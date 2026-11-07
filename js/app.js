@@ -469,7 +469,9 @@ window.AzotaApp = (function() {
                 nickname: target.nickname,
                 grade: target.grade,
                 goal: target.goal || "9.0+ Học Kỳ 1",
-                avatar: target.avatar || "👦"
+                avatar: target.avatar || "👦",
+                isAdmin: !!target.isAdmin,
+                role: target.role
             });
 
             this.renderAccountsList();
@@ -1056,6 +1058,31 @@ window.AzotaApp = (function() {
     window.AuthGate = AuthGate;
     window.AccountManager = AccountManager;
 
+    // HELPER: KIỂM TRA QUYỀN ADMIN (QUẢN TRỊ VIÊN)
+    function isCurrentUserAdmin() {
+        try {
+            const acc = AccountManager.getCurrentAccount();
+            if (acc) {
+                if (acc.isAdmin === true || acc.id === "acc_vanthua" || (acc.nickname && acc.nickname.toLowerCase() === "vanthua")) {
+                    return true;
+                }
+                if (acc.role && (acc.role.includes("Admin") || acc.role.includes("Quản Trị"))) {
+                    return true;
+                }
+            }
+            const prof = UserProfile.get();
+            if (prof) {
+                if (prof.isAdmin === true || (prof.nickname && prof.nickname.toLowerCase() === "vanthua")) {
+                    return true;
+                }
+                if (prof.role && (prof.role.includes("Admin") || prof.role.includes("Quản Trị"))) {
+                    return true;
+                }
+            }
+        } catch(e) {}
+        return false;
+    }
+
     // USER PROFILE CONTROLLER
     const UserProfile = {
         get: function() {
@@ -1081,6 +1108,8 @@ window.AzotaApp = (function() {
         },
         updateUI: function() {
             const p = this.get();
+            const isAdmin = isCurrentUserAdmin();
+
             const nameEl = document.getElementById("userNameDisplay");
             const nickEl = document.getElementById("userNicknameDisplay");
             const avatarEl = document.getElementById("userAvatarPill");
@@ -1094,8 +1123,40 @@ window.AzotaApp = (function() {
             if (sideNameEl) sideNameEl.textContent = p.name || "Học Sinh Aseta";
             if (sideNickEl) sideNickEl.textContent = `@${p.nickname || "hocsinh11"}`;
             if (sideAvatarEl) sideAvatarEl.textContent = p.avatar || "👦";
+
+            // CHỈ ADMIN MỚI CÓ BUTTON QUẢN LÝ TÀI KHOẢN TRÊN THANH SIDEBAR
+            const accBtn = document.getElementById("sidebar-util-accounts");
+            if (accBtn) {
+                if (isAdmin) {
+                    accBtn.classList.remove("hidden");
+                    accBtn.style.removeProperty("display");
+                } else {
+                    accBtn.classList.add("hidden");
+                    accBtn.style.setProperty("display", "none", "important");
+                }
+            }
+
+            // User Account Pill trên Navbar
+            const navAccountPill = document.getElementById("explorerUserAccountPill");
+            if (navAccountPill) {
+                if (isAdmin) {
+                    navAccountPill.setAttribute("title", "Quản lý hệ thống tài khoản (Admin)");
+                    navAccountPill.classList.add("cursor-pointer");
+                } else {
+                    navAccountPill.setAttribute("title", `Tài khoản: ${p.name || ''} (@${p.nickname || ''})`);
+                    navAccountPill.classList.remove("cursor-pointer");
+                }
+            }
         },
         openModal: function() {
+            if (!isCurrentUserAdmin()) {
+                if (typeof AzotaModal !== "undefined" && AzotaModal.alert) {
+                    AzotaModal.alert("Bạn đang đăng nhập bằng tài khoản học sinh. Chức năng Quản Lý Tài Khoản chỉ dành riêng cho Quản Trị Viên (Admin)!", "Quyền Quản Trị Viên", "🔒");
+                } else {
+                    alert("Chức năng Quản Lý Tài Khoản chỉ dành riêng cho Quản Trị Viên (Admin)!");
+                }
+                return;
+            }
             const modal = document.getElementById("userProfileModal");
             if (modal) modal.classList.remove("hidden");
             AccountManager.switchTab("list");
