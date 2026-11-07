@@ -1,0 +1,2204 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aseta — Hệ Thống Ôn Tập & Khảo Thí Trực Tuyến Đa Môn</title>
+
+    <!-- Official Aseta Logo (Decorative Number 7) Favicon & App Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon.png">
+    <link rel="icon" type="image/png" sizes="256x256" href="assets/logo-aseta-7.png">
+    <link rel="apple-touch-icon" href="assets/logo-aseta-7-512.png">
+
+    <!-- Force No-Cache so F5 immediately pulls fresh files -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <!-- Google Fonts: Plus Jakarta Sans & Be Vietnam Pro & JetBrains Mono (Preconnected & Crisp) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', '"Be Vietnam Pro"', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
+                    },
+                    colors: {
+                        azota: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- KaTeX for Math & Science formulas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+    <!-- Custom OS & Animated Dock CSS (New Cache-Busted File) -->
+    <link rel="stylesheet" href="css/custom-v4.css">
+
+    <!-- Critical AuthGate & Icon Alignment Styles (Immediate In-Memory Render) -->
+    <style>
+        #authGateView {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            min-width: 100vw !important;
+            min-height: 100vh !important;
+            max-width: 100vw !important;
+            max-height: 100vh !important;
+            z-index: 999999 !important;
+            background-color: #000000 !important;
+            box-sizing: border-box !important;
+        }
+        #authGateView.hidden {
+            display: none !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+        #authGateView:not(.hidden) {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+        }
+        #authGateView.opacity-0 {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+        #loginCardWrapper {
+            width: 100% !important;
+            max-width: 400px !important;
+            margin: auto !important;
+            position: relative !important;
+            z-index: 10 !important;
+        }
+        /* Dock English icon perfect centering and enamel finish */
+        [id="sidebar-folder-Tiếng Anh"] .gradient-menu-icon {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 32px !important;
+            height: 32px !important;
+            margin: 0 auto !important;
+        }
+        [id="sidebar-folder-Tiếng Anh"] .gradient-menu-icon svg {
+            width: 29px !important;
+            height: 29px !important;
+            display: block !important;
+            margin: auto !important;
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.55));
+        }
+    </style>
+</head>
+<body class="bg-white dark:bg-black text-slate-800 dark:text-slate-100 min-h-screen flex flex-col pb-36 relative overflow-x-hidden">
+
+    <!-- AMBIENT AURORA GLOW BACKGROUND -->
+    <div id="auroraContainer" class="aurora-container">
+        <div class="aurora-orb orb-1"></div>
+        <div class="aurora-orb orb-2"></div>
+        <div class="aurora-orb orb-3"></div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- AUTH GATE: CYBER 3D TILTING LOGIN & ACCESS CONTROL GATEWAY -->
+    <!-- ======================================================== -->
+    <div id="authGateView" class="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-black overflow-y-auto no-scrollbar transition-opacity duration-500" style="position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; width: 100vw !important; height: 100vh !important; min-width: 100vw !important; min-height: 100vh !important; z-index: 999999 !important; background-color: #000000 !important; display: flex !important; align-items: center !important; justify-content: center !important; opacity: 1 !important; visibility: visible !important; pointer-events: auto !important;">
+        
+        <!-- Background gradient effect - matches purple OnlyPipe style -->
+        <div class="absolute inset-0 bg-gradient-to-b from-purple-500/40 via-purple-700/50 to-black pointer-events-none"></div>
+
+        <!-- Subtle noise texture overlay -->
+        <div class="absolute inset-0 opacity-[0.03] mix-blend-soft-light pointer-events-none" style="background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E&quot;); background-size: 200px 200px;"></div>
+
+        <!-- Top & Bottom radial glows -->
+        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-[120vh] h-[60vh] rounded-b-[50%] bg-purple-400/20 blur-[80px] pointer-events-none"></div>
+        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-[100vh] h-[60vh] rounded-b-full bg-purple-300/20 blur-[60px] pointer-events-none animate-pulse"></div>
+        <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[90vh] h-[90vh] rounded-t-full bg-purple-400/20 blur-[60px] pointer-events-none animate-pulse"></div>
+
+        <!-- Animated glow spots -->
+        <div class="absolute left-1/4 top-1/4 w-96 h-96 bg-white/5 rounded-full blur-[100px] animate-pulse opacity-40 pointer-events-none"></div>
+        <div class="absolute right-1/4 bottom-1/4 w-96 h-96 bg-white/5 rounded-full blur-[100px] animate-pulse delay-1000 opacity-40 pointer-events-none"></div>
+
+        <!-- 3D Tilting Card Wrapper -->
+        <div id="loginCardWrapper" class="w-full max-w-[400px] relative z-10 my-auto py-6" style="perspective: 1500px;">
+            <div id="loginCard3D" class="relative group transition-transform duration-150 ease-out" style="transform-style: preserve-3d;">
+                
+                <!-- Traveling light beam effect around border -->
+                <div class="absolute -inset-[1px] rounded-3xl overflow-hidden pointer-events-none">
+                    <!-- Top light beam -->
+                    <div class="absolute top-0 left-0 h-[3px] w-[50%] bg-gradient-to-r from-transparent via-white to-transparent opacity-70 traveling-beam-top"></div>
+                    <!-- Right light beam -->
+                    <div class="absolute top-0 right-0 h-[50%] w-[3px] bg-gradient-to-b from-transparent via-white to-transparent opacity-70 traveling-beam-right"></div>
+                    <!-- Bottom light beam -->
+                    <div class="absolute bottom-0 right-0 h-[3px] w-[50%] bg-gradient-to-r from-transparent via-white to-transparent opacity-70 traveling-beam-bottom"></div>
+                    <!-- Left light beam -->
+                    <div class="absolute bottom-0 left-0 h-[50%] w-[3px] bg-gradient-to-b from-transparent via-white to-transparent opacity-70 traveling-beam-left"></div>
+                    
+                    <!-- Corner glow spots -->
+                    <div class="absolute top-0 left-0 h-[6px] w-[6px] rounded-full bg-white/50 blur-[1px]"></div>
+                    <div class="absolute top-0 right-0 h-[8px] w-[8px] rounded-full bg-white/70 blur-[2px]"></div>
+                    <div class="absolute bottom-0 right-0 h-[8px] w-[8px] rounded-full bg-white/70 blur-[2px]"></div>
+                    <div class="absolute bottom-0 left-0 h-[6px] w-[6px] rounded-full bg-white/50 blur-[1px]"></div>
+                </div>
+
+                <!-- Card border glow -->
+                <div class="absolute -inset-[0.5px] rounded-3xl bg-gradient-to-r from-purple-500/20 via-purple-400/30 to-purple-500/20 opacity-0 group-hover:opacity-70 transition-opacity duration-500 pointer-events-none"></div>
+
+                <!-- Glass card background matching exact user mockup -->
+                <div class="relative bg-[#0c0717]/90 backdrop-blur-2xl rounded-3xl p-7 sm:p-8 border border-purple-500/30 shadow-[0_0_50px_rgba(147,51,234,0.25),0_20px_40px_rgba(0,0,0,0.8)] overflow-hidden">
+                    
+                    <!-- Top Logo Badge (Aseta Official Number 7 Logo) -->
+                    <div class="text-center mb-6 relative z-10">
+                        <div class="mx-auto w-16 h-16 rounded-2xl bg-black/60 border border-amber-500/40 p-2 flex items-center justify-center shadow-[0_0_30px_rgba(245,158,11,0.25)] transition-transform hover:scale-105">
+                            <img src="assets/logo-aseta-7.png" alt="Aseta Logo" class="w-full h-full object-contain filter drop-shadow(0 2px 8px rgba(0,0,0,0.7))">
+                        </div>
+                        <h1 class="text-2xl font-bold text-white tracking-tight mt-3">
+                            Welcome Back
+                        </h1>
+                        <p class="text-white/60 text-[11.5px] font-medium mt-1 whitespace-nowrap">
+                            Hệ Thống Ôn Thi Trực Tuyến Aseta • Tài Khoản Cấp Quyền
+                        </p>
+                    </div>
+
+                    <!-- Alert Box -->
+                    <div id="loginAlertBox" class="hidden p-3 rounded-2xl text-xs font-medium border flex items-center gap-2 mb-3 relative z-10 bg-rose-500/20 border-rose-500/40 text-rose-300">
+                        <span id="loginAlertIcon">⚠️</span>
+                        <span id="loginAlertText" class="flex-1">Tên đăng nhập hoặc mã PIN không đúng.</span>
+                    </div>
+
+                    <!-- Lockout Countdown Banner -->
+                    <div id="loginLockoutBox" class="hidden p-3 rounded-2xl text-xs font-semibold bg-rose-500/20 border border-rose-500/40 text-rose-300 space-y-1 mb-3 relative z-10">
+                        <div class="flex items-center justify-between">
+                            <span>🛑 Tạm khóa do nhập sai nhiều lần:</span>
+                            <span id="loginLockoutTimer" class="font-mono font-bold text-white">30s</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                            <div id="loginLockoutBar" class="bg-rose-500 h-full w-full transition-all duration-1000"></div>
+                        </div>
+                    </div>
+
+                    <form id="loginForm" onsubmit="AuthGate.handleLoginSubmit(event)" class="space-y-3.5 relative z-10">
+                        
+                        <!-- Username / Email Input (Solid White Pill Input) -->
+                        <div class="relative">
+                            <input type="text" 
+                                   id="loginUsernameInput" 
+                                   autocomplete="username"
+                                   placeholder="Tên đăng nhập / @username" 
+                                   class="w-full bg-white text-slate-900 placeholder:text-slate-400 h-12 px-5 rounded-2xl text-sm font-medium shadow-sm outline-none border border-transparent focus:border-purple-400 focus:ring-2 focus:ring-purple-400/30 transition-all">
+                        </div>
+
+                        <!-- Password / PIN Input (Solid White Pill Input) -->
+                        <div class="relative">
+                            <input type="password" 
+                                   id="loginPinInput" 
+                                   autocomplete="current-password"
+                                   placeholder="Mã PIN / Mật khẩu" 
+                                   class="w-full bg-white text-slate-900 placeholder:text-slate-400 h-12 pl-5 pr-12 rounded-2xl text-sm font-mono font-medium shadow-sm outline-none border border-transparent focus:border-purple-400 focus:ring-2 focus:ring-purple-400/30 transition-all">
+                            <!-- Toggle Eye Button -->
+                            <button type="button" 
+                                    id="loginTogglePinVisibility" 
+                                    onclick="AuthGate.togglePasswordVisibility()" 
+                                    class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer p-1"
+                                    title="Ẩn/Hiện mật khẩu">
+                                <svg id="loginEyeIcon" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Remember me & Help -->
+                        <div class="flex items-center justify-between text-xs px-1 pt-0.5">
+                            <label class="flex items-center gap-2 cursor-pointer text-white/90 hover:text-white transition-colors select-none font-medium">
+                                <input type="checkbox" id="loginRememberMe" checked class="w-4 h-4 rounded border-purple-400/40 accent-purple-600 focus:ring-0 cursor-pointer">
+                                <span>Ghi nhớ đăng nhập</span>
+                            </label>
+                            <button type="button" onclick="AuthGate.showPinHelp()" class="text-xs text-white/60 hover:text-white transition-colors cursor-pointer font-medium">
+                                Xem mã mẫu?
+                            </button>
+                        </div>
+
+                        <!-- Sign In Submit Button (Solid White Pill Button) -->
+                        <button type="submit" 
+                                id="loginSubmitBtn"
+                                class="w-full h-12 rounded-2xl bg-white hover:bg-slate-100 text-slate-950 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all active:scale-[0.99] cursor-pointer outline-none mt-2">
+                            <span id="loginBtnSpinner" class="hidden w-4 h-4 border-2 border-black/70 border-t-transparent rounded-full animate-spin"></span>
+                            <span id="loginBtnText">ĐĂNG NHẬP</span>
+                            <span class="text-sm font-bold">→</span>
+                        </button>
+
+                        <!-- Divider -->
+                        <div class="relative my-4 flex items-center">
+                            <div class="flex-grow border-t border-white/10"></div>
+                            <span class="mx-3 text-[10.5px] text-white/40 uppercase tracking-widest font-semibold">Tài khoản cấp quyền</span>
+                            <div class="flex-grow border-t border-white/10"></div>
+                        </div>
+
+                        <!-- Quick Demo Accounts (Hidden on card face, preserved for JS API) -->
+                        <div id="loginQuickAccountsList" class="hidden">
+                            <!-- Populated dynamically by AuthGate.renderQuickAccounts() -->
+                        </div>
+
+                        <!-- Fast Guest Access Button -->
+                        <button type="button" 
+                                onclick="AuthGate.loginAsGuest()" 
+                                class="w-full h-12 rounded-2xl bg-purple-950/40 hover:bg-purple-900/40 border border-purple-500/30 hover:border-purple-500/50 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.99] cursor-pointer shadow-inner">
+                            <span class="text-amber-300">✦</span>
+                            <span>Vào Nhanh Dưới Dạng Khách (Trải Nghiệm)</span>
+                        </button>
+
+                        <!-- Footer note: Only accounts provided by admin -->
+                        <p class="text-center text-[10.5px] text-white/40 pt-1">
+                            Hệ thống nội bộ chỉ dành cho học sinh có tài khoản được cấp.
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SVG Defs for GlassFolder Silhouette ClipPaths (3D Feature Preservation) -->
+    <svg width="0" height="0" class="absolute pointer-events-none" style="position: absolute; width: 0; height: 0; overflow: hidden;" aria-hidden="true">
+        <defs>
+            <clipPath id="gfBackClip" clipPathUnits="userSpaceOnUse">
+                <path d="M0 56A22 22 0 0 1 22 34L146 34C170 34 172 0 198 0L318 0A22 22 0 0 1 340 22L340 250A22 22 0 0 1 318 272L22 272A22 22 0 0 1 0 250Z"></path>
+            </clipPath>
+            <clipPath id="gfFrontClip" clipPathUnits="userSpaceOnUse">
+                <path d="M0 22A22 22 0 0 1 22 0L118 0C144 0 146 32 172 32L318 32A22 22 0 0 1 340 54L340 176A22 22 0 0 1 318 198L22 198A22 22 0 0 1 0 176Z"></path>
+            </clipPath>
+        </defs>
+    </svg>
+
+    <!-- ======================================================== -->
+    <!-- ACETERNITY UI GRID BACKGROUND & RADIAL VIGNETTE SYSTEM    -->
+    <!-- ======================================================== -->
+    <div id="aceternityGridWrapper" class="aceternity-grid-wrapper">
+        <div class="aceternity-grid-lines"></div>
+        <div class="aceternity-grid-vignette"></div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- STANDARD WEB APPLICATION ROOT LAYOUT (MODERNIZE DASHBOARD) -->
+    <!-- ======================================================== -->
+    <div class="app-layout min-h-screen flex flex-col lg:flex-row bg-transparent text-slate-800 dark:text-slate-100 relative z-10">
+
+        <!-- Mobile Drawer Backdrop Overlay -->
+        <div id="sidebarBackdrop" onclick="AzotaApp.toggleSidebar(false)" class="fixed inset-0 bg-black/60 z-40 lg:hidden hidden backdrop-blur-xs transition-opacity duration-200"></div>
+
+        <!-- ======================================================== -->
+        <!-- LEFT VERTICAL SIDEBAR: GRADIENT EXPANDING ICON RAIL      -->
+        <!-- ======================================================== -->
+        <aside id="appSidebar" class="app-sidebar fixed lg:sticky top-0 left-0 h-screen w-72 lg:w-20 bg-white/75 dark:bg-black/65 backdrop-blur-2xl border-r border-slate-200/80 dark:border-white/10 flex flex-col justify-between shrink-0 z-50 transition-all duration-300 -translate-x-full lg:translate-x-0 shadow-2xl lg:shadow-none select-none">
+            
+            <div class="p-3 sm:p-4 space-y-3.5 overflow-y-auto lg:overflow-visible flex-1 flex flex-col items-stretch lg:items-center lg:p-0 lg:py-4">
+                
+                <!-- Sidebar Brand Header & Logo (Aseta Official Number 7 Logo) -->
+                <div class="sidebar-brand-header flex items-center justify-between lg:justify-center w-full pb-3 border-b border-slate-200/80 dark:border-white/5 shrink-0">
+                    <div class="flex items-center gap-3 cursor-pointer group" onclick="AzotaApp.openFileExplorer('root')" title="Aseta 2.5 — Kho Đề & Khảo Thí">
+                        <div class="w-11 h-11 rounded-2xl bg-slate-900/90 dark:bg-black/90 border border-amber-500/30 dark:border-white/15 flex items-center justify-center p-1.5 shadow-lg shadow-amber-500/10 group-hover:scale-105 group-hover:border-amber-500/60 transition-all shrink-0 overflow-hidden">
+                            <img src="assets/logo-aseta-7.png" alt="Aseta Logo" class="w-full h-full object-contain filter drop-shadow(0 2px 4px rgba(0,0,0,0.5))">
+                        </div>
+                        <!-- Brand title visible on mobile drawer or when sidebar expanded -->
+                        <div class="sidebar-brand-text block lg:hidden min-w-0">
+                            <div class="flex items-center gap-1.5">
+                                <h2 class="text-base font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">Aseta</h2>
+                                <span class="px-1.5 py-0.2 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[10px] font-bold border border-amber-500/20">2.5</span>
+                            </div>
+                            <p class="text-[11px] text-slate-400 font-medium">Hệ Thống Ôn Khảo Thí</p>
+                        </div>
+                    </div>
+                    <!-- Desktop Toggle Sidebar Expand Button -->
+                    <button type="button" 
+                            id="sidebarExpandToggle" 
+                            onclick="AzotaApp.toggleSidebarExpand()" 
+                            class="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg text-slate-400 hover:text-white hover:bg-slate-200 dark:hover:bg-white/10 transition-colors cursor-pointer shrink-0"
+                            title="Mở rộng / Thu gọn Sidebar">
+                        <svg id="sidebarExpandSvg" class="w-4 h-4 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="13 17 18 12 13 7"></polyline>
+                            <polyline points="6 17 11 12 6 7"></polyline>
+                        </svg>
+                    </button>
+                    <!-- Close button on mobile -->
+                    <button type="button" onclick="AzotaApp.toggleSidebar(false)" class="lg:hidden p-2 text-slate-400 hover:text-white text-lg cursor-pointer">
+                        ✕
+                    </button>
+                </div>
+
+                <!-- CATEGORY 1: TỔNG QUAN & KHẢO THÍ -->
+                <div class="w-full space-y-1">
+                    <div class="nav-group-title">
+                        <span>TỔNG QUAN &amp; KHẢO THÍ</span>
+                        <span class="text-[9px] px-1.5 py-0.2 rounded-md bg-blue-500/10 text-blue-500 font-bold">CHÍNH</span>
+                    </div>
+                    
+                    <!-- Kho Đề & Môn Học -->
+                    <button type="button" 
+                            id="sidebar-folder-root" 
+                            onclick="AzotaApp.openFileExplorer('root')" 
+                            style="--gradient-from: #3b82f6; --gradient-to: #06b6d4;" 
+                            class="gradient-menu-btn nav-item-modern nav-item-active group" 
+                            title="Kho Đề & Môn Học">
+                        <span class="gradient-menu-bg"></span>
+                        <span class="gradient-menu-glow"></span>
+                        <span class="gradient-menu-icon"><span class="text-xl">📁</span></span>
+                        <span class="gradient-menu-title">Kho Đề</span>
+                        <span class="gradient-active-dot"></span>
+                        <span class="mobile-drawer-label hidden">
+                            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Kho Đề & Môn Học</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 font-bold">6</span>
+                        </span>
+                    </button>
+
+                    <!-- Bảng Xếp Hạng & Đua Top (Coming Soon) -->
+                    <button type="button" 
+                            id="sidebar-folder-leaderboard" 
+                            onclick="AzotaApp.openLeaderboard()" 
+                            style="--gradient-from: #f59e0b; --gradient-to: #ef4444;" 
+                            class="gradient-menu-btn nav-item-modern group" 
+                            title="Bảng Xếp Hạng & Đua Top (Coming Soon)">
+                        <span class="gradient-menu-bg"></span>
+                        <span class="gradient-menu-glow"></span>
+                        <span class="gradient-menu-icon"><span class="text-xl">🏆</span></span>
+                        <span class="gradient-menu-title">Đua Top</span>
+                        <span class="gradient-active-dot"></span>
+                        <span class="mobile-drawer-label hidden">
+                            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Đua Top Xếp Hạng</span>
+                            <span class="liquid-tag-pill bg-amber-500/20 text-amber-400 border border-amber-500/30">SOON</span>
+                        </span>
+                    </button>
+                </div>
+
+                <!-- Section Divider 1 -> 2 -->
+                <div class="sidebar-section-divider"></div>
+
+                <!-- CATEGORY 2: DANH MỤC MÔN HỌC -->
+                <div class="w-full space-y-1">
+                    <div class="w-full flex items-center justify-between nav-group-title cursor-pointer select-none py-1 group" onclick="AzotaApp.toggleSidebarMainFolders()">
+                        <span class="flex items-center gap-1.5">
+                            <span class="sidebar-chevron-btn w-4 h-4 rounded flex items-center justify-center bg-slate-200/50 dark:bg-white/5">
+                                <svg id="sidebarFolderArrow" class="sidebar-chevron-svg w-3 h-3 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m6 9 6 6 6-6"/>
+                                </svg>
+                            </span>
+                            <span>DANH MỤC MÔN HỌC</span>
+                        </span>
+                        <span class="text-[9px] px-1.5 py-0.2 rounded-md bg-emerald-500/10 text-emerald-500 font-bold">9 MÔN</span>
+                    </div>
+
+                    <div id="sidebarMainFoldersList" class="space-y-1 transition-all duration-300">
+                        <div id="sidebarSubjectsSubTree" class="space-y-1.5 transition-all duration-300">
+                            <!-- 1. Học Tự Luận -->
+                            <button type="button" 
+                                    id="sidebar-folder-Hoc_Tu_Luan" 
+                                    onclick="AzotaApp.openFileExplorer('Hoc_Tu_Luan')" 
+                                    style="--gradient-from: #10b981; --gradient-to: #06b6d4;" 
+                                    class="gradient-menu-btn nav-item-modern group" 
+                                    title="Học Tự Luận">
+                                <span class="gradient-menu-bg"></span>
+                                <span class="gradient-menu-glow"></span>
+                                <span class="gradient-menu-icon"><span class="text-xl">📝</span></span>
+                                <span class="gradient-menu-title">Tự Luận</span>
+                                <span class="gradient-active-dot"></span>
+                                <span class="mobile-drawer-label hidden">
+                                    <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Học Tự Luận</span>
+                                    <span class="liquid-tag-pill bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">TL</span>
+                                </span>
+                            </button>
+
+                            <!-- 2. Địa Lí 11 -->
+                            <button type="button" 
+                                    id="sidebar-folder-Địa Lí" 
+                                    onclick="AzotaApp.openFileExplorer('Địa Lí')" 
+                                    style="--gradient-from: #0284c7; --gradient-to: #2563eb;" 
+                                    class="gradient-menu-btn nav-item-modern group" 
+                                    title="Địa Lí 11">
+                                <span class="gradient-menu-bg"></span>
+                                <span class="gradient-menu-glow"></span>
+                                <span class="gradient-menu-icon"><span class="text-xl">🌍</span></span>
+                                <span class="gradient-menu-title">Địa Lí 11</span>
+                                <span class="gradient-active-dot"></span>
+                                <span class="mobile-drawer-label hidden">
+                                    <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Địa Lí 11</span>
+                                    <span class="liquid-tag-pill bg-cyan-500/15 text-cyan-400 border border-cyan-500/25">DL</span>
+                                </span>
+                            </button>
+
+                            <!-- 3. Tin Học 11 -->
+                            <button type="button" 
+                                    id="sidebar-folder-Tin Học" 
+                                    onclick="AzotaApp.openFileExplorer('Tin Học')" 
+                                    style="--gradient-from: #ec4899; --gradient-to: #8b5cf6;" 
+                                    class="gradient-menu-btn nav-item-modern group" 
+                                    title="Tin Học 11">
+                                <span class="gradient-menu-bg"></span>
+                                <span class="gradient-menu-glow"></span>
+                                <span class="gradient-menu-icon"><span class="text-xl">💻</span></span>
+                                <span class="gradient-menu-title">Tin Học 11</span>
+                                <span class="gradient-active-dot"></span>
+                                <span class="mobile-drawer-label hidden">
+                                    <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Tin Học 11</span>
+                                    <span class="liquid-tag-pill bg-rose-500/15 text-rose-400 border border-rose-500/25">TH</span>
+                                </span>
+                            </button>
+
+                            <!-- 4. GDKT & PL 11 -->
+                            <button type="button" 
+                                    id="sidebar-folder-GDKT&PL" 
+                                    onclick="AzotaApp.openFileExplorer('GDKT&PL')" 
+                                    style="--gradient-from: #8b5cf6; --gradient-to: #6366f1;" 
+                                    class="gradient-menu-btn nav-item-modern group" 
+                                    title="GDKT & PL 11">
+                                <span class="gradient-menu-bg"></span>
+                                <span class="gradient-menu-glow"></span>
+                                <span class="gradient-menu-icon"><span class="text-xl">⚖️</span></span>
+                                <span class="gradient-menu-title">GDKT & PL</span>
+                                <span class="gradient-active-dot"></span>
+                                <span class="mobile-drawer-label hidden">
+                                    <span class="font-bold text-sm text-slate-800 dark:text-slate-100">GDKT & PL 11</span>
+                                    <span class="liquid-tag-pill bg-purple-500/15 text-purple-400 border border-purple-500/25">PL</span>
+                                </span>
+                            </button>
+
+                            <!-- 5. Lịch Sử 11 -->
+                            <button type="button" 
+                                    id="sidebar-folder-Lịch Sử" 
+                                    onclick="AzotaApp.openFileExplorer('Lịch Sử')" 
+                                    style="--gradient-from: #f59e0b; --gradient-to: #d97706;" 
+                                    class="gradient-menu-btn nav-item-modern group" 
+                                    title="Lịch Sử 11">
+                                <span class="gradient-menu-bg"></span>
+                                <span class="gradient-menu-glow"></span>
+                                <span class="gradient-menu-icon"><span class="text-xl">🏛️</span></span>
+                                <span class="gradient-menu-title">Lịch Sử 11</span>
+                                <span class="gradient-active-dot"></span>
+                                <span class="mobile-drawer-label hidden">
+                                    <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Lịch Sử 11</span>
+                                    <span class="liquid-tag-pill bg-amber-500/15 text-amber-400 border border-amber-500/25">LS</span>
+                                </span>
+                            </button>
+
+                            <!-- 6. Tiếng Anh 11 -->
+                            <button type="button" 
+                                    id="sidebar-folder-Tiếng Anh" 
+                                    onclick="AzotaApp.openFileExplorer('Tiếng Anh')" 
+                                    style="--gradient-from: #3b82f6; --gradient-to: #4f46e5;" 
+                                    class="gradient-menu-btn nav-item-modern group" 
+                                    title="Tiếng Anh 11">
+                                <span class="gradient-menu-bg"></span>
+                                <span class="gradient-menu-glow"></span>
+                                <span class="gradient-menu-icon flex items-center justify-center">
+                                    <svg class="w-[29px] h-[29px] rounded-full shrink-0 block" viewBox="0 0 36 36" style="display: block; margin: auto; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.55));" aria-label="Tiếng Anh 11">
+                                        <defs>
+                                            <clipPath id="uk-flag-sidebar">
+                                                <circle cx="18" cy="18" r="18"/>
+                                            </clipPath>
+                                            <linearGradient id="ukGloss" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.45"/>
+                                                <stop offset="50%" stop-color="#ffffff" stop-opacity="0.05"/>
+                                                <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+                                            </linearGradient>
+                                        </defs>
+                                        <circle cx="18" cy="18" r="18" fill="#0052B4"/>
+                                        <g clip-path="url(#uk-flag-sidebar)">
+                                            <!-- Diagonal White Stripes -->
+                                            <path d="M-2,-2 L38,38 M38,-2 L-2,38" stroke="#FFFFFF" stroke-width="6.5"/>
+                                            <!-- Diagonal Red Stripes -->
+                                            <path d="M-2,-2 L38,38 M38,-2 L-2,38" stroke="#D80027" stroke-width="3.8"/>
+                                            <!-- St. George Cross White Base -->
+                                            <path d="M18,-2 V38 M-2,18 H38" stroke="#FFFFFF" stroke-width="10"/>
+                                            <!-- St. George Cross Red -->
+                                            <path d="M18,-2 V38 M-2,18 H38" stroke="#D80027" stroke-width="6"/>
+                                            <!-- 3D Convex Gloss Highlight -->
+                                            <ellipse cx="18" cy="11" rx="15" ry="8" fill="url(#ukGloss)"/>
+                                            <!-- Outer glossy enamel metallic rim -->
+                                            <circle cx="18" cy="18" r="17.2" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.2"/>
+                                        </g>
+                                    </svg>
+                                </span>
+                                <span class="gradient-menu-title">Tiếng Anh 11</span>
+                                <span class="gradient-active-dot"></span>
+                                <span class="mobile-drawer-label hidden">
+                                    <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Tiếng Anh 11</span>
+                                    <span class="liquid-tag-pill bg-blue-500/15 text-blue-400 border border-blue-500/25">EN</span>
+                                </span>
+                            </button>
+
+                            <!-- 7. Toán 11 -->
+                            <button type="button" 
+                                    id="sidebar-folder-Toán" 
+                                    onclick="AzotaApp.openFileExplorer('Toán')" 
+                                    style="--gradient-from: #2563eb; --gradient-to: #4f46e5;" 
+                                    class="gradient-menu-btn nav-item-modern group" 
+                                    title="Toán 11">
+                                <span class="gradient-menu-bg"></span>
+                                <span class="gradient-menu-glow"></span>
+                                <span class="gradient-menu-icon"><span class="text-xl">📐</span></span>
+                                <span class="gradient-menu-title">Toán 11</span>
+                                <span class="gradient-active-dot"></span>
+                                <span class="mobile-drawer-label hidden">
+                                    <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Toán 11</span>
+                                    <span class="liquid-tag-pill bg-blue-500/15 text-blue-400 border border-blue-500/25">TO</span>
+                                </span>
+                            </button>
+
+                            <!-- 8. Vật Lí 11 -->
+                            <button type="button" 
+                                    id="sidebar-folder-Vật Lí" 
+                                    onclick="AzotaApp.openFileExplorer('Vật Lí')" 
+                                    style="--gradient-from: #f59e0b; --gradient-to: #ea580c;" 
+                                    class="gradient-menu-btn nav-item-modern group" 
+                                    title="Vật Lí 11">
+                                <span class="gradient-menu-bg"></span>
+                                <span class="gradient-menu-glow"></span>
+                                <span class="gradient-menu-icon"><span class="text-xl">⚡</span></span>
+                                <span class="gradient-menu-title">Vật Lí 11</span>
+                                <span class="gradient-active-dot"></span>
+                                <span class="mobile-drawer-label hidden">
+                                    <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Vật Lí 11</span>
+                                    <span class="liquid-tag-pill bg-amber-500/15 text-amber-400 border border-amber-500/25">VL</span>
+                                </span>
+                            </button>
+
+                            <!-- 9. GDQP & AN 11 -->
+                            <button type="button" 
+                                    id="sidebar-folder-GDQP&AN" 
+                                    onclick="AzotaApp.openFileExplorer('GDQP&AN')" 
+                                    style="--gradient-from: #10b981; --gradient-to: #059669;" 
+                                    class="gradient-menu-btn nav-item-modern group" 
+                                    title="GDQP & AN 11">
+                                <span class="gradient-menu-bg"></span>
+                                <span class="gradient-menu-glow"></span>
+                                <span class="gradient-menu-icon"><span class="text-xl">🛡️</span></span>
+                                <span class="gradient-menu-title">GDQP & AN</span>
+                                <span class="gradient-active-dot"></span>
+                                <span class="mobile-drawer-label hidden">
+                                    <span class="font-bold text-sm text-slate-800 dark:text-slate-100">GDQP & AN 11</span>
+                                    <span class="liquid-tag-pill bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">QP</span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Divider 2 -> 3 -->
+                <div class="sidebar-section-divider"></div>
+
+                <!-- CATEGORY 3: CÔNG CỤ & TIỆN ÍCH -->
+                <div class="w-full space-y-1.5">
+                    <div class="nav-group-title">
+                        <span>CÔNG CỤ &amp; TIỆN ÍCH</span>
+                        <span class="text-[9px] px-1.5 py-0.2 rounded-md bg-purple-500/10 text-purple-500 font-bold">TIỆN ÍCH</span>
+                    </div>
+
+                    <!-- 1. Kho Lời Giải (Hình Ảnh) -->
+                    <button type="button" 
+                            id="sidebar-util-solutions" 
+                            onclick="AzotaApp.showView('solutions')" 
+                            style="--gradient-from: #10b981; --gradient-to: #059669;" 
+                            class="gradient-menu-btn nav-item-modern group" 
+                            title="Kho Lời Giải &amp; Bài Mẫu (Hình Ảnh)">
+                        <span class="gradient-menu-bg"></span>
+                        <span class="gradient-menu-glow"></span>
+                        <span class="gradient-menu-icon"><span class="text-xl">📸</span></span>
+                        <span class="gradient-menu-title">Lời Giải</span>
+                        <span class="gradient-active-dot"></span>
+                        <span class="mobile-drawer-label hidden">
+                            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Kho Lời Giải (Ảnh)</span>
+                            <span class="liquid-tag-pill bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">GIẢI</span>
+                        </span>
+                    </button>
+
+                    <!-- 2. Thống Kê Tiến Độ -->
+                    <button type="button" 
+                            id="sidebar-util-stats" 
+                            onclick="AzotaApp.showView('history')" 
+                            style="--gradient-from: #06b6d4; --gradient-to: #3b82f6;" 
+                            class="gradient-menu-btn nav-item-modern group" 
+                            title="Thống Kê Tiến Độ">
+                        <span class="gradient-menu-bg"></span>
+                        <span class="gradient-menu-glow"></span>
+                        <span class="gradient-menu-icon"><span class="text-xl">📊</span></span>
+                        <span class="gradient-menu-title">Tiến Độ</span>
+                        <span class="gradient-active-dot"></span>
+                        <span class="mobile-drawer-label hidden">
+                            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Thống Kê Tiến Độ</span>
+                            <span class="liquid-tag-pill bg-sky-500/15 text-sky-400 border border-sky-500/25">TK</span>
+                        </span>
+                    </button>
+
+                    <!-- Ngân Hàng Câu Hỏi -->
+                    <button type="button" 
+                            id="sidebar-util-bank" 
+                            onclick="AzotaApp.showView('bank')" 
+                            style="--gradient-from: #6366f1; --gradient-to: #a855f7;" 
+                            class="gradient-menu-btn nav-item-modern group" 
+                            title="Ngân Hàng Câu Hỏi">
+                        <span class="gradient-menu-bg"></span>
+                        <span class="gradient-menu-glow"></span>
+                        <span class="gradient-menu-icon"><span class="text-xl">🔍</span></span>
+                        <span class="gradient-menu-title">Ngân Hàng</span>
+                        <span class="gradient-active-dot"></span>
+                        <span class="mobile-drawer-label hidden">
+                            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Ngân Hàng Câu Hỏi</span>
+                            <span class="liquid-tag-pill bg-indigo-500/15 text-indigo-400 border border-indigo-500/25">NH</span>
+                        </span>
+                    </button>
+
+                    <!-- Tạo Đề Nhanh AI -->
+                    <button type="button" 
+                            id="sidebar-util-creator" 
+                            onclick="AzotaApp.showView('creator')" 
+                            style="--gradient-from: #f59e0b; --gradient-to: #eab308;" 
+                            class="gradient-menu-btn nav-item-modern group" 
+                            title="Tạo Đề Nhanh AI">
+                        <span class="gradient-menu-bg"></span>
+                        <span class="gradient-menu-glow"></span>
+                        <span class="gradient-menu-icon"><span class="text-xl">⚡</span></span>
+                        <span class="gradient-menu-title">Tạo Đề AI</span>
+                        <span class="gradient-active-dot"></span>
+                        <span class="mobile-drawer-label hidden">
+                            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Tạo Đề Nhanh AI</span>
+                            <span class="liquid-tag-pill bg-amber-500/15 text-amber-400 border border-amber-500/25">AI</span>
+                        </span>
+                    </button>
+
+                    <!-- Câu Cần Ghi Nhớ -->
+                    <button type="button" 
+                            id="sidebar-util-notebook" 
+                            onclick="AzotaApp.showView('notebook')" 
+                            style="--gradient-from: #f43f5e; --gradient-to: #ec4899;" 
+                            class="gradient-menu-btn nav-item-modern group" 
+                            title="Câu Cần Ghi Nhớ">
+                        <span class="gradient-menu-bg"></span>
+                        <span class="gradient-menu-glow"></span>
+                        <span class="gradient-menu-icon"><span class="text-xl">📖</span></span>
+                        <span class="gradient-menu-title">Ghi Nhớ</span>
+                        <span class="gradient-active-dot"></span>
+                        <span class="mobile-drawer-label hidden">
+                            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Câu Cần Ghi Nhớ</span>
+                            <span class="liquid-tag-pill bg-rose-500/15 text-rose-400 border border-rose-500/25" id="sidebarBookmarkBadge">GN</span>
+                        </span>
+                    </button>
+
+                    <!-- Quản Lý Tài Khoản -->
+                    <button type="button" 
+                            id="sidebar-util-accounts" 
+                            onclick="AzotaApp.openUserProfileModal()" 
+                            style="--gradient-from: #a855f7; --gradient-to: #d946ef;" 
+                            class="gradient-menu-btn nav-item-modern group" 
+                            title="Quản Lý Tài Khoản">
+                        <span class="gradient-menu-bg"></span>
+                        <span class="gradient-menu-glow"></span>
+                        <span class="gradient-menu-icon"><span class="text-xl">👥</span></span>
+                        <span class="gradient-menu-title">Tài Khoản</span>
+                        <span class="gradient-active-dot"></span>
+                        <span class="mobile-drawer-label hidden">
+                            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Quản Lý Tài Khoản</span>
+                            <span class="liquid-tag-pill bg-purple-500/15 text-purple-400 border border-purple-500/25">USER</span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sidebar User Profile Footer (Bottom) -->
+            <div class="p-3 lg:p-0 lg:py-3 border-t border-slate-200/80 dark:border-white/5 bg-slate-50/50 dark:bg-slate-900/50 shrink-0 w-full flex flex-col items-center">
+                <!-- Desktop Compact Profile -->
+                <div class="hidden lg:flex flex-col items-center gap-2">
+                    <button type="button" 
+                            onclick="AzotaApp.openUserProfileModal()" 
+                            style="--gradient-from: #3b82f6; --gradient-to: #8b5cf6;"
+                            class="gradient-menu-btn group" 
+                            title="Cài đặt tài khoản (@hocsinh11)">
+                        <span class="gradient-menu-bg"></span>
+                        <span class="gradient-menu-glow"></span>
+                        <span class="gradient-menu-icon">
+                            <span class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-sky-500 text-white flex items-center justify-center font-bold text-sm shadow-xs" id="sidebarAvatarIcon">👦</span>
+                        </span>
+                        <span class="gradient-menu-title">Hồ Sơ</span>
+                    </button>
+                    <!-- Hidden elements for test & runtime compatibility -->
+                    <span id="sidebarUserName" class="hidden">Học Sinh Aseta</span>
+                    <span id="sidebarUserHandle" class="hidden">@hocsinh11</span>
+                </div>
+
+                <!-- Mobile Drawer Full Profile Card -->
+                <div class="flex lg:hidden items-center justify-between gap-2.5 p-2 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 shadow-xs">
+                    <div class="flex items-center gap-2.5 min-w-0 flex-1 cursor-pointer" onclick="AzotaApp.openUserProfileModal()" title="Cài đặt hồ sơ & tài khoản">
+                        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-sky-500 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
+                            👦
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate flex items-center gap-1.5">
+                                <span>Học Sinh Aseta</span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
+                            </div>
+                            <div class="text-[10px] text-slate-400 truncate">@hocsinh11</div>
+                        </div>
+                    </div>
+                    <button type="button" onclick="AuthGate.logout()" title="Đăng Xuất" class="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl transition-colors cursor-pointer shrink-0">
+                        🚪
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ======================================================== -->
+        <!-- RIGHT WORKSPACE (TOP NAVBAR + MAIN CONTENT AREA)         -->
+        <!-- ======================================================== -->
+        <div class="flex-1 flex flex-col min-w-0">
+            
+            <!-- Top Web Navbar (Modernize Inspired) -->
+            <header id="appNavbar" class="app-navbar sticky top-0 z-30 h-16 px-4 sm:px-6 bg-white/75 dark:bg-black/65 backdrop-blur-2xl border-b border-slate-200/80 dark:border-white/10 flex items-center justify-between gap-3 transition-colors duration-300">
+                
+                <!-- Left: Mobile Toggle + Breadcrumbs / Title -->
+                <div class="flex items-center gap-3 min-w-0">
+                    <button type="button" onclick="AzotaApp.toggleSidebar()" class="lg:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer" title="Mở danh mục môn học">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    </button>
+
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                        <h1 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight truncate" id="appNavbarTitle">
+                            Kho Đề & Môn Học
+                        </h1>
+                        <span class="hidden sm:inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shrink-0" id="appNavbarBadge">
+                            v2.5 Pro
+                        </span>
+                        <!-- Hidden elements for JS compatibility -->
+                        <span id="osActiveAppName" class="hidden">Kho Đề & Môn Học</span>
+                        <span id="osWindowTitle" class="hidden">Aseta</span>
+                        <div id="explorerAddressBar" class="hidden">
+                            <span id="explorerCurrentCrumb">Thư Mục Môn Học</span>
+                            <span id="explorerCrumbBadge">9 môn</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Center: Liquid Shuffle Controls (Nimbus UI Inspired - Đảo Câu Hỏi & Đảo Đáp Án) -->
+                <div class="hidden md:flex items-center justify-center my-1 sm:my-0" id="navbarShuffleCapsule">
+                    <div class="nimbus-liquid-pill flex items-center gap-1 sm:gap-2 px-2.5 py-1.5 rounded-full shadow-xs select-none">
+                        <!-- Button 1: Đảo Câu Hỏi -->
+                        <button type="button" 
+                                id="headerToggleShuffleQ" 
+                                onclick="AzotaApp.toggleShuffleQuestions()" 
+                                class="nimbus-pill-btn flex items-center gap-2 px-3 py-1.2 rounded-full text-xs font-bold transition-all cursor-pointer group"
+                                title="Bật/Tắt xáo trộn ngẫu nhiên thứ tự câu hỏi khi làm bài">
+                            <span class="nimbus-ico text-sm group-hover:scale-125 transition-transform inline-block">🔀</span>
+                            <span class="tracking-tight font-bold">Đảo Câu Hỏi</span>
+                            <span class="shuffle-status-badge flex items-center gap-1 px-1.5 py-0.2 rounded-full text-[9px] font-bold uppercase">
+                                <span class="shuffle-status-dot w-1.5 h-1.5 rounded-full inline-block"></span>
+                                <span class="shuffle-status-text" id="statusTextShuffleQ">TẮT</span>
+                            </span>
+                        </button>
+
+                        <!-- Liquid Divider -->
+                        <span class="nimbus-divider w-[1px] h-4"></span>
+
+                        <!-- Button 2: Đảo Đáp Án -->
+                        <button type="button" 
+                                id="headerToggleShuffleOpt" 
+                                onclick="AzotaApp.toggleShuffleOptions()" 
+                                class="nimbus-pill-btn flex items-center gap-2 px-3 py-1.2 rounded-full text-xs font-bold transition-all cursor-pointer group"
+                                title="Bật/Tắt xáo trộn ngẫu nhiên thứ tự các đáp án A, B, C, D">
+                            <span class="nimbus-ico text-sm group-hover:rotate-45 transition-transform inline-block">🔄</span>
+                            <span class="tracking-tight font-bold">Đảo Đáp Án</span>
+                            <span class="shuffle-status-badge flex items-center gap-1 px-1.5 py-0.2 rounded-full text-[9px] font-bold uppercase">
+                                <span class="shuffle-status-dot w-1.5 h-1.5 rounded-full inline-block"></span>
+                                <span class="shuffle-status-text" id="statusTextShuffleOpt">TẮT</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right: Status Indicators & Quick Actions -->
+                <div class="flex items-center gap-2 sm:gap-2.5 text-slate-600 dark:text-slate-300 shrink-0">
+                    <!-- Live Clock (Clean single-line pill, never wraps) -->
+                    <div id="osLiveClock" class="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-white/5 font-mono text-xs font-semibold text-slate-600 dark:text-slate-300 whitespace-nowrap shrink-0 select-none">
+                        <span>🕒</span>
+                        <span>Thứ Sáu, 6 Th11 • 21:30</span>
+                    </div>
+
+                    <!-- Sound toggle -->
+                    <button type="button" id="toggleSoundBtn" title="Âm thanh" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer text-sm shrink-0">
+                        <span>🔊</span>
+                    </button>
+
+                    <!-- Theme toggle -->
+                    <button type="button" id="toggleThemeBtn" onclick="AzotaApp.toggleTheme()" title="Đổi giao diện Sáng / Tối" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer text-sm shrink-0">
+                        <span>☀️</span>
+                    </button>
+
+                    <!-- Fullscreen toggle -->
+                    <button type="button" onclick="AzotaApp.toggleFullscreen()" title="Toàn màn hình" class="hidden sm:inline-block p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer text-sm shrink-0">
+                        ⛶
+                    </button>
+
+                    <!-- User Account Pill Button -->
+                    <div id="explorerUserAccountPill" onclick="AzotaApp.openUserProfileModal()" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200/70 dark:hover:bg-slate-700/80 border border-slate-200/80 dark:border-white/5 transition-all cursor-pointer group shrink-0" title="Bấm để chỉnh sửa hồ sơ & biệt danh">
+                        <div class="w-6 h-6 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-sky-500 text-white flex items-center justify-center font-bold text-xs shrink-0" id="userAvatarPill">
+                            👦
+                        </div>
+                        <span class="text-xs font-semibold text-slate-800 dark:text-slate-200 hidden sm:inline whitespace-nowrap" id="userNameDisplay">Học Sinh Aseta</span>
+                    </div>
+
+                    <!-- Logout Button -->
+                    <button type="button" onclick="AuthGate.logout()" title="Đăng Xuất Khỏi Aseta" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-500/10 border border-rose-500/20 transition-all flex items-center gap-1.5 cursor-pointer shrink-0 whitespace-nowrap">
+                        <span>🚪</span>
+                        <span class="hidden md:inline">Đăng Xuất</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Content Canvas (Spacious, Fluid Dashboard) -->
+            <main id="appMainContent" class="flex-1 p-4 sm:p-6 lg:p-8 min-w-0">
+
+                <!-- RESUME EXAM BANNER -->
+                <div id="resumeExamBanner" class="hidden mb-6 p-4.5 rounded-3xl bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-xl shadow-orange-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in">
+                    <div class="flex items-center gap-3.5">
+                        <div class="text-3xl">⏳</div>
+                        <div>
+                            <h4 class="font-extrabold text-base leading-tight">Bạn có bài thi đang làm dở!</h4>
+                            <p class="text-xs text-amber-100 mt-0.5" id="resumeExamTitle">Đang làm bài...</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 self-end sm:self-center">
+                        <button type="button" onclick="AzotaApp.resumeExam()" class="px-4.5 py-2 rounded-xl text-xs font-black bg-white text-orange-700 shadow-md hover:bg-orange-50 transition-all cursor-pointer">
+                            Tiếp tục làm bài
+                        </button>
+                        <button type="button" onclick="AzotaApp.discardInProgressExam()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-black/20 hover:bg-black/30 text-white transition-all cursor-pointer">
+                            Hủy bỏ
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ======================================================== -->
+                <!-- TRANG CHỦ DUY NHẤT: KHẢO THÍ & THƯ MỤC MÔN HỌC 3D       -->
+                <!-- ======================================================== -->
+                <section id="explorerView" class="space-y-6">
+
+                    <!-- QUICK STATS STRIP (TẠM ẨN THEO YÊU CẦU ĐỂ TỐI ƯU KHÔNG GIAN) -->
+                    <div id="explorerStatsStrip" class="hidden" style="display: none !important;" aria-hidden="true">
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+                            <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 shadow-xs flex items-center justify-between transition-transform hover:-translate-y-0.5">
+                                <div>
+                                    <div class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Đã Hoàn Thành</div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Số lượt nộp bài thi</div>
+                                </div>
+                                <div class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white" id="statExamsDone">0</div>
+                            </div>
+                            <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 shadow-xs flex items-center justify-between transition-transform hover:-translate-y-0.5">
+                                <div>
+                                    <div class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Điểm Trung Bình</div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Thang điểm 10 chuẩn</div>
+                                </div>
+                                <div class="text-2xl sm:text-3xl font-extrabold text-blue-600 dark:text-sky-400" id="statAvgScore">--</div>
+                            </div>
+                            <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 shadow-xs flex items-center justify-between transition-transform hover:-translate-y-0.5">
+                                <div>
+                                    <div class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Tỷ Lệ Đúng</div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Độ chính xác chuẩn</div>
+                                </div>
+                                <div class="text-2xl sm:text-3xl font-extrabold text-emerald-500 dark:text-emerald-400" id="statCorrectRate">--</div>
+                            </div>
+                            <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 shadow-xs flex items-center justify-between cursor-pointer hover:border-amber-500/50 transition-all hover:-translate-y-0.5 group" onclick="AzotaApp.showView('notebook')" title="Xem danh sách câu cần ghi nhớ">
+                                <div>
+                                    <div class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider group-hover:text-amber-500 transition-colors">Câu Cần Ghi Nhớ</div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Đã lưu ôn tập</div>
+                                </div>
+                                <div class="text-2xl sm:text-3xl font-extrabold text-amber-500 dark:text-amber-400" id="statMistakeCount">0</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- UNIFIED EXPLORER TOOLBAR -->
+                    <div id="explorerToolbar" class="p-2.5 sm:p-3 rounded-2xl bg-white/80 dark:bg-slate-950/75 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 shadow-xs flex items-center justify-between gap-3 transition-colors duration-300">
+                        <!-- Left Controls: Dynamic Back Button & Expanding Search Dock -->
+                        <div class="flex items-center gap-2 sm:gap-2.5 min-w-0" id="explorerCategoryFilters">
+                            <!-- Dynamic Back Button (Moves up here to toolbar when drilled into subject/folder) -->
+                            <button type="button" 
+                                    id="explorerBackBtn" 
+                                    onclick="AzotaApp.goBackExplorer()" 
+                                    class="hidden nimbus-pill-btn h-11 px-3.5 sm:px-4 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-blue-600 hover:text-white border border-slate-200 dark:border-slate-700/80 transition-all cursor-pointer flex items-center gap-1.5 shrink-0 shadow-xs group" 
+                                    title="Quay lại danh mục môn học">
+                                <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
+                                <span class="hidden sm:inline font-bold">Quay Lại</span>
+                            </button>
+
+                            <!-- Expanding Search Dock Component (Framer Motion / Spring Dynamics) -->
+                            <div id="expandingSearchDock" class="expanding-search-dock relative">
+                                <!-- Collapsed Circular Search Button (h-11 w-11) -->
+                                <button type="button" 
+                                        id="expandingSearchTrigger"
+                                        onclick="AzotaApp.expandSearch()" 
+                                        class="expanding-search-trigger"
+                                        title="Tìm kiếm đề & môn học (Nhấp để mở)">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                                    </svg>
+                                </button>
+
+                                <!-- Expanded Form Pill with Backdrop Blur (width: 320px) -->
+                                <form id="expandingSearchForm" onsubmit="event.preventDefault();" class="expanding-search-form h-11 relative">
+                                    <div class="ml-3.5 text-slate-400 dark:text-slate-400 shrink-0">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                                        </svg>
+                                    </div>
+                                    <input type="text" 
+                                           id="explorerSearchInput" 
+                                           oninput="AzotaApp.handleExplorerSearch(this.value)" 
+                                           onkeydown="if(event.key==='Escape') AzotaApp.collapseSearch()"
+                                           placeholder="Tìm đề, môn học..." 
+                                           class="h-11 flex-1 bg-transparent px-3 text-xs sm:text-sm text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none">
+                                    <button type="button" 
+                                            onclick="AzotaApp.collapseSearch()" 
+                                            class="mr-1.5 flex h-7 w-7 items-center justify-center rounded-full hover:bg-slate-200/60 dark:hover:bg-slate-700/80 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all cursor-pointer shrink-0" 
+                                            title="Đóng tìm kiếm (Esc)">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Right Controls: Sort & Nimbus Icon Switcher -->
+                        <div class="flex items-center gap-2 sm:gap-2.5 justify-end shrink-0">
+                            <!-- Sort Select -->
+                            <select id="explorerSortSelect" onchange="AzotaApp.handleExplorerSort(this.value)" class="h-11 px-3 sm:px-3.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 cursor-pointer focus:outline-none shrink-0">
+                                <option value="default">Mới cập nhật</option>
+                                <option value="name">Tên A-Z</option>
+                                <option value="questions">Số câu</option>
+                            </select>
+
+                            <!-- Nimbus UI Liquid Capsule: Icon-Only Layout Buttons (3D Grid & List) -->
+                            <div class="nimbus-liquid-pill flex items-center p-1 rounded-xl shadow-xs select-none shrink-0" id="explorerLayoutSwitchCapsule">
+                                <button type="button" 
+                                        id="explorerGridBtn" 
+                                        onclick="AzotaApp.setExplorerLayout('grid')" 
+                                        class="nimbus-pill-btn p-1.5 sm:p-2 rounded-lg bg-white/95 dark:bg-slate-700 text-blue-600 dark:text-sky-400 shadow-xs cursor-pointer transition-all active:scale-95" 
+                                        title="Xem dạng Thư mục 3D">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                                    </svg>
+                                </button>
+                                <span class="nimbus-divider w-[1px] h-3.5 mx-0.5"></span>
+                                <button type="button" 
+                                        id="explorerListBtn" 
+                                        onclick="AzotaApp.setExplorerLayout('list')" 
+                                        class="nimbus-pill-btn p-1.5 sm:p-2 rounded-lg text-slate-400 hover:text-blue-600 dark:hover:text-sky-400 cursor-pointer transition-all active:scale-95" 
+                                        title="Xem dạng Danh sách">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Dynamic Content Canvas: 3D Folders or Subject Exams -->
+                    <div class="w-full p-2 sm:p-4 overflow-y-auto min-h-[500px]" id="explorerContentArea">
+                        <!-- Rendered by AzotaApp.renderFileExplorer() -->
+                    </div>
+
+                    <!-- Bottom Status Bar -->
+                    <div class="p-4 rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/60 dark:bg-slate-950/60 backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-2 transition-colors duration-300">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span>6 thư mục môn học • Toàn bộ bài tập đã sẵn sàng ngoại tuyến & đám mây</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-slate-400">
+                            <span id="explorerSyncTime">Đã đồng bộ</span>
+                            <span>•</span>
+                            <span class="font-bold">Aseta File System v2.5</span>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- DORMANT ALIAS FOR HOME VIEW (ZERO JS BREAKAGE) -->
+                <div id="homeView" class="hidden" style="display:none !important;" aria-hidden="true">
+                    <input type="text" id="examSearchInput" class="hidden">
+                    <select id="prefLayoutSelect" class="hidden"><option value="single">single</option></select>
+                    <input type="checkbox" id="prefShuffleQ" class="hidden">
+                    <input type="checkbox" id="prefShuffleOpt" class="hidden">
+                    <div id="examGrid" class="hidden"></div>
+                    <span id="examCountBadge" class="hidden"></span>
+                    <span id="examSectionTitle" class="hidden"></span>
+                    <span id="examSectionSubtitle" class="hidden"></span>
+                    <button type="button" id="examViewGroupedBtn" class="hidden"></button>
+                    <button type="button" id="examViewAllBtn" class="hidden"></button>
+                    <div id="examSubjectDetailBanner" class="hidden"></div>
+                    <span id="subjectDetailIcon" class="hidden"></span>
+                    <span id="subjectDetailTitle" class="hidden"></span>
+                    <span id="subjectDetailDesc" class="hidden"></span>
+                </div>
+
+                <!-- ======================================================== -->
+                <!-- VIEW: ESSAY VIEW (CHẾ ĐỘ HỌC TỰ LUẬN SIÊU TỐC - MÔN ĐỊA)  -->
+                <!-- ======================================================== -->
+                <section id="essayView" class="hidden space-y-6">
+
+                    <!-- Sticky Header Bar for Essay Mode -->
+                    <div class="p-4 sm:p-5 rounded-3xl bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-14 z-30 shadow-xl backdrop-blur-xl">
+                        <div class="flex items-center gap-3">
+                            <button type="button" onclick="AzotaApp.openFileExplorer('Hoc_Tu_Luan')" class="p-2.5 rounded-2xl hover:bg-slate-200/60 dark:hover:bg-slate-800 text-slate-500 cursor-pointer text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all">
+                                <span>←</span> <span class="hidden sm:inline">Quay Lại Thư Mục</span>
+                            </button>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                                        🌍 ĐỊA LÍ 11
+                                    </span>
+                                    <span class="text-xs text-slate-400">|</span>
+                                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400">B. PHẦN TỰ LUẬN</span>
+                                </div>
+                                <h2 class="font-black text-slate-900 dark:text-white text-base sm:text-lg leading-tight mt-0.5">
+                                    Học Thuộc Tự Luận Siêu Tốc (6 Câu Trọng Tâm & Bí Kíp Biểu Đồ)
+                                </h2>
+                            </div>
+                        </div>
+
+                        <!-- Right Actions: Mastery Progress & Print Button -->
+                        <div class="flex items-center gap-3 flex-wrap self-end md:self-center">
+                            <div id="essayMasteryPill" class="px-3.5 py-1.5 rounded-2xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"></div>
+
+                            <button type="button" onclick="EssayEngine.printCheatSheet()" class="px-3.5 py-2 rounded-2xl text-xs font-bold bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all cursor-pointer flex items-center gap-1.5">
+                                <span>🖨️</span> <span class="hidden sm:inline">In Sổ Tay / Lưu PDF</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Question Quick Navigation (Câu 1 -> 6 + Biểu Đồ) -->
+                    <div class="p-4 rounded-2xl bg-white/50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-white/5">
+                        <div class="text-[11px] font-black uppercase text-slate-400 tracking-wider mb-2 flex items-center justify-between">
+                            <span>CHỌN CÂU HỎI TỰ LUẬN:</span>
+                            <span class="text-[10px] text-slate-500 font-normal">Mẹo: Sử dụng phím mũi tên ← → để chuyển câu nhanh</span>
+                        </div>
+                        <div id="essayQuickNav" class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none"></div>
+                    </div>
+
+                    <!-- Sub-Mode Selector Tabs -->
+                    <div class="flex items-center gap-2 border-b border-slate-200/70 dark:border-white/10 pb-2 overflow-x-auto scrollbar-none">
+                        <button type="button" id="essay-tab-flashcard" onclick="EssayEngine.setSubMode('flashcard')" class="px-4 py-2 rounded-2xl text-xs sm:text-sm font-black bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/30 transition-all cursor-pointer flex items-center gap-1.5 shrink-0">
+                            <span>🗂️</span> 1. Flashcard Lật Thẻ 3D
+                        </button>
+                        <button type="button" id="essay-tab-cloze" onclick="EssayEngine.setSubMode('cloze')" class="px-4 py-2 rounded-2xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-emerald-500 transition-all cursor-pointer flex items-center gap-1.5 shrink-0">
+                            <span>🧩</span> 2. Che Khuyết Từ Khóa (Active Recall)
+                        </button>
+                        <button type="button" id="essay-tab-write" onclick="EssayEngine.setSubMode('write')" class="px-4 py-2 rounded-2xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-emerald-500 transition-all cursor-pointer flex items-center gap-1.5 shrink-0">
+                            <span>✍️</span> 3. Tự Viết & Chấm Điểm AI
+                        </button>
+                        <button type="button" id="essay-tab-chart" onclick="EssayEngine.setSubMode('chart')" class="px-4 py-2 rounded-2xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-emerald-500 transition-all cursor-pointer flex items-center gap-1.5 shrink-0">
+                            <span>📊</span> 4. Bí Kíp Nhận Dạng Biểu Đồ
+                        </button>
+                    </div>
+
+                    <!-- Dynamic Sub-Mode Working Area -->
+                    <div id="essaySubModeArea"></div>
+
+                </section>
+
+                <!-- ======================================================== -->
+                <!-- VIEW 2: EXAM VIEW (PHÒNG THI CHUẨN AZOTA DUAL LAYOUT)    -->
+                <!-- ======================================================== -->
+                <section id="examView" class="hidden space-y-5 w-full">
+
+                    <!-- Sticky Top Status & Control Bar -->
+                    <div class="p-3.5 sm:p-4 rounded-3xl bg-slate-900/90 backdrop-blur-xl border border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-3 sticky top-20 z-20 shadow-2xl">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <button type="button" onclick="AzotaApp.openFileExplorer('root')" class="liquid-btn px-3.5 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 text-xs sm:text-sm font-bold flex items-center gap-2 shrink-0 cursor-pointer transition-all" title="Quay lại danh mục môn học">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
+                                <span>Thoát</span>
+                            </button>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span id="examHeaderBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                        🌍 Địa Lí • Luyện Tập
+                                    </span>
+                                    <span class="text-xs text-slate-400 font-semibold" id="answeredCountText">
+                                        Đã làm 0/0 câu (0%)
+                                    </span>
+                                </div>
+                                <h2 id="examHeaderTitle" class="font-bold text-white text-sm sm:text-base leading-snug mt-1 truncate">
+                                    Tiêu đề bài thi
+                                </h2>
+                            </div>
+                        </div>
+
+                        <!-- Right Control Actions: Toàn Bộ Đề, Timer, Nộp Bài -->
+                        <div class="flex items-center gap-2.5 self-end md:self-center shrink-0 flex-wrap">
+                            <button type="button" id="toggleLayoutBtn" onclick="ExamEngine.toggleLayout()" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 hover:text-sky-400 transition-all cursor-pointer flex items-center gap-1.5">
+                                <span>📖</span> <span class="hidden sm:inline">Toàn Bộ Đề</span>
+                            </button>
+
+                            <div class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-800/80 border border-white/10">
+                                <span class="text-xs uppercase font-bold text-slate-400 hidden sm:inline">THỜI GIAN:</span>
+                                <span class="text-slate-400 text-xs font-bold">⏱</span>
+                                <span id="examTimer" class="font-mono font-bold text-base text-sky-400">45:00</span>
+                            </div>
+
+                            <button type="button" onclick="ExamEngine.submitExam()" class="px-5 py-2 rounded-xl font-bold text-xs sm:text-sm bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white shadow-lg shadow-sky-500/30 transition-all cursor-pointer flex items-center gap-1.5">
+                                <span>✓</span> Nộp Bài
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Two Columns Layout (Question Box Left + Palette Sidebar Right) -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start w-full">
+                        
+                        <!-- Left Column: Question Card Container -->
+                        <div class="lg:col-span-8 xl:col-span-8 space-y-4" id="examQuestionsList">
+                            <!-- Populated dynamically by ExamEngine.renderSingleQuestion() or ExamEngine.renderFullListQuestions() -->
+                        </div>
+
+                        <!-- Right Column: Bảng Điều Hướng Sticky Palette -->
+                        <div class="lg:col-span-4 xl:col-span-4 palette-sidebar">
+                            <div class="exam-clean-card p-5 space-y-4 sticky top-36">
+                                
+                                <!-- Palette Header -->
+                                <div class="flex items-center justify-between pb-3 border-b border-white/5">
+                                    <h4 class="font-black text-white text-sm flex items-center gap-2">
+                                        <span class="text-sky-400">❖</span> Bảng Điều Hướng
+                                    </h4>
+                                    <span class="text-[11px] font-bold text-slate-400">Bấm số nhảy câu</span>
+                                </div>
+
+                                <!-- Progress Bar Row -->
+                                <div class="space-y-1.5">
+                                    <div class="flex items-center justify-between text-xs font-bold">
+                                        <span class="text-slate-400">Tiến độ làm bài</span>
+                                        <span id="answeredCountRatio" class="text-sky-400 font-mono">0 / 0 (0%)</span>
+                                    </div>
+                                    <div class="w-full bg-slate-800/80 h-2 rounded-full overflow-hidden p-0.5 border border-white/5">
+                                        <div id="answeredProgressBar" class="bg-gradient-to-r from-sky-400 to-blue-500 h-full w-0 rounded-full transition-all duration-300"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Question Numbers Grid -->
+                                <div id="questionPalette" class="grid grid-cols-5 gap-2 max-h-[380px] overflow-y-auto pr-1 no-scrollbar"></div>
+
+                                <!-- Palette Legend -->
+                                <div class="pt-3 border-t border-white/5 space-y-2 text-xs text-slate-400">
+                                    <div class="flex items-center gap-2.5">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-sky-500 inline-block shrink-0 shadow-sm shadow-sky-500/40"></span>
+                                        <span>Đã chọn đáp án</span>
+                                    </div>
+                                    <div class="flex items-center gap-2.5">
+                                        <span class="w-3.5 h-3.5 rounded-full border-2 border-sky-400 bg-transparent inline-block shrink-0"></span>
+                                        <span>Đang làm (Hiện tại)</span>
+                                    </div>
+                                    <div class="flex items-center gap-2.5">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-slate-800 border border-slate-700 inline-block shrink-0"></span>
+                                        <span>Chưa làm</span>
+                                    </div>
+                                    <div class="flex items-center gap-2.5">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-amber-500 inline-block shrink-0 shadow-sm shadow-amber-500/40"></span>
+                                        <span>Đánh dấu xem lại (F)</span>
+                                    </div>
+                                </div>
+
+                                <!-- Prominent White Submit Button (Exact match from Fig 2) -->
+                                <div class="pt-2 space-y-1.5">
+                                    <button type="button" onclick="ExamEngine.submitExam()" class="exam-submit-white">
+                                        <span>✓</span> Nộp bài thi ngay
+                                    </button>
+                                    <p class="text-[10.5px] text-center text-slate-400/80">Hệ thống tự động lưu kết quả vào đám mây</p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- ======================================================== -->
+                <!-- VIEW 3: QUESTION BANK SEARCH (TRA CỨU NGÂN HÀNG CÂU HỎI) -->
+                <!-- ======================================================== -->
+                <section id="bankView" class="hidden space-y-6">
+                    <div class="p-6 rounded-3xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2.5">
+                                <span class="text-3xl">🔍</span>
+                                <h2 class="font-black text-slate-900 dark:text-white text-xl sm:text-2xl">Tra Cứu Toàn Bộ Ngân Hàng Câu Hỏi</h2>
+                                <span id="bankTotalBadge" class="px-3 py-1 rounded-full text-xs font-black bg-sky-500/20 text-sky-400 border border-sky-500/30">0 câu hỏi</span>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                Tìm kiếm tức thì theo từ khóa, xem trước đáp án và lời giải chi tiết cho tất cả các môn học.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-5 rounded-3xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 flex flex-col sm:flex-row items-center gap-3">
+                        <div class="relative flex-1 w-full">
+                            <input type="text" id="bankSearchInput" placeholder="Nhập từ khóa tìm kiếm (VD: hệ điều hành, plug & play, cạnh tranh, cách mạng...)" class="w-full pl-10 pr-4 py-3 rounded-2xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                            <span class="absolute left-3.5 top-3.5 text-slate-400 text-sm">🔍</span>
+                        </div>
+                        <select id="bankSubjectSelect" onchange="AzotaApp.renderQuestionBank()" class="px-4 py-3 rounded-2xl text-xs sm:text-sm font-bold bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer w-full sm:w-56">
+                            <option value="all">🌟 Tất cả môn học</option>
+                            <option value="Tin Học">💻 Tin Học 11</option>
+                            <option value="Tiếng Anh">🌐 Tiếng Anh</option>
+                            <option value="Lịch Sử">🏛️ Lịch Sử</option>
+                            <option value="GDKT&PL">⚖️ GDKT&PL</option>
+                        </select>
+                    </div>
+
+                    <div id="bankQuestionsList" class="space-y-3"></div>
+                </section>
+
+                <!-- ======================================================== -->
+                <!-- VIEW 4: RESULT VIEW (BẢNG ĐIỂM & ĐÁP ÁN CHI TIẾT)         -->
+                <!-- ======================================================== -->
+                <section id="resultView" class="hidden space-y-6">
+                    <div class="p-6 sm:p-9 rounded-3xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 text-center relative overflow-hidden">
+                        <div class="max-w-xl mx-auto">
+                            <span id="resultRankBadge" class="inline-flex px-4 py-1.5 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 mb-3">
+                                Xuất sắc! 🎉
+                            </span>
+                            <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mb-1" id="resultExamTitle">
+                                Tiêu đề đề thi vừa làm
+                            </h2>
+                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-6">Kết quả bài làm đã được hệ thống Aseta tự động chấm điểm và ghi nhận.</p>
+
+                            <div class="w-36 h-36 mx-auto rounded-full bg-gradient-to-tr from-sky-500 via-blue-600 to-indigo-600 p-1 shadow-2xl shadow-sky-500/40 flex items-center justify-center text-white mb-6">
+                                <div class="w-full h-full bg-slate-900 rounded-full flex flex-col items-center justify-center text-white">
+                                    <span id="resultScoreBig" class="text-5xl font-black tracking-tight text-sky-400 leading-none">9.5</span>
+                                    <span class="text-[11px] font-black uppercase text-slate-400 mt-1">Thang 10</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-3 max-w-md mx-auto mb-6">
+                                <div class="p-3.5 rounded-2xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                    <div class="text-xs font-bold text-slate-400">Số câu đúng</div>
+                                    <div class="text-base sm:text-lg font-black text-emerald-500" id="resultCorrectCount">38/40</div>
+                                </div>
+                                <div class="p-3.5 rounded-2xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                    <div class="text-xs font-bold text-slate-400">Số câu sai</div>
+                                    <div class="text-base sm:text-lg font-black text-rose-500" id="resultIncorrectCount">2</div>
+                                </div>
+                                <div class="p-3.5 rounded-2xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                    <div class="text-xs font-bold text-slate-400">Thời gian làm</div>
+                                    <div class="text-base sm:text-lg font-black text-slate-800 dark:text-slate-200" id="resultTimeSpent">24p 15s</div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-center gap-3 flex-wrap">
+                                <button type="button" onclick="AzotaApp.showWrongQuestionsReview()" class="px-5 py-2.5 rounded-2xl font-black text-xs sm:text-sm bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white shadow-lg shadow-rose-500/25 transition-all cursor-pointer flex items-center gap-2">
+                                    <span>🔍</span> Xem Lại Câu Sai
+                                </button>
+                                <button type="button" onclick="AzotaApp.retryCurrentExam()" class="px-4.5 py-2.5 rounded-2xl font-bold text-xs sm:text-sm bg-sky-600 hover:bg-sky-700 text-white shadow-lg shadow-sky-600/30 transition-all cursor-pointer flex items-center gap-1.5">
+                                    <span>🔄</span> Làm Lại Đề Này
+                                </button>
+                                <button type="button" onclick="AzotaApp.showView('notebook')" class="px-4.5 py-2.5 rounded-2xl font-bold text-xs sm:text-sm bg-amber-500/15 hover:bg-amber-500/25 text-amber-400 border border-amber-500/30 transition-all cursor-pointer flex items-center gap-1.5">
+                                    <span>📖</span> Câu Cần Ghi Nhớ
+                                </button>
+                                <button type="button" onclick="AzotaApp.showView('home')" class="px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-slate-500 transition-all cursor-pointer">
+                                    Trở Về Kho Đề
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6 sm:p-8 rounded-3xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 space-y-6" id="resultReviewSection">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200/50 dark:border-white/5">
+                            <div>
+                                <h3 class="font-black text-slate-900 dark:text-white text-lg flex items-center gap-2">
+                                    <span>📋</span> Xem Lại Chi Tiết Toàn Bộ Câu Hỏi
+                                </h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                    Bấm nút <strong>"⭐ Thêm Vào Ghi Nhớ"</strong> ở câu hỏi bạn muốn lưu lại để ôn tập riêng
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button type="button" id="reviewFilterAllBtn" onclick="AzotaApp.renderResultQuestionsReview('all')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-sky-500/20 text-sky-400 border border-sky-500/30 cursor-pointer transition-all">
+                                    Tất cả
+                                </button>
+                                <button type="button" id="reviewFilterWrongBtn" onclick="AzotaApp.renderResultQuestionsReview('incorrect')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 border border-rose-500/30 cursor-pointer transition-all">
+                                    ❌ Chỉ câu sai
+                                </button>
+                                <button type="button" id="reviewFilterCorrectBtn" onclick="AzotaApp.renderResultQuestionsReview('correct')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30 cursor-pointer transition-all">
+                                    ✓ Chỉ câu đúng
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="resultReviewList" class="space-y-4"></div>
+                    </div>
+                </section>
+
+                <!-- ======================================================== -->
+                <!-- VIEW 5: NOTEBOOK VIEW (CÂU CẦN GHI NHỚ)                  -->
+                <!-- ======================================================== -->
+                <section id="notebookView" class="hidden space-y-6">
+                    <div class="p-6 sm:p-7 rounded-3xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2.5">
+                                <span class="text-3xl">📖</span>
+                                <h2 class="font-black text-slate-900 dark:text-white text-xl sm:text-2xl">Câu Cần Ghi Nhớ (Tự Chọn Ôn Tập)</h2>
+                                <span id="notebookTotalBadge" class="px-3 py-1 rounded-full text-xs font-black bg-amber-500/20 text-amber-500 border border-amber-500/30">0 câu đã lưu</span>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                Danh sách câu hỏi bạn đã chủ động bấm lưu để ôn tập ghi nhớ. Luyện tập riêng các câu này để không bao giờ tái phạm sai lầm!
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="AzotaApp.practiceMistakesNow()" class="px-5 py-2.5 rounded-2xl font-black text-xs sm:text-sm bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-amber-500/25 transition-all cursor-pointer flex items-center gap-2">
+                                <span>🎯</span> Luyện Tập Ngay Câu Đã Lưu
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="notebookList" class="space-y-3"></div>
+                </section>
+
+                <!-- ======================================================== -->
+                <!-- VIEW 6: CREATOR VIEW (TẠO ĐỀ & IMPORT ĐỀ AZOTA)          -->
+                <!-- ======================================================== -->
+                <section id="creatorView" class="hidden space-y-6">
+                    <div class="p-6 sm:p-7 rounded-3xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10">
+                        <div class="flex items-center gap-3.5 mb-2">
+                            <span class="text-4xl">⚡</span>
+                            <div>
+                                <h2 class="font-black text-slate-900 dark:text-white text-xl sm:text-2xl">Trình Nhập Đề Thi Thông Minh Chuẩn Aseta</h2>
+                                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                                    Dán nội dung đề từ file Word/PDF, hệ thống tự động bóc tách từng câu hỏi, đáp án và lời giải chi tiết.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 p-4 rounded-2xl bg-sky-500/10 border border-sky-500/25 text-xs">
+                            <div class="font-extrabold text-sky-400 mb-1">💡 Hướng dẫn cấu trúc đề:</div>
+                            <code class="block font-mono bg-black/30 p-3 rounded-xl border border-sky-500/20 leading-relaxed text-slate-300">
+                                Câu 1: Thủ đô của Việt Nam là gì?<br>
+                                A. Hà Nội<br>
+                                B. TP. Hồ Chí Minh<br>
+                                C. Đà Nẵng<br>
+                                D. Hải Phòng<br>
+                                Đáp án: A<br>
+                                Lời giải: Hà Nội là thủ đô của nước CHXHCN Việt Nam.
+                            </code>
+                        </div>
+
+                        <div class="mt-4">
+                            <label class="block text-xs font-black text-slate-400 mb-1.5 uppercase">Dán nội dung đề thi vào đây:</label>
+                            <textarea id="rawExamTextarea" rows="9" placeholder="Dán văn bản đề thi dạng: Câu 1: ... A. ... B. ... C. ... D. ... Đáp án: A..." class="w-full p-4 rounded-2xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500"></textarea>
+                        </div>
+
+                        <div id="creatorErrorAlert" class="hidden mt-3 p-3.5 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-400 text-xs font-bold"></div>
+
+                        <div class="flex items-center gap-3 mt-4 flex-wrap">
+                            <button type="button" onclick="AzotaApp.parseAndPreviewText()" class="px-5 py-2.5 rounded-2xl font-black text-xs sm:text-sm bg-sky-600 hover:bg-sky-700 text-white shadow-lg shadow-sky-600/30 transition-all cursor-pointer flex items-center gap-2">
+                                <span>🔍</span> Nhận Diện & Xem Trước
+                            </button>
+                            <button type="button" onclick="document.getElementById('rawExamTextarea').value = getSampleExamText(); AzotaApp.parseAndPreviewText();" class="px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer">
+                                Dán Mẫu Thử Nghiệm
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="creatorPreviewContainer" class="hidden p-6 sm:p-7 rounded-3xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 space-y-5">
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-200/50 dark:border-white/5">
+                            <h3 class="font-black text-slate-900 dark:text-white text-lg">Thông Tin Đề Thi Được Nhận Diện</h3>
+                            <span id="previewQuestionsCount" class="px-3 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                0 câu hỏi
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 mb-1">Tên đề thi:</label>
+                                <input type="text" id="creatorTitleInput" class="w-full px-3.5 py-2.5 rounded-xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 mb-1">Môn học:</label>
+                                <select id="creatorSubjectSelect" class="w-full px-3.5 py-2.5 rounded-xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm cursor-pointer">
+                                    <option value="Tin Học">Tin Học</option>
+                                    <option value="Tiếng Anh">Tiếng Anh</option>
+                                    <option value="Lịch Sử">Lịch Sử</option>
+                                    <option value="GDKT&PL">GDKT&PL</option>
+                                    <option value="Khác">Khác</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 mb-1">Khối lớp:</label>
+                                <select id="creatorGradeSelect" class="w-full px-3.5 py-2.5 rounded-xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm cursor-pointer">
+                                    <option value="11" selected>Lớp 11</option>
+                                    <option value="12">Lớp 12 / THPT</option>
+                                    <option value="10">Lớp 10</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 mb-1">Thời gian (phút):</label>
+                                <input type="number" id="creatorDurationInput" value="45" class="w-full px-3.5 py-2.5 rounded-xl bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm">
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="font-black text-xs uppercase text-slate-400 mb-2">Xem trước danh sách câu hỏi:</h4>
+                            <div id="previewQuestionsList" class="space-y-2 max-h-72 overflow-y-auto pr-1"></div>
+                        </div>
+
+                        <div class="flex items-center gap-3 pt-4 border-t border-slate-200/50 dark:border-white/5">
+                            <button type="button" onclick="AzotaApp.saveCustomExam()" class="px-6 py-2.5 rounded-2xl font-black text-xs sm:text-sm bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg shadow-emerald-500/25 transition-all cursor-pointer">
+                                ✓ Lưu Vào Kho Đề & Bắt Đầu Thi
+                            </button>
+                            <button type="button" onclick="AzotaApp.exportExamAsJSON()" class="px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm bg-white/80 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer">
+                                📥 Xuất File JSON
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ======================================================== -->
+                <!-- VIEW 7: HISTORY VIEW (LỊCH SỬ THI)                       -->
+                <!-- ======================================================== -->
+                <section id="historyView" class="hidden space-y-6">
+                    <div class="p-6 sm:p-7 rounded-3xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2.5">
+                                <span class="text-3xl">📜</span>
+                                <h2 class="font-black text-slate-900 dark:text-white text-xl sm:text-2xl">Lịch Sử Các Lần Làm Bài</h2>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                Theo dõi điểm số, thời gian và xem lại chi tiết bài làm của bạn qua từng bài kiểm tra.
+                            </p>
+                        </div>
+                        <div>
+                            <button type="button" onclick="AzotaApp.clearAllHistory()" class="px-4 py-2 rounded-xl text-xs font-bold text-rose-500 bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 transition-all cursor-pointer">
+                                🗑️ Xóa Lịch Sử
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="historyList" class="space-y-3"></div>
+                </section>
+
+                <!-- ======================================================== -->
+                <!-- VIEW 8: SOLUTIONS VIEW (KHO LỜI GIẢI CHI TIẾT - HÌNH ẢNH) -->
+                <!-- ======================================================== -->
+                <section id="solutionsView" class="hidden space-y-6">
+                    <!-- Solutions Header -->
+                    <div class="p-6 sm:p-7 rounded-3xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4 backdrop-blur-xl shadow-lg">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center text-xl font-bold shadow-md shadow-emerald-500/20">
+                                    📸
+                                </div>
+                                <h2 class="font-black text-slate-900 dark:text-white text-xl sm:text-2xl tracking-tight">
+                                    Kho Lời Giải &amp; Bài Mẫu Chi Tiết
+                                </h2>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                                Danh mục môn học tương ứng với trang Kho Đề • Tạm thời rỗng vì chưa import dữ liệu bài giải.
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
+                            <button type="button" 
+                                    id="solutionOpenCreateFolderBtn"
+                                    onclick="SolutionEngine.openCreateFolderModal()" 
+                                    class="px-4 py-2.5 rounded-2xl text-xs font-black bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 cursor-pointer active:scale-98"
+                                    title="Tạo thư mục phân loại bài học">
+                                <span>📁</span>
+                                <span>+ Tạo Thư Mục Mới</span>
+                            </button>
+                            <button type="button" 
+                                    id="solutionOpenUploadBtn"
+                                    onclick="SolutionEngine.openUploadModal()" 
+                                    class="px-4.5 py-2.5 rounded-2xl text-xs font-black bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-lg shadow-emerald-500/25 transition-all flex items-center gap-2 cursor-pointer active:scale-98"
+                                    title="Đăng tải hình ảnh lời giải bài tập">
+                                <span>➕</span>
+                                <span>Đăng Tải Lời Giải (Ảnh)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filter Capsule Tabs & Search Bar -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar flex-1" id="solutionsFilterCapsule">
+                            <!-- Populated dynamically by SolutionEngine.render() -->
+                        </div>
+                        <div class="flex items-center gap-3 shrink-0">
+                            <!-- Search Solutions Input -->
+                            <div class="relative w-full sm:w-64">
+                                <input type="text" 
+                                       id="solutionSearchInput" 
+                                       oninput="SolutionEngine.setKeyword(this.value)"
+                                       placeholder="Tìm kiếm bài giải..." 
+                                       class="w-full h-10 pl-9 pr-4 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-white/10 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-colors">
+                                <span class="absolute left-3 top-2.5 text-xs text-slate-400">🔍</span>
+                            </div>
+                            <span id="solutionsTotalCount" class="text-xs font-bold text-amber-400 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 whitespace-nowrap shrink-0">
+                                0 bài giải (Chưa import)
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Solutions Dynamic Content Area -->
+                    <div id="solutionsGrid" class="w-full">
+                        <!-- Populated dynamically by SolutionEngine.render() -->
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Dormant Hidden Dock Container (Maintained for Zero JS Errors) -->
+    <div id="dockTriggerPill" class="hidden" style="display:none !important;" aria-hidden="true"></div>
+    <div class="dock-wrapper hidden" style="display:none !important;" aria-hidden="true">
+        <div id="osDock" class="dock-container hidden" style="display:none !important;" aria-hidden="true">
+            <div class="dock-item" data-dock-app="explorer"></div>
+            <div class="dock-item" data-dock-app="bank"></div>
+            <div class="dock-item" data-dock-app="creator"></div>
+            <div class="dock-item" data-dock-app="notebook"></div>
+            <div class="dock-item" data-dock-app="history"></div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- USER ACCOUNTS & PERMISSIONS MANAGEMENT CENTER MODAL      -->
+    <!-- ======================================================== -->
+    <div id="userProfileModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md hidden transition-opacity duration-200">
+        <div class="relative w-full max-w-xl rounded-3xl bg-slate-900/95 border border-slate-700/80 shadow-2xl overflow-hidden p-5 sm:p-6 text-white space-y-4.5 animate-scaleIn">
+            
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-3 border-b border-white/10">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 via-indigo-600 to-purple-600 flex items-center justify-center text-xl shadow-lg shadow-amber-500/20 border border-amber-400/30">
+                        👑
+                    </div>
+                    <div>
+                        <h3 class="text-sm sm:text-base font-black text-white flex items-center gap-2">
+                            <span>Cửa Sổ Quản Trị Hệ Thống (Admin Window)</span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">👑 Admin Tối Cao</span>
+                        </h3>
+                        <p class="text-[11px] text-slate-400">Quản lý toàn bộ tài khoản, cấp quyền, xem mã PIN & giám sát học sinh</p>
+                    </div>
+                </div>
+                <button type="button" onclick="AzotaApp.closeUserProfileModal()" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer" title="Đóng cửa sổ">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Navigation Tabs for Account Center -->
+            <div class="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-800/80 border border-white/5 text-xs font-bold">
+                <button type="button" id="accTabList" onclick="AzotaApp.switchAccountTab('list')" class="flex-1 py-2 rounded-xl text-center transition-all bg-sky-500 text-white shadow-sm cursor-pointer flex items-center justify-center gap-1.5">
+                    <span>👥</span> <span>Danh Sách Tài Khoản</span>
+                </button>
+                <button type="button" id="accTabCreate" onclick="AzotaApp.switchAccountTab('create')" class="flex-1 py-2 rounded-xl text-center transition-all text-slate-400 hover:text-white cursor-pointer flex items-center justify-center gap-1.5">
+                    <span>➕</span> <span>Cấp Tài Khoản Mới</span>
+                </button>
+                <button type="button" id="accTabEdit" onclick="AzotaApp.switchAccountTab('edit')" class="flex-1 py-2 rounded-xl text-center transition-all text-slate-400 hover:text-white cursor-pointer flex items-center justify-center gap-1.5">
+                    <span>✏️</span> <span>Hồ Sơ Admin (@VanThua)</span>
+                </button>
+            </div>
+
+            <!-- TAB 1 CONTENT: ACCOUNTS LIST & FAST SWITCHER -->
+            <div id="accPaneList" class="space-y-3">
+                <div class="flex items-center justify-between text-xs font-bold text-slate-400 px-1">
+                    <span>Tất cả tài khoản hiện có trong hệ thống:</span>
+                    <span id="accountCountBadge" class="text-sky-400 font-mono">5 tài khoản</span>
+                </div>
+                <div id="accountsListContainer" class="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
+                    <!-- Populated dynamically by AccountManager.renderAccountsList() -->
+                </div>
+                <div class="pt-2 border-t border-white/5">
+                    <button type="button" onclick="AzotaApp.closeUserProfileModal(); AuthGate.logout();" class="w-full py-2.5 px-3 rounded-xl text-xs font-semibold bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 border border-rose-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                        <span>🚪</span>
+                        <span>Đăng Xuất Khỏi Thiết Bị Này</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 2 CONTENT: CREATE ACCOUNT FOR FRIENDS -->
+            <div id="accPaneCreate" class="hidden space-y-3.5">
+                <div class="p-3 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-xs text-sky-200">
+                    💡 <strong>Cấp tài khoản:</strong> Bạn có thể tạo tài khoản và đặt mã PIN 4 số để bạn bè đăng nhập và cùng ôn luyện, đua top trên bảng xếp hạng!
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Tên Bạn Bè (Họ và Tên)</label>
+                        <input type="text" id="newAccName" placeholder="VD: Nguyễn Văn Hoàng" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/90 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Tên Đăng Nhập (Nickname)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2.5 text-xs text-slate-400 font-bold">@</span>
+                            <input type="text" id="newAccNickname" placeholder="VD: hoang11a" class="w-full pl-7 pr-3 py-2.5 rounded-xl bg-slate-800/90 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Khối Lớp</label>
+                        <select id="newAccGrade" class="w-full px-3 py-2.5 rounded-xl bg-slate-800/90 border border-slate-700 text-xs font-bold text-white focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer">
+                            <option value="Lớp 11A">Lớp 11A</option>
+                            <option value="Lớp 11B">Lớp 11B</option>
+                            <option value="Lớp 11C">Lớp 11C</option>
+                            <option value="Lớp 12">Lớp 12</option>
+                            <option value="Lớp 10">Lớp 10</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Mã PIN / Mật Khẩu (4 số)</label>
+                        <input type="password" id="newAccPin" maxlength="6" placeholder="VD: 1234" class="w-full px-3 py-2.5 rounded-xl bg-slate-800/90 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 text-center font-mono tracking-widest">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Vai Trò</label>
+                        <select id="newAccRole" class="w-full px-3 py-2.5 rounded-xl bg-slate-800/90 border border-slate-700 text-xs font-bold text-white focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer">
+                            <option value="Học Sinh">🎓 Học Sinh</option>
+                            <option value="Bạn Thân">🚀 Bạn Thân</option>
+                            <option value="Ban Cán Sự">⭐ Ban Cán Sự</option>
+                            <option value="Quản Trị Viên">👑 Quản Trị Viên</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">Chọn Ảnh Đại Diện (Avatar)</label>
+                    <div class="flex items-center gap-2 overflow-x-auto pb-1.5 no-scrollbar" id="newAccAvatarList">
+                        <button type="button" onclick="AzotaApp.selectNewAccAvatar('🎓')" class="new-acc-avatar-btn w-9 h-9 rounded-xl bg-slate-800 border-2 border-sky-500 flex items-center justify-center text-base hover:scale-110 transition-transform cursor-pointer" data-avatar="🎓">🎓</button>
+                        <button type="button" onclick="AzotaApp.selectNewAccAvatar('👦')" class="new-acc-avatar-btn w-9 h-9 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 flex items-center justify-center text-base hover:scale-110 transition-transform cursor-pointer" data-avatar="👦">👦</button>
+                        <button type="button" onclick="AzotaApp.selectNewAccAvatar('👧')" class="new-acc-avatar-btn w-9 h-9 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 flex items-center justify-center text-base hover:scale-110 transition-transform cursor-pointer" data-avatar="👧">👧</button>
+                        <button type="button" onclick="AzotaApp.selectNewAccAvatar('🚀')" class="new-acc-avatar-btn w-9 h-9 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 flex items-center justify-center text-base hover:scale-110 transition-transform cursor-pointer" data-avatar="🚀">🚀</button>
+                        <button type="button" onclick="AzotaApp.selectNewAccAvatar('🧑‍💻')" class="new-acc-avatar-btn w-9 h-9 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 flex items-center justify-center text-base hover:scale-110 transition-transform cursor-pointer" data-avatar="🧑‍💻">🧑‍💻</button>
+                        <button type="button" onclick="AzotaApp.selectNewAccAvatar('🦊')" class="new-acc-avatar-btn w-9 h-9 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 flex items-center justify-center text-base hover:scale-110 transition-transform cursor-pointer" data-avatar="🦊">🦊</button>
+                        <button type="button" onclick="AzotaApp.selectNewAccAvatar('👑')" class="new-acc-avatar-btn w-9 h-9 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 flex items-center justify-center text-base hover:scale-110 transition-transform cursor-pointer" data-avatar="👑">👑</button>
+                        <button type="button" onclick="AzotaApp.selectNewAccAvatar('⚡')" class="new-acc-avatar-btn w-9 h-9 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 flex items-center justify-center text-base hover:scale-110 transition-transform cursor-pointer" data-avatar="⚡">⚡</button>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="button" onclick="AzotaApp.createNewFriendAccount()" class="w-full py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white shadow-lg shadow-sky-500/25 transition-all cursor-pointer flex items-center justify-center gap-2">
+                        <span>✨</span> Cấp Tài Khoản Mới Ngay
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 3 CONTENT: EDIT CURRENT PROFILE -->
+            <div id="accPaneEdit" class="hidden space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-2">Ảnh Đại Diện Hiện Tại</label>
+                    <div class="flex items-center gap-2 overflow-x-auto pb-1.5 no-scrollbar" id="avatarOptionList">
+                        <button type="button" onclick="AzotaApp.selectAvatarOption('👦')" class="avatar-opt-btn w-9 h-9 rounded-xl bg-slate-800 border-2 border-sky-500 flex items-center justify-center text-base hover:scale-110 transition-transform cursor-pointer" data-avatar="👦">👦</button>
+                        <button type="button" onclick="AzotaApp.selectAvatarOption('👧')" class="avatar-opt-btn w-9 h-9 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 flex items-center justify-center text-base hover:scale-110 transition-transform cursor-pointer" data-avatar="👧">👧</button>
+                        <button type="button" onclick="AzotaApp.selectAvatarOption('🧑‍💻')" class="avatar-opt-btn w-9 h-9 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 flex items-center justify-center text-base hover:scale-110 transition-transform cursor-pointer" data-avatar="🧑‍💻">🧑‍💻</button>
+                        <button type="button" onclick="AzotaApp.selectAvatarOption('🦊')" class="avatar-opt-btn w-9 h-9 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 flex items-center justify-center text-base hover:scale-110 transition-transform cursor-pointer" data-avatar="🦊">🦊</button>
+                        <button type="button" onclick="AzotaApp.selectAvatarOption('🦁')" class="avatar-opt-btn w-9 h-9 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 flex items-center justify-center text-base hover:scale-110 transition-transform cursor-pointer" data-avatar="🦁">🦁</button>
+                        <button type="button" onclick="AzotaApp.selectAvatarOption('🚀')" class="avatar-opt-btn w-9 h-9 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 flex items-center justify-center text-base hover:scale-110 transition-transform cursor-pointer" data-avatar="🚀">🚀</button>
+                        <button type="button" onclick="AzotaApp.selectAvatarOption('🎓')" class="avatar-opt-btn w-9 h-9 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 flex items-center justify-center text-base hover:scale-110 transition-transform cursor-pointer" data-avatar="🎓">🎓</button>
+                        <button type="button" onclick="AzotaApp.selectAvatarOption('⚡')" class="avatar-opt-btn w-9 h-9 rounded-xl bg-slate-800 border-2 border-transparent hover:border-slate-600 flex items-center justify-center text-base hover:scale-110 transition-transform cursor-pointer" data-avatar="⚡">⚡</button>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Họ và Tên</label>
+                        <input type="text" id="modalInputName" placeholder="Nhập tên của bạn" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800/90 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Biệt danh (Nickname)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2.5 text-xs text-slate-400 font-bold">@</span>
+                            <input type="text" id="modalInputNickname" placeholder="VD: hocsinh11" class="w-full pl-7 pr-3.5 py-2.5 rounded-xl bg-slate-800/90 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">Khối Lớp</label>
+                            <select id="modalInputGrade" class="w-full px-3 py-2.5 rounded-xl bg-slate-800/90 border border-slate-700 text-xs font-bold text-white focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer">
+                                <option value="Lớp 11">Lớp 11</option>
+                                <option value="Lớp 12">Lớp 12</option>
+                                <option value="Lớp 10">Lớp 10</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">Mục Tiêu Ôn Thi</label>
+                            <input type="text" id="modalInputGoal" placeholder="VD: 9.0+ Học Kỳ 1" class="w-full px-3 py-2.5 rounded-xl bg-slate-800/90 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-white/10">
+                    <button type="button" onclick="AzotaApp.saveUserProfileFromModal()" class="px-5 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white shadow-lg shadow-sky-500/25 transition-all cursor-pointer flex items-center gap-1.5">
+                        <span>💾</span> Lưu Thay Đổi
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SLEEK IN-APP GLASS MODAL (Hộp thoại Liquid Glass thông minh) -->
+    <!-- ======================================================== -->
+    <div id="azotaAppModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-md hidden transition-all duration-200">
+        <div class="relative w-full max-w-md rounded-3xl bg-slate-900/95 border border-slate-700/80 shadow-2xl p-6 text-white space-y-4 animate-scaleIn">
+            <div class="flex items-start gap-4">
+                <div id="appModalIconBox" class="w-12 h-12 rounded-2xl bg-sky-500/15 border border-sky-500/30 text-sky-400 flex items-center justify-center text-2xl shrink-0">
+                    ℹ️
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 id="appModalTitle" class="text-base sm:text-lg font-bold text-white tracking-tight">
+                        Thông Báo
+                    </h3>
+                    <p id="appModalMessage" class="text-xs sm:text-sm text-slate-300 mt-1.5 leading-relaxed whitespace-pre-line break-words">
+                        Nội dung thông báo
+                    </p>
+                </div>
+            </div>
+            <div id="appModalActions" class="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+                <button type="button" id="appModalCancelBtn" class="hidden px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer">
+                    Hủy Bỏ
+                </button>
+                <button type="button" id="appModalConfirmBtn" class="px-5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white shadow-lg shadow-sky-500/25 transition-all cursor-pointer">
+                    Đồng Ý
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FLOATING MOBILE BOTTOM DOCK (IOS DYNAMIC DOCK STYLE) -->
+    <nav id="mobileBottomDock" class="lg:hidden fixed bottom-3 inset-x-3 sm:inset-x-8 z-40 h-16 rounded-2xl bg-slate-900/90 dark:bg-slate-950/90 backdrop-blur-2xl border border-white/10 shadow-2xl flex items-center justify-around px-2 select-none">
+        <!-- Item 1: Kho Đề -->
+        <button type="button" 
+                onclick="AzotaApp.openFileExplorer('root')" 
+                id="mobile-dock-root"
+                style="--gradient-from: #3b82f6; --gradient-to: #06b6d4;"
+                class="mobile-dock-btn active group">
+            <span class="mobile-dock-bg"></span>
+            <span class="mobile-dock-glow"></span>
+            <span class="mobile-dock-icon">📁</span>
+            <span class="mobile-dock-text">Kho Đề</span>
+        </button>
+
+        <!-- Item 2: Đua Top -->
+        <button type="button" 
+                onclick="AzotaApp.openLeaderboard()" 
+                id="mobile-dock-leaderboard"
+                style="--gradient-from: #f59e0b; --gradient-to: #ef4444;"
+                class="mobile-dock-btn group">
+            <span class="mobile-dock-bg"></span>
+            <span class="mobile-dock-glow"></span>
+            <span class="mobile-dock-icon">🏆</span>
+            <span class="mobile-dock-text">Đua Top</span>
+        </button>
+
+        <!-- Item 3: Tự Luận -->
+        <button type="button" 
+                onclick="AzotaApp.openFileExplorer('Hoc_Tu_Luan')" 
+                id="mobile-dock-Hoc_Tu_Luan"
+                style="--gradient-from: #10b981; --gradient-to: #06b6d4;"
+                class="mobile-dock-btn group">
+            <span class="mobile-dock-bg"></span>
+            <span class="mobile-dock-glow"></span>
+            <span class="mobile-dock-icon">📝</span>
+            <span class="mobile-dock-text">Tự Luận</span>
+        </button>
+
+        <!-- Item 4: Ghi Nhớ -->
+        <button type="button" 
+                onclick="AzotaApp.showView('notebook')" 
+                id="mobile-dock-notebook"
+                style="--gradient-from: #f43f5e; --gradient-to: #ec4899;"
+                class="mobile-dock-btn group">
+            <span class="mobile-dock-bg"></span>
+            <span class="mobile-dock-glow"></span>
+            <span class="mobile-dock-icon">📖</span>
+            <span class="mobile-dock-text">Ghi Nhớ</span>
+        </button>
+
+        <!-- Item 5: Môn Học (Mở Full Drawer) -->
+        <button type="button" 
+                onclick="AzotaApp.toggleSidebar(true)" 
+                id="mobile-dock-menu"
+                style="--gradient-from: #8b5cf6; --gradient-to: #6366f1;"
+                class="mobile-dock-btn group">
+            <span class="mobile-dock-bg"></span>
+            <span class="mobile-dock-glow"></span>
+            <span class="mobile-dock-icon">☰</span>
+            <span class="mobile-dock-text">Môn Học</span>
+        </button>
+    </nav>
+
+    <!-- ======================================================== -->
+    <!-- MODAL: CREATE SOLUTION FOLDER (TẠO THƯ MỤC LỜI GIẢI MỚI) -->
+    <!-- ======================================================== -->
+    <div id="solutionCreateFolderModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md hidden transition-opacity duration-200">
+        <div class="relative w-full max-w-md rounded-3xl bg-slate-900/95 border border-slate-700/80 shadow-2xl overflow-hidden p-5 sm:p-6 text-white space-y-4 animate-scaleIn">
+            <div class="flex items-center justify-between pb-3 border-b border-white/10">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center text-lg font-bold">
+                        📁
+                    </div>
+                    <div>
+                        <h3 class="text-base font-black text-white">Tạo Thư Mục Lời Giải Mới</h3>
+                        <p class="text-[11px] text-slate-400">Tạo folder bài học để phân loại và nhét lời giải vào</p>
+                    </div>
+                </div>
+                <button type="button" onclick="SolutionEngine.closeCreateFolderModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer" title="Đóng">
+                    ✕
+                </button>
+            </div>
+
+            <form id="solutionCreateFolderForm" onsubmit="SolutionEngine.submitCreateFolder(event)" class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Môn Học *</label>
+                    <select id="solFolderSubject" class="w-full h-11 px-3 rounded-xl bg-slate-800 border border-white/10 text-xs font-semibold text-white focus:outline-none focus:border-amber-500 transition-colors cursor-pointer">
+                        <option value="Tin Học 11">💻 Tin Học 11</option>
+                        <option value="Địa Lí 11">🌍 Địa Lí 11</option>
+                        <option value="Học Tự Luận">📝 Học Tự Luận</option>
+                        <option value="GDKT &amp; PL 11">⚖️ GDKT &amp; PL 11</option>
+                        <option value="Lịch Sử 11">🏛️ Lịch Sử 11</option>
+                        <option value="Tiếng Anh 11">🌐 Tiếng Anh 11</option>
+                        <option value="Toán 11">📐 Toán 11</option>
+                        <option value="Vật Lí 11">⚡ Vật Lí 11</option>
+                        <option value="GDQP &amp; AN 11">🛡️ GDQP &amp; AN 11</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Tên Thư Mục / Bài Học *</label>
+                    <input type="text" id="solFolderName" placeholder="VD: Bài 4 - Cấu trúc bên trong máy tính" required class="w-full h-11 px-3 rounded-xl bg-slate-800 border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-colors">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Mô Tả Thư Mục (Tùy chọn)</label>
+                    <input type="text" id="solFolderDesc" placeholder="VD: Lời giải chi tiết câu hỏi SGK, sơ đồ khối ALU và Bus" class="w-full h-11 px-3 rounded-xl bg-slate-800 border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-colors">
+                </div>
+
+                <div class="pt-2 flex items-center justify-end gap-2.5">
+                    <button type="button" onclick="SolutionEngine.closeCreateFolderModal()" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer">
+                        Hủy Bỏ
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white shadow-lg shadow-amber-500/25 transition-all cursor-pointer">
+                        📁 Tạo Thư Mục Ngay
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL: UPLOAD SOLUTION IMAGE (TÀI KHOẢN ĐƯỢC CẤP QUYỀN)  -->
+    <!-- ======================================================== -->
+    <div id="solutionUploadModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md hidden transition-opacity duration-200">
+        <div class="relative w-full max-w-lg rounded-3xl bg-slate-900/95 border border-slate-700/80 shadow-2xl overflow-hidden p-5 sm:p-6 text-white space-y-4 animate-scaleIn">
+            
+            <div class="flex items-center justify-between pb-3 border-b border-white/10">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-lg font-bold">
+                        📸
+                    </div>
+                    <div>
+                        <h3 class="text-base font-black text-white">Đăng Tải Lời Giải Mới (Hình Ảnh)</h3>
+                        <p class="text-[11px] text-slate-400">Dành cho tài khoản được cấp quyền (Admin / Giáo viên / VIP)</p>
+                    </div>
+                </div>
+                <button type="button" onclick="SolutionEngine.closeUploadModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer" title="Đóng">
+                    ✕
+                </button>
+            </div>
+
+            <form id="solutionUploadForm" onsubmit="SolutionEngine.submitUpload(event)" class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Chọn Môn Học *</label>
+                    <select id="solInputSubject" onchange="SolutionEngine.updateUploadFolderOptions()" class="w-full h-11 px-3 rounded-xl bg-slate-800 border border-white/10 text-xs font-semibold text-white focus:outline-none focus:border-emerald-500 transition-colors cursor-pointer">
+                        <option value="Tin Học 11">💻 Tin Học 11</option>
+                        <option value="Địa Lí 11">🌍 Địa Lí 11</option>
+                        <option value="Học Tự Luận">📝 Học Tự Luận</option>
+                        <option value="GDKT &amp; PL 11">⚖️ GDKT &amp; PL 11</option>
+                        <option value="Lịch Sử 11">🏛️ Lịch Sử 11</option>
+                        <option value="Tiếng Anh 11">🌐 Tiếng Anh 11</option>
+                        <option value="Toán 11">📐 Toán 11</option>
+                        <option value="Vật Lí 11">⚡ Vật Lí 11</option>
+                        <option value="GDQP &amp; AN 11">🛡️ GDQP &amp; AN 11</option>
+                    </select>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="block text-xs font-bold text-slate-300">Thư Mục Chứa Lời Giải *</label>
+                        <button type="button" onclick="SolutionEngine.openCreateFolderModalFromUpload()" class="text-[11px] font-bold text-amber-400 hover:text-amber-300 transition-colors cursor-pointer flex items-center gap-1">
+                            <span>+ Tạo Thư Mục Mới</span>
+                        </button>
+                    </div>
+                    <select id="solInputFolder" class="w-full h-11 px-3 rounded-xl bg-slate-800 border border-white/10 text-xs font-semibold text-white focus:outline-none focus:border-emerald-500 transition-colors cursor-pointer">
+                        <!-- Populated dynamically by SolutionEngine.updateUploadFolderOptions() -->
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Tiêu Đề Lời Giải *</label>
+                    <input type="text" id="solInputTitle" placeholder="VD: Giải chi tiết bài 4 - Cấu trúc bên trong máy tính" required class="w-full h-11 px-3 rounded-xl bg-slate-800 border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Tên Bài Học / Chuyên Đề</label>
+                    <input type="text" id="solInputLesson" placeholder="VD: Bài 4 - Phần Cứng Máy Tính" class="w-full h-11 px-3 rounded-xl bg-slate-800 border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Tóm Tắt Phương Pháp Giải / Ghi Chú</label>
+                    <textarea id="solInputDesc" rows="2" placeholder="Ghi chú ngắn về phương pháp giải, lưu ý khi làm bài..." class="w-full p-3 rounded-xl bg-slate-800 border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors resize-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1">Tải Lên Hình Ảnh Lời Giải *</label>
+                    <div class="relative border-2 border-dashed border-emerald-500/40 hover:border-emerald-500 rounded-2xl p-4 text-center cursor-pointer bg-emerald-500/5 hover:bg-emerald-500/10 transition-colors" onclick="document.getElementById('solFileInput').click()">
+                        <input type="file" id="solFileInput" accept="image/*" class="hidden" onchange="SolutionEngine.handleFileSelected(this.files[0])">
+                        <div class="text-2xl mb-1">🖼️</div>
+                        <div class="text-xs font-bold text-slate-200">Bấm để chọn ảnh hoặc kéo thả ảnh vào đây</div>
+                        <div class="text-[10px] text-slate-400 mt-0.5">Hỗ trợ PNG, JPG, WebP, SVG (Tối đa 8MB)</div>
+                    </div>
+                </div>
+
+                <!-- Image Preview -->
+                <div id="solutionUploadPreviewContainer" class="hidden relative rounded-2xl overflow-hidden border border-white/10 max-h-48 bg-black/60">
+                    <img id="solutionUploadPreviewImg" src="" alt="Preview" class="w-full h-44 object-contain">
+                    <button type="button" onclick="document.getElementById('solFileInput').value=''; document.getElementById('solutionUploadPreviewContainer').classList.add('hidden'); window._pendingSolutionImageBase64=null;" class="absolute top-2 right-2 p-1.5 rounded-lg bg-black/70 hover:bg-rose-600 text-white text-xs transition-colors cursor-pointer">
+                        ✕ Xóa ảnh
+                    </button>
+                </div>
+
+                <div class="pt-2 flex items-center justify-end gap-2.5">
+                    <button type="button" onclick="SolutionEngine.closeUploadModal()" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer">
+                        Hủy Bỏ
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-lg shadow-emerald-500/25 transition-all cursor-pointer">
+                        🚀 Đăng Lời Giải Ngay
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL: LIGHTBOX / ZOOM FULLSCREEN SOLUTION IMAGE         -->
+    <!-- ======================================================== -->
+    <div id="solutionLightboxModal" class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-2xl hidden transition-opacity duration-200" onclick="if(event.target === this) SolutionEngine.closeLightbox()">
+        <div class="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-3xl bg-slate-950/95 border border-white/15 shadow-2xl overflow-hidden animate-scaleIn">
+            
+            <!-- Lightbox Top Bar -->
+            <div class="p-4 px-5 border-b border-white/10 flex items-center justify-between gap-3 bg-black/40">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <span id="solutionLightboxSubject" class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shrink-0">
+                        Môn Học
+                    </span>
+                    <h3 id="solutionLightboxTitle" class="text-sm sm:text-base font-bold text-white truncate">
+                        Tiêu Đề Lời Giải
+                    </h3>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button type="button" id="solutionLightboxDownloadBtn" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-white transition-colors flex items-center gap-1.5 cursor-pointer" title="Tải ảnh về máy">
+                        <span>📥</span>
+                        <span class="hidden sm:inline">Tải Về Ảnh</span>
+                    </button>
+                    <button type="button" onclick="SolutionEngine.closeLightbox()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer" title="Đóng">
+                        ✕
+                    </button>
+                </div>
+            </div>
+
+            <!-- Lightbox Image Canvas -->
+            <div class="flex-1 overflow-auto p-4 flex items-center justify-center bg-black/70 min-h-[350px]">
+                <img id="solutionLightboxImg" src="" alt="Chi tiết lời giải" class="max-w-full max-h-[70vh] object-contain rounded-xl shadow-2xl transition-transform duration-200">
+            </div>
+
+            <!-- Lightbox Bottom Caption Bar -->
+            <div class="p-3.5 px-5 border-t border-white/10 bg-black/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-400">
+                <div class="flex items-center gap-3">
+                    <span id="solutionLightboxLesson" class="font-bold text-emerald-400">Bài học</span>
+                    <span>•</span>
+                    <span id="solutionLightboxDesc" class="line-clamp-1 text-slate-300">Mô tả bài giải</span>
+                </div>
+                <div id="solutionLightboxAuthor" class="text-[11px] font-mono text-slate-500 shrink-0">
+                    Đăng bởi Admin
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Security & Anti-Flood Toast -->
+    <div id="securityToast" class="flex items-center gap-3 px-4.5 py-3 rounded-2xl bg-slate-900/95 border border-amber-500/50 text-white shadow-2xl backdrop-blur-xl">
+        <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg">🛡️</div>
+        <div>
+            <h5 class="text-xs font-black text-amber-400 leading-tight">Cảnh Báo An Ninh Hệ Thống</h5>
+            <p class="text-[11px] text-slate-300" id="securityToastMsg">Thao tác quá nhanh! Vui lòng chờ 1s để bảo vệ hệ thống.</p>
+        </div>
+    </div>
+
+    <!-- Sample Exam Text Generator Helper -->
+    <script>
+        function getSampleExamText() {
+            return `ĐỀ THI KHẢO SÁT TIN HỌC 11\nThời gian làm bài: 15 phút\n\nCâu 1: Tiêu chí quan trọng nhất đối với hệ điều hành máy tính cá nhân dành cho người dùng phổ thông là gì?\nA. Dung lượng nhỏ\nB. Tốc độ xử lí cao\nC. Thân thiện và dễ sử dụng\nD. Giá thành thấp\nĐáp án: C\nLời giải: Thân thiện và dễ sử dụng thông qua giao diện đồ họa GUI là tiêu chí hàng đầu.\n\nCâu 2: Cơ chế "Plug & Play" có chức năng chính là gì?\nA. Tăng tốc độ xử lí CPU\nB. Tự động nhận biết thiết bị ngoại vi và hỗ trợ cài đặt trình điều khiển\nC. Chống virus máy tính\nD. Quản lí dữ liệu Internet\nĐáp án: B\nLời giải: Plug & Play tự động phát hiện thiết bị cắm vào và nạp driver phù hợp.`;
+        }
+    </script>
+
+    <!-- SCRIPTS -->
+    <script src="data/exam_database.js"></script>
+    <script src="js/audio_helper.js"></script>
+    <script src="js/smart_parser.js"></script>
+    <script src="js/exam_engine.js"></script>
+    <script src="js/essay_engine.js"></script>
+    <script src="js/dock.js"></script>
+    <script src="js/solution_engine.js"></script>
+    <script src="js/app-v4.js"></script>
+
+    <!-- DIRECT INLINE RUNTIME FAIL-SAFE FOR file:/// BROWSER CACHE & 3D TILT EFFECT -->
+    <script>
+        (function() {
+            var FULL_GATE_STYLE = "position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; width: 100vw !important; height: 100vh !important; min-width: 100vw !important; min-height: 100vh !important; max-width: 100vw !important; max-height: 100vh !important; z-index: 999999 !important; background-color: #000000 !important; display: flex !important; align-items: center !important; justify-content: center !important; opacity: 1 !important; visibility: visible !important; pointer-events: auto !important;";
+
+            // Synchronize visibility of the 3D Auth Gate
+            function syncAuthVisibility() {
+                try {
+                    var ls = typeof localStorage !== "undefined" ? localStorage.getItem("azota_session_active_3d") : null;
+                    var ss = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("azota_session_active_3d") : null;
+                    var isAuth = (ls === "true") || (ss === "true");
+                    var gate = document.getElementById("authGateView");
+                    if (!isAuth && gate) {
+                        gate.classList.remove("hidden", "opacity-0", "pointer-events-none");
+                        gate.style.cssText = FULL_GATE_STYLE;
+                    }
+                } catch(e) {}
+            }
+
+            // 3. Instant 3D Tilting Card Mouse Tracking (Native & Smooth)
+            function init3DCardInline() {
+                var wrapper = document.getElementById("loginCardWrapper");
+                var card = document.getElementById("loginCard3D");
+                if (!wrapper || !card || wrapper._hasInline3D) return;
+                wrapper._hasInline3D = true;
+
+                wrapper.addEventListener("mousemove", function(e) {
+                    var rect = card.getBoundingClientRect();
+                    var mouseX = e.clientX - rect.left - rect.width / 2;
+                    var mouseY = e.clientY - rect.top - rect.height / 2;
+                    var rotX = -(mouseY / (rect.height / 2)) * 10;
+                    var rotY = (mouseX / (rect.width / 2)) * 10;
+                    card.style.transform = "perspective(1500px) rotateX(" + rotX.toFixed(2) + "deg) rotateY(" + rotY.toFixed(2) + "deg) translateZ(10px)";
+                });
+
+                wrapper.addEventListener("mouseleave", function() {
+                    card.style.transition = "transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)";
+                    card.style.transform = "perspective(1500px) rotateX(0deg) rotateY(0deg) translateZ(0px)";
+                });
+
+                wrapper.addEventListener("mouseenter", function() {
+                    card.style.transition = "transform 0.1s ease-out";
+                });
+            }
+
+            // 4. Ensure window.AuthGate helpers and logout are bulletproof
+            window.AuthGate = window.AuthGate || {};
+            if (!window.AuthGate.fillAccount) {
+                window.AuthGate.fillAccount = function(nick, pin) {
+                    var u = document.getElementById("loginUsernameInput");
+                    var p = document.getElementById("loginPinInput");
+                    if (u) u.value = nick;
+                    if (p) p.value = pin;
+                };
+            }
+
+            // Bulletproof Logout trigger - always transitions to 3D login screen immediately
+            var origLogout = window.AuthGate.logout;
+            window.AuthGate.logout = function() {
+                try {
+                    localStorage.removeItem("azota_session_active_3d");
+                    sessionStorage.removeItem("azota_session_active_3d");
+                    localStorage.removeItem("azota_auth_logged_in");
+                    sessionStorage.removeItem("azota_auth_logged_in");
+                } catch(e) {}
+
+                var u = document.getElementById("loginUsernameInput");
+                var p = document.getElementById("loginPinInput");
+                if (u) u.value = "";
+                if (p) p.value = "";
+
+                var gate = document.getElementById("authGateView");
+                if (gate) {
+                    gate.classList.remove("hidden", "opacity-0", "pointer-events-none");
+                    gate.style.cssText = FULL_GATE_STYLE;
+                }
+
+                if (typeof origLogout === "function" && origLogout !== window.AuthGate.logout) {
+                    try { origLogout.call(window.AuthGate); } catch(e) {}
+                }
+
+                if (window.SecurityGuard && window.SecurityGuard.showSecurityToast) {
+                    try { window.SecurityGuard.showSecurityToast("🚪 Bạn đã đăng xuất an toàn khỏi Aseta."); } catch(e) {}
+                }
+            };
+
+            // 5. Ensure window.AzotaApp search dock triggers are bulletproof
+            window.AzotaApp = window.AzotaApp || {};
+            if (!window.AzotaApp.expandSearch) {
+                window.AzotaApp.expandSearch = function() {
+                    var dock = document.getElementById("expandingSearchDock");
+                    var input = document.getElementById("explorerSearchInput");
+                    if (dock) dock.classList.add("is-expanded");
+                    if (input) setTimeout(function() { input.focus(); input.select(); }, 60);
+                };
+            }
+            if (!window.AzotaApp.collapseSearch) {
+                window.AzotaApp.collapseSearch = function() {
+                    var dock = document.getElementById("expandingSearchDock");
+                    var input = document.getElementById("explorerSearchInput");
+                    if (dock) dock.classList.remove("is-expanded");
+                    if (input) {
+                        input.value = "";
+                        if (window.AzotaApp.handleExplorerSearch) {
+                            window.AzotaApp.handleExplorerSearch("");
+                        }
+                    }
+                };
+            }
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", function() {
+                    syncAuthVisibility();
+                    init3DCardInline();
+                });
+            } else {
+                syncAuthVisibility();
+                init3DCardInline();
+            }
+        })();
+    </script>
+</body>
+</html>
