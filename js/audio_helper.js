@@ -468,6 +468,12 @@ window.AudioHelper = (function() {
 
         document.addEventListener("pointerover", function(e) {
             if (!soundEnabled) return;
+            // CRITICAL PERFORMANCE GUARD: Ignore touch pointers and coarse touchscreens (phones/tablets)
+            // On mobile devices, finger scrolling fires dozens of pointerover events per second, causing massive Web Audio churn and lag!
+            if (e.pointerType === "touch" || (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) || window.innerWidth <= 768) {
+                return;
+            }
+
             const target = e.target;
             if (!target || typeof target.closest !== "function") return;
 
@@ -484,7 +490,7 @@ window.AudioHelper = (function() {
             lastHoverTarget = entity;
 
             const now = performance.now();
-            if (now - lastHoverTime < 38) return; // Debounce rapid sweeps
+            if (now - lastHoverTime < 65) return; // Smooth ergonomic debounce
             lastHoverTime = now;
 
             // Specialized tactile sound per entity type

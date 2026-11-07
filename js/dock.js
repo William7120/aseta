@@ -36,20 +36,29 @@ window.AzotaDock = (function() {
         startSpringLoop();
     }
 
+    function wakeSpringLoop() {
+        if (!animFrame) {
+            animFrame = requestAnimationFrame(updatePhysics);
+        }
+    }
+
     function handleMouseMove(e) {
         mouseX = e.clientX;
         isHovering = true;
+        wakeSpringLoop();
     }
 
     function handleTouchMove(e) {
         if (e.touches && e.touches[0]) {
             mouseX = e.touches[0].clientX;
             isHovering = true;
+            wakeSpringLoop();
         }
     }
 
     function handleMouseEnter() {
         isHovering = true;
+        wakeSpringLoop();
     }
 
     function handleMouseLeave() {
@@ -60,54 +69,69 @@ window.AzotaDock = (function() {
             st.targetWidth = 48;
             st.targetScale = 1;
         });
+        wakeSpringLoop();
+    }
+
+    function updatePhysics() {
+        if (isHovering && mouseX !== Infinity && !isMinimized) {
+            const maxDistance = 105; // Tight, comfortable detection radius
+            const baseWidth = 48;
+            const maxWidth = 66; // Subtle, elegant magnification (48px to 66px)
+
+            items.forEach((item, idx) => {
+                const rect = item.getBoundingClientRect();
+                const itemCenterX = rect.left + rect.width / 2;
+                const distance = Math.abs(mouseX - itemCenterX);
+
+                if (distance < maxDistance) {
+                    // Smooth cosine curve
+                    const norm = distance / maxDistance;
+                    const factor = Math.cos((norm * Math.PI) / 2);
+                    
+                    itemStates[idx].targetWidth = baseWidth + factor * (maxWidth - baseWidth);
+                    itemStates[idx].targetScale = 1 + factor * 0.32;
+                } else {
+                    itemStates[idx].targetWidth = baseWidth;
+                    itemStates[idx].targetScale = 1;
+                }
+            });
+        }
+
+        let needsAnother = isHovering;
+
+        // Spring interpolation
+        items.forEach((item, idx) => {
+            const st = itemStates[idx];
+            const dWidth = st.targetWidth - st.width;
+            const dScale = st.targetScale - st.scale;
+
+            if (Math.abs(dWidth) > 0.08 || Math.abs(dScale) > 0.008) {
+                st.width += dWidth * 0.28;
+                st.scale += dScale * 0.28;
+                needsAnother = true;
+            } else {
+                st.width = st.targetWidth;
+                st.scale = st.targetScale;
+            }
+
+            item.style.width = `${st.width}px`;
+            item.style.height = `${st.width}px`;
+
+            const icon = item.querySelector(".dock-icon");
+            if (icon) {
+                icon.style.transform = `scale(${st.scale})`;
+            }
+        });
+
+        if (needsAnother) {
+            animFrame = requestAnimationFrame(updatePhysics);
+        } else {
+            animFrame = null;
+        }
     }
 
     function startSpringLoop() {
-        function updatePhysics() {
-            if (isHovering && mouseX !== Infinity && !isMinimized) {
-                const maxDistance = 105; // Tight, comfortable detection radius
-                const baseWidth = 48;
-                const maxWidth = 66; // Subtle, elegant magnification (48px to 66px)
-
-                items.forEach((item, idx) => {
-                    const rect = item.getBoundingClientRect();
-                    const itemCenterX = rect.left + rect.width / 2;
-                    const distance = Math.abs(mouseX - itemCenterX);
-
-                    if (distance < maxDistance) {
-                        // Smooth cosine curve
-                        const norm = distance / maxDistance;
-                        const factor = Math.cos((norm * Math.PI) / 2);
-                        
-                        itemStates[idx].targetWidth = baseWidth + factor * (maxWidth - baseWidth);
-                        itemStates[idx].targetScale = 1 + factor * 0.32;
-                    } else {
-                        itemStates[idx].targetWidth = baseWidth;
-                        itemStates[idx].targetScale = 1;
-                    }
-                });
-            }
-
-            // Spring interpolation
-            items.forEach((item, idx) => {
-                const st = itemStates[idx];
-                st.width += (st.targetWidth - st.width) * 0.28;
-                st.scale += (st.targetScale - st.scale) * 0.28;
-
-                item.style.width = `${st.width}px`;
-                item.style.height = `${st.width}px`;
-
-                const icon = item.querySelector(".dock-icon");
-                if (icon) {
-                    icon.style.transform = `scale(${st.scale})`;
-                }
-            });
-
-            animFrame = requestAnimationFrame(updatePhysics);
-        }
-
-        if (animFrame) cancelAnimationFrame(animFrame);
-        animFrame = requestAnimationFrame(updatePhysics);
+        wakeSpringLoop();
     }
 
     function bounceItem(appId) {

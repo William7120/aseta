@@ -195,14 +195,12 @@ html, body,
   width: 100%;
   height: 100%;
   pointer-events: none;
-  background-color: #ffffff;
-  -webkit-mask-image: radial-gradient(ellipse at center, transparent 20%, black);
-  mask-image: radial-gradient(ellipse at center, transparent 20%, black);
-  transition: background-color 0.3s ease;
+  background: radial-gradient(ellipse at center, transparent 20%, rgba(255, 255, 255, 0.95) 80%);
+  transition: background 0.3s ease;
 }
 
 .dark .aceternity-grid-vignette {
-  background-color: #000000;
+  background: radial-gradient(ellipse at center, transparent 20%, rgba(0, 0, 0, 0.92) 80%);
 }
 
 /* ========================================================
@@ -2765,12 +2763,49 @@ mark {
 
 /* ========================================================
    MOBILE & TOUCH SCREEN OPTIMIZATIONS (SMOOTH & RESPONSIVE)
+   HIGH-PERFORMANCE HARDWARE ACCELERATION (ZERO LAG, MINIMAL RAM)
    ======================================================== */
+@media (max-width: 768px) {
+  /* 1. Stop heavy background Gaussian blur recalculations on mobile GPUs */
+  .aurora-orb {
+    animation: none !important;
+    filter: blur(40px) !important;
+    opacity: 0.15 !important;
+  }
+
+  /* 2. Replace multi-pass 24px backdrop blur on 3D Glass Folders with crisp, optimized glass tint */
+  .gf-front {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: rgba(14, 18, 30, 0.94) !important;
+  }
+
+  .gf-shadow {
+    filter: none !important;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55) !important;
+  }
+
+  /* 3. Disable continuous traveling beam animation on mobile to preserve CPU & battery */
+  .traveling-beam-top,
+  .traveling-beam-right,
+  .traveling-beam-bottom,
+  .traveling-beam-left {
+    animation-play-state: paused !important;
+    display: none !important;
+  }
+
+  /* 4. Smooth touch behavior */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
 @media (max-width: 640px) {
-  /* Scale 3D Glass Folders proportionally so they fit seamlessly without side scroll */
+  /* Scale 3D Glass Folders smoothly using GPU transform instead of layout-reflow zoom */
   .gf-root {
-    zoom: 0.88;
-    margin: 0 auto;
+    transform: scale(0.9);
+    transform-origin: top center;
+    margin: 0 auto -20px auto;
   }
 
   /* Smooth momentum scrolling for category chips */
@@ -2804,8 +2839,9 @@ mark {
 @media (max-width: 380px) {
   /* Ultra-compact screens (iPhone SE, smaller Androids) */
   .gf-root {
-    zoom: 0.78;
-    margin: 0 auto;
+    transform: scale(0.8);
+    transform-origin: top center;
+    margin: 0 auto -45px auto;
   }
 
   #explorerToolbar input {
