@@ -447,13 +447,17 @@ window.AzotaApp = (function() {
         },
 
         getCurrentAccountId: function() {
-            return localStorage.getItem(this.CURRENT_KEY) || "acc_vanthua";
+            try {
+                return localStorage.getItem(this.CURRENT_KEY) || "acc_minhtri";
+            } catch(e) {
+                return "acc_minhtri";
+            }
         },
 
         getCurrentAccount: function() {
             const list = this.getAllAccounts();
             const currId = this.getCurrentAccountId();
-            return list.find(a => a.id === currId) || list[0];
+            return list.find(a => a.id === currId) || list.find(a => a.id === "acc_minhtri") || list.find(a => !a.isAdmin) || list[0];
         },
 
         switchAccount: function(accountId) {
@@ -1063,21 +1067,11 @@ window.AzotaApp = (function() {
         try {
             const acc = AccountManager.getCurrentAccount();
             if (acc) {
-                if (acc.isAdmin === true || acc.id === "acc_vanthua" || (acc.nickname && acc.nickname.toLowerCase() === "vanthua")) {
+                // Strict Admin: Only genuine VanThua Admin Account with isAdmin: true
+                if (acc.isAdmin === true && (acc.id === "acc_vanthua" || (acc.nickname && acc.nickname.toLowerCase() === "vanthua"))) {
                     return true;
                 }
-                if (acc.role && (acc.role.includes("Admin") || acc.role.includes("Quản Trị"))) {
-                    return true;
-                }
-            }
-            const prof = UserProfile.get();
-            if (prof) {
-                if (prof.isAdmin === true || (prof.nickname && prof.nickname.toLowerCase() === "vanthua")) {
-                    return true;
-                }
-                if (prof.role && (prof.role.includes("Admin") || prof.role.includes("Quản Trị"))) {
-                    return true;
-                }
+                return false;
             }
         } catch(e) {}
         return false;
@@ -1091,13 +1085,13 @@ window.AzotaApp = (function() {
                 if (raw) return JSON.parse(raw);
             } catch (e) {}
             return {
-                name: "Văn Thừa (Admin)",
-                nickname: "VanThua",
-                grade: "Quản Trị Hệ Thống",
-                role: "👑 Quản Trị Viên (Admin)",
-                goal: "Toàn quyền quản trị hệ thống Aseta",
-                avatar: "👑",
-                isAdmin: true
+                name: "Minh Trí",
+                nickname: "MinhTri",
+                grade: "Lớp 11",
+                role: "🎓 Học Sinh",
+                goal: "9.0+ Học Kỳ 1",
+                avatar: "👦",
+                isAdmin: false
             };
         },
         save: function(profile) {
@@ -1150,16 +1144,33 @@ window.AzotaApp = (function() {
         },
         openModal: function() {
             if (!isCurrentUserAdmin()) {
-                if (typeof AzotaModal !== "undefined" && AzotaModal.alert) {
-                    AzotaModal.alert("Bạn đang đăng nhập bằng tài khoản học sinh. Chức năng Quản Lý Tài Khoản chỉ dành riêng cho Quản Trị Viên (Admin)!", "Quyền Quản Trị Viên", "🔒");
-                } else {
-                    alert("Chức năng Quản Lý Tài Khoản chỉ dành riêng cho Quản Trị Viên (Admin)!");
+                const acc = AccountManager.getCurrentAccount();
+                if (window.SecurityGuard && window.SecurityGuard.showSecurityToast) {
+                    window.SecurityGuard.showSecurityToast(`👤 Bạn đang đăng nhập bằng tài khoản học sinh: ${acc ? acc.name : 'Minh Trí'} (@${acc ? acc.nickname : 'MinhTri'}). Chức năng Quản Trị Hệ Thống chỉ dành riêng cho Admin.`);
+                }
+                const modal = document.getElementById("userProfileModal");
+                if (modal) {
+                    modal.classList.add("hidden");
+                    modal.style.setProperty("display", "none", "important");
                 }
                 return;
             }
             const modal = document.getElementById("userProfileModal");
-            if (modal) modal.classList.remove("hidden");
+            if (modal) {
+                modal.style.removeProperty("display");
+                modal.classList.remove("hidden");
+            }
             AccountManager.switchTab("list");
+        },
+        handleProfileClick: function() {
+            if (isCurrentUserAdmin()) {
+                this.openModal();
+            } else {
+                const acc = AccountManager.getCurrentAccount();
+                if (window.SecurityGuard && window.SecurityGuard.showSecurityToast) {
+                    window.SecurityGuard.showSecurityToast(`👤 Tài khoản học sinh: ${acc ? acc.name : 'Minh Trí'} (@${acc ? acc.nickname : 'MinhTri'}) • Khối ${acc ? acc.grade : 'Lớp 11'}`);
+                }
+            }
         },
         openModalFields: function() {
             const p = this.get();
@@ -1176,7 +1187,10 @@ window.AzotaApp = (function() {
         },
         closeModal: function() {
             const modal = document.getElementById("userProfileModal");
-            if (modal) modal.classList.add("hidden");
+            if (modal) {
+                modal.classList.add("hidden");
+                modal.style.setProperty("display", "none", "important");
+            }
         },
         updateAvatarOptionUI: function() {
             document.querySelectorAll(".avatar-opt-btn").forEach(btn => {
@@ -4251,6 +4265,7 @@ window.AzotaApp = (function() {
         setExplorerCategoryFilter: setExplorerCategoryFilter,
         handleExplorerSort: handleExplorerSort,
         openUserProfileModal: () => UserProfile.openModal(),
+        handleProfileClick: () => UserProfile.handleProfileClick(),
         closeUserProfileModal: () => UserProfile.closeModal(),
         saveUserProfileFromModal: () => UserProfile.saveFromModal(),
         selectAvatarOption: (av) => UserProfile.selectAvatar(av),

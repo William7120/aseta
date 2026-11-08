@@ -747,11 +747,11 @@
                     </button>
 
                     <!-- Quản Lý Tài Khoản -->
-                    <button type="button" 
+                    <!-- Quản Lý Tài Khoản (CHỈ DÀNH CHO ADMIN) -->
                             id="sidebar-util-accounts" 
                             onclick="AzotaApp.openUserProfileModal()" 
-                            style="--gradient-from: #a855f7; --gradient-to: #d946ef;" 
-                            class="gradient-menu-btn nav-item-modern group" 
+                            style="display: none !important; --gradient-from: #a855f7; --gradient-to: #d946ef;" 
+                            class="gradient-menu-btn nav-item-modern group hidden" 
                             title="Quản Lý Tài Khoản">
                         <span class="gradient-menu-bg"></span>
                         <span class="gradient-menu-glow"></span>
@@ -771,7 +771,7 @@
                 <!-- Desktop Compact Profile -->
                 <div class="hidden lg:flex flex-col items-center gap-2">
                     <button type="button" 
-                            onclick="AzotaApp.openUserProfileModal()" 
+                            onclick="AzotaApp.handleProfileClick()" 
                             style="--gradient-from: #3b82f6; --gradient-to: #8b5cf6;"
                             class="gradient-menu-btn group" 
                             title="Cài đặt tài khoản (@hocsinh11)">
@@ -789,7 +789,7 @@
 
                 <!-- Mobile Drawer Full Profile Card -->
                 <div class="flex lg:hidden items-center justify-between gap-2.5 p-2 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 shadow-xs">
-                    <div class="flex items-center gap-2.5 min-w-0 flex-1 cursor-pointer" onclick="AzotaApp.openUserProfileModal()" title="Cài đặt hồ sơ & tài khoản">
+                    <div class="flex items-center gap-2.5 min-w-0 flex-1 cursor-pointer" onclick="AzotaApp.handleProfileClick()" title="Hồ sơ tài khoản">
                         <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-sky-500 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
                             👦
                         </div>
@@ -900,7 +900,7 @@
                     </button>
 
                     <!-- User Account Pill Button -->
-                    <div id="explorerUserAccountPill" onclick="AzotaApp.openUserProfileModal()" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200/70 dark:hover:bg-slate-700/80 border border-slate-200/80 dark:border-white/5 transition-all cursor-pointer group shrink-0" title="Bấm để chỉnh sửa hồ sơ & biệt danh">
+                    <div id="explorerUserAccountPill" onclick="AzotaApp.handleProfileClick()" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200/70 dark:hover:bg-slate-700/80 border border-slate-200/80 dark:border-white/5 transition-all cursor-pointer group shrink-0" title="Bấm để chỉnh sửa hồ sơ & biệt danh">
                         <div class="w-6 h-6 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-sky-500 text-white flex items-center justify-center font-bold text-xs shrink-0" id="userAvatarPill">
                             👦
                         </div>
@@ -1636,7 +1636,7 @@
     <!-- ======================================================== -->
     <!-- USER ACCOUNTS & PERMISSIONS MANAGEMENT CENTER MODAL      -->
     <!-- ======================================================== -->
-    <div id="userProfileModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md hidden transition-opacity duration-200">
+    <div id="userProfileModal" style="display: none !important;" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md hidden transition-opacity duration-200">
         <div class="relative w-full max-w-xl rounded-3xl bg-slate-900/95 border border-slate-700/80 shadow-2xl overflow-hidden p-5 sm:p-6 text-white space-y-4.5 animate-scaleIn">
             
             <!-- Modal Header -->
@@ -2162,6 +2162,7 @@
                 wrapper._hasInline3D = true;
 
                 wrapper.addEventListener("mousemove", function(e) {
+                    if (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) return;
                     var rect = card.getBoundingClientRect();
                     var mouseX = e.clientX - rect.left - rect.width / 2;
                     var mouseY = e.clientY - rect.top - rect.height / 2;

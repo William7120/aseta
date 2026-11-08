@@ -202,9 +202,13 @@
                 if (!res.ok) return false;
                 const data = await res.json();
                 if (data && Array.isArray(data.folders) && Array.isArray(data.solutions)) {
-                    // Update local storage
-                    localStorage.setItem(FOLDER_STORAGE_KEY, JSON.stringify(data.folders));
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(data.solutions));
+                    // Update local storage with Safari Quota protection
+                    try {
+                        localStorage.setItem(FOLDER_STORAGE_KEY, JSON.stringify(data.folders));
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(data.solutions));
+                    } catch(quotaErr) {
+                        console.warn("[Aseta Cloud] Storage quota exceeded or restricted in browser:", quotaErr);
+                    }
                     lastCloudSyncTime = new Date();
                     if (engine && typeof engine.updateCloudStatusBadge === "function") {
                         engine.updateCloudStatusBadge("synced");
@@ -294,43 +298,16 @@
                 if (window.AccountManager && typeof window.AccountManager.getCurrentAccount === "function") {
                     const user = window.AccountManager.getCurrentAccount();
                     if (user) {
-                        if (user.isAdmin) return true;
-                        if (user.nickname && (user.nickname.toLowerCase() === "vanthua" || user.nickname.toLowerCase() === "hocsinh11")) return true;
-                        if (user.role && (user.role.includes("Admin") || user.role.includes("Quản Trị") || user.role.includes("Giáo Viên") || user.role.includes("VIP"))) return true;
+                        return (user.isAdmin === true && (user.id === "acc_vanthua" || (user.nickname && user.nickname.toLowerCase() === "vanthua")));
                     }
                 }
 
                 const currId = localStorage.getItem("azota_current_account_id") || localStorage.getItem("aseta_current_account_id");
                 if (currId === "acc_vanthua") return true;
 
-                const accountsRaw = localStorage.getItem("azota_accounts_list") || localStorage.getItem("aseta_accounts_list");
-                if (accountsRaw) {
-                    try {
-                        const accounts = JSON.parse(accountsRaw);
-                        const activeId = currId || "acc_vanthua";
-                        const acc = accounts.find(a => a.id === activeId);
-                        if (acc) {
-                            if (acc.isAdmin) return true;
-                            if (acc.nickname && (acc.nickname.toLowerCase() === "vanthua" || acc.nickname.toLowerCase() === "hocsinh11")) return true;
-                            if (acc.role && (acc.role.includes("Admin") || acc.role.includes("Quản Trị") || acc.role.includes("Giáo Viên") || acc.role.includes("VIP"))) return true;
-                        }
-                    } catch(e) {}
-                }
-
-                const profileRaw = localStorage.getItem("azota_user_profile") || localStorage.getItem("aseta_user_profile");
-                if (profileRaw) {
-                    try {
-                        const prof = JSON.parse(profileRaw);
-                        if (prof.nickname && (prof.nickname.toLowerCase() === "vanthua" || prof.nickname.toLowerCase() === "hocsinh11")) return true;
-                    } catch(e) {}
-                }
-
-                // Default initial account in system is acc_vanthua (Admin)
-                if (!currId) return true;
-
                 return false;
             } catch(e) {
-                return true; // Fallback to allow Admin testing
+                return false; // Strictest security: student default on any error
             }
         },
 
