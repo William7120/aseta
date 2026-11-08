@@ -220,6 +220,156 @@
         },
 
         // ==========================================
+        // REALTIME CLOUD SYNCHRONIZATION (CROSS-DEVICE & MULTI-USER)
+        // ==========================================
+        CLOUD_BIN_URL: CLOUD_BIN_URL,
+
+        syncFromCloud: async function(shouldRender = true) {
+            try {
+                const res = await fetch(CLOUD_BIN_URL + "?t=" + Date.now(), {
+                    method: "GET",
+                    headers: { "Cache-Control": "no-cache" }
+                });
+                if (!res.ok) return false;
+                const data = await res.json();
+                if (data && Array.isArray(data.folders) && Array.isArray(data.solutions)) {
+                    // Update local cache with cloud database
+                    localStorage.setItem(FOLDER_STORAGE_KEY, JSON.stringify(data.folders));
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(data.solutions));
+                    lastCloudSyncTime = new Date();
+                    this.updateCloudStatusBadge("synced");
+                    if (shouldRender) {
+                        this.render();
+                    }
+                    return true;
+                }
+            } catch(e) {
+                console.warn("[Aseta Cloud] Sync from cloud fallback to local:", e);
+                this.updateCloudStatusBadge("offline");
+            }
+            return false;
+        },
+
+        syncToCloud: async function() {
+            if (isCloudSyncing) return;
+            isCloudSyncing = true;
+            this.updateCloudStatusBadge("syncing");
+            try {
+                const folders = this.getAllFolders();
+                const solutions = this.getAllSolutions();
+                const payload = {
+                    folders: folders,
+                    solutions: solutions,
+                    updatedAt: new Date().toISOString(),
+                    app: "Aseta OS v2.5",
+                    author: "Admin VanThua"
+                };
+
+                const res = await fetch(CLOUD_BIN_URL, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    lastCloudSyncTime = new Date();
+                    this.updateCloudStatusBadge("synced");
+                    if (window.SecurityGuard && window.SecurityGuard.showSecurityToast) {
+                        window.SecurityGuard.showSecurityToast("☁️ Đã đồng bộ Đám Mây thành công! Tất cả bạn bè sẽ thấy bài giải ngay.");
+                    }
+                    return true;
+                } else {
+                    this.updateCloudStatusBadge("error");
+                }
+            } catch(e) {
+                console.warn("[Aseta Cloud] Push to cloud error:", e);
+                this.updateCloudStatusBadge("error");
+            } finally {
+                isCloudSyncing = false;
+            }
+            return false;
+        },
+
+        updateCloudStatusBadge: function(state) {
+            const badge = document.getElementById("solutionCloudSyncBadge");
+            if (!badge) return;
+            if (state === "syncing") {
+                badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-spin"></span><span>Đang đồng bộ...</span>`;
+                badge.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-amber-500/15 text-amber-400 border border-amber-500/25";
+            } else if (state === "synced") {
+                badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>Đám mây đã đồng bộ</span>`;
+                badge.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/25";
+            } else if (state === "offline") {
+                badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-slate-400"></span><span>Dữ liệu ngoại tuyến</span>`;
+                badge.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-slate-800 text-slate-400 border border-white/5";
+            } else {
+                badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-400"></span><span>Lỗi kết nối đám mây</span>`;
+                badge.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/25";
+            }
+        },
+
+        manualSync: function() {
+            if (window.AudioHelper && window.AudioHelper.playSuccess) window.AudioHelper.playSuccess();
+            this.syncFromCloud(true);
+            if (window.SecurityGuard && window.SecurityGuard.showSecurityToast) {
+                window.SecurityGuard.showSecurityToast("🔄 Đang kiểm tra bài giải & thư mục mới nhất từ đám mây...");
+            }
+        },
+
+        syncFromCloud: function(shouldRender = true) {
+            return SolutionCloud.syncFromCloud(shouldRender, this);
+        },
+
+        syncToCloud: function() {
+            return SolutionCloud.syncToCloud(this);
+        },
+
+        handleDirectUrlInput: function(url) {
+            const clean = (url || "").trim();
+            if (clean.startsWith("http://") || clean.startsWith("https://") || clean.startsWith("data:image/")) {
+                window._pendingSolutionImageBase64 = clean;
+                const previewContainer = document.getElementById("solutionUploadPreviewContainer");
+                const previewImg = document.getElementById("solutionUploadPreviewImg");
+                if (previewImg) previewImg.src = clean;
+                if (previewContainer) previewContainer.classList.remove("hidden");
+            }
+        },
+
+        compressImageFile: function(file, callback) {
+            if (!file) return callback(null);
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement("canvas");
+                    let width = img.width;
+                    let height = img.height;
+                    const maxDim = 850;
+                    if (width > maxDim || height > maxDim) {
+                        if (width > height) {
+                            height = Math.round((height * maxDim) / width);
+                            width = maxDim;
+                        } else {
+                            width = Math.round((width * maxDim) / height);
+                            height = maxDim;
+                        }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const compressed = canvas.toDataURL("image/jpeg", 0.68);
+                    callback(compressed);
+                };
+                img.onerror = function() {
+                    callback(e.target.result);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        },
+
+        // ==========================================
         // FOLDER CRUD
         // ==========================================
         getAllFolders: function() {
@@ -260,6 +410,7 @@
             const list = this.getAllFolders();
             list.unshift(newFolder);
             this.saveFolders(list);
+            this.syncToCloud();
             return newFolder;
         },
 
@@ -1096,16 +1247,14 @@
                 return;
             }
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                window._pendingSolutionImageBase64 = e.target.result;
+            this.compressImageFile(file, function(compressedData) {
+                window._pendingSolutionImageBase64 = compressedData;
                 const previewContainer = document.getElementById("solutionUploadPreviewContainer");
                 const previewImg = document.getElementById("solutionUploadPreviewImg");
-                if (previewImg) previewImg.src = e.target.result;
+                if (previewImg) previewImg.src = compressedData;
                 if (previewContainer) previewContainer.classList.remove("hidden");
                 if (window.AudioHelper && window.AudioHelper.playFeltStep) window.AudioHelper.playFeltStep();
-            };
-            reader.readAsDataURL(file);
+            });
         },
 
         submitUpload: function(e) {
@@ -1162,6 +1311,7 @@
             const currentList = this.getAllSolutions();
             currentList.unshift(newSolution);
             this.saveSolutions(currentList);
+            this.syncToCloud();
 
             if (window.AudioHelper && window.AudioHelper.playSuccess) {
                 window.AudioHelper.playSuccess();

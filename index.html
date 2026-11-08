@@ -656,6 +656,24 @@
                         </span>
                     </button>
 
+                    <!-- Thời Khóa Biểu (Coming Soon) -->
+                    <button type="button"
+                            id="sidebar-util-timetable"
+                            onclick="AzotaApp.openTimetable()"
+                            style="--gradient-from: #3b82f6; --gradient-to: #6366f1;"
+                            class="gradient-menu-btn nav-item-modern group"
+                            title="Thời Khóa Biểu (Sắp Ra Mắt)">
+                        <span class="gradient-menu-bg"></span>
+                        <span class="gradient-menu-glow"></span>
+                        <span class="gradient-menu-icon"><span class="text-xl">📅</span></span>
+                        <span class="gradient-menu-title">Thời Khóa Biểu</span>
+                        <span class="gradient-active-dot"></span>
+                        <span class="mobile-drawer-label hidden">
+                            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Thời Khóa Biểu</span>
+                            <span class="liquid-tag-pill bg-indigo-500/15 text-indigo-400 border border-indigo-500/25">Sắp Ra Mắt</span>
+                        </span>
+                    </button>
+
                     <!-- 2. Thống Kê Tiến Độ -->
                     <button type="button" 
                             id="sidebar-util-stats" 
@@ -1999,6 +2017,12 @@
 
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">Tải Lên Hình Ảnh Lời Giải *</label>
+                    <!-- Direct Image URL Option -->
+                    <div class="mb-2">
+                        <label class="block text-[11px] font-bold text-slate-300 mb-1">Dán Link Ảnh Trực Tiếp (Tùy chọn nếu có sẵn link):</label>
+                        <input type="url" id="solInputImageUrl" placeholder="https://... (Link ảnh trực tiếp từ Discord, Facebook, Imgur...)" oninput="SolutionEngine.handleDirectUrlInput(this.value)" class="w-full h-10 px-3 rounded-xl bg-slate-800 border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors">
+                    </div>
+                    <div class="text-[10px] text-center text-slate-400 font-bold mb-1">--- HOẶC CHỌN TỆP ẢNH TỪ MÁY (TỰ ĐỘNG NÉN ĐỒNG BỘ ĐÁM MÂY) ---</div>
                     <div class="relative border-2 border-dashed border-emerald-500/40 hover:border-emerald-500 rounded-2xl p-4 text-center cursor-pointer bg-emerald-500/5 hover:bg-emerald-500/10 transition-colors" onclick="document.getElementById('solFileInput').click()">
                         <input type="file" id="solFileInput" accept="image/*" class="hidden" onchange="SolutionEngine.handleFileSelected(this.files[0])">
                         <div class="text-2xl mb-1">🖼️</div>
