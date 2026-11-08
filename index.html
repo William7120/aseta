@@ -412,12 +412,30 @@
                             </span>
                             <span>DANH MỤC MÔN HỌC</span>
                         </span>
-                        <span class="text-[9px] px-1.5 py-0.2 rounded-md bg-emerald-500/10 text-emerald-500 font-bold">9 MÔN</span>
+                        <span class="text-[9px] px-1.5 py-0.2 rounded-md bg-emerald-500/10 text-emerald-500 font-bold">10 MÔN</span>
                     </div>
 
                     <div id="sidebarMainFoldersList" class="space-y-1 transition-all duration-300">
                         <div id="sidebarSubjectsSubTree" class="space-y-1.5 transition-all duration-300">
-                            <!-- 1. Học Tự Luận -->
+                            <!-- 1. Ngữ Văn 11 -->
+                            <button type="button" 
+                                    id="sidebar-folder-Ngữ Văn" 
+                                    onclick="AzotaApp.openFileExplorer('Ngữ Văn')" 
+                                    style="--gradient-from: #f43f5e; --gradient-to: #fb7185;" 
+                                    class="gradient-menu-btn nav-item-modern group" 
+                                    title="Ngữ Văn 11">
+                                <span class="gradient-menu-bg"></span>
+                                <span class="gradient-menu-glow"></span>
+                                <span class="gradient-menu-icon"><span class="text-xl">📖</span></span>
+                                <span class="gradient-menu-title">Ngữ Văn</span>
+                                <span class="gradient-active-dot"></span>
+                                <span class="mobile-drawer-label hidden">
+                                    <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Ngữ Văn 11</span>
+                                    <span class="liquid-tag-pill bg-rose-500/15 text-rose-400 border border-rose-500/25">NV</span>
+                                </span>
+                            </button>
+
+                            <!-- 2. Học Tự Luận -->
                             <button type="button" 
                                     id="sidebar-folder-Hoc_Tu_Luan" 
                                     onclick="AzotaApp.openFileExplorer('Hoc_Tu_Luan')" 
@@ -799,7 +817,7 @@
                         <span id="osWindowTitle" class="hidden">Aseta</span>
                         <div id="explorerAddressBar" class="hidden">
                             <span id="explorerCurrentCrumb">Thư Mục Môn Học</span>
-                            <span id="explorerCrumbBadge">9 môn</span>
+                            <span id="explorerCrumbBadge">10 môn</span>
                         </div>
                     </div>
                 </div>
@@ -1035,7 +1053,7 @@
                     <div class="p-4 rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/60 dark:bg-slate-950/60 backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-2 transition-colors duration-300">
                         <div class="flex items-center gap-2">
                             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                            <span>6 thư mục môn học • Toàn bộ bài tập đã sẵn sàng ngoại tuyến & đám mây</span>
+                            <span>10 thư mục môn học • Toàn bộ bài tập đã sẵn sàng ngoại tuyến & đám mây</span>
                         </div>
                         <div class="flex items-center gap-2 text-slate-400">
                             <span id="explorerSyncTime">Đã đồng bộ</span>
@@ -1879,6 +1897,7 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">Môn Học *</label>
                     <select id="solFolderSubject" class="w-full h-11 px-3 rounded-xl bg-slate-800 border border-white/10 text-xs font-semibold text-white focus:outline-none focus:border-amber-500 transition-colors cursor-pointer">
+                        <option value="Ngữ Văn 11">📖 Ngữ Văn 11</option>
                         <option value="Tin Học 11">💻 Tin Học 11</option>
                         <option value="Địa Lí 11">🌍 Địa Lí 11</option>
                         <option value="Học Tự Luận">📝 Học Tự Luận</option>
@@ -1938,6 +1957,7 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">Chọn Môn Học *</label>
                     <select id="solInputSubject" onchange="SolutionEngine.updateUploadFolderOptions()" class="w-full h-11 px-3 rounded-xl bg-slate-800 border border-white/10 text-xs font-semibold text-white focus:outline-none focus:border-emerald-500 transition-colors cursor-pointer">
+                        <option value="Ngữ Văn 11">📖 Ngữ Văn 11</option>
                         <option value="Tin Học 11">💻 Tin Học 11</option>
                         <option value="Địa Lí 11">🌍 Địa Lí 11</option>
                         <option value="Học Tự Luận">📝 Học Tự Luận</option>

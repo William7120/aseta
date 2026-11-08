@@ -19,6 +19,18 @@
     // 6 Mục môn học chuẩn đồng bộ 100% với Kho Đề
     const SUBJECT_CATEGORIES = [
         {
+            id: "van-11",
+            title: "Ngữ Văn 11",
+            name: "Ngữ Văn 11",
+            icon: "📖",
+            iconType: "emoji",
+            art: "dusk",
+            tag: "Ngữ Văn",
+            desc: "Đọc hiểu văn bản, nghị luận văn học, sơ đồ tư duy tác phẩm & dàn ý phân tích mẫu.",
+            color: "#f43f5e",
+            gradient: "from-rose-500/20 to-pink-500/20"
+        },
+        {
             id: "dia-11",
             title: "Địa Lí 11",
             name: "Địa Lí 11",

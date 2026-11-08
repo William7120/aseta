@@ -1237,6 +1237,26 @@ window.AzotaApp = (function() {
 
     const SUBJECT_FOLDERS = [
         {
+            id: "Ngữ Văn",
+            title: "Ngữ Văn 11",
+            abbr: "NV",
+            grade: "11",
+            icon: "📖",
+            category: "tracnghiem",
+            isLop11: true,
+            folderBoxBg: "bg-rose-950/70 border border-rose-500/40 text-rose-400",
+            badgeBg: "bg-rose-500 text-white",
+            lineBg: "bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.7)]",
+            progressTextColor: "text-rose-400 font-bold",
+            defaultProgress: 0,
+            defaultFiles: 0,
+            defaultQuestions: 0,
+            colorClass: "from-rose-500 via-pink-600 to-red-600",
+            bgLight: "bg-rose-500/10 text-rose-400 border-rose-500/20",
+            description: "Đọc hiểu văn bản, nghị luận văn học, nghị luận xã hội & phân tích tác phẩm văn học 11.",
+            tags: ["⭐ Tạm Thời Rỗng", "Nghị Luận Văn Học", "Đọc Hiểu", "Đang Cập Nhật"]
+        },
+        {
             id: "Hoc_Tu_Luan",
             title: "Học Tự Luận",
             abbr: "TL",
@@ -1855,6 +1875,18 @@ window.AzotaApp = (function() {
     // ==========================================
     const GLASS_FOLDER_SUBJECTS = [
         {
+            id: "van-11",
+            subjectName: "Ngữ Văn",
+            title: "Ngữ Văn 11",
+            meta: "0 đề • Tạm thời rỗng",
+            category: "tracnghiem",
+            art: "dusk",
+            sheets: [
+                { id: "van-11-coming", name: "Chưa có đề thi", meta: "Đang cập nhật", art: "dusk", isEmpty: true },
+                { id: "van-11-coming-2", name: "Tạm thời rỗng", meta: "Chờ import", lines: true, isEmpty: true }
+            ]
+        },
+        {
             id: "dia-11",
             subjectName: "Địa Lí",
             title: "Địa Lí 11",
@@ -2123,7 +2155,7 @@ window.AzotaApp = (function() {
         if (currentExplorerFolder === 'root') {
             if (crumbEl) crumbEl.textContent = "Thư Mục Môn Học";
             if (crumbBadge) {
-                crumbBadge.textContent = "9 môn";
+                crumbBadge.textContent = `${GLASS_FOLDER_SUBJECTS.length} môn`;
                 crumbBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-500/15 text-sky-400 border border-sky-500/20";
             }
             renderExplorerRootFolders(contentArea);
@@ -3216,8 +3248,8 @@ window.AzotaApp = (function() {
         if (currentFilter.subject === "all" && !currentFilter.search && examViewMode === "grouped") {
             if (bannerEl) bannerEl.classList.add("hidden");
             if (titleEl) titleEl.innerHTML = `<span>Danh Sách Đề Thi Theo Môn</span>`;
-            if (subTitleEl) subTitleEl.textContent = `6 Thư Mục 3D`;
-            if (countEl) countEl.textContent = `24 đề thi (6 môn)`;
+            if (subTitleEl) subTitleEl.textContent = `${GLASS_FOLDER_SUBJECTS.length} Thư Mục 3D`;
+            if (countEl) countEl.textContent = `${allExams.length} đề thi (${GLASS_FOLDER_SUBJECTS.length} môn)`;
 
             grid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center";
 
