@@ -1475,6 +1475,11 @@ window.AzotaApp = (function() {
 
         if (window.AzotaDock) {
             window.AzotaDock.init();
+        try {
+            if (window.SolutionEngine && typeof window.SolutionEngine.syncFromCloud === "function") {
+                window.SolutionEngine.syncFromCloud(false);
+            }
+        } catch(e) {}
             window.AzotaDock.setActiveApp("explorer");
         }
     }
@@ -1742,8 +1747,12 @@ window.AzotaApp = (function() {
         } else if (viewId === "solutions") {
             updateActiveAppName("Kho Lời Giải & Bài Mẫu Chi Tiết");
             updateSidebarActive("sidebar-util-solutions");
-            if (window.SolutionEngine && window.SolutionEngine.render) {
-                window.SolutionEngine.render();
+            if (window.SolutionEngine) {
+                if (typeof window.SolutionEngine.syncFromCloud === "function") {
+                    window.SolutionEngine.syncFromCloud(true);
+                } else if (typeof window.SolutionEngine.render === "function") {
+                    window.SolutionEngine.render();
+                }
             }
         } else if (viewId === "essay") {
             updateActiveAppName("Học Tự Luận Siêu Tốc — Môn Địa");

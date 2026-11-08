@@ -1559,6 +1559,18 @@
                             </p>
                         </div>
                         <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
+                            <!-- Real-time Cloud Sync Badge & Manual Sync -->
+                            <div id="solutionCloudSyncBadge" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 shadow-sm">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                <span>Đám mây đã đồng bộ</span>
+                            </div>
+                            <button type="button" 
+                                    onclick="SolutionEngine.manualSync()" 
+                                    class="px-3.5 py-2 rounded-2xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 shadow transition-colors flex items-center gap-1.5 cursor-pointer active:scale-98"
+                                    title="Kiểm tra và đồng bộ bài giải mới nhất từ đám mây">
+                                <span>🔄</span>
+                                <span>Đồng Bộ Đám Mây</span>
+                            </button>
                             <button type="button" 
                                     id="solutionOpenCreateFolderBtn"
                                     onclick="SolutionEngine.openCreateFolderModal()" 
