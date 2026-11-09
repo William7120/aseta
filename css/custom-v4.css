@@ -2947,3 +2947,102 @@ mark {
     display: none !important;
   }
 }
+
+
+/* ========================================================
+   TIMETABLE & BACKPACK CHECKLIST STYLES
+   ======================================================== */
+.timetable-glass-card {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.25s ease;
+}
+
+.timetable-period-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.timetable-period-row:hover {
+  background: rgba(255, 255, 255, 0.07);
+  transform: translateX(2px);
+}
+
+.timetable-period-row.is-current {
+  background: rgba(14, 165, 233, 0.12) !important;
+  border-color: rgba(56, 189, 248, 0.5) !important;
+  box-shadow: 0 0 15px -3px rgba(14, 165, 233, 0.3) !important;
+}
+
+.backpack-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.backpack-checkbox-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.backpack-checkbox-item.is-checked {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.3);
+  opacity: 0.65;
+}
+
+.backpack-checkbox-item.is-checked .item-text {
+  text-decoration: line-through;
+  color: #94a3b8;
+}
+
+.timetable-table-container {
+  overflow-x: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.7);
+  -webkit-overflow-scrolling: touch;
+}
+
+.timetable-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 620px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.timetable-table th,
+.timetable-table td {
+  padding: 10px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.timetable-table th {
+  background: rgba(30, 41, 59, 0.8);
+  font-weight: 700;
+  color: #cbd5e1;
+}
+
+.timetable-table th.col-today,
+.timetable-table td.col-today {
+  background: rgba(14, 165, 233, 0.12);
+  border-left-color: rgba(56, 189, 248, 0.4);
+  border-right-color: rgba(56, 189, 248, 0.4);
+}

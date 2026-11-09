@@ -2367,6 +2367,13 @@ window.AzotaApp = (function() {
                 Hiển thị ${activeSubjects.length} / ${GLASS_FOLDER_SUBJECTS.length} thư mục môn học 3D
             </div>
         `;
+        // Mini Timetable Banner for Today
+        if (window.TimetableEngine && window.TimetableEngine.renderMiniBanner) {
+            const bannerBox = document.createElement("div");
+            window.TimetableEngine.renderMiniBanner(bannerBox);
+            container.appendChild(bannerBox);
+        }
+
         container.appendChild(headerDiv);
 
         if (activeSubjects.length === 0) {
@@ -2807,68 +2814,11 @@ window.AzotaApp = (function() {
     }
 
     function renderExplorerTimetable(container) {
-        container.innerHTML = "";
-
-        const wrapper = document.createElement("div");
-        wrapper.className = "py-10 px-4 sm:px-8 max-w-3xl mx-auto space-y-6 text-center animate-fadeIn";
-
-        wrapper.innerHTML = `
-            <div class="relative w-28 h-28 mx-auto flex items-center justify-center">
-                <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-sky-500/20 via-blue-500/25 to-indigo-500/20 blur-2xl animate-pulse"></div>
-                <div class="relative w-24 h-24 rounded-3xl bg-gradient-to-tr from-sky-500 via-blue-600 to-indigo-600 text-white flex items-center justify-center text-5xl shadow-2xl shadow-blue-500/30 border border-sky-300/40 transform hover:scale-105 hover:rotate-3 transition-transform cursor-pointer" onclick="window.AudioHelper && window.AudioHelper.playBubblePop()">
-                    📅
-                </div>
-            </div>
-
-            <div class="space-y-3">
-                <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-black bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 shadow-xs">
-                    <span class="w-2 h-2 rounded-full bg-indigo-400 animate-ping"></span>
-                    <span>SẮP RA MẮT • COMING SOON</span>
-                </div>
-                <h2 class="text-2xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-                    Thời Khóa Biểu &amp; Lịch Học Lớp 11
-                </h2>
-                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-300 max-w-xl mx-auto leading-relaxed">
-                    Hệ thống thời khóa biểu thông minh, tự động đồng bộ lịch học theo buổi, đếm ngược tiết thi và gợi ý bộ đề ôn tập tương ứng chuẩn bị ra mắt!
-                </p>
-            </div>
-
-            <!-- Coming Soon Feature Highlights -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-left pt-2">
-                <div class="p-4 rounded-2xl bg-white/60 dark:bg-slate-900/60 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl transition-transform hover:-translate-y-1">
-                    <div class="w-9 h-9 rounded-xl bg-sky-500/15 text-sky-500 flex items-center justify-center text-lg font-bold mb-2.5">
-                        🗓️
-                    </div>
-                    <div class="font-bold text-xs text-slate-800 dark:text-white">Lịch Học Từng Tiết</div>
-                    <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-normal">Phân phối chương trình chi tiết từ Thứ 2 đến Thứ 7, tự nhiên &amp; xã hội.</div>
-                </div>
-
-                <div class="p-4 rounded-2xl bg-white/60 dark:bg-slate-900/60 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl transition-transform hover:-translate-y-1">
-                    <div class="w-9 h-9 rounded-xl bg-indigo-500/15 text-indigo-400 flex items-center justify-center text-lg font-bold mb-2.5">
-                        ⏰
-                    </div>
-                    <div class="font-bold text-xs text-slate-800 dark:text-white">Đếm Ngược Kiểm Tra</div>
-                    <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-normal">Nhắc nhở ngày kiểm tra 15 phút, 1 tiết và kì thi Giữa kì / Cuối kì.</div>
-                </div>
-
-                <div class="p-4 rounded-2xl bg-white/60 dark:bg-slate-900/60 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl transition-transform hover:-translate-y-1">
-                    <div class="w-9 h-9 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center text-lg font-bold mb-2.5">
-                        🎯
-                    </div>
-                    <div class="font-bold text-xs text-slate-800 dark:text-white">Gợi Ý Bộ Đề Ôn</div>
-                    <div class="text-[11px] text-slate-400 mt-1 leading-normal">Khuyên học sinh luyện đề trong Kho Đề cho môn sắp có tiết ngày mai.</div>
-                </div>
-            </div>
-
-            <div class="pt-4 flex items-center justify-center gap-3">
-                <button type="button" onclick="AzotaApp.openFileExplorer('root')" class="px-5 py-2.5 rounded-2xl text-xs font-black bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white shadow-lg shadow-sky-500/25 transition-all flex items-center gap-2 cursor-pointer active:scale-98">
-                    <span>📁</span>
-                    <span>Quay Lại Thư Mục Môn Học</span>
-                </button>
-            </div>
-        `;
-
-        container.appendChild(wrapper);
+        if (window.TimetableEngine && window.TimetableEngine.render) {
+            window.TimetableEngine.render(container);
+        } else {
+            container.innerHTML = '<div class="p-8 text-center text-slate-400">Đang tải thời khóa biểu...</div>';
+        }
     }
 
     function renderExplorerLeaderboard(container) {
