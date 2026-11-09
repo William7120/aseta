@@ -2,7 +2,7 @@
  * Aseta Timetable Engine (Thời Khóa Biểu & Balo Học Tập Lớp 11A7)
  * Trường THPT Trần Văn Giàu - Học Kỳ 1 (Áp dụng từ 09/11/2026)
  * GVCN: Nguyễn Việt Kiều Anh
- * Tự động nhận diện thứ ngày hôm nay, hiển thị lịch học và checklist đồ dùng cần mang.
+ * Tự động nhận diện thứ ngày hôm nay, hiển thị lịch học, checklist đồ dùng cần mang & ảnh gốc to của nhà trường.
  */
 
 window.TimetableEngine = (function() {
@@ -14,6 +14,7 @@ window.TimetableEngine = (function() {
         className: "11A7",
         semester: "Học Kỳ 1 (Áp dụng từ 09/11/2026)",
         homeroomTeacher: "Nguyễn Việt Kiều Anh",
+        imageUrl: "assets/thoi_khoa_bieu_11a7.jpg",
         
         // Khung giờ các tiết học chuẩn THPT
         timeSlots: {
@@ -261,7 +262,8 @@ window.TimetableEngine = (function() {
 
     // State
     let activeDayCode = null; // T2, T3, T4, T5, T6, or 'ALL'
-    let currentViewMode = 'day'; // 'day' or 'fullweek'
+    let currentViewMode = 'day'; // 'day', 'fullweek', or 'image'
+    let imageModalZoom = 1;
 
     // 2. HÀM TỰ ĐỘNG NHẬN DIỆN THỜI GIAN & THỨ HÔM NAY
     function getTodayInfo() {
@@ -445,6 +447,13 @@ window.TimetableEngine = (function() {
 
                 <div class="flex items-center gap-2.5 flex-wrap">
                     <button type="button" 
+                            onclick="window.TimetableEngine.switchViewMode('image')" 
+                            class="px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shadow-md active:scale-98 ${currentViewMode === 'image' ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-amber-500/25 ring-2 ring-amber-400/40' : 'bg-white/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700/80 text-amber-600 dark:text-amber-400 border border-amber-500/30'}"
+                            title="Xem ảnh chụp thời khóa biểu gốc của nhà trường">
+                        <span>🖼️</span>
+                        <span>Ảnh TKB To</span>
+                    </button>
+                    <button type="button" 
                             onclick="window.TimetableEngine.switchViewMode('fullweek')" 
                             class="px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shadow-md active:scale-98 ${currentViewMode === 'fullweek' ? 'bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-sky-500/25 ring-2 ring-sky-400/40' : 'bg-white/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10'}">
                         <span>📋</span>
@@ -483,7 +492,6 @@ window.TimetableEngine = (function() {
         todayBtn.onclick = () => {
             if (window.AudioHelper && window.AudioHelper.playClick) window.AudioHelper.playClick();
             currentViewMode = 'day';
-            // Nếu hôm nay là cuối tuần thì mở T2 nhưng thông báo rõ
             activeDayCode = info.isWeekend ? "T2" : info.todayCode;
             render(container);
         };
@@ -515,7 +523,27 @@ window.TimetableEngine = (function() {
             tabsContainer.appendChild(tabBtn);
         });
 
-        // 3. Phím tắt buổi tối: "Soạn cặp ngày mai"
+        // 3. Tab "Ảnh Gốc TKB To"
+        const isImageView = (currentViewMode === 'image');
+        const imgTabBtn = document.createElement("button");
+        imgTabBtn.type = "button";
+        imgTabBtn.className = `shrink-0 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-xs ${
+            isImageView 
+                ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md shadow-amber-500/25 ring-2 ring-amber-400/40' 
+                : 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/25'
+        }`;
+        imgTabBtn.innerHTML = `
+            <span>🖼️</span>
+            <span>Ảnh Gốc TKB</span>
+        `;
+        imgTabBtn.onclick = () => {
+            if (window.AudioHelper && window.AudioHelper.playClick) window.AudioHelper.playClick();
+            currentViewMode = 'image';
+            render(container);
+        };
+        tabsContainer.appendChild(imgTabBtn);
+
+        // 4. Phím tắt buổi tối: "Soạn cặp ngày mai"
         if (info.isEvening && !info.isWeekend && info.todayCode !== 'T6') {
             const tomorrowBtn = document.createElement("button");
             tomorrowBtn.type = "button";
@@ -541,7 +569,9 @@ window.TimetableEngine = (function() {
 
         container.appendChild(wrapper);
 
-        if (currentViewMode === 'fullweek') {
+        if (currentViewMode === 'image') {
+            renderImageView(mainContentArea);
+        } else if (currentViewMode === 'fullweek') {
             renderFullWeekView(mainContentArea);
         } else {
             renderDayView(activeDayCode, mainContentArea);
@@ -576,18 +606,30 @@ window.TimetableEngine = (function() {
                             <div class="text-sm sm:text-base font-black text-slate-900 dark:text-white">${dayData.name} • Đang áp dụng lịch học chính khóa</div>
                         </div>
                     </div>
-                    <div class="text-xs font-semibold px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30">
-                        ${dayData.morning.filter(Boolean).length} tiết Sáng • ${dayData.afternoon.filter(Boolean).length} tiết Chiều
+                    <div class="flex items-center gap-2">
+                        <button type="button" 
+                                onclick="window.TimetableEngine.openImageModal()" 
+                                class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/80 dark:bg-slate-800/80 hover:bg-slate-100 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-white/10 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs">
+                            <span>🖼️</span><span>Xem Ảnh TKB To</span>
+                        </button>
+                        <div class="text-xs font-semibold px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30">
+                            ${dayData.morning.filter(Boolean).length} tiết Sáng • ${dayData.afternoon.filter(Boolean).length} tiết Chiều
+                        </div>
                     </div>
                 </div>
             `;
         } else if (info.isWeekend && dayCode === "T2") {
             bannerHtml = `
-                <div class="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 to-orange-500/10 border border-amber-500/25 backdrop-blur-md flex items-center gap-3">
-                    <span class="text-2xl">🌴</span>
-                    <div class="text-xs sm:text-sm text-amber-700 dark:text-amber-200">
-                        <span class="font-bold">Hôm nay là cuối tuần (Nghỉ học)!</span> Đang gợi ý thời khóa biểu <span class="font-bold underline">${dayData.name}</span> để bạn chuẩn bị sách vở và đề cương cho đầu tuần mới.
+                <div class="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 to-orange-500/10 border border-amber-500/25 backdrop-blur-md flex items-center justify-between gap-3 flex-wrap">
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">🌴</span>
+                        <div class="text-xs sm:text-sm text-amber-700 dark:text-amber-200">
+                            <span class="font-bold">Hôm nay là cuối tuần (Nghỉ học)!</span> Đang gợi ý thời khóa biểu <span class="font-bold underline">${dayData.name}</span> để bạn chuẩn bị sách vở và đề cương cho đầu tuần mới.
+                        </div>
                     </div>
+                    <button type="button" onclick="window.TimetableEngine.openImageModal()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-500 border border-amber-500/30 cursor-pointer">
+                        <span>🖼️</span> Xem Ảnh TKB To
+                    </button>
                 </div>
             `;
         }
@@ -735,8 +777,8 @@ window.TimetableEngine = (function() {
             <!-- Danh sách từng môn -->
             <div class="space-y-3.5" id="backpackSuppliesList"></div>
 
-            <!-- Gợi ý bổ sung -->
-            <div class="pt-2 text-[11px] text-slate-400 leading-relaxed border-t border-slate-200/60 dark:border-white/5 space-y-1">
+            <!-- Gợi ý bổ sung & Nút xem ảnh to -->
+            <div class="pt-2 text-[11px] text-slate-400 leading-relaxed border-t border-slate-200/60 dark:border-white/5 space-y-2">
                 <div class="flex items-start gap-1.5">
                     <span>💡</span>
                     <span><strong class="text-slate-700 dark:text-slate-300">Đồ dùng luôn mang:</strong> Bút bi, thước kẻ, máy tính Casio, nước uống cá nhân.</span>
@@ -744,6 +786,13 @@ window.TimetableEngine = (function() {
                 <div class="flex items-start gap-1.5">
                     <span>⚠️</span>
                     <span>Chỉ mang chuyên đề Văn/Lý khi thầy cô có dặn trước.</span>
+                </div>
+                <div class="pt-1">
+                    <button type="button" 
+                            onclick="window.TimetableEngine.openImageModal()" 
+                            class="w-full py-2 rounded-xl text-xs font-bold bg-amber-500/15 hover:bg-amber-500/25 text-amber-500 dark:text-amber-300 border border-amber-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs">
+                        <span>🖼️</span><span>Xem Bản Ảnh Gốc TKB Của Trường</span>
+                    </button>
                 </div>
             </div>
         `;
@@ -885,7 +934,79 @@ window.TimetableEngine = (function() {
         return row;
     }
 
-    // 6. RENDER GIAO DIỆN TOÀN BỘ TUẦN (GRID TABLE CHUẨN THPT)
+    // 6. RENDER GIAO DIỆN XEM ẢNH GỐC TO CỦA THỜI KHÓA BIỂU
+    function renderImageView(container) {
+        const targetContainer = container || document.getElementById("timetableMainContentArea");
+        if (!targetContainer) return;
+        targetContainer.innerHTML = "";
+
+        const info = getTodayInfo();
+
+        const imgWrapper = document.createElement("div");
+        imgWrapper.className = "space-y-6 animate-fadeIn";
+
+        // Thanh công cụ trên ảnh
+        const topBar = document.createElement("div");
+        topBar.className = "p-4 rounded-2xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl shadow-lg flex items-center justify-between flex-wrap gap-3";
+        topBar.innerHTML = `
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center text-xl shrink-0">
+                    🖼️
+                </div>
+                <div>
+                    <h3 class="font-black text-sm sm:text-base text-slate-900 dark:text-white">Ảnh Chụp Thời Khóa Biểu Nhà Trường (Bản Gốc To)</h3>
+                    <div class="text-[11px] text-slate-400">Trường THPT Trần Văn Giàu • Lớp 11A7 • GVCN: Nguyễn Việt Kiều Anh</div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 flex-wrap">
+                <button type="button" 
+                        onclick="window.TimetableEngine.openImageModal()" 
+                        class="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white shadow-md shadow-sky-500/25 transition-all flex items-center gap-1.5 cursor-pointer active:scale-95">
+                    <span>🔍</span><span>Phóng To Toàn Màn Hình</span>
+                </button>
+                <a href="${TIMETABLE_CONFIG.imageUrl}" 
+                   download="Thoi_Khoa_Bieu_11A7_THPT_Tran_Van_Giau.jpg" 
+                   class="px-3.5 py-2 rounded-xl text-xs font-bold bg-white/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 transition-all flex items-center gap-1.5 cursor-pointer">
+                    <span>📥</span><span>Tải Ảnh Gốc</span>
+                </a>
+                <button type="button" 
+                        onclick="window.TimetableEngine.switchViewMode('day', '${info.isWeekend ? 'T2' : info.todayCode}')" 
+                        class="px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-500/10 hover:bg-sky-500/20 text-sky-500 dark:text-sky-400 border border-sky-500/25 transition-all flex items-center gap-1.5 cursor-pointer">
+                    <span>🎒</span><span>Xem Lịch &amp; Soạn Balo</span>
+                </button>
+            </div>
+        `;
+        imgWrapper.appendChild(topBar);
+
+        // KHUNG HIỂN THỊ ẢNH TO
+        const cardEl = document.createElement("div");
+        cardEl.className = "p-3 sm:p-6 rounded-3xl bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl shadow-2xl text-center space-y-4";
+        cardEl.innerHTML = `
+            <div class="relative rounded-2xl overflow-hidden border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-950 p-2 sm:p-4 cursor-pointer group shadow-inner" 
+                 onclick="window.TimetableEngine.openImageModal()" 
+                 title="Bấm vào ảnh để phóng to toàn màn hình">
+                <img src="${TIMETABLE_CONFIG.imageUrl}" 
+                     alt="Thời khóa biểu Lớp 11A7 Trường THPT Trần Văn Giàu" 
+                     class="w-full max-w-4xl mx-auto h-auto rounded-xl shadow-lg transition-transform duration-300 group-hover:scale-[1.015]">
+                
+                <div class="absolute inset-0 bg-slate-900/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span class="px-5 py-2.5 rounded-2xl bg-black/80 text-white text-xs font-black backdrop-blur-md border border-white/20 shadow-2xl flex items-center gap-2 transform group-hover:scale-105 transition-transform">
+                        <span>🔍</span><span>Nhấp để phóng to toàn màn hình</span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+                <span>💡 Bấm trực tiếp vào ảnh để mở chế độ xem phóng to chi tiết.</span>
+            </div>
+        `;
+        imgWrapper.appendChild(cardEl);
+
+        targetContainer.appendChild(imgWrapper);
+    }
+
+    // 7. RENDER GIAO DIỆN TOÀN BỘ TUẦN (GRID TABLE CHUẨN THPT + ẢNH GỐC)
     function renderFullWeekView(container) {
         const targetContainer = container || document.getElementById("timetableMainContentArea");
         if (!targetContainer) return;
@@ -903,12 +1024,20 @@ window.TimetableEngine = (function() {
             <div class="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
                 <span>📋 Bảng Phân Phối Tiết Học Toàn Bộ Tuần Lớp 11A7</span>
             </div>
-            <button type="button" 
-                    onclick="window.TimetableEngine.switchViewMode('day', '${info.isWeekend ? 'T2' : info.todayCode}')" 
-                    class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-sky-500/15 hover:bg-sky-500/25 text-sky-400 border border-sky-500/30 transition-all flex items-center gap-1.5 cursor-pointer">
-                <span>🎒</span>
-                <span>Xem Chi Tiết &amp; Soạn Balo Hôm Nay</span>
-            </button>
+            <div class="flex items-center gap-2">
+                <button type="button" 
+                        onclick="window.TimetableEngine.openImageModal()" 
+                        class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-500/15 hover:bg-amber-500/25 text-amber-500 dark:text-amber-300 border border-amber-500/30 transition-all flex items-center gap-1.5 cursor-pointer">
+                    <span>🖼️</span>
+                    <span>Phóng To Ảnh Gốc</span>
+                </button>
+                <button type="button" 
+                        onclick="window.TimetableEngine.switchViewMode('day', '${info.isWeekend ? 'T2' : info.todayCode}')" 
+                        class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-sky-500/15 hover:bg-sky-500/25 text-sky-400 border border-sky-500/30 transition-all flex items-center gap-1.5 cursor-pointer">
+                    <span>🎒</span>
+                    <span>Soạn Balo Hôm Nay</span>
+                </button>
+            </div>
         `;
         fullWrapper.appendChild(topBar);
 
@@ -999,6 +1128,45 @@ window.TimetableEngine = (function() {
         tableCard.innerHTML = tableHtml;
         fullWrapper.appendChild(tableCard);
 
+        // BẢN ẢNH GỐC THỜI KHÓA BIỂU TO
+        const imgCard = document.createElement("div");
+        imgCard.className = "p-5 sm:p-6 rounded-3xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl shadow-lg space-y-4";
+        imgCard.innerHTML = `
+            <div class="flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-slate-200/60 dark:border-white/5">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl">🖼️</span>
+                    <div>
+                        <h3 class="font-black text-sm sm:text-base text-slate-900 dark:text-white">Ảnh Gốc Thời Khóa Biểu Nhà Trường (Bản Chuẩn)</h3>
+                        <div class="text-[11px] text-slate-400">Trường THPT Trần Văn Giàu • Lớp 11A7 • Áp dụng từ 09/11/2026</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" 
+                            onclick="window.TimetableEngine.openImageModal()" 
+                            class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-sky-500/15 hover:bg-sky-500/25 text-sky-400 border border-sky-500/30 transition-all flex items-center gap-1.5 cursor-pointer">
+                        <span>🔍</span><span>Phóng To Cực Đại</span>
+                    </button>
+                    <a href="${TIMETABLE_CONFIG.imageUrl}" 
+                       download="Thoi_Khoa_Bieu_11A7_THPT_Tran_Van_Giau.jpg" 
+                       class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/80 dark:bg-slate-800/80 hover:bg-slate-100 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-white/10 transition-all flex items-center gap-1 cursor-pointer">
+                        <span>📥</span><span>Tải Về</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="relative rounded-2xl overflow-hidden border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-950 p-2 sm:p-4 text-center cursor-pointer group shadow-inner" 
+                 onclick="window.TimetableEngine.openImageModal()" 
+                 title="Nhấp để phóng to toàn màn hình">
+                <img src="${TIMETABLE_CONFIG.imageUrl}" 
+                     alt="Thời khóa biểu Lớp 11A7 THPT Trần Văn Giàu" 
+                     class="max-w-full max-h-[550px] w-auto h-auto mx-auto rounded-xl shadow-md transition-transform duration-300 group-hover:scale-[1.015]">
+                <div class="absolute bottom-4 right-4 px-3.5 py-1.5 rounded-xl bg-slate-900/85 text-white text-xs font-black backdrop-blur-md border border-white/20 shadow-lg flex items-center gap-1.5 pointer-events-none opacity-90 group-hover:opacity-100 transition-opacity">
+                    <span>🔍</span><span>Bấm để phóng to</span>
+                </div>
+            </div>
+        `;
+        fullWrapper.appendChild(imgCard);
+
         // BẢNG TRA CỨU ĐỒ DÙNG HỌC TẬP TẤT CẢ CÁC MÔN
         const refCard = document.createElement("div");
         refCard.className = "p-6 rounded-3xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl shadow-lg space-y-4";
@@ -1030,7 +1198,126 @@ window.TimetableEngine = (function() {
         targetContainer.appendChild(fullWrapper);
     }
 
-    // 7. MINI BANNER CHO TRANG KHO ĐỀ (ROOT EXPLORER)
+    // 8. FULLSCREEN LIGHTBOX MODAL CHO ẢNH THỜI KHÓA BIỂU
+    function openImageModal() {
+        let modal = document.getElementById("timetableImageModal");
+        if (!modal) {
+            modal = document.createElement("div");
+            modal.id = "timetableImageModal";
+            modal.className = "fixed inset-0 z-[999999] bg-slate-950/95 backdrop-blur-2xl flex flex-col items-center justify-between p-3 sm:p-6 animate-fadeIn transition-all select-none";
+            
+            modal.innerHTML = `
+                <!-- Top bar controls -->
+                <div class="w-full max-w-5xl flex items-center justify-between pb-3 border-b border-white/10 shrink-0">
+                    <div class="flex items-center gap-2 text-white">
+                        <span class="text-xl">📅</span>
+                        <div>
+                            <div class="font-black text-sm sm:text-base">${TIMETABLE_CONFIG.schoolName} • Lớp ${TIMETABLE_CONFIG.className}</div>
+                            <div class="text-[11px] text-slate-400">${TIMETABLE_CONFIG.semester} • GVCN: ${TIMETABLE_CONFIG.homeroomTeacher}</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button type="button" 
+                                onclick="window.TimetableEngine.zoomImage(0.2)" 
+                                class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-lg cursor-pointer"
+                                title="Phóng to (+)">
+                            +
+                        </button>
+                        <button type="button" 
+                                onclick="window.TimetableEngine.zoomImage(-0.2)" 
+                                class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-lg cursor-pointer"
+                                title="Thu nhỏ (-)">
+                            -
+                        </button>
+                        <button type="button" 
+                                onclick="window.TimetableEngine.resetZoom()" 
+                                class="px-2.5 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center justify-center cursor-pointer"
+                                title="Khôi phục kích thước 100%">
+                            100%
+                        </button>
+                        <a href="${TIMETABLE_CONFIG.imageUrl}" 
+                           download="Thoi_Khoa_Bieu_11A7_THPT_Tran_Van_Giau.jpg" 
+                           class="px-3 h-9 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-lg">
+                            <span>📥</span><span class="hidden sm:inline">Tải Về</span>
+                        </a>
+                        <button type="button" 
+                                onclick="window.TimetableEngine.closeImageModal()" 
+                                class="w-9 h-9 rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center font-black text-base cursor-pointer shadow-lg ml-1"
+                                title="Đóng cửa sổ (ESC)">
+                            ✕
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Image container with scroll/pan support -->
+                <div class="flex-1 w-full max-w-5xl flex items-center justify-center overflow-auto p-2 sm:p-4 cursor-zoom-in" 
+                     id="timetableModalImgWrapper"
+                     onclick="window.TimetableEngine.zoomImage(0.3)">
+                    <img id="timetableModalImg" 
+                         src="${TIMETABLE_CONFIG.imageUrl}" 
+                         alt="Thời khóa biểu Lớp 11A7" 
+                         class="max-w-full max-h-[82vh] object-contain rounded-2xl shadow-2xl transition-transform duration-200">
+                </div>
+
+                <!-- Footer hint -->
+                <div class="w-full max-w-5xl pt-2 text-center text-xs text-slate-400 flex items-center justify-between shrink-0 border-t border-white/10">
+                    <span>💡 Nhấp vào ảnh hoặc dùng nút [+] [-] để phóng to chi tiết. Nhấn phím ESC để đóng.</span>
+                    <button type="button" onclick="window.TimetableEngine.closeImageModal()" class="text-xs text-slate-300 hover:text-white underline cursor-pointer">
+                        Đóng
+                    </button>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+
+            // Close on ESC key
+            window.addEventListener("keydown", function(e) {
+                if (e.key === "Escape") {
+                    window.TimetableEngine.closeImageModal();
+                }
+            });
+        }
+
+        imageModalZoom = 1;
+        const img = document.getElementById("timetableModalImg");
+        if (img) img.style.transform = `scale(1)`;
+
+        modal.classList.remove("hidden");
+        modal.style.display = "flex";
+        document.body.style.overflow = "hidden";
+
+        if (window.AudioHelper && window.AudioHelper.playClick) {
+            window.AudioHelper.playClick();
+        }
+    }
+
+    function closeImageModal() {
+        const modal = document.getElementById("timetableImageModal");
+        if (modal) {
+            modal.classList.add("hidden");
+            modal.style.display = "none";
+        }
+        document.body.style.overflow = "";
+    }
+
+    function zoomImage(delta) {
+        imageModalZoom = Math.max(0.6, Math.min(3, imageModalZoom + delta));
+        const img = document.getElementById("timetableModalImg");
+        if (img) {
+            img.style.transform = `scale(${imageModalZoom})`;
+        }
+    }
+
+    function resetZoom() {
+        imageModalZoom = 1;
+        const img = document.getElementById("timetableModalImg");
+        if (img) {
+            img.style.transform = `scale(1)`;
+        }
+    }
+
+    // 9. MINI BANNER CHO TRANG KHO ĐỀ (ROOT EXPLORER)
     function renderMiniBanner(container) {
         if (!container) return;
         container.innerHTML = "";
@@ -1053,12 +1340,19 @@ window.TimetableEngine = (function() {
                             <div class="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300">Nghỉ học chính khóa. Tự do ôn luyện đề hoặc chuẩn bị bài Thứ Hai!</div>
                         </div>
                     </div>
-                    <button type="button" 
-                            onclick="window.AzotaApp.openTimetable()" 
-                            class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-sky-600 hover:bg-sky-500 text-white shadow-md shadow-sky-600/20 transition-all flex items-center gap-1.5 cursor-pointer">
-                        <span>📅</span>
-                        <span>Xem TKB Tuần Mới</span>
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button type="button" 
+                                onclick="window.TimetableEngine.openImageModal()" 
+                                class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-white/10 hover:bg-slate-100 transition-all flex items-center gap-1 cursor-pointer">
+                            <span>🖼️</span><span>Ảnh To</span>
+                        </button>
+                        <button type="button" 
+                                onclick="window.AzotaApp.openTimetable()" 
+                                class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-sky-600 hover:bg-sky-500 text-white shadow-md shadow-sky-600/20 transition-all flex items-center gap-1.5 cursor-pointer">
+                            <span>📅</span>
+                            <span>Xem TKB Tuần Mới</span>
+                        </button>
+                    </div>
                 </div>
             `;
         } else {
@@ -1081,12 +1375,19 @@ window.TimetableEngine = (function() {
                             </div>
                         </div>
                     </div>
-                    <button type="button" 
-                            onclick="window.AzotaApp.openTimetable()" 
-                            class="px-3.5 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white shadow-md shadow-sky-500/25 transition-all flex items-center gap-1.5 cursor-pointer active:scale-95">
-                        <span>🎒</span>
-                        <span>Soạn Cặp Đi Học</span>
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button type="button" 
+                                onclick="window.TimetableEngine.openImageModal()" 
+                                class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-white/10 hover:bg-slate-100 transition-all flex items-center gap-1 cursor-pointer">
+                            <span>🖼️</span><span>Ảnh To</span>
+                        </button>
+                        <button type="button" 
+                                onclick="window.AzotaApp.openTimetable()" 
+                                class="px-3.5 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white shadow-md shadow-sky-500/25 transition-all flex items-center gap-1.5 cursor-pointer active:scale-95">
+                            <span>🎒</span>
+                            <span>Soạn Cặp Đi Học</span>
+                        </button>
+                    </div>
                 </div>
             `;
         }
@@ -1099,7 +1400,12 @@ window.TimetableEngine = (function() {
         render: render,
         renderMiniBanner: renderMiniBanner,
         renderDayView: renderDayView,
+        renderImageView: renderImageView,
         renderFullWeekView: renderFullWeekView,
+        openImageModal: openImageModal,
+        closeImageModal: closeImageModal,
+        zoomImage: zoomImage,
+        resetZoom: resetZoom,
         resetBackpackChecklist: resetBackpackChecklist,
         switchViewMode: function(mode, dayCode) {
             currentViewMode = mode;
