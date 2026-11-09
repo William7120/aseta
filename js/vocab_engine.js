@@ -1,14 +1,15 @@
 /**
- * VOCABULARY STUDY SUITE (HỆ THỐNG HỌC TỪ VỰNG THÔNG MINH)
+ * VOCABULARY STUDY SUITE (HỆ THỐNG HỌC TỪ VỰNG THÔNG MINH Aseta 2.5)
  * Dành cho Unit 4: ASEAN and Vietnam - 40 Từ Vựng Trọng Tâm THPT Trần Văn Giàu
  * 
  * Các tính năng cao cấp:
- * 1. 🎴 3D Flip Flashcards (Thẻ ghi nhớ 3D, Leitner Spaced Repetition, Auto-Play, Shuffle, Starred Filter)
- * 2. ⚡ Speed Matching Game (Trò chơi ghép cặp từ vựng tốc độ cao có bấm giờ & lưu kỷ lục)
- * 3. ✍️ Spelling & Dictation Master (Luyện nghe & viết chính tả từ vựng, tự động kiểm tra, gợi ý)
- * 4. 🎯 Quick Speed Quiz (Trắc nghiệm nhanh 4 lựa chọn phản xạ từ - nghĩa)
- * 5. 📖 Full Reference Explorer (Bảng 40 từ tra cứu trực quan, phát âm, live search)
- * 6. 🏆 LocalStorage Persistence (Lưu từ gắn sao, từ đã thuộc, kỷ lục thời gian ghép thẻ)
+ * 1. 🎴 3D Flip Flashcards (Thẻ ghi nhớ 3D, Spaced Repetition Leitner, Auto-Play, Shuffle, Starred Filter)
+ * 2. 👩‍🏫 Cô Khảo Bài Miệng 40/40 (Khảo ngẫu nhiên câu hỏi tiếng Việt của cô, lặp lại các câu sai cho đến khi thuộc 100%)
+ * 3. ⚡ Speed Matching Game (Trò chơi ghép cặp từ vựng tốc độ cao có bấm giờ & lưu kỷ lục)
+ * 4. ✍️ Spelling & Dictation Master (Luyện nghe & viết chính tả từ vựng, tự động kiểm tra, gợi ý)
+ * 5. 🎯 Quick Speed Quiz (Trắc nghiệm nhanh 4 lựa chọn phản xạ từ - nghĩa)
+ * 6. 📖 Full Reference Explorer (Bảng 40 từ tra cứu trực quan, phát âm, live search)
+ * 7. 🏆 LocalStorage Persistence (Lưu từ gắn sao, từ đã thuộc, kỷ lục thời gian ghép thẻ, tiến độ cô khảo bài)
  */
 
 (function (window) {
@@ -25,6 +26,7 @@
             typeCategory: "all",
             primaryMeaning: "tình nguyện viên; làm tình nguyện",
             fullMeaning: "tình nguyện viên; làm tình nguyện (trái nghĩa: compulsory - bắt buộc)",
+            teacherQuestion: "tình nguyện viên hoặc làm tình nguyện (trái nghĩa với bắt buộc)",
             example: "Many high school students volunteer to support local community projects.",
             exampleVi: "Nhiều học sinh cấp 3 tình nguyện hỗ trợ các dự án cộng đồng địa phương.",
             note: "Compulsory (adj) = bắt buộc, mandatory"
@@ -38,6 +40,7 @@
             typeCategory: "phrase",
             primaryMeaning: "tham gia vào",
             fullMeaning: "tham gia vào (= participate in / join)",
+            teacherQuestion: "tham gia vào một hoạt động hoặc sự kiện",
             example: "Vietnam actively takes part in various ASEAN youth exchange activities.",
             exampleVi: "Việt Nam tích cực tham gia vào nhiều hoạt động giao lưu thanh niên ASEAN.",
             note: "take part in = participate in = join"
@@ -51,6 +54,7 @@
             typeCategory: "noun",
             primaryMeaning: "sự phát triển",
             fullMeaning: "sự phát triển / phát triển / thuộc về sự phát triển",
+            teacherQuestion: "sự phát triển về kinh tế hoặc xã hội",
             example: "ASEAN countries work together for economic and cultural development.",
             exampleVi: "Các quốc gia ASEAN cùng hợp tác vì sự phát triển kinh tế và văn hóa.",
             note: "develop (v) -> development (n) -> developmental (adj)"
@@ -64,6 +68,7 @@
             typeCategory: "noun",
             primaryMeaning: "các mục tiêu",
             fullMeaning: "các mục tiêu, mục đích đặt ra",
+            teacherQuestion: "các mục tiêu hoặc mục đích đề ra",
             example: "One of our main goals is to protect regional peace and stability.",
             exampleVi: "Một trong những mục tiêu chính của chúng ta là bảo vệ hòa bình và ổn định khu vực.",
             note: "set / achieve goals = đặt ra / đạt được mục tiêu"
@@ -77,6 +82,7 @@
             typeCategory: "adj",
             primaryMeaning: "đủ tiêu chuẩn, đủ điều kiện",
             fullMeaning: "đủ tiêu chuẩn, đủ điều kiện/trình độ (cho) / bằng cấp",
+            teacherQuestion: "đủ tiêu chuẩn, đủ điều kiện hoặc trình độ cho một vị trí",
             example: "Applicants must be qualified for the ASEAN youth leadership scholarship.",
             exampleVi: "Ứng viên phải đủ điều kiện nhận học bổng lãnh đạo thanh niên ASEAN.",
             note: "be qualified for N / to V; qualification (n) = bằng cấp"
@@ -90,6 +96,7 @@
             typeCategory: "phrase",
             primaryMeaning: "đề xuất / gợi ý làm gì",
             fullMeaning: "đề xuất / gợi ý làm gì",
+            teacherQuestion: "cấu trúc đề xuất hoặc gợi ý cùng làm việc gì",
             example: "The teacher suggested organizing a cultural exchange exhibition.",
             exampleVi: "Giáo viên đề xuất tổ chức một buổi triển lãm giao lưu văn hóa.",
             note: "suggest + V-ing / suggest that S + (should) + V-bare"
@@ -103,6 +110,7 @@
             typeCategory: "phrase",
             primaryMeaning: "cảm ơn ai vì đã làm gì",
             fullMeaning: "cảm ơn ai vì đã làm việc gì đó",
+            teacherQuestion: "cấu trúc cảm ơn ai vì đã làm điều gì đó",
             example: "We thanked the delegates for sharing their inspiring experiences.",
             exampleVi: "Chúng tôi cảm ơn các đại biểu vì đã chia sẻ những kinh nghiệm truyền cảm hứng.",
             note: "thank sb for doing sth / be thankful for sth"
@@ -116,6 +124,7 @@
             typeCategory: "noun",
             primaryMeaning: "cộng đồng",
             fullMeaning: "cộng đồng",
+            teacherQuestion: "cộng đồng những người cùng chung sống hoặc lợi ích",
             example: "ASEAN represents a united and dynamic regional community.",
             exampleVi: "ASEAN đại diện cho một cộng đồng khu vực đoàn kết và năng động.",
             note: "community service = phục vụ cộng đồng"
@@ -129,6 +138,7 @@
             typeCategory: "phrase",
             primaryMeaning: "thích thú, hào hứng với",
             fullMeaning: "thích thú, hào hứng với (= fond of / interested in / excited about)",
+            teacherQuestion: "thích thú, say mê hoặc hào hứng với điều gì",
             example: "Vietnamese teenagers are very keen on joining international volunteer programs.",
             exampleVi: "Thanh thiếu niên Việt Nam rất hào hứng tham gia các chương trình tình nguyện quốc tế.",
             note: "be keen on + V-ing / N = be fond of = be interested in"
@@ -142,6 +152,7 @@
             typeCategory: "phrase",
             primaryMeaning: "phụ thuộc vào",
             fullMeaning: "phụ thuộc vào (= rely on)",
+            teacherQuestion: "phụ thuộc hoặc dựa dẫm vào ai hoặc cái gì",
             example: "The success of our presentation depends on great teamwork and preparation.",
             exampleVi: "Sự thành công của bài thuyết trình phụ thuộc vào tinh thần làm việc nhóm và chuẩn bị chu đáo.",
             note: "depend on = rely on; independent (adj) = độc lập"
@@ -155,6 +166,7 @@
             typeCategory: "noun",
             primaryMeaning: "kỹ năng lãnh đạo",
             fullMeaning: "các kỹ năng lãnh đạo",
+            teacherQuestion: "các kỹ năng lãnh đạo, dẫn dắt đội ngũ",
             example: "Leading school clubs helps students develop strong leadership skills.",
             exampleVi: "Dẫn dắt các câu lạc bộ trường học giúp học sinh rèn luyện kỹ năng lãnh đạo vững vàng.",
             note: "leader (n) -> leadership (n)"
@@ -168,6 +180,7 @@
             typeCategory: "noun",
             primaryMeaning: "sự đóng góp, cống hiến",
             fullMeaning: "sự đóng góp, cống hiến / người đóng góp / đóng góp vào",
+            teacherQuestion: "sự đóng góp, cống hiến cho tập thể hoặc xã hội",
             example: "Vietnam has made significant contributions to the prosperity of ASEAN.",
             exampleVi: "Việt Nam đã có những đóng góp to lớn vào sự thịnh vượng của ASEAN.",
             note: "make a contribution to = contribute to + V-ing/N"
@@ -181,6 +194,7 @@
             typeCategory: "noun",
             primaryMeaning: "giao lưu / trao đổi văn hóa",
             fullMeaning: "sự giao lưu / trao đổi văn hóa",
+            teacherQuestion: "sự giao lưu, trao đổi văn hóa giữa các quốc gia",
             example: "Cultural exchange festivals bring ASEAN youth closer together.",
             exampleVi: "Các lễ hội giao lưu văn hóa giúp thanh niên ASEAN gắn kết gần nhau hơn.",
             note: "culture (n) -> cultural (adj)"
@@ -194,6 +208,7 @@
             typeCategory: "noun",
             primaryMeaning: "các vấn đề thời sự, hiện nay",
             fullMeaning: "các vấn đề hiện tại / vấn đề thời sự nóng hổi",
+            teacherQuestion: "các vấn đề thời sự, vấn đề đang diễn ra hiện nay",
             example: "The summit focused on current issues such as clean energy and food security.",
             exampleVi: "Hội nghị thượng đỉnh tập trung vào các vấn đề thời sự như năng lượng sạch và an ninh lương thực.",
             note: "current (adj) = hiện nay, hiện hành"
@@ -207,6 +222,7 @@
             typeCategory: "noun",
             primaryMeaning: "biến đổi khí hậu",
             fullMeaning: "biến đổi khí hậu toàn cầu",
+            teacherQuestion: "hiện tượng biến đổi khí hậu trên trái đất",
             example: "All Southeast Asian countries are taking urgent actions to fight climate change.",
             exampleVi: "Tất cả các nước Đông Nam Á đang hành động khẩn trương để chống lại biến đổi khí hậu.",
             note: "fight / combat / tackle climate change"
@@ -220,6 +236,7 @@
             typeCategory: "adj",
             primaryMeaning: "thuận tiện, tiện lợi",
             fullMeaning: "thuận tiện, tiện lợi",
+            teacherQuestion: "thuận tiện, tiện lợi, dễ dàng sử dụng",
             example: "Online meeting apps make it convenient for delegates to discuss remotely.",
             exampleVi: "Các ứng dụng họp trực tuyến giúp các đại biểu thảo luận từ xa rất thuận tiện.",
             note: "inconvenient (adj) = bất tiện; convenience (n)"
@@ -233,6 +250,7 @@
             typeCategory: "noun",
             primaryMeaning: "khả năng, năng lực",
             fullMeaning: "khả năng, năng lực / không có khả năng / sự khuyết tật",
+            teacherQuestion: "khả năng, năng lực làm được việc gì đó",
             example: "She has an outstanding ability to communicate in multiple foreign languages.",
             exampleVi: "Cô ấy có khả năng xuất sắc trong việc giao tiếp bằng nhiều ngoại ngữ.",
             note: "have the ability to do sth; disabled (adj)"
@@ -246,6 +264,7 @@
             typeCategory: "verb",
             primaryMeaning: "xoay xở / làm được việc khó",
             fullMeaning: "đã xoay xở / thành công làm được việc gì khó khăn",
+            teacherQuestion: "xoay xở hoặc thành công làm được một việc khó khăn",
             example: "Despite technical difficulties, the organizers managed to complete the workshop on time.",
             exampleVi: "Bất chấp khó khăn kỹ thuật, ban tổ chức đã xoay xở hoàn thành buổi hội thảo đúng giờ.",
             note: "manage to do sth = succeed in doing sth"
@@ -259,6 +278,7 @@
             typeCategory: "verb",
             primaryMeaning: "đạt tới, chạm đến, tiếp cận",
             fullMeaning: "đạt tới, chạm đến, tiếp cận",
+            teacherQuestion: "đạt tới mục tiêu, chạm đến hoặc tiếp cận",
             example: "ASEAN leaders hope to reach an agreement on carbon reduction targets.",
             exampleVi: "Các nhà lãnh đạo ASEAN hy vọng đạt được một thỏa thuận về mục tiêu giảm phát thải carbon.",
             note: "reach an agreement / reach a goal"
@@ -272,6 +292,7 @@
             typeCategory: "verb",
             primaryMeaning: "mục đích, mục tiêu; hướng tới",
             fullMeaning: "mục đích, mục tiêu; hướng tới",
+            teacherQuestion: "mục đích, mục tiêu đề ra hoặc nhắm tới",
             example: "The campaign aims to raise youth awareness about wildlife protection.",
             exampleVi: "Chiến dịch hướng tới mục tiêu nâng cao nhận thức giới trẻ về bảo vệ động vật hoang dã.",
             note: "aim at + V-ing / aim to do sth"
@@ -285,6 +306,7 @@
             typeCategory: "adj",
             primaryMeaning: "đa dạng, nhiều loại khác nhau",
             fullMeaning: "đa dạng, nhiều loại khác nhau (= diverse)",
+            teacherQuestion: "tính từ chỉ sự đa dạng, nhiều thể loại khác nhau",
             example: "Participants come from various cultural backgrounds across Southeast Asia.",
             exampleVi: "Những người tham gia đến từ nhiều nền văn hóa đa dạng khắp Đông Nam Á.",
             note: "various = diverse; vary (v)"
@@ -298,6 +320,7 @@
             typeCategory: "noun",
             primaryMeaning: "sự đa dạng",
             fullMeaning: "sự đa dạng (= diversity / a variety of: nhiều thứ khác nhau)",
+            teacherQuestion: "danh từ chỉ sự đa dạng, phong phú nhiều loại",
             example: "The ASEAN food festival offered a wide variety of traditional dishes.",
             exampleVi: "Lễ hội ẩm thực ASEAN mang đến sự đa dạng phong phú các món ăn truyền thống.",
             note: "a variety of + plural noun = a wide range of"
@@ -311,6 +334,7 @@
             typeCategory: "noun",
             primaryMeaning: "người tham gia",
             fullMeaning: "người tham gia / sự tham gia, góp mặt, tham dự",
+            teacherQuestion: "người tham gia, người góp mặt trong sự kiện",
             example: "Each participant received a certificate of completion at the end of the summit.",
             exampleVi: "Mỗi người tham gia đều nhận được giấy chứng nhận hoàn thành khi kết thúc hội nghị.",
             note: "participate in (v) -> participant (n người) -> participation (n sự)"
@@ -324,6 +348,7 @@
             typeCategory: "phrase",
             primaryMeaning: "diễn ra (có kế hoạch trước)",
             fullMeaning: "diễn ra (= occur / happen theo lịch trình định sẵn)",
+            teacherQuestion: "diễn ra theo kế hoạch hoặc lịch trình định sẵn",
             example: "The 43rd ASEAN Summit took place in Jakarta, Indonesia.",
             exampleVi: "Hội nghị cấp cao ASEAN lần thứ 43 đã diễn ra tại Jakarta, Indonesia.",
             note: "take place (có kế hoạch) # happen (bất ngờ, ngẫu nhiên)"
@@ -337,6 +362,7 @@
             typeCategory: "verb",
             primaryMeaning: "phát sóng trực tiếp qua mạng",
             fullMeaning: "được phát sóng trực tiếp (qua mạng Internet)",
+            teacherQuestion: "được phát sóng trực tiếp qua mạng Internet",
             example: "The opening ceremony was live-streamed to millions of viewers worldwide.",
             exampleVi: "Lễ khai mạc được phát sóng trực tiếp tới hàng triệu khán giả trên toàn thế giới.",
             note: "broadcast live / streamed online in real time"
@@ -350,6 +376,7 @@
             typeCategory: "phrase",
             primaryMeaning: "nâng cao nhận thức",
             fullMeaning: "nâng cao nhận thức (về một vấn đề)",
+            teacherQuestion: "cụm từ mang nghĩa nâng cao nhận thức của mọi người",
             example: "Schools organized green campaigns to raise awareness about plastic recycling.",
             exampleVi: "Các trường học tổ chức chiến dịch xanh để nâng cao nhận thức về tái chế rác nhựa.",
             note: "raise awareness of/about sth; aware (adj) -> awareness (n)"
@@ -363,6 +390,7 @@
             typeCategory: "verb",
             primaryMeaning: "thúc đẩy, xúc tiến, quảng bá",
             fullMeaning: "thúc đẩy, xúc tiến, quảng bá",
+            teacherQuestion: "thúc đẩy, xúc tiến hoặc quảng bá cái gì",
             example: "The program aims to promote friendship and mutual understanding among member states.",
             exampleVi: "Chương trình nhằm thúc đẩy tình hữu nghị và sự thấu hiểu lẫn nhau giữa các nước thành viên.",
             note: "promote tourism / friendship / peace; promotion (n)"
@@ -376,6 +404,7 @@
             typeCategory: "verb",
             primaryMeaning: "tăng cường, củng cố",
             fullMeaning: "tăng cường, củng cố, làm mạnh thêm",
+            teacherQuestion: "động từ chỉ hành động tăng cường, củng cố cho vững mạnh hơn",
             example: "Education partnerships help strengthen bilateral relations between nations.",
             exampleVi: "Hợp tác giáo dục giúp tăng cường mối quan hệ song phương giữa các quốc gia.",
             note: "strong (adj) -> strength (n) -> strengthen (v)"
@@ -389,6 +418,7 @@
             typeCategory: "noun",
             primaryMeaning: "mối quan hệ (ngoại giao / tình cảm)",
             fullMeaning: "mối quan hệ (relations: ngoại giao, đối ngoại / relationship: tình cảm, bạn bè, gia đình)",
+            teacherQuestion: "mối quan hệ ngoại giao giữa các quốc gia",
             example: "Vietnam continues to expand diplomatic relations with countries around the globe.",
             exampleVi: "Việt Nam tiếp tục mở rộng quan hệ ngoại giao với các nước trên toàn cầu.",
             note: "diplomatic relations (ngoại giao) # close personal relationship"
@@ -402,6 +432,7 @@
             typeCategory: "verb",
             primaryMeaning: "đại diện cho",
             fullMeaning: "đại diện cho (quốc gia, tổ chức, tập thể)",
+            teacherQuestion: "đại diện cho một quốc gia, tổ chức hoặc tập thể",
             example: "Ten youth ambassadors were selected to represent Vietnam at the summit.",
             exampleVi: "Mười đại sứ trẻ đã được chọn để đại diện cho Việt Nam tại hội nghị thượng đỉnh.",
             note: "represent a country / an organization"
@@ -415,6 +446,7 @@
             typeCategory: "noun",
             primaryMeaning: "người đại diện, đại biểu",
             fullMeaning: "người đại diện, đại biểu (adj: tiêu biểu)",
+            teacherQuestion: "người đại diện, đại biểu phát biểu ý kiến",
             example: "The representative of the Ministry of Foreign Affairs delivered the keynote speech.",
             exampleVi: "Đại diện của Bộ Ngoại giao đã có bài phát biểu quan trọng.",
             note: "Lưu ý đuôi -ive nhưng đây là danh từ chỉ người đại diện!"
@@ -428,6 +460,7 @@
             typeCategory: "adj",
             primaryMeaning: "mở mang tầm mắt, khai sáng",
             fullMeaning: "mở mang tầm mắt, đem lại hiểu biết mới mẻ",
+            teacherQuestion: "mở mang tầm mắt, đem lại trải nghiệm bất ngờ thú vị",
             example: "Visiting heritage sites across Southeast Asia was an eye-opening journey.",
             exampleVi: "Tham quan các di sản khắp Đông Nam Á là một chuyến đi mở mang tầm mắt.",
             note: "an eye-opening experience / journey"
@@ -441,6 +474,7 @@
             typeCategory: "noun",
             primaryMeaning: "cơ hội",
             fullMeaning: "cơ hội (= chance)",
+            teacherQuestion: "cơ hội tốt để làm một điều gì đó",
             example: "Studying abroad provides students with the opportunity to explore new cultures.",
             exampleVi: "Du học mang lại cho học sinh cơ hội khám phá những nền văn hóa mới.",
             note: "take / miss / seize an opportunity to do sth"
@@ -454,6 +488,7 @@
             typeCategory: "noun",
             primaryMeaning: "sự bình đẳng",
             fullMeaning: "sự bình đẳng / bình đẳng giới (gender equality)",
+            teacherQuestion: "sự bình đẳng, công bằng trong xã hội",
             example: "Promoting gender equality is an essential goal for modern society.",
             exampleVi: "Thúc đẩy bình đẳng giới là một mục tiêu thiết yếu của xã hội hiện đại.",
             note: "equal (adj) -> equality (n) # inequality"
@@ -467,6 +502,7 @@
             typeCategory: "phrase",
             primaryMeaning: "có kinh nghiệm làm việc cộng đồng",
             fullMeaning: "có kinh nghiệm làm việc cộng đồng",
+            teacherQuestion: "cụm từ có kinh nghiệm tham gia các hoạt động cộng đồng",
             example: "Candidates who have community work experience are highly preferred.",
             exampleVi: "Những ứng viên có kinh nghiệm làm việc cộng đồng được ưu tiên rất cao.",
             note: "work experience (danh từ không đếm được)"
@@ -480,6 +516,7 @@
             typeCategory: "phrase",
             primaryMeaning: "là những người nói tự tin",
             fullMeaning: "là những người nói tự tin trước công chúng",
+            teacherQuestion: "là những người nói, diễn giả tự tin trước đám đông",
             example: "Debate clubs train young students to be confident speakers in public.",
             exampleVi: "Các câu lạc bộ tranh biện rèn luyện học sinh trẻ trở thành những người nói tự tin trước đám đông.",
             note: "confidence (n) -> confident (adj) -> speak (v) -> speaker (n)"
@@ -493,6 +530,7 @@
             typeCategory: "phrase",
             primaryMeaning: "có kỹ năng làm việc nhóm",
             fullMeaning: "có kỹ năng làm việc nhóm hiệu quả",
+            teacherQuestion: "có kỹ năng phối hợp làm việc nhóm hiệu quả",
             example: "To complete complex group projects, students must have good teamwork skills.",
             exampleVi: "Để hoàn thành các dự án nhóm phức tạp, học sinh phải có kỹ năng làm việc nhóm tốt.",
             note: "teamwork spirit = tinh thần đồng đội"
@@ -506,6 +544,7 @@
             typeCategory: "noun",
             primaryMeaning: "kỹ năng thực hành, thực tế",
             fullMeaning: "kỹ năng thực hành, kỹ năng thực tế",
+            teacherQuestion: "các kỹ năng thực hành, thực tế trong đời sống",
             example: "Workshops equip young volunteers with practical skills for emergency response.",
             exampleVi: "Các buổi tập huấn trang bị cho tình nguyện viên trẻ các kỹ năng thực tế để ứng phó khẩn cấp.",
             note: "practice (n) -> practical (adj) # theoretical (lý thuyết)"
@@ -519,6 +558,7 @@
             typeCategory: "phrase",
             primaryMeaning: "thấu hiểu các nền văn hóa khác nhau",
             fullMeaning: "thấu hiểu các nền văn hóa khác nhau trên thế giới",
+            teacherQuestion: "thấu hiểu và tôn trọng các nền văn hóa khác nhau",
             example: "Living with host families helps exchange students understand different cultures deeply.",
             exampleVi: "Sống cùng gia đình bản xứ giúp học sinh trao đổi thấu hiểu sâu sắc các nền văn hóa khác nhau.",
             note: "cultural diversity = sự đa dạng văn hóa"
@@ -532,6 +572,7 @@
             typeCategory: "phrase",
             primaryMeaning: "đưa ra giải pháp",
             fullMeaning: "đưa ra giải pháp giải quyết vấn đề",
+            teacherQuestion: "đưa ra giải pháp giải quyết một vấn đề nan giải",
             example: "Youth delegates collaborated to offer innovative solutions to marine pollution.",
             exampleVi: "Các đại biểu trẻ đã cùng nhau đưa ra các giải pháp sáng tạo cho vấn đề ô nhiễm biển.",
             note: "solve (v) -> solution (n) -> offer/find a solution"
@@ -542,6 +583,7 @@
     const STORAGE_KEY_STARRED = "azota_vocab_starred_u4";
     const STORAGE_KEY_MASTERED = "azota_vocab_mastered_u4";
     const STORAGE_KEY_BEST_TIME = "azota_match_best_time_u4";
+    const STORAGE_KEY_ORAL_PROGRESS = "azota_oral_progress_u4";
 
     function getStarredMap() {
         try {
@@ -605,10 +647,7 @@
 
     // PHÁT ÂM AUDIO BẢN XỨ (TTS)
     function speakWord(text) {
-        if (!('speechSynthesis' in window)) {
-            console.warn("Trình duyệt không hỗ trợ Web Speech API");
-            return;
-        }
+        if (!('speechSynthesis' in window)) return;
         try {
             window.speechSynthesis.cancel();
             const cleanWord = text.split('\n')[0].split('/')[0].split('(')[0].replace(/sb|sth|\+ V-ing/g, '').trim();
@@ -627,14 +666,76 @@
         }
     }
 
+    // PHÁT ÂM TIẾNG VIỆT GIỌNG CÔ GIÁO
+    function speakTeacherQuestion(vietnameseText) {
+        if (!('speechSynthesis' in window)) return;
+        try {
+            window.speechSynthesis.cancel();
+            const questionPrompt = `Từ nào có nghĩa là: ${vietnameseText}?`;
+            const utterance = new SpeechSynthesisUtterance(questionPrompt);
+            utterance.lang = 'vi-VN';
+            utterance.rate = 0.98;
+            utterance.pitch = 1.1; // Giọng cô giáo trẻ trung, rõ ràng
+
+            const voices = window.speechSynthesis.getVoices();
+            const viVoice = voices.find(v => v.lang.startsWith('vi') || v.name.includes('Vietnamese') || v.name.includes('Linh') || v.name.includes('An'));
+            if (viVoice) utterance.voice = viVoice;
+
+            window.speechSynthesis.speak(utterance);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    // TIỆN ÍCH SO KHỚP ĐÁP ÁN THÔNG MINH
+    function checkOralAnswer(userInput, item) {
+        if (!userInput) return false;
+        const cleanUser = userInput.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+        if (!cleanUser) return false;
+
+        // 1. So khớp với primaryWord
+        const cleanPrimary = item.primaryWord.toLowerCase().replace(/[^a-z0-9]/g, '');
+        if (cleanUser === cleanPrimary) return true;
+
+        // 2. So khớp với các biến thể trong displayWord
+        const variants = item.displayWord.split(/[\/\n;,]/).map(s => s.trim().toLowerCase().replace(/[^a-z0-9]/g, '')).filter(Boolean);
+        if (variants.includes(cleanUser)) return true;
+
+        // 3. Xử lý các tiền tố/hậu tố cấu trúc: (+ V-inf), + V-ing, sb for V-ing, for, at, in, on
+        const primaryCore = item.primaryWord.toLowerCase()
+            .replace(/\+.*$/, '')
+            .replace(/\(.*?\)/g, '')
+            .replace(/\bsb\b|\bsth\b/g, '')
+            .trim().replace(/[^a-z0-9]/g, '');
+
+        if (primaryCore && cleanUser === primaryCore) return true;
+
+        return false;
+    }
+
     // TRẠNG THÁI TOÀN CỤC CỦA MODAL
-    let currentTab = "flashcards"; // 'flashcards' | 'match' | 'spelling' | 'quiz' | 'list'
+    let currentTab = "oral"; // Mặc định mở tab Cô Khảo Bài nếu được gọi, hoặc 'flashcards'
     let flashcardIndex = 0;
     let isFlipped = false;
     let filterStarredOnly = false;
     let autoPlayTimer = null;
     let autoPlayActive = false;
     let flashcardList = [...UNIT4_VOCAB_DATA];
+
+    // ==========================================
+    // STATE: CÔ KHẢO BÀI (ORAL MASTERY DRILL)
+    // ==========================================
+    let oralRemainingList = [];   // Danh sách các từ CHƯA THUỘC (ban đầu 40 từ)
+    let oralMasteredList = [];    // Danh sách các từ ĐÃ THUỘC (ban đầu 0 từ)
+    let oralCurrentItem = null;   // Từ đang được cô hỏi
+    let oralMode = 'type';        // 'type' (gõ chữ) hoặc 'choice' (chọn 4 đáp án)
+    let oralMistakesCount = 0;    // Số lần làm sai
+    let oralQuestionNumber = 0;   // Lần khảo thứ mấy
+    let oralIsAnswered = false;   // Đã kiểm tra câu hiện tại chưa
+    let oralIsCorrect = false;    // Kết quả đúng hay sai
+    let oralFeedbackMessage = ""; // Lời cô giáo nói
+    let oralSelectedChoice = null;// Index nếu ở mode choice
+    let oralChoices = [];         // 4 lựa chọn nếu ở mode choice
 
     // State cho Game Ghép Thẻ
     let matchCards = [];
@@ -687,7 +788,7 @@
     }
 
     // MỞ VOCABULARY MASTER MODAL
-    function openVocabModal(initialTab = "flashcards") {
+    function openVocabModal(initialTab = "oral") {
         if (window.AudioHelper && window.AudioHelper.playClick) window.AudioHelper.playClick();
 
         currentTab = initialTab;
@@ -695,6 +796,11 @@
         flashcardIndex = 0;
         filterStarredOnly = false;
         stopAutoPlay();
+
+        // Khởi tạo trạng thái Cô Khảo Bài nếu chưa có
+        if (oralRemainingList.length === 0 && oralMasteredList.length === 0) {
+            initOralTest();
+        }
 
         let existingModal = document.getElementById("vocabMasterModal");
         if (existingModal) existingModal.remove();
@@ -711,20 +817,20 @@
             <!-- HEADER TÍCH HỢP -->
             <div class="px-4 sm:px-6 py-3.5 bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border-b border-slate-800 flex items-center justify-between shrink-0">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25 shrink-0 text-lg">
-                        🇬🇧
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-rose-500 via-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/25 shrink-0 text-lg">
+                        👩‍🏫
                     </div>
                     <div>
                         <div class="flex items-center gap-2 flex-wrap">
                             <h2 class="text-sm sm:text-base font-black text-white tracking-tight flex items-center gap-1.5">
-                                Unit 4: ASEAN and Vietnam
+                                Khảo Bài Miệng Unit 4: ASEAN and Vietnam
                             </h2>
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-blue-500/20 text-blue-400 border border-blue-500/30">
-                                40 Từ Trọng Tâm
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-500/20 text-rose-400 border border-rose-500/30 animate-pulse">
+                                Thuộc Đủ 40/40 Câu
                             </span>
                         </div>
                         <p class="text-[11px] text-slate-400 hidden sm:block">
-                            Hệ thống Flashcard 3D • Ghép thẻ trí nhớ • Luyện chính tả • Khảo sát 40 câu
+                            Hỏi bất kì bằng tiếng Việt • Sai làm lại đến khi thuộc 100% • 3D Flashcards • Mini Game
                         </p>
                     </div>
                 </div>
@@ -741,6 +847,9 @@
 
             <!-- TABS ĐIỀU HƯỚNG CHẾ ĐỘ HỌC -->
             <div class="px-3 sm:px-6 py-2 bg-slate-950/60 border-b border-slate-800/80 flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar shrink-0">
+                <button type="button" data-tab="oral" class="vocab-tab-btn px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
+                    <span>👩‍🏫</span> <span>Cô Khảo Bài (40/40)</span>
+                </button>
                 <button type="button" data-tab="flashcards" class="vocab-tab-btn px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
                     <span>🎴</span> <span>Flashcard 3D</span>
                 </button>
@@ -748,7 +857,7 @@
                     <span>⚡</span> <span>Ghép Thẻ Nhanh</span>
                 </button>
                 <button type="button" data-tab="spelling" class="vocab-tab-btn px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
-                    <span>✍️</span> <span>Luyện Viết & Chính Tả</span>
+                    <span>✍️</span> <span>Luyện Viết</span>
                 </button>
                 <button type="button" data-tab="quiz" class="vocab-tab-btn px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
                     <span>🎯</span> <span>Trắc Nghiệm Phản Xạ</span>
@@ -783,7 +892,7 @@
         });
 
         // Close button
-        const closeBtn = container.getElementById ? container.getElementById("vocabModalCloseBtn") : document.getElementById("vocabModalCloseBtn");
+        const closeBtn = document.getElementById("vocabModalCloseBtn");
         if (closeBtn) {
             closeBtn.addEventListener("click", closeModal);
         }
@@ -818,15 +927,15 @@
         const statsEl = document.getElementById("vocabHeaderStats");
         if (!statsEl) return;
         const starredCount = Object.keys(getStarredMap()).length;
-        const masteredCount = Object.keys(getMasteredMap()).length;
+        const oralMasteredCount = oralMasteredList.length;
         const bestTime = getBestMatchTime();
 
         statsEl.innerHTML = `
+            <span class="px-2 py-0.5 rounded-lg bg-rose-500/15 text-rose-300 border border-rose-500/20 flex items-center gap-1">
+                👩‍🏫 Thuộc: ${oralMasteredCount}/40
+            </span>
             <span class="px-2 py-0.5 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-500/20 flex items-center gap-1">
                 ⭐ ${starredCount} từ khó
-            </span>
-            <span class="px-2 py-0.5 rounded-lg bg-emerald-500/15 text-emerald-300 border border-emerald-500/20 flex items-center gap-1">
-                ✅ ${masteredCount}/40 thuộc
             </span>
             ${bestTime !== null ? `
                 <span class="px-2 py-0.5 rounded-lg bg-purple-500/15 text-purple-300 border border-purple-500/20 flex items-center gap-1">
@@ -850,7 +959,11 @@
         tabBtns.forEach(btn => {
             const tab = btn.getAttribute("data-tab");
             if (tab === currentTab) {
-                btn.className = "vocab-tab-btn px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20";
+                if (tab === 'oral') {
+                    btn.className = "vocab-tab-btn px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 text-white shadow-md shadow-pink-500/20 ring-2 ring-pink-400/40";
+                } else {
+                    btn.className = "vocab-tab-btn px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20";
+                }
             } else {
                 btn.className = "vocab-tab-btn px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer text-slate-400 hover:text-slate-200 hover:bg-slate-800/60";
             }
@@ -860,6 +973,9 @@
         if (!content) return;
 
         switch (currentTab) {
+            case "oral":
+                renderOralTab(content);
+                break;
             case "flashcards":
                 renderFlashcardsTab(content);
                 break;
@@ -880,7 +996,450 @@
     }
 
     // ==========================================
-    // 1. CHẾ ĐỘ FLASHCARD 3D
+    // 1. CHẾ ĐỘ CÔ KHẢO BÀI (ORAL MASTERY DRILL)
+    // Hỏi bất kì câu tiếng Việt, sai lặp lại đến khi thuộc 40/40
+    // ==========================================
+    function initOralTest() {
+        oralRemainingList = shuffleArray([...UNIT4_VOCAB_DATA]);
+        oralMasteredList = [];
+        oralMistakesCount = 0;
+        oralQuestionNumber = 0;
+        pickNextOralQuestion();
+    }
+
+    function pickNextOralQuestion() {
+        if (oralRemainingList.length === 0) {
+            oralCurrentItem = null;
+            return;
+        }
+        // Chọn ngẫu nhiên 1 từ trong danh sách còn lại
+        const randomIdx = Math.floor(Math.random() * oralRemainingList.length);
+        oralCurrentItem = oralRemainingList[randomIdx];
+        oralQuestionNumber++;
+        oralIsAnswered = false;
+        oralIsCorrect = false;
+        oralFeedbackMessage = "";
+        oralSelectedChoice = null;
+
+        // Sinh 4 đáp án nếu đang ở chế độ trắc nghiệm
+        const otherItems = shuffleArray(UNIT4_VOCAB_DATA.filter(x => x.stt !== oralCurrentItem.stt)).slice(0, 3);
+        oralChoices = shuffleArray([
+            { text: oralCurrentItem.primaryWord, isCorrect: true },
+            { text: otherItems[0].primaryWord, isCorrect: false },
+            { text: otherItems[1].primaryWord, isCorrect: false },
+            { text: otherItems[2].primaryWord, isCorrect: false }
+        ]);
+
+        // Đọc câu hỏi tiếng Việt của cô
+        speakTeacherQuestion(oralCurrentItem.primaryMeaning);
+    }
+
+    function renderOralTab(container) {
+        // Kiểm tra nếu đã hoàn thành đủ 40 câu
+        if (oralRemainingList.length === 0 && oralMasteredList.length === UNIT4_VOCAB_DATA.length) {
+            showOralVictoryScreen(container);
+            return;
+        }
+
+        if (!oralCurrentItem && oralRemainingList.length > 0) {
+            pickNextOralQuestion();
+        }
+
+        const masteredCount = oralMasteredList.length;
+        const totalCount = UNIT4_VOCAB_DATA.length;
+        const progressPercent = Math.round((masteredCount / totalCount) * 100);
+        const remainingCount = oralRemainingList.length;
+
+        container.className = "flex-1 overflow-y-auto p-2 sm:p-5 flex flex-col justify-between items-center";
+        container.innerHTML = `
+            <!-- Top Controls & Thống kê tiến độ thuộc bài -->
+            <div class="w-full max-w-xl flex flex-col gap-2 mb-2 px-1">
+                <div class="flex items-center justify-between text-xs text-slate-300">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="font-black text-rose-400 flex items-center gap-1.5 text-sm">
+                            <span>👩‍🏫</span> <span>Cô Đang Khảo Bài</span>
+                        </span>
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                            Đã thuộc: ${masteredCount} / ${totalCount} từ
+                        </span>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <!-- Toggle Mode: Gõ chữ vs Trắc nghiệm -->
+                        <button type="button" id="oralToggleModeBtn" class="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all flex items-center gap-1 cursor-pointer active:scale-95" title="Đổi cách trả lời: Gõ bàn phím hoặc Chọn 4 đáp án">
+                            <span>${oralMode === 'type' ? '⌨️ Chế độ Gõ chữ' : '🎯 Chọn 4 đáp án'}</span>
+                        </button>
+                        <button type="button" id="oralResetBtn" class="px-2 py-1 rounded-xl text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-all cursor-pointer" title="Khảo lại từ đầu">
+                            🔄
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Progress Bar động -->
+                <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden border border-slate-700/60 p-0.5">
+                    <div class="h-full bg-gradient-to-r from-rose-500 via-pink-500 to-emerald-500 rounded-full transition-all duration-500" style="width: ${progressPercent}%"></div>
+                </div>
+
+                <div class="flex items-center justify-between text-[11px] text-slate-400">
+                    <span>Còn lại cần thuộc: <strong class="text-white">${remainingCount} từ</strong></span>
+                    <span>Số lần làm sai / khảo lại: <strong class="${oralMistakesCount > 0 ? 'text-rose-400' : 'text-slate-400'}">${oralMistakesCount} lần</strong></span>
+                </div>
+            </div>
+
+            <!-- TEACHER CLASSROOM CARD -->
+            <div class="w-full max-w-xl p-5 sm:p-7 rounded-3xl bg-gradient-to-b from-slate-800/95 via-slate-900 to-slate-950 border-2 ${
+                oralIsAnswered 
+                    ? (oralIsCorrect ? 'border-emerald-500/70 shadow-emerald-500/20' : 'border-rose-500/70 shadow-rose-500/20') 
+                    : 'border-indigo-500/40 shadow-indigo-500/10'
+            } shadow-2xl flex flex-col justify-between my-auto transition-all">
+                
+                <!-- HỘI THOẠI CỦA CÔ GIÁO -->
+                <div class="flex items-start gap-3.5 mb-4">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-pink-500 to-rose-600 flex items-center justify-center text-2xl shadow-lg shadow-pink-500/30 shrink-0 select-none">
+                        ${oralIsAnswered ? (oralIsCorrect ? '🥰' : '🧐') : '👩‍🏫'}
+                    </div>
+                    <div class="flex-1 bg-slate-900/90 border border-slate-700/80 rounded-2xl p-3.5 relative">
+                        <div class="text-[11px] font-bold text-rose-300 flex items-center justify-between mb-1">
+                            <span>Cô Kiều Anh gọi trả lời bài cũ:</span>
+                            <button type="button" id="oralTeacherVoiceBtn" class="text-blue-400 hover:text-blue-300 font-bold flex items-center gap-1 cursor-pointer transition-all" title="Nghe cô đọc lại câu hỏi tiếng Việt">
+                                <span>🔊</span> <span class="text-[10px]">Nghe cô hỏi</span>
+                            </button>
+                        </div>
+                        <div class="text-sm sm:text-base font-black text-white leading-relaxed">
+                            "Em hãy cho cô biết từ tiếng Anh có nghĩa là:"
+                        </div>
+                        <!-- CÂU HỎI TIẾNG VIỆT TO RÕ -->
+                        <div class="text-lg sm:text-2xl font-black text-amber-300 tracking-tight my-1.5 py-1 px-3 rounded-xl bg-amber-500/10 border border-amber-500/25">
+                            👉 "${oralCurrentItem.primaryMeaning}"
+                        </div>
+                        <div class="text-[11px] text-slate-400 flex items-center gap-2">
+                            <span class="px-2 py-0.2 rounded-md bg-blue-500/15 text-blue-300 font-bold border border-blue-500/25">${oralCurrentItem.type}</span>
+                            <span>Từ này có <strong>${oralCurrentItem.primaryWord.length} chữ cái</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KHU VỰC HỌC SINH TRẢ LỜI -->
+                ${!oralIsAnswered ? `
+                    ${oralMode === 'type' ? `
+                        <!-- MODE GÕ CHỮ (NHƯ VIẾT LÊN BẢNG) -->
+                        <form id="oralAnswerForm" class="flex flex-col gap-3">
+                            <div class="relative">
+                                <input type="text" id="oralInput" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" 
+                                       placeholder="Gõ từ tiếng Anh vào đây rồi nhấn Enter..." 
+                                       class="w-full px-4 py-3 text-center text-base sm:text-lg font-black rounded-2xl bg-slate-900 border-2 border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30 transition-all">
+                            </div>
+
+                            <div class="flex items-center justify-between gap-2">
+                                <button type="button" id="oralHintBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-amber-400 border border-slate-700 transition-all cursor-pointer active:scale-95">
+                                    💡 Gợi ý chữ cái đầu
+                                </button>
+                                <button type="button" id="oralSkipBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-slate-400 hover:text-rose-400 border border-slate-700 transition-all cursor-pointer active:scale-95" title="Nếu chưa nhớ, bấm để cô chỉ bài và khảo lại sau">
+                                    ❓ Em chưa nhớ (Khảo lại sau)
+                                </button>
+                                <button type="submit" class="px-5 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white shadow-md shadow-rose-500/25 transition-all cursor-pointer active:scale-95">
+                                    Trả Lời (Enter)
+                                </button>
+                            </div>
+                        </form>
+                    ` : `
+                        <!-- MODE CHỌN 4 ĐÁP ÁN NHANH -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            ${oralChoices.map((choice, idx) => {
+                                const letters = ['A', 'B', 'C', 'D'];
+                                return `
+                                    <button type="button" data-choice-idx="${idx}" class="oral-choice-btn p-3 rounded-2xl border-2 border-slate-700 bg-slate-800/80 hover:border-pink-500 hover:bg-slate-750 text-white font-bold text-left text-xs sm:text-sm flex items-center gap-2.5 transition-all cursor-pointer active:scale-98">
+                                        <span class="w-6 h-6 rounded-lg bg-slate-700 font-black text-xs flex items-center justify-center shrink-0 text-slate-300">
+                                            ${letters[idx]}
+                                        </span>
+                                        <span class="truncate">${choice.text}</span>
+                                    </button>
+                                `;
+                            }).join('')}
+                        </div>
+                    `}
+                ` : `
+                    <!-- MÀN HÌNH PHẢN HỒI KẾT QUẢ CỦA CÔ -->
+                    <div class="p-4 rounded-2xl ${
+                        oralIsCorrect ? 'bg-emerald-950/40 border border-emerald-500/50' : 'bg-rose-950/40 border border-rose-500/50'
+                    } flex flex-col gap-2.5 animate-fadeIn">
+                        
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs sm:text-sm font-black ${oralIsCorrect ? 'text-emerald-400' : 'text-rose-400'} flex items-center gap-1.5">
+                                <span>${oralIsCorrect ? '✅ XUẤT SẮC! CÔ CỘNG 1 ĐIỂM THUỘC BÀI' : '❌ CHƯA ĐÚNG RỒI! CÔ SẼ KHẢO LẠI CÂU NÀY'}</span>
+                            </span>
+                            <button type="button" onclick="window.VocabHub.speak('${oralCurrentItem.primaryWord}')" class="text-blue-400 hover:text-blue-300 text-xs font-bold flex items-center gap-1 cursor-pointer">
+                                <span>🔊</span> <span>Nghe phát âm</span>
+                            </button>
+                        </div>
+
+                        <!-- Đáp án chuẩn -->
+                        <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-base sm:text-lg font-black text-white">${oralCurrentItem.primaryWord}</span>
+                                <span class="text-xs text-blue-400 font-mono font-bold">${oralCurrentItem.ipa}</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded-full ${getTypeBadge(oralCurrentItem.type).bg} border">${oralCurrentItem.type}</span>
+                            </div>
+                            <div class="text-xs text-emerald-300 font-bold mt-1">
+                                👉 Nghĩa: ${oralCurrentItem.primaryMeaning}
+                            </div>
+                            <div class="text-xs text-slate-400 italic mt-1">
+                                "${oralCurrentItem.example}"
+                            </div>
+                            <div class="text-[11px] text-slate-400">
+                                🇻🇳 ${oralCurrentItem.exampleVi}
+                            </div>
+                            ${oralCurrentItem.note ? `
+                                <div class="text-[10px] text-amber-300 font-bold mt-1">
+                                    📌 Lưu ý: ${oralCurrentItem.note}
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        ${!oralIsCorrect ? `
+                            <!-- BẮT BUỘC GÕ LẠI 1 LẦN NẾU SAI ĐỂ KHẮC SÂU TRÍ NHỚ -->
+                            <form id="oralRetryForm" class="flex items-center gap-2 mt-1">
+                                <input type="text" id="oralRetryInput" placeholder="Gõ lại '${oralCurrentItem.primaryWord}' để khắc sâu trí nhớ..." 
+                                       class="flex-1 px-3.5 py-2 text-xs font-bold rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-all">
+                                <button type="submit" class="px-4 py-2 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-500 text-white transition-all cursor-pointer active:scale-95 shrink-0">
+                                    Đã Nhớ, Khảo Tiếp →
+                                </button>
+                            </form>
+                        ` : `
+                            <div class="flex items-center justify-end mt-1">
+                                <button type="button" id="oralNextBtn" class="px-5 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md shadow-emerald-500/25 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5">
+                                    <span>Cô hỏi câu tiếp theo</span> <span>→</span>
+                                </button>
+                            </div>
+                        `}
+                    </div>
+                `}
+
+            </div>
+
+            <!-- Footer note -->
+            <div class="w-full max-w-xl flex items-center justify-between text-[11px] text-slate-500 mt-2 px-1">
+                <span>💡 Quy tắc: Bất kỳ câu nào trả lời sai sẽ được cô hỏi lại đến khi nào thuộc 40/40!</span>
+                <span>Tiến độ: <strong class="text-emerald-400">${masteredCount}/40 câu</strong></span>
+            </div>
+        `;
+
+        // BIND EVENTS CHO CÔ KHẢO BÀI
+        // 1. Nghe cô đọc tiếng Việt
+        const voiceBtn = container.querySelector("#oralTeacherVoiceBtn");
+        if (voiceBtn) {
+            voiceBtn.addEventListener("click", () => {
+                speakTeacherQuestion(oralCurrentItem.primaryMeaning);
+            });
+        }
+
+        // 2. Toggle Mode (Gõ chữ vs Chọn đáp án)
+        const toggleModeBtn = container.querySelector("#oralToggleModeBtn");
+        if (toggleModeBtn) {
+            toggleModeBtn.addEventListener("click", () => {
+                oralMode = (oralMode === 'type') ? 'choice' : 'type';
+                renderCurrentTab();
+            });
+        }
+
+        // 3. Reset Button
+        const resetBtn = container.querySelector("#oralResetBtn");
+        if (resetBtn) {
+            resetBtn.addEventListener("click", () => {
+                if (confirm("Em có chắc chắn muốn cô khảo bài lại từ đầu không?")) {
+                    initOralTest();
+                    renderCurrentTab();
+                }
+            });
+        }
+
+        // 4. Nếu đang ở mode nhập liệu (chưa trả lời)
+        if (!oralIsAnswered) {
+            if (oralMode === 'type') {
+                const inputEl = container.querySelector("#oralInput");
+                if (inputEl) {
+                    setTimeout(() => inputEl.focus(), 80);
+                }
+
+                // Gợi ý chữ
+                let revealed = 0;
+                const hintBtn = container.querySelector("#oralHintBtn");
+                if (hintBtn) {
+                    hintBtn.addEventListener("click", () => {
+                        revealed++;
+                        const word = oralCurrentItem.primaryWord;
+                        inputEl.value = word.slice(0, revealed);
+                        inputEl.focus();
+                    });
+                }
+
+                // Skip / Chưa nhớ
+                const skipBtn = container.querySelector("#oralSkipBtn");
+                if (skipBtn) {
+                    skipBtn.addEventListener("click", () => {
+                        handleOralAnswer(false);
+                    });
+                }
+
+                // Form submit
+                const form = container.querySelector("#oralAnswerForm");
+                if (form) {
+                    form.addEventListener("submit", (e) => {
+                        e.preventDefault();
+                        const typed = inputEl.value;
+                        const isMatch = checkOralAnswer(typed, oralCurrentItem);
+                        handleOralAnswer(isMatch);
+                    });
+                }
+            } else {
+                // Choice click
+                const choiceBtns = container.querySelectorAll(".oral-choice-btn");
+                choiceBtns.forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        const idx = parseInt(btn.getAttribute("data-choice-idx"), 10);
+                        const isMatch = oralChoices[idx].isCorrect;
+                        handleOralAnswer(isMatch);
+                    });
+                });
+            }
+        } else {
+            // Đã trả lời: Nếu đúng bấm Next, nếu sai có form Retry
+            const nextBtn = container.querySelector("#oralNextBtn");
+            if (nextBtn) {
+                nextBtn.addEventListener("click", () => {
+                    pickNextOralQuestion();
+                    renderCurrentTab();
+                });
+            }
+
+            const retryForm = container.querySelector("#oralRetryForm");
+            if (retryForm) {
+                const retryInput = container.querySelector("#oralRetryInput");
+                if (retryInput) setTimeout(() => retryInput.focus(), 80);
+
+                retryForm.addEventListener("submit", (e) => {
+                    e.preventDefault();
+                    // Chuyển sang câu tiếp theo trong hàng đợi
+                    pickNextOralQuestion();
+                    renderCurrentTab();
+                });
+            }
+        }
+    }
+
+    function handleOralAnswer(isMatch) {
+        oralIsAnswered = true;
+        oralIsCorrect = isMatch;
+
+        if (isMatch) {
+            // ĐÚNG: Cô khen, loại khỏi hàng đợi chưa thuộc, thêm vào đã thuộc!
+            if (window.AudioHelper && window.AudioHelper.playPlip) window.AudioHelper.playPlip();
+            if (window.confetti) {
+                window.confetti({ particleCount: 35, spread: 60, origin: { y: 0.7 } });
+            }
+
+            // Xóa khỏi remainingList
+            oralRemainingList = oralRemainingList.filter(x => x.stt !== oralCurrentItem.stt);
+            // Thêm vào masteredList (nếu chưa có)
+            if (!oralMasteredList.some(x => x.stt === oralCurrentItem.stt)) {
+                oralMasteredList.push(oralCurrentItem);
+            }
+
+            // Đọc phát âm tiếng Anh cho học sinh nghe lại
+            speakWord(oralCurrentItem.primaryWord);
+
+            // Tự động chuyển câu sau 1.4s nếu ở mode choice
+            if (oralMode === 'choice') {
+                setTimeout(() => {
+                    if (currentTab === 'oral' && oralIsAnswered && oralIsCorrect) {
+                        pickNextOralQuestion();
+                        renderCurrentTab();
+                    }
+                }, 1300);
+            }
+        } else {
+            // SAI: Tăng số lần sai, giữ lại trong hàng đợi để khảo lại ở các câu tiếp theo!
+            oralMistakesCount++;
+            // Xáo trộn lại remainingList để câu này xuất hiện lại bất ngờ
+            oralRemainingList = shuffleArray(oralRemainingList);
+            speakWord(oralCurrentItem.primaryWord);
+        }
+
+        renderCurrentTab();
+    }
+
+    function showOralVictoryScreen(container) {
+        if (window.confetti) {
+            window.confetti({ particleCount: 120, spread: 90, origin: { y: 0.5 } });
+        }
+
+        container.className = "flex-1 overflow-y-auto p-4 flex flex-col justify-center items-center";
+        container.innerHTML = `
+            <div class="max-w-lg w-full text-center p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950 border-2 border-emerald-500/60 shadow-2xl animate-scaleUp">
+                <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-cyan-500 flex items-center justify-center text-4xl shadow-xl shadow-emerald-500/30 mb-4 animate-bounce">
+                    👩‍🏫💯
+                </div>
+
+                <div class="inline-block px-3 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 mb-2">
+                    XUẤT SẮC ĐẠT 10 ĐIỂM BÀI KHẢO MIỆNG
+                </div>
+
+                <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight mb-2">
+                    Chúc Mừng Em Đã Thuộc Lào Lào 40/40 Từ Vựng!
+                </h3>
+                <p class="text-xs text-slate-300 mb-5 leading-relaxed">
+                    Em đã xuất sắc vượt qua toàn bộ câu hỏi bất kì bằng tiếng Việt của cô Kiều Anh. Mọi từ sai trước đó đều đã được em rèn luyện và ghi nhớ thành thạo 100%!
+                </p>
+
+                <!-- Thống kê thành tích -->
+                <div class="grid grid-cols-3 gap-2.5 p-4 rounded-2xl bg-slate-900/90 border border-slate-800 mb-6">
+                    <div class="p-2 rounded-xl bg-slate-800/60">
+                        <div class="text-[10px] text-slate-400 font-bold mb-0.5">Đã thuộc</div>
+                        <div class="text-lg sm:text-xl font-black text-emerald-400">40 / 40</div>
+                    </div>
+                    <div class="p-2 rounded-xl bg-slate-800/60">
+                        <div class="text-[10px] text-slate-400 font-bold mb-0.5">Số lượt khảo</div>
+                        <div class="text-lg sm:text-xl font-black text-blue-400">${oralQuestionNumber} lượt</div>
+                    </div>
+                    <div class="p-2 rounded-xl bg-slate-800/60">
+                        <div class="text-[10px] text-slate-400 font-bold mb-0.5">Khắc phục sai</div>
+                        <div class="text-lg sm:text-xl font-black text-amber-400">${oralMistakesCount} lần</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-center gap-3 flex-wrap">
+                    <button type="button" id="oralPlayAgainBtn" class="px-5 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white shadow-lg shadow-pink-500/25 transition-all cursor-pointer active:scale-95">
+                        🔄 Khảo Lại Từ Đầu
+                    </button>
+                    <button type="button" id="oralGoToQuizBtn" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-600 text-white transition-all cursor-pointer active:scale-95">
+                        📝 Làm Khảo Sát 40 Câu
+                    </button>
+                    <button type="button" id="oralBackToFlashBtn" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 transition-all cursor-pointer active:scale-95">
+                        🎴 Về Flashcards
+                    </button>
+                </div>
+            </div>
+        `;
+
+        container.querySelector("#oralPlayAgainBtn").addEventListener("click", () => {
+            initOralTest();
+            renderCurrentTab();
+        });
+
+        container.querySelector("#oralGoToQuizBtn").addEventListener("click", () => {
+            closeModal();
+            if (window.AzotaApp && window.AzotaApp.startExam) {
+                window.AzotaApp.startExam('ta-unit4-vocab-40', 'practice');
+            }
+        });
+
+        container.querySelector("#oralBackToFlashBtn").addEventListener("click", () => {
+            switchTab("flashcards");
+        });
+    }
+
+    // ==========================================
+    // 2. CHẾ ĐỘ FLASHCARD 3D
     // ==========================================
     function getActiveFlashcards() {
         const starred = getStarredMap();
@@ -1036,7 +1595,7 @@
                 </div>
             </div>
 
-            <!-- FLASHCARD CONTROLS: PREV / NEXT & LEITNER MEMORIZE BUTTONS -->
+            <!-- FLASHCARD CONTROLS -->
             <div class="w-full max-w-xl flex items-center justify-between gap-2 pt-1">
                 <!-- Nút Chưa Thuộc -->
                 <button type="button" id="cardUnmasterBtn" class="flex-1 py-2.5 px-2 rounded-2xl text-xs font-black bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 border border-rose-500/30 transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95" title="Đánh dấu cần ôn luyện lại (Phím X)">
@@ -1173,7 +1732,6 @@
         isFlipped = false;
         flashcardIndex = (flashcardIndex + 1) % activeCards.length;
         renderCurrentTab();
-        // Tự động phát âm từ mới
         speakWord(activeCards[flashcardIndex].primaryWord);
     }
 
@@ -1243,7 +1801,7 @@
     }
 
     // ==========================================
-    // 2. CHẾ ĐỘ SPEED MATCHING GAME (GHÉP THẺ)
+    // 3. CHẾ ĐỘ SPEED MATCHING GAME (GHÉP THẺ)
     // ==========================================
     function initMatchGame() {
         clearInterval(matchTimerInterval);
@@ -1257,7 +1815,6 @@
         const cards = [];
 
         picked.forEach((item, idx) => {
-            // Thẻ Tiếng Anh
             cards.push({
                 id: `en_${item.stt}`,
                 stt: item.stt,
@@ -1266,7 +1823,6 @@
                 subText: item.ipa,
                 isMatched: false
             });
-            // Thẻ Nghĩa Tiếng Việt
             cards.push({
                 id: `vi_${item.stt}`,
                 stt: item.stt,
@@ -1373,7 +1929,6 @@
         const card = matchCards.find(c => c.id === cardId);
         if (!card || card.isMatched) return;
 
-        // Nếu đã chọn chính thẻ này thì bỏ chọn
         if (matchSelected.some(c => c.id === cardId)) {
             matchSelected = matchSelected.filter(c => c.id !== cardId);
             renderCurrentTab();
@@ -1393,9 +1948,7 @@
             renderCurrentTab();
             const [c1, c2] = matchSelected;
 
-            // Kiểm tra xem có đúng cặp không (cùng stt và khác ngôn ngữ)
             if (c1.stt === c2.stt && c1.lang !== c2.lang) {
-                // ĐÚNG CẶP!
                 if (window.AudioHelper && window.AudioHelper.playPlip) window.AudioHelper.playPlip();
                 c1.isMatched = true;
                 c2.isMatched = true;
@@ -1403,7 +1956,6 @@
                 matchSelected = [];
 
                 if (matchMatchedCount === 6) {
-                    // HOÀN THÀNH VÁN ĐẤU!
                     clearInterval(matchTimerInterval);
                     matchIsCompleted = true;
                     const finalTime = matchElapsedSeconds;
@@ -1420,7 +1972,6 @@
                     renderCurrentTab();
                 }
             } else {
-                // SAI CẶP: Rung lắc & reset sau 500ms
                 setTimeout(() => {
                     matchSelected = [];
                     renderCurrentTab();
@@ -1476,7 +2027,7 @@
     }
 
     // ==========================================
-    // 3. CHẾ ĐỘ SPELING & DICTATION (LUYỆN VIẾT)
+    // 4. CHẾ ĐỘ SPELING & DICTATION (LUYỆN VIẾT)
     // ==========================================
     function renderSpellingTab(container) {
         if (spellingIndex >= spellingList.length) spellingIndex = 0;
@@ -1505,7 +2056,6 @@
                 </button>
                 <span class="text-xs text-blue-400 font-bold mb-3">Nhấp loa để nghe phát âm</span>
 
-                <!-- Nghĩa tiếng Việt gợi ý -->
                 <div class="text-lg sm:text-xl font-black text-emerald-400 mb-1">
                     ${currentItem.primaryMeaning}
                 </div>
@@ -1513,7 +2063,6 @@
                     (${currentItem.type}) • ${currentItem.primaryWord.length} ký tự
                 </div>
 
-                <!-- Input viết từ tiếng Anh -->
                 <form id="spellingForm" class="w-full max-w-md flex flex-col items-center gap-3">
                     <div class="w-full relative">
                         <input type="text" id="spellingInput" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" 
@@ -1546,15 +2095,12 @@
             setTimeout(() => inputEl.focus(), 100);
         }
 
-        // Tự động đọc loa
         speakWord(currentItem.primaryWord);
 
-        // Speak button
         container.querySelector("#spellingSpeakBigBtn").addEventListener("click", () => {
             speakWord(currentItem.primaryWord);
         });
 
-        // Hint button
         spellingRevealedChars = 0;
         container.querySelector("#spellingHintBtn").addEventListener("click", () => {
             spellingRevealedChars++;
@@ -1565,7 +2111,6 @@
             if (inputEl) inputEl.focus();
         });
 
-        // Form Submit Check
         container.querySelector("#spellingForm").addEventListener("submit", (e) => {
             e.preventDefault();
             const typed = (inputEl.value || "").trim().toLowerCase();
@@ -1576,7 +2121,6 @@
 
             spellingScore.total++;
             if (typed === target || typed === currentItem.primaryWord.toLowerCase().replace(/\s*\([^)]*\)/g, '').trim()) {
-                // ĐÚNG CHÍNH TẢ!
                 spellingScore.correct++;
                 if (window.AudioHelper && window.AudioHelper.playPlip) window.AudioHelper.playPlip();
                 feedback.innerHTML = `<span class="text-emerald-400">🎉 Chính xác! "${currentItem.primaryWord}"</span>`;
@@ -1588,7 +2132,6 @@
                     renderCurrentTab();
                 }, 1000);
             } else {
-                // CHƯA ĐÚNG
                 feedback.innerHTML = `<span class="text-rose-400">❌ Chưa đúng! Đáp án đúng: <strong class="text-white underline">${currentItem.primaryWord}</strong></span>`;
                 inputEl.classList.remove("border-slate-700");
                 inputEl.classList.add("border-rose-500");
@@ -1596,7 +2139,6 @@
             }
         });
 
-        // Navigation
         container.querySelector("#spellingPrevBtn").addEventListener("click", () => {
             spellingIndex = (spellingIndex - 1 + spellingList.length) % spellingList.length;
             renderCurrentTab();
@@ -1613,7 +2155,7 @@
     }
 
     // ==========================================
-    // 4. CHẾ ĐỘ TRẮC NGHIỆM PHẢN XẠ (SPEED QUIZ)
+    // 5. CHẾ ĐỘ TRẮC NGHIỆM PHẢN XẠ (SPEED QUIZ)
     // ==========================================
     function initQuiz() {
         quizCurrentIdx = 0;
@@ -1621,10 +2163,8 @@
         quizSelectedAnswer = null;
         quizAnswerSubmitted = false;
 
-        // Sinh 10 câu hỏi ngẫu nhiên
         const shuffled = shuffleArray(UNIT4_VOCAB_DATA).slice(0, 10);
         quizList = shuffled.map(item => {
-            // Lấy 3 đáp án sai ngẫu nhiên
             const otherItems = shuffleArray(UNIT4_VOCAB_DATA.filter(x => x.stt !== item.stt)).slice(0, 3);
             const options = shuffleArray([
                 { text: item.primaryMeaning, isCorrect: true, fullItem: item },
@@ -1649,7 +2189,6 @@
         }
 
         if (quizCurrentIdx >= quizList.length) {
-            // MÀN HÌNH KẾT QUẢ QUIZ
             container.className = "flex-1 overflow-y-auto p-4 flex flex-col justify-center items-center";
             container.innerHTML = `
                 <div class="max-w-md w-full text-center p-6 sm:p-8 rounded-3xl bg-slate-800/90 border border-slate-700 shadow-2xl animate-scaleUp">
@@ -1753,12 +2292,10 @@
             </div>
         `;
 
-        // Speak btn
         container.querySelector("#quizSpeakBtn").addEventListener("click", () => {
             speakWord(currentQ.questionWord);
         });
 
-        // Option click
         const optionBtns = container.querySelectorAll(".quiz-option-btn");
         optionBtns.forEach(btn => {
             btn.addEventListener("click", () => {
@@ -1776,7 +2313,6 @@
             });
         });
 
-        // Next btn
         const nextBtn = container.querySelector("#quizNextBtn");
         if (nextBtn) {
             nextBtn.addEventListener("click", () => {
@@ -1789,7 +2325,7 @@
     }
 
     // ==========================================
-    // 5. CHẾ ĐỘ BẢNG TRA CỨU TOÀN DIỆN (LIST VIEW)
+    // 6. CHẾ ĐỘ BẢNG TRA CỨU TOÀN DIỆN (LIST VIEW)
     // ==========================================
     let listSearchKeyword = "";
     let listTypeFilter = "all";
@@ -1932,13 +2468,11 @@
         const modal = document.getElementById("vocabMasterModal");
         if (!modal) return;
 
-        // Escape: Đóng modal
         if (e.key === "Escape") {
             closeModal();
             return;
         }
 
-        // Nếu đang trong input hoặc textarea thì không bắt phím tắt flashcard
         if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") {
             return;
         }
@@ -1971,12 +2505,14 @@
     window.VocabHub = {
         data: UNIT4_VOCAB_DATA,
         open: openVocabModal,
+        openOralTest: () => openVocabModal('oral'),
         openFlashcards: () => openVocabModal('flashcards'),
         openMatchGame: () => openVocabModal('match'),
         openSpelling: () => openVocabModal('spelling'),
         openQuiz: () => openVocabModal('quiz'),
         openCheatSheet: () => openVocabModal('list'),
         speak: speakWord,
+        speakTeacher: speakTeacherQuestion,
         toggleStar: (stt) => {
             toggleStarred(stt);
             renderCurrentTab();
@@ -1985,8 +2521,9 @@
 
     // Tương thích ngược với AzotaApp
     if (window.AzotaApp) {
-        window.AzotaApp.openUnit4VocabCheatSheet = () => openVocabModal('flashcards');
-        window.AzotaApp.openVocabHub = (tab) => openVocabModal(tab || 'flashcards');
+        window.AzotaApp.openUnit4VocabCheatSheet = () => openVocabModal('oral');
+        window.AzotaApp.openVocabHub = (tab) => openVocabModal(tab || 'oral');
+        window.AzotaApp.openOralTest = () => openVocabModal('oral');
         window.AzotaApp.speakVocabWord = speakWord;
     }
 

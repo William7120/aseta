@@ -3128,11 +3128,14 @@ window.AzotaApp = (function() {
                     </div>
                 </div>
                 <div class="flex items-center gap-2 shrink-0 flex-wrap">
-                    <button type="button" onclick="if(window.VocabHub){window.VocabHub.openFlashcards();}else{AzotaApp.openUnit4VocabCheatSheet();}" class="px-3.5 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white transition-all cursor-pointer flex items-center gap-1.5 shadow-md shadow-indigo-500/25 active:scale-95">
-                        <span>🎴</span> Flashcard 3D & Mini Game
+                    <button type="button" onclick="if(window.VocabHub){window.VocabHub.openOralTest();}else{AzotaApp.openUnit4VocabCheatSheet();}" class="px-3.5 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 hover:from-rose-500 hover:to-pink-500 text-white transition-all cursor-pointer flex items-center gap-1.5 shadow-md shadow-rose-500/25 active:scale-95">
+                        <span>👩‍🏫</span> Cô Khảo Bài (40/40)
+                    </button>
+                    <button type="button" onclick="if(window.VocabHub){window.VocabHub.openFlashcards();}else{AzotaApp.openUnit4VocabCheatSheet();}" class="px-3.5 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white transition-all cursor-pointer flex items-center gap-1.5 shadow-md active:scale-95">
+                        <span>🎴</span> Flashcard 3D & Game
                     </button>
                     <button type="button" onclick="if(window.VocabHub){window.VocabHub.openCheatSheet();}else{AzotaApp.openUnit4VocabCheatSheet();}" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition-all cursor-pointer flex items-center gap-1.5 shadow-md active:scale-95">
-                        <span>📖</span> Bảng 40 Từ Tra Cứu
+                        <span>📖</span> Bảng 40 Từ
                     </button>
                     <button type="button" onclick="AzotaApp.startExam('ta-unit4-vocab-40', 'practice')" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white transition-all cursor-pointer flex items-center gap-1.5 shadow-md active:scale-95">
                         <span>📝</span> Làm Khảo Sát 40 Câu

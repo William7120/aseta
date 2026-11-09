@@ -991,11 +991,18 @@ window.TimetableEngine = (function() {
             <div class="flex items-center gap-1 shrink-0">
                 ${(subjectKey === "Ngoại ngữ") ? `
                     <button type="button" 
+                            onclick="if(window.VocabHub){window.VocabHub.openOralTest();}else if(window.AzotaApp&&window.AzotaApp.openOralTest){window.AzotaApp.openOralTest();}" 
+                            class="px-2 py-0.5 rounded-lg text-[10px] font-black bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white shadow-xs transition-all flex items-center gap-1 cursor-pointer active:scale-95"
+                            title="👩‍🏫 Cô Khảo Bài Miệng: Hỏi bất kì câu tiếng Việt, làm lại đến khi thuộc 40/40">
+                        <span>👩‍🏫</span>
+                        <span>Cô Khảo Bài</span>
+                    </button>
+                    <button type="button" 
                             onclick="if(window.VocabHub){window.VocabHub.openFlashcards();}else if(window.AzotaApp&&window.AzotaApp.openUnit4VocabCheatSheet){window.AzotaApp.openUnit4VocabCheatSheet();}" 
                             class="px-2 py-0.5 rounded-lg text-[10px] font-black bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-xs transition-all flex items-center gap-1 cursor-pointer active:scale-95"
                             title="Học Flashcard 3D & Ghép Thẻ 40 từ vựng Unit 4: ASEAN and Vietnam">
                         <span>🎴</span>
-                        <span>Flashcard 40 Từ</span>
+                        <span class="hidden sm:inline">Flashcard</span>
                     </button>
                     <button type="button" 
                             onclick="window.AzotaApp.startExam('ta-unit4-vocab-40', 'practice')" 
