@@ -1375,20 +1375,20 @@ window.AzotaApp = (function() {
             title: "Tiếng Anh 11",
             abbr: "EN",
             grade: "11",
-            icon: "🌐",
+            icon: "🇬🇧",
             category: "tracnghiem",
             isLop11: true,
             folderBoxBg: "bg-blue-950/70 border border-blue-500/40 text-blue-400",
             badgeBg: "bg-blue-500 text-white",
             lineBg: "bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.7)]",
             progressTextColor: "text-blue-400 font-bold",
-            defaultProgress: 66,
-            defaultFiles: 2,
-            defaultQuestions: 45,
-            colorClass: "from-blue-600 to-cyan-500",
+            defaultProgress: 85,
+            defaultFiles: 3,
+            defaultQuestions: 85,
+            colorClass: "from-blue-600 to-indigo-600",
             bgLight: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-            description: "Đề kiểm tra giữa kỳ, Chuyên đề ngữ pháp Modal verbs, Gerund, Tenses & Vocab.",
-            tags: ["Grammar", "Vocabulary", "50 câu"]
+            description: "40 Từ vựng trọng tâm Unit 4 (ASEAN and Vietnam), Từ vựng Unit 1-2-3 & Đề Smart Cities.",
+            tags: ["Unit 4 Vocab", "40 Từ Vựng", "ASEAN", "85 câu"]
         },
         {
             id: "Toán",
@@ -1820,6 +1820,24 @@ window.AzotaApp = (function() {
     // FILE EXPLORER IMPLEMENTATION
     // ==========================================
     function openFileExplorer(folderName = 'root') {
+        const aliasMap = {
+            'anh-11': 'Tiếng Anh',
+            'ta-11': 'Tiếng Anh',
+            'tieng-anh': 'Tiếng Anh',
+            'van-11': 'Ngữ Văn',
+            'th-11': 'Tin Học',
+            'su-11': 'Lịch Sử',
+            'ls-11': 'Lịch Sử',
+            'dia-11': 'Địa Lí',
+            'gdktpl-11': 'GDKT&PL',
+            'gdkt-11': 'GDKT&PL',
+            'toan-11': 'Toán',
+            'ly-11': 'Vật Lí',
+            'tuluan': 'Hoc_Tu_Luan'
+        };
+        if (aliasMap[folderName]) {
+            folderName = aliasMap[folderName];
+        }
         currentExplorerFolder = folderName || 'root';
         explorerKeyword = '';
         const searchInput = document.getElementById("explorerSearchInput");
@@ -1978,13 +1996,13 @@ window.AzotaApp = (function() {
             id: "ta-11",
             subjectName: "Tiếng Anh",
             title: "Tiếng Anh 11",
-            meta: "2 đề • 45 câu",
+            meta: "3 đề • 85 câu",
             category: "tracnghiem",
             art: "glacier",
             sheets: [
-                { id: "ta-11-unit123", name: "Từ Vựng Unit 1, 2, 3", meta: "30 câu • 30p", art: "glacier" },
-                { id: "ta-11-smartcities", name: "Smart Cities & Future", meta: "15 câu • 20p", art: "aurora" },
-                { id: "ta-11-unit123", name: "Grammar Focus", meta: "Modal & Gerund", lines: true }
+                { id: "ta-unit4-vocab-40", name: "Unit 4: 40 Từ Vựng ASEAN", meta: "40 câu • 35p", art: "aurora" },
+                { id: "ta-vocab-unit1-2-3", name: "Từ Vựng Unit 1, 2, 3", meta: "30 câu • 30p", art: "glacier" },
+                { id: "ta-de-01", name: "Smart Cities & Future", meta: "15 câu • 20p", lines: true }
             ]
         },
         {
@@ -3093,6 +3111,34 @@ window.AzotaApp = (function() {
         `;
         container.appendChild(headerDiv);
 
+        if (subjectName === "Tiếng Anh") {
+            const tip = document.createElement("div");
+            tip.className = "mb-4 p-4 rounded-2xl bg-gradient-to-r from-blue-500/15 via-indigo-500/15 to-purple-500/10 border border-blue-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm";
+            tip.innerHTML = `
+                <div class="flex items-center gap-3 text-xs text-blue-900 dark:text-blue-100">
+                    <span class="text-2xl">🇬🇧</span>
+                    <div>
+                        <div class="font-extrabold text-sm text-blue-900 dark:text-blue-100 flex items-center gap-2">
+                            <span>Bài Học 40 Từ Vựng Unit 4: ASEAN and Vietnam</span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-blue-500 text-white">Mới Nhất</span>
+                        </div>
+                        <div class="text-slate-600 dark:text-slate-300 mt-0.5">
+                            Trích xuất 40 từ vựng cốt lõi đầu tiên từ tài liệu cương trường THPT Trần Văn Giàu. Đầy đủ phát âm, từ loại và tra cứu nhanh!
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button type="button" onclick="AzotaApp.openUnit4VocabCheatSheet()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition-all cursor-pointer flex items-center gap-1.5 shadow-md active:scale-95">
+                        <span>📖</span> Bảng 40 Từ Vựng Tra Cứu
+                    </button>
+                    <button type="button" onclick="AzotaApp.startExam('ta-unit4-vocab-40', 'practice')" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white transition-all cursor-pointer flex items-center gap-1.5 shadow-md active:scale-95">
+                        <span>⚡</span> Luyện 40 Câu Trắc Nghiệm ➜
+                    </button>
+                </div>
+            `;
+            container.appendChild(tip);
+        }
+
         if (subjectName === "Địa Lí") {
             const tip = document.createElement("div");
             tip.className = "mb-4 p-4 rounded-2xl bg-teal-500/10 border border-teal-500/25 flex flex-col sm:flex-row sm:items-center justify-between gap-3";
@@ -4193,11 +4239,247 @@ window.AzotaApp = (function() {
         }, null, "Xác Nhận Xóa Lịch Sử", "🗑️");
     }
 
+    
+    // ========================================================
+    // UNIT 4 VOCABULARY ENGINE (40 TỪ VỰNG CỐT LÕI ĐẦU TIÊN)
+    // ========================================================
+    const UNIT_4_VOCAB_DATA = [
+        { stt: 1, word: "Volunteer\nVolunteering\nCompulsory", type: "n, v\nv\nadj", meaning: "tình nguyện viên; làm tình nguyện\nbắt buộc", note: "" },
+        { stt: 2, word: "take part in", type: "v.phr", meaning: "tham gia vào (= participate in)", note: "" },
+        { stt: 3, word: "Development\ndevelop\ndevelopmental", type: "N\nv\nadj", meaning: "sự phát triển\nThuộc về sự phát triển", note: "" },
+        { stt: 4, word: "goals", type: "n", meaning: "các mục tiêu", note: "" },
+        { stt: 5, word: "qualified (for)\nqualify\nqualification", type: "Adj\nv\nn", meaning: "đủ tiêu chuẩn, đủ điều kiện/trình độ (cho)\nbằng cấp", note: "" },
+        { stt: 6, word: "suggest + V-ing", type: "v.phr", meaning: "đề xuất / gợi ý làm gì", note: "" },
+        { stt: 7, word: "thank sb for V-ing", type: "v.phr", meaning: "cảm ơn ai vì đã làm gì", note: "" },
+        { stt: 8, word: "community", type: "n", meaning: "cộng đồng", note: "" },
+        { stt: 9, word: "keen on\nkeeness", type: "phr.v\nn", meaning: "thích thú, hào hứng với (= fond of / interested in / excited about)", note: "" },
+        { stt: 10, word: "depend on", type: "phr.v", meaning: "phụ thuộc vào", note: "" },
+        { stt: 11, word: "leadership skills", type: "n.phr", meaning: "các kỹ năng lãnh đạo", note: "" },
+        { stt: 12, word: "Contribution\nmake contribution\ncontributor\ncontribute to", type: "N\nv.phr\nn\nv", meaning: "sự đóng góp, cống hiến\nngười đóng góp, cống hiến", note: "" },
+        { stt: 13, word: "cultural exchange", type: "n.phr", meaning: "sự giao lưu / trao đổi văn hóa", note: "" },
+        { stt: 14, word: "current issues", type: "n.phr", meaning: "các vấn đề hiện tại / vấn đề thời sự", note: "" },
+        { stt: 15, word: "climate change", type: "n.phr", meaning: "biến đổi khí hậu", note: "" },
+        { stt: 16, word: "convenient", type: "adj", meaning: "thuận tiện, tiện lợi", note: "" },
+        { stt: 17, word: "Ability\ninability\ndisability", type: "N\nn\nn", meaning: "khả năng, năng lực\nkhông có khả năng, bất lực\nsự khuyết tật, tàn tật", note: "" },
+        { stt: 18, word: "managed to (+ V-inf)", type: "v.phr", meaning: "đã xoay xở / thành công làm được việc gì khó khăn", note: "" },
+        { stt: 19, word: "reach", type: "v", meaning: "đạt tới, chạm đến, tiếp cận", note: "" },
+        { stt: 20, word: "aim", type: "n, v", meaning: "mục đích, mục tiêu; hướng tới", note: "" },
+        { stt: 21, word: "Various = diverse", type: "adj", meaning: "đa dạng, nhiều loại khác nhau", note: "" },
+        { stt: 22, word: "Variety = diversity\na variety of N", type: "n", meaning: "sự đa dạng", note: "" },
+        { stt: 23, word: "Participant\nparticipation", type: "N\nn", meaning: "người tham gia\nsự tham gia, góp mặt, tham dự", note: "" },
+        { stt: 24, word: "take place", type: "v.phr", meaning: "diễn ra (= occur / happen)", note: "" },
+        { stt: 25, word: "live-streamed", type: "adj/v", meaning: "được phát sóng trực tiếp (qua mạng)", note: "" },
+        { stt: 26, word: "raise awareness", type: "v.phr", meaning: "nâng cao nhận thức", note: "" },
+        { stt: 27, word: "promote", type: "v", meaning: "thúc đẩy, xúc tiến, quảng bá", note: "" },
+        { stt: 28, word: "strengthen", type: "v", meaning: "tăng cường, củng cố", note: "" },
+        { stt: 29, word: "Relation (ngoại giao, họ hàng)\nrelationship (yêu đương, bạn bè, gia đình)", type: "N\nn", meaning: "mối quan hệ", note: "" },
+        { stt: 30, word: "represent", type: "v", meaning: "đại diện cho", note: "" },
+        { stt: 31, word: "representative", type: "n (adj)", meaning: "người đại diện, đại biểu (adj: tiêu biểu)", note: "Lưu ý từ loại: n = người đại diện" },
+        { stt: 32, word: "eye-opening", type: "adj", meaning: "mở mang tầm mắt, khai sáng", note: "" },
+        { stt: 33, word: "opportunity", type: "n", meaning: "cơ hội (= chance)", note: "" },
+        { stt: 34, word: "Equality\ngender equality", type: "N\nn.phr", meaning: "sự bình đẳng\nbình đẳng giới", note: "" },
+        { stt: 35, word: "have community work experience", type: "v.phr", meaning: "có kinh nghiệm làm việc cộng đồng", note: "" },
+        { stt: 36, word: "be confident speakers", type: "v.phr", meaning: "là những người nói tự tin", note: "" },
+        { stt: 37, word: "have teamwork skills", type: "v.phr", meaning: "có kỹ năng làm việc nhóm", note: "" },
+        { stt: 38, word: "practical skills", type: "n.phr", meaning: "kỹ năng thực hành, kỹ năng thực tế", note: "" },
+        { stt: 39, word: "understand different cultures", type: "v.phr", meaning: "thấu hiểu các nền văn hóa khác nhau", note: "" },
+        { stt: 40, word: "offer solution", type: "v.phr", meaning: "đưa ra giải pháp", note: "" }
+    ];
+
+    function speakVocabWord(word) {
+        if (!window.speechSynthesis) return;
+        try {
+            window.speechSynthesis.cancel();
+            const clean = word.split('\n')[0].replace(/[=()]/g, '').trim();
+            const utter = new SpeechSynthesisUtterance(clean);
+            utter.lang = 'en-US';
+            utter.rate = 0.9;
+            window.speechSynthesis.speak(utter);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    function openUnit4VocabCheatSheet() {
+        if (window.AudioHelper && window.AudioHelper.playClick) window.AudioHelper.playClick();
+        
+        let existingModal = document.getElementById("unit4VocabModal");
+        if (existingModal) existingModal.remove();
+
+        const modal = document.createElement("div");
+        modal.id = "unit4VocabModal";
+        modal.className = "fixed inset-0 z-[120] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-fadeIn";
+
+        function renderRows(keyword = "") {
+            const kw = keyword.toLowerCase().trim();
+            const filtered = UNIT_4_VOCAB_DATA.filter(item => {
+                if (!kw) return true;
+                return item.word.toLowerCase().includes(kw) ||
+                       item.type.toLowerCase().includes(kw) ||
+                       item.meaning.toLowerCase().includes(kw) ||
+                       (item.note && item.note.toLowerCase().includes(kw));
+            });
+
+            if (filtered.length === 0) {
+                return `
+                    <tr>
+                        <td colspan="5" class="py-8 text-center text-xs text-slate-400">
+                            🔍 Không tìm thấy từ vựng nào khớp với "${keyword}"
+                        </td>
+                    </tr>
+                `;
+            }
+
+            return filtered.map(item => {
+                const wordHtml = item.word.split('\n').map(w => `<span class="block font-bold text-sky-400 dark:text-sky-300">${w}</span>`).join('');
+                const typeHtml = item.type.split('\n').map(t => `<span class="inline-block px-1.5 py-0.2 rounded text-[10px] font-bold bg-indigo-500/15 text-indigo-300 border border-indigo-500/25 mr-1 mb-1">${t}</span>`).join('');
+                const meaningHtml = item.meaning.split('\n').map(m => `<span class="block text-slate-700 dark:text-slate-200">${m}</span>`).join('');
+                const firstWord = item.word.split('\n')[0].replace(/['"]/g, "\\'");
+
+                return `
+                    <tr class="border-b border-slate-200/50 dark:border-white/5 hover:bg-sky-500/5 transition-colors">
+                        <td class="py-2.5 px-3 text-center text-xs font-black text-slate-400 w-12">
+                            ${item.stt}
+                        </td>
+                        <td class="py-2.5 px-3 text-xs">
+                            <div class="flex items-center gap-1.5">
+                                <div>${wordHtml}</div>
+                                <button type="button" 
+                                        onclick="window.AzotaApp.speakVocabWord('${firstWord}')" 
+                                        class="w-6 h-6 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 text-sky-400 flex items-center justify-center text-xs transition-all cursor-pointer active:scale-95 shrink-0" 
+                                        title="Phát âm từ vựng">
+                                    🔊
+                                </button>
+                            </div>
+                        </td>
+                        <td class="py-2.5 px-3 text-xs w-24">
+                            ${typeHtml}
+                        </td>
+                        <td class="py-2.5 px-3 text-xs leading-relaxed">
+                            ${meaningHtml}
+                        </td>
+                        <td class="py-2.5 px-3 text-[11px] text-amber-500 dark:text-amber-300 italic w-32">
+                            ${item.note || '-'}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        modal.innerHTML = `
+            <div class="w-full max-w-4xl max-h-[90vh] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-scaleUp">
+                <!-- Header -->
+                <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-white/10 bg-gradient-to-r from-blue-600/15 via-indigo-600/10 to-purple-600/15 flex items-center justify-between gap-3 shrink-0">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-blue-500/20 text-blue-500 flex items-center justify-center text-xl font-bold border border-blue-500/30">
+                            🇬🇧
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">
+                                    40 Từ Vựng Cốt Lõi Unit 4: ASEAN and Vietnam
+                                </h3>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500 text-white">40 Từ Đầu Tiên</span>
+                            </div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">
+                                Tiếng Anh 11 Global Success • Trường THPT Trần Văn Giàu
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" 
+                            id="closeUnit4VocabModalBtn"
+                            class="w-8 h-8 rounded-xl bg-slate-200/70 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center font-bold text-sm cursor-pointer transition-all active:scale-95">
+                        ✕
+                    </button>
+                </div>
+
+                <!-- Search bar & Tools -->
+                <div class="p-3 sm:px-5 bg-slate-50 dark:bg-slate-950/60 border-b border-slate-200 dark:border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 shrink-0">
+                    <div class="relative flex-1">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">🔍</span>
+                        <input type="text" 
+                               id="unit4VocabSearchInput" 
+                               placeholder="Tìm nhanh từ vựng, từ loại (v.phr, adj, n) hoặc nghĩa tiếng Việt..." 
+                               class="w-full pl-8 pr-4 py-2 rounded-xl text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50">
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button type="button" 
+                                onclick="document.getElementById('unit4VocabModal').remove(); window.AzotaApp.startExam('ta-unit4-vocab-40', 'practice')" 
+                                class="px-3.5 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-md transition-all cursor-pointer flex items-center gap-1.5 active:scale-95">
+                            <span>⚡</span>
+                            <span>Luyện 40 Câu Trắc Nghiệm</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Table Content -->
+                <div class="flex-1 overflow-y-auto p-3 sm:p-5">
+                    <div class="border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden shadow-xs">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 dark:bg-slate-800/80 text-[11px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-wider border-b border-slate-200 dark:border-white/10">
+                                    <th class="py-2.5 px-3 text-center w-12">STT</th>
+                                    <th class="py-2.5 px-3">Từ vựng / Cụm từ</th>
+                                    <th class="py-2.5 px-3 w-24">Từ loại</th>
+                                    <th class="py-2.5 px-3">Nghĩa tiếng Việt</th>
+                                    <th class="py-2.5 px-3 w-32">Ghi chú</th>
+                                </tr>
+                            </thead>
+                            <tbody id="unit4VocabTableBody">
+                                ${renderRows()}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="p-3 sm:px-5 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/80 flex items-center justify-between text-xs text-slate-500 shrink-0">
+                    <div>
+                        <span>Hiển thị đầy đủ đúng <strong>40 từ vựng đầu tiên</strong> trong tài liệu giải chi tiết.</span>
+                    </div>
+                    <button type="button" 
+                            onclick="document.getElementById('unit4VocabModal').remove()" 
+                            class="px-4 py-1.5 rounded-xl text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                        Đóng
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        const closeBtn = modal.querySelector("#closeUnit4VocabModalBtn");
+        if (closeBtn) closeBtn.onclick = () => modal.remove();
+
+        modal.onclick = (e) => {
+            if (e.target === modal) modal.remove();
+        };
+
+        const searchInput = modal.querySelector("#unit4VocabSearchInput");
+        const tableBody = modal.querySelector("#unit4VocabTableBody");
+        if (searchInput && tableBody) {
+            searchInput.focus();
+            searchInput.oninput = () => {
+                tableBody.innerHTML = renderRows(searchInput.value);
+            };
+        }
+
+        const handleKey = (e) => {
+            if (e.key === 'Escape') {
+                modal.remove();
+                window.removeEventListener('keydown', handleKey);
+            }
+        };
+        window.addEventListener('keydown', handleKey);
+    }
+
     return {
         init: init,
         showView: showView,
         openFileExplorer: openFileExplorer,
         openEssayStudy: openEssayStudy,
+        openUnit4VocabCheatSheet: openUnit4VocabCheatSheet,
+        speakVocabWord: speakVocabWord,
         goBackExplorer: goBackExplorer,
         handleExplorerSearch: handleExplorerSearch,
         expandSearch: expandSearch,

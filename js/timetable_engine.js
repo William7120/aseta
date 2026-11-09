@@ -18,20 +18,22 @@ window.TimetableEngine = (function() {
         homeroomTeacher: "Nguyễn Việt Kiều Anh",
         imageUrl: "assets/thoi_khoa_bieu_11a7.jpg",
         
-        // Khung giờ các tiết học chuẩn THPT
+        // Khung giờ các tiết học chuẩn THPT Trần Văn Giàu (Áp dụng từ 09/11/2026)
+        // Buổi Sáng: Tiết 1 bắt đầu 7:00, Tiết 4 kết thúc 10:35
+        // Buổi Chiều: Tiết 1 bắt đầu 13:30 (1g30), Tiết 4 kết thúc 16:15 (4g15), Tiết 5 kết thúc 17:05 (5g05)
         timeSlots: {
             morning: [
                 { id: "S1", label: "Tiết 1", time: "07:00 - 07:45" },
-                { id: "S2", label: "Tiết 2", time: "07:45 - 08:30" },
-                { id: "S3", label: "Tiết 3", time: "08:50 - 09:35" },
-                { id: "S4", label: "Tiết 4", time: "09:35 - 10:20" },
-                { id: "S5", label: "Tiết 5", time: "10:20 - 11:05" }
+                { id: "S2", label: "Tiết 2", time: "07:50 - 08:35" },
+                { id: "S3", label: "Tiết 3", time: "09:00 - 09:45" },
+                { id: "S4", label: "Tiết 4", time: "09:50 - 10:35" },
+                { id: "S5", label: "Tiết 5", time: "10:40 - 11:25" }
             ],
             afternoon: [
-                { id: "C1", label: "Tiết 1", time: "13:00 - 13:45" },
-                { id: "C2", label: "Tiết 2", time: "13:45 - 14:30" },
-                { id: "C3", label: "Tiết 3", time: "14:50 - 15:35" },
-                { id: "C4", label: "Tiết 4", time: "15:35 - 16:20" },
+                { id: "C1", label: "Tiết 1", time: "13:30 - 14:10" },
+                { id: "C2", label: "Tiết 2", time: "14:15 - 14:55" },
+                { id: "C3", label: "Tiết 3", time: "15:05 - 15:40" },
+                { id: "C4", label: "Tiết 4", time: "15:40 - 16:15" },
                 { id: "C5", label: "Tiết 5", time: "16:20 - 17:05" }
             ]
         },
@@ -287,7 +289,9 @@ window.TimetableEngine = (function() {
 
         const todayCode = map[day] || "T2";
         const isWeekend = (day === 0 || day === 6);
-        const isEvening = (hour >= 18);
+        // Thời gian soạn cặp: Kích hoạt sau khi kết thúc buổi chiều (từ sau 16h15 trở đi), buổi tối hoặc sáng sớm trước 7g
+        const isPackingTime = (hour === 16 && minute >= 15) || (hour >= 17) || (hour < 7);
+        const isEvening = isPackingTime;
 
         // Tính ngày mai
         const nextDayIdx = (day + 1) % 7;
@@ -305,6 +309,7 @@ window.TimetableEngine = (function() {
             todayCode,
             todayName: dayNameMap[todayCode],
             isWeekend,
+            isPackingTime,
             isEvening,
             tomorrowCode,
             tomorrowName: dayNameMap[tomorrowCode],
@@ -314,6 +319,8 @@ window.TimetableEngine = (function() {
     }
 
     // Xác định tiết học đang diễn ra trong ngày hiện tại
+    // Buổi Sáng: Tiết 1 bắt đầu 7:00, Tiết 4 kết thúc 10:35
+    // Buổi Chiều: Tiết 1 bắt đầu 13:30 (1g30), Tiết 4 kết thúc 16:15 (4g15), Tiết 5 kết thúc 17:05 (5g05)
     function getCurrentPeriodId() {
         const info = getTodayInfo();
         if (info.isWeekend) return null;
@@ -321,17 +328,27 @@ window.TimetableEngine = (function() {
         const currentMinutes = info.hour * 60 + info.minute;
 
         // Morning periods
+        // S1: 07:00 - 07:45
         if (currentMinutes >= 7 * 60 && currentMinutes < 7 * 60 + 45) return "S1";
-        if (currentMinutes >= 7 * 60 + 45 && currentMinutes < 8 * 60 + 30) return "S2";
-        if (currentMinutes >= 8 * 60 + 50 && currentMinutes < 9 * 60 + 35) return "S3";
-        if (currentMinutes >= 9 * 60 + 35 && currentMinutes < 10 * 60 + 20) return "S4";
-        if (currentMinutes >= 10 * 60 + 20 && currentMinutes < 11 * 60 + 5) return "S5";
+        // S2: 07:50 - 08:35
+        if (currentMinutes >= 7 * 60 + 50 && currentMinutes < 8 * 60 + 35) return "S2";
+        // S3: 09:00 - 09:45 (Sau giờ ra chơi 25 phút)
+        if (currentMinutes >= 9 * 60 && currentMinutes < 9 * 60 + 45) return "S3";
+        // S4: 09:50 - 10:35 (Kết thúc đúng 10g35)
+        if (currentMinutes >= 9 * 60 + 50 && currentMinutes < 10 * 60 + 35) return "S4";
+        // S5: 10:40 - 11:25
+        if (currentMinutes >= 10 * 60 + 40 && currentMinutes < 11 * 60 + 25) return "S5";
 
         // Afternoon periods
-        if (currentMinutes >= 13 * 60 && currentMinutes < 13 * 60 + 45) return "C1";
-        if (currentMinutes >= 13 * 60 + 45 && currentMinutes < 14 * 60 + 30) return "C2";
-        if (currentMinutes >= 14 * 60 + 50 && currentMinutes < 15 * 60 + 35) return "C3";
-        if (currentMinutes >= 15 * 60 + 35 && currentMinutes < 16 * 60 + 20) return "C4";
+        // C1: 13:30 - 14:10 (Bắt đầu đúng 1g30)
+        if (currentMinutes >= 13 * 60 + 30 && currentMinutes < 14 * 60 + 10) return "C1";
+        // C2: 14:15 - 14:55
+        if (currentMinutes >= 14 * 60 + 15 && currentMinutes < 14 * 60 + 55) return "C2";
+        // C3: 15:05 - 15:40 (Sau giờ ra chơi 10 phút)
+        if (currentMinutes >= 15 * 60 + 5 && currentMinutes < 15 * 60 + 40) return "C3";
+        // C4: 15:40 - 16:15 (Kết thúc đúng 4g15 / 16g15)
+        if (currentMinutes >= 15 * 60 + 40 && currentMinutes < 16 * 60 + 15) return "C4";
+        // C5: 16:20 - 17:05 (Kết thúc đúng 5g05 / 17g05)
         if (currentMinutes >= 16 * 60 + 20 && currentMinutes < 17 * 60 + 5) return "C5";
 
         return null;
@@ -411,6 +428,9 @@ window.TimetableEngine = (function() {
         if (!activeDayCode) {
             if (info.isWeekend) {
                 activeDayCode = "T2";
+            } else if (info.isPackingTime && info.todayCode !== 'T6') {
+                // Sau giờ tan học chiều (từ sau 16h15), ưu tiên gợi ý ngày mai để soạn cặp
+                activeDayCode = info.tomorrowCode;
             } else {
                 activeDayCode = info.todayCode;
             }
@@ -523,18 +543,27 @@ window.TimetableEngine = (function() {
             tabsContainer.appendChild(tabBtn);
         });
 
-        // 3. Phím tắt buổi tối: "Soạn cặp ngày mai"
-        if (info.isEvening && !info.isWeekend && info.todayCode !== 'T6') {
+        // 3. Phím tắt: "Soạn cặp ngày mai" (Kích hoạt từ sau 16h15 hoặc buổi tối)
+        if (info.isPackingTime) {
+            const targetCode = info.isWeekend ? "T2" : (info.todayCode === 'T6' ? "T2" : info.tomorrowCode);
+            const targetName = TIMETABLE_CONFIG.days[targetCode] ? TIMETABLE_CONFIG.days[targetCode].name : targetCode;
             const tomorrowBtn = document.createElement("button");
             tomorrowBtn.type = "button";
-            tomorrowBtn.className = "shrink-0 px-3.5 py-2 rounded-2xl text-xs font-bold bg-amber-500/15 hover:bg-amber-500/25 text-amber-500 dark:text-amber-300 border border-amber-500/30 transition-all flex items-center gap-1.5 cursor-pointer active:scale-95";
+            const isTargetActive = (currentViewMode === 'day' && activeDayCode === targetCode && !isViewingToday);
+            tomorrowBtn.className = `shrink-0 px-3.5 py-2 rounded-2xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-xs ${
+                isTargetActive 
+                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-amber-500/25 ring-2 ring-amber-400/50' 
+                    : 'bg-amber-500/15 hover:bg-amber-500/25 text-amber-500 dark:text-amber-300 border border-amber-500/30'
+            }`;
             tomorrowBtn.innerHTML = `
-                <span>🌙 Soạn Cặp ${info.tomorrowName}</span>
+                <span>🌙</span>
+                <span>Soạn Cặp: ${targetName}</span>
+                <span class="px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-amber-500/30 text-amber-900 dark:text-amber-200">Gợi ý</span>
             `;
             tomorrowBtn.onclick = () => {
                 if (window.AudioHelper && window.AudioHelper.playClick) window.AudioHelper.playClick();
                 currentViewMode = 'day';
-                activeDayCode = info.tomorrowCode;
+                activeDayCode = targetCode;
                 render(container);
             };
             tabsContainer.appendChild(tomorrowBtn);
@@ -576,7 +605,19 @@ window.TimetableEngine = (function() {
         topBannerEl.className = "p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-sky-500/10 border border-emerald-500/25 backdrop-blur-md flex items-center justify-between gap-3 flex-wrap shadow-xs";
         
         let bannerText = "";
-        if (isToday) {
+        if (info.isPackingTime && !info.isWeekend && dayCode === info.tomorrowCode && info.todayCode !== 'T6') {
+            bannerText = `
+                <div class="flex items-center gap-2">
+                    <span class="text-base">🌙</span>
+                    <span class="text-xs sm:text-sm font-black text-amber-700 dark:text-amber-300 uppercase tracking-wide">
+                        GIỜ SOẠN CẶP (Sau 16h15): Đang xem lịch ${dayData.name} ngày mai
+                    </span>
+                    <span class="text-xs text-slate-500 dark:text-slate-400 hidden sm:inline">
+                        (${dayData.morning.filter(Boolean).length} tiết Sáng • ${dayData.afternoon.filter(Boolean).length} tiết Chiều)
+                    </span>
+                </div>
+            `;
+        } else if (isToday) {
             bannerText = `
                 <div class="flex items-center gap-2.5">
                     <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
@@ -712,7 +753,7 @@ window.TimetableEngine = (function() {
                         <div class="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300 px-0.5">
                             <span class="flex items-center gap-1.5">
                                 <span>🌅</span><span>Buổi Sáng</span>
-                                <span class="text-[10px] text-slate-400 font-normal">(07:00 – 11:05)</span>
+                                <span class="text-[10px] text-slate-400 font-normal">(07:00 – 10:35)</span>
                             </span>
                             <span class="text-[10px] text-sky-500 font-bold">${dayData.morning.filter(Boolean).length} tiết</span>
                         </div>
@@ -724,7 +765,7 @@ window.TimetableEngine = (function() {
                         <div class="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300 px-0.5">
                             <span class="flex items-center gap-1.5">
                                 <span>🌇</span><span>Buổi Chiều</span>
-                                <span class="text-[10px] text-slate-400 font-normal">(13:00 – 17:05)</span>
+                                <span class="text-[10px] text-slate-400 font-normal">(13:30 – 16:15/17:05)</span>
                             </span>
                             <span class="text-[10px] ${hasAfternoon ? 'text-indigo-400' : 'text-slate-400'} font-bold">
                                 ${hasAfternoon ? `${dayData.afternoon.filter(Boolean).length} tiết` : 'Nghỉ'}
@@ -948,6 +989,15 @@ window.TimetableEngine = (function() {
             </div>
 
             <div class="flex items-center gap-1 shrink-0">
+                ${(subjectKey === "Ngoại ngữ") ? `
+                    <button type="button" 
+                            onclick="window.AzotaApp.startExam('ta-unit4-vocab-40', 'practice')" 
+                            class="px-2 py-0.5 rounded-lg text-[10px] font-black bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-xs transition-all flex items-center gap-1 cursor-pointer active:scale-95"
+                            title="Học 40 từ vựng cốt lõi Unit 4: ASEAN and Vietnam">
+                        <span>🇬🇧</span>
+                        <span>40 Từ Unit 4</span>
+                    </button>
+                ` : ''}
                 ${hasExams ? `
                     <button type="button" 
                             onclick="window.AzotaApp.openFileExplorer('${meta.examFolderId}')" 
