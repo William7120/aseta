@@ -991,11 +991,18 @@ window.TimetableEngine = (function() {
             <div class="flex items-center gap-1 shrink-0">
                 ${(subjectKey === "Ngoại ngữ") ? `
                     <button type="button" 
+                            onclick="if(window.VocabHub){window.VocabHub.openFlashcards();}else if(window.AzotaApp&&window.AzotaApp.openUnit4VocabCheatSheet){window.AzotaApp.openUnit4VocabCheatSheet();}" 
+                            class="px-2 py-0.5 rounded-lg text-[10px] font-black bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-xs transition-all flex items-center gap-1 cursor-pointer active:scale-95"
+                            title="Học Flashcard 3D & Ghép Thẻ 40 từ vựng Unit 4: ASEAN and Vietnam">
+                        <span>🎴</span>
+                        <span>Flashcard 40 Từ</span>
+                    </button>
+                    <button type="button" 
                             onclick="window.AzotaApp.startExam('ta-unit4-vocab-40', 'practice')" 
-                            class="px-2 py-0.5 rounded-lg text-[10px] font-black bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-xs transition-all flex items-center gap-1 cursor-pointer active:scale-95"
-                            title="Học 40 từ vựng cốt lõi Unit 4: ASEAN and Vietnam">
-                        <span>🇬🇧</span>
-                        <span>40 Từ Unit 4</span>
+                            class="px-2 py-0.5 rounded-lg text-[10px] font-black bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white shadow-xs transition-all flex items-center gap-1 cursor-pointer active:scale-95"
+                            title="Làm bài khảo sát trắc nghiệm 40 câu Unit 4">
+                        <span>📝</span>
+                        <span class="hidden sm:inline">Khảo Sát</span>
                     </button>
                 ` : ''}
                 ${hasExams ? `

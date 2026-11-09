@@ -117,6 +117,30 @@
             margin: auto !important;
             filter: drop-shadow(0 2px 5px rgba(0,0,0,0.55));
         }
+            /* 3D Flashcard & Vocab Hub Utilities */
+        .perspective-1000 {
+            perspective: 1000px;
+            -webkit-perspective: 1000px;
+        }
+        .preserve-3d {
+            transform-style: preserve-3d;
+            -webkit-transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+            -webkit-transform: rotateY(180deg);
+        }
+        @keyframes scaleUp {
+            0% { transform: scale(0.92); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-scaleUp {
+            animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
     </style>
 </head>
 <body class="bg-white dark:bg-black text-slate-800 dark:text-slate-100 min-h-screen flex flex-col pb-36 relative overflow-x-hidden">
@@ -671,6 +695,23 @@
                         <span class="mobile-drawer-label hidden">
                             <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Thời Khóa Biểu</span>
                             <span class="liquid-tag-pill bg-sky-500/15 text-sky-400 border border-sky-500/25">Hôm Nay</span>
+                        </span>
+                    </button>
+                    <!-- Flashcard & Học Từ Vựng Tiếng Anh -->
+                    <button type="button"
+                            id="sidebar-util-vocab"
+                            onclick="if(window.VocabHub){window.VocabHub.openFlashcards();}else if(window.AzotaApp&&window.AzotaApp.openUnit4VocabCheatSheet){window.AzotaApp.openUnit4VocabCheatSheet();}"
+                            style="--gradient-from: #a855f7; --gradient-to: #ec4899;"
+                            class="gradient-menu-btn nav-item-modern group"
+                            title="Flashcard 3D & Mini Game Học Từ Vựng Unit 4">
+                        <span class="gradient-menu-bg"></span>
+                        <span class="gradient-menu-glow"></span>
+                        <span class="gradient-menu-icon"><span class="text-xl">🎴</span></span>
+                        <span class="gradient-menu-title">Flashcard</span>
+                        <span class="gradient-active-dot"></span>
+                        <span class="mobile-drawer-label hidden">
+                            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Flashcard Từ Vựng</span>
+                            <span class="liquid-tag-pill bg-purple-500/20 text-purple-400 border border-purple-500/30">HOT</span>
                         </span>
                     </button>
 
@@ -2134,6 +2175,7 @@
     <script src="js/dock.js"></script>
     <script src="js/solution_engine.js"></script>
     <script src="js/timetable_engine.js"></script>
+    <script src="js/vocab_engine.js"></script>
     <script src="js/app-v4.js"></script>
 
     <!-- DIRECT INLINE RUNTIME FAIL-SAFE FOR file:/// BROWSER CACHE & 3D TILT EFFECT -->
