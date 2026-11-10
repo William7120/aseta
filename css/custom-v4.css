@@ -1870,13 +1870,12 @@ mark {
   background: rgba(0, 0, 0, .75);
 }
 
-/* Back Plate with Tab Silhouette */
+/* Back Plate with Tab Silhouette (WebKit Zero-Crash Safe) */
 .gf-back {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  clip-path: path('M0 56A22 22 0 0 1 22 34L146 34C170 34 172 0 198 0L318 0A22 22 0 0 1 340 22L340 250A22 22 0 0 1 318 272L22 272A22 22 0 0 1 0 250Z');
-  /* clip-path url removed for WebKit stability */
+  border-radius: 22px;
   background: linear-gradient(180deg, #f3f3f4 0%, #e3e3e6 100%);
 }
 
@@ -2095,10 +2094,11 @@ mark {
   width: 340px;
   height: 198px;
   z-index: 10;
-  -webkit-backdrop-filter: blur(24px) saturate(1.5);
-  backdrop-filter: blur(24px) saturate(1.5);
-  clip-path: path('M0 22A22 22 0 0 1 22 0L118 0C144 0 146 32 172 32L318 32A22 22 0 0 1 340 54L340 176A22 22 0 0 1 318 198L22 198A22 22 0 0 1 0 176Z');
-  /* clip-path url removed for WebKit stability */
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   transform-origin: 50% 100%;
   transform: perspective(760px) rotateX(var(--gf-hinge));
   transition: transform .7s var(--gf-spring);
@@ -2963,12 +2963,13 @@ mark {
 
 .timetable-period-row {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  padding: 11px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 

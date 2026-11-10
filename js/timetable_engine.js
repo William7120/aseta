@@ -939,22 +939,25 @@ window.TimetableEngine = (function() {
     }
 
     // Helper tạo một hàng tiết học tinh tế, tích hợp sẵn tóm tắt đồ dùng cần mang
+    // Helper tạo một hàng tiết học tinh tế, thiết kế 2 tầng (2-tier card) chống đè chữ tuyệt đối
     function createCompactPeriodRow(slot, subjectKey, isOngoing) {
         const row = document.createElement("div");
         row.className = `timetable-period-row ${isOngoing ? 'is-current' : ''}`;
 
         if (!subjectKey) {
             row.innerHTML = `
-                <div class="flex items-center gap-2.5">
-                    <span class="w-6 h-6 rounded-lg bg-slate-500/10 text-slate-400 flex items-center justify-center text-[10px] font-black shrink-0">
-                        ${slot.id}
-                    </span>
-                    <div>
-                        <div class="text-[11px] font-semibold text-slate-400">${slot.label}</div>
-                        <div class="text-[9px] text-slate-500">${slot.time}</div>
+                <div class="flex items-center justify-between w-full">
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-lg bg-slate-500/10 text-slate-400 flex items-center justify-center text-[10px] font-black shrink-0">
+                            ${slot.id}
+                        </span>
+                        <div>
+                            <div class="text-[11px] font-semibold text-slate-400">${slot.label}</div>
+                            <div class="text-[9px] text-slate-500 font-mono">${slot.time}</div>
+                        </div>
                     </div>
+                    <span class="text-[10px] text-slate-400 dark:text-slate-500 italic px-2 py-0.5 rounded-md bg-slate-500/5">Nghỉ</span>
                 </div>
-                <span class="text-[10px] text-slate-400 dark:text-slate-500 italic">Nghỉ</span>
             `;
             return row;
         }
@@ -968,66 +971,66 @@ window.TimetableEngine = (function() {
         const hasExams = !!meta.examFolderId;
         const suppliesSummary = meta.supplies ? meta.supplies.map(s => s.name).join(", ") : "";
 
+        // BỐ CỤC 2 TẦNG CHUYÊN NGHIỆP:
+        // TẦNG 1: [Tiết ID] [Icon & Tên môn học] [Badge Đang học] | [Thời gian 07:00 - 07:45]
+        // TẦNG 2: [🎒 Đồ dùng sách vở] | [Nút chức năng tinh gọn]
+        // ĐẢM BẢO 100% NÚT BẤM KHÔNG BAO GIỜ BỊ ĐÈ LÊN THỜI GIAN HOẶC TÊN MÔN!
         row.innerHTML = `
-            <div class="flex items-center gap-2.5 min-w-0">
-                <span class="w-6 h-6 rounded-lg bg-sky-500/15 text-sky-400 flex items-center justify-center text-[10px] font-black shrink-0 border border-sky-500/20">
-                    ${slot.id}
-                </span>
-                <div class="min-w-0">
-                    <div class="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5 truncate">
-                        <span>${meta.icon}</span>
-                        <span>${subjectKey}</span>
-                        ${isOngoing ? `<span class="px-1.5 py-0.2 rounded-full text-[8px] font-black bg-emerald-500 text-white animate-pulse">Đang Học</span>` : ''}
+            <!-- TẦNG 1: TIÊU ĐỀ TIẾT & THỜI GIAN ĐỘC LẬP -->
+            <div class="flex items-center justify-between gap-2 w-full">
+                <div class="flex items-center gap-2 min-w-0">
+                    <span class="w-6 h-6 rounded-lg ${isOngoing ? 'bg-emerald-500 text-white font-black shadow-xs shadow-emerald-500/40' : 'bg-sky-500/15 text-sky-500 dark:text-sky-400 border border-sky-500/20'} flex items-center justify-center text-[10px] font-black shrink-0">
+                        ${slot.id}
+                    </span>
+                    <div class="flex items-center gap-1.5 min-w-0">
+                        <span class="text-sm shrink-0">${meta.icon}</span>
+                        <span class="text-xs font-bold text-slate-900 dark:text-white truncate">${subjectKey}</span>
+                        ${isOngoing ? `<span class="px-1.5 py-0.2 rounded-full text-[8px] font-black bg-emerald-500 text-white shrink-0 animate-pulse">Đang Học</span>` : ''}
                     </div>
-                    <div class="text-[10px] text-slate-400 font-medium">${slot.label} • ${slot.time}</div>
-                    ${suppliesSummary ? `
-                        <div class="text-[9px] text-sky-600 dark:text-sky-300 font-medium truncate max-w-[210px]" title="${suppliesSummary}">
-                            🎒 ${suppliesSummary}
-                        </div>
-                    ` : ''}
+                </div>
+                <div class="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 bg-slate-200/50 dark:bg-white/5 px-2 py-0.5 rounded-md shrink-0 border border-slate-300/40 dark:border-white/5">
+                    ⏱️ ${slot.time}
                 </div>
             </div>
 
-            <div class="flex items-center gap-1 shrink-0">
-                ${(subjectKey === "Ngoại ngữ") ? `
-                    <button type="button" 
-                            onclick="if(window.VocabHub){window.VocabHub.openOralTest();}else if(window.AzotaApp&&window.AzotaApp.openOralTest){window.AzotaApp.openOralTest();}" 
-                            class="px-2 py-0.5 rounded-lg text-[10px] font-black bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white shadow-xs transition-all flex items-center gap-1 cursor-pointer active:scale-95"
-                            title="👩‍🏫 Cô Khảo Bài Miệng: Hỏi bất kì câu tiếng Việt, làm lại đến khi thuộc 40/40">
-                        <span>👩‍🏫</span>
-                        <span>Cô Khảo Bài</span>
-                    </button>
-                    <button type="button" 
-                            onclick="if(window.VocabHub){window.VocabHub.openFlashcards();}else if(window.AzotaApp&&window.AzotaApp.openUnit4VocabCheatSheet){window.AzotaApp.openUnit4VocabCheatSheet();}" 
-                            class="px-2 py-0.5 rounded-lg text-[10px] font-black bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-xs transition-all flex items-center gap-1 cursor-pointer active:scale-95"
-                            title="Học Flashcard 3D & Ghép Thẻ 40 từ vựng Unit 4: ASEAN and Vietnam">
-                        <span>🎴</span>
-                        <span class="hidden sm:inline">Flashcard</span>
-                    </button>
-                    <button type="button" 
-                            onclick="window.AzotaApp.startExam('ta-unit4-vocab-40', 'practice')" 
-                            class="px-2 py-0.5 rounded-lg text-[10px] font-black bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white shadow-xs transition-all flex items-center gap-1 cursor-pointer active:scale-95"
-                            title="Làm bài khảo sát trắc nghiệm 40 câu Unit 4">
-                        <span>📝</span>
-                        <span class="hidden sm:inline">Khảo Sát</span>
-                    </button>
-                ` : ''}
-                ${hasExams ? `
-                    <button type="button" 
-                            onclick="window.AzotaApp.openFileExplorer('${meta.examFolderId}')" 
-                            class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-sky-500/10 hover:bg-sky-500/20 text-sky-500 dark:text-sky-400 border border-sky-500/25 transition-all flex items-center gap-1 cursor-pointer"
-                            title="Luyện giải đề môn ${subjectKey} trên Aseta">
-                        <span>📝</span>
-                        <span class="hidden sm:inline">Luyện Đề</span>
-                    </button>
-                ` : `
-                    <span class="text-[9px] text-slate-400 font-medium px-1.5 py-0.5 rounded bg-slate-500/5">
-                        Chính khóa
-                    </span>
-                `}
+            <!-- TẦNG 2: ĐỒ DÙNG BALO & NÚT HÀNH ĐỘNG TINH TẾ -->
+            <div class="pt-2 border-t border-slate-200/60 dark:border-white/5 flex items-center justify-between gap-2 w-full">
+                <div class="min-w-0 flex-1">
+                    ${suppliesSummary ? `
+                        <div class="text-[10px] text-sky-600 dark:text-sky-300 font-medium truncate" title="${suppliesSummary}">
+                            🎒 ${suppliesSummary}
+                        </div>
+                    ` : `
+                        <div class="text-[10px] text-slate-400 italic">Không có đồ dùng riêng</div>
+                    `}
+                </div>
+
+                <div class="flex items-center gap-1.5 shrink-0">
+                    ${(subjectKey === "Ngoại ngữ") ? `
+                        <button type="button" 
+                                onclick="if(window.VocabHub){window.VocabHub.openOralTest();}else if(window.AzotaApp&&window.AzotaApp.openOralTest){window.AzotaApp.openOralTest();}" 
+                                class="px-2.5 py-1 rounded-lg text-[10px] font-black bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 hover:from-rose-500 hover:to-purple-500 text-white shadow-xs transition-all flex items-center gap-1 cursor-pointer active:scale-95"
+                                title="👩‍🏫 Học & Khảo Bài Unit 4: Flashcard 3D, Cô Khảo Bài 40/40, Ghép Thẻ & Trắc Nghiệm">
+                            <span>👩‍🏫</span>
+                            <span>Học &amp; Khảo Bài</span>
+                        </button>
+                    ` : ''}
+                    ${hasExams ? `
+                        <button type="button" 
+                                onclick="window.AzotaApp.openFileExplorer('${meta.examFolderId}')" 
+                                class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 border border-sky-500/25 transition-all flex items-center gap-1 cursor-pointer active:scale-95"
+                                title="Luyện giải đề môn ${subjectKey} trên Aseta">
+                            <span>📝</span>
+                            <span>Luyện Đề</span>
+                        </button>
+                    ` : `
+                        <span class="text-[9px] text-slate-400 font-medium px-2 py-0.5 rounded bg-slate-500/5">
+                            Chính khóa
+                        </span>
+                    `}
+                </div>
             </div>
         `;
-
         return row;
     }
 

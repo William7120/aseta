@@ -197,6 +197,7 @@ window.ExamEngine = (function() {
             }
         }
         updatePaletteActive();
+        saveInProgress();
     }
 
     function updateQuestionCardUI(qId) {
@@ -942,8 +943,53 @@ window.ExamEngine = (function() {
         }
     }
 
+    function resumeExam() {
+        const inProgress = restoreInProgress();
+        if (!inProgress || !inProgress.exam || !inProgress.questions || !inProgress.questions.length) {
+            return false;
+        }
+
+        // Restore all active session properties exactly as user left off
+        state.exam = inProgress.exam;
+        state.mode = inProgress.mode || "exam";
+        state.layout = inProgress.layout || "single";
+        state.questions = inProgress.questions;
+        state.userAnswers = inProgress.userAnswers || {};
+        state.flags = inProgress.flags || {};
+        state.totalDurationSeconds = inProgress.totalDurationSeconds || 900;
+        state.timeRemaining = (typeof inProgress.timeRemaining === "number") ? inProgress.timeRemaining : state.totalDurationSeconds;
+        state.startTime = inProgress.startTime || Date.now();
+        state.isSubmitted = false;
+        state.currentIndex = (typeof inProgress.currentIndex === "number" && inProgress.currentIndex >= 0 && inProgress.currentIndex < state.questions.length)
+            ? inProgress.currentIndex
+            : 0;
+
+        renderExamHeader();
+        renderExamView();
+
+        // Direct restoration to the exact question user was on!
+        goToQuestion(state.currentIndex);
+
+        // Refresh all palette items (answered, flagged, current)
+        state.questions.forEach((q) => {
+            updatePaletteButton(q.id);
+        });
+        updatePaletteActive();
+
+        // Restart ticking clock if time remains
+        clearInterval(state.timerInterval);
+        startTimer();
+
+        // Hide resume banner
+        const resumeBanner = document.getElementById("resumeExamBanner");
+        if (resumeBanner) resumeBanner.classList.add("hidden");
+
+        return true;
+    }
+
     return {
         startExam: startExam,
+        resumeExam: resumeExam,
         selectMCQAnswer: selectMCQAnswer,
         selectTFAnswer: selectTFAnswer,
         inputEssayAnswer: inputEssayAnswer,

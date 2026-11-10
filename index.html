@@ -2,7 +2,22 @@
 <html lang="vi" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Immediate Mobile In-App / Safari URL sanitizer: strip heavy fbclid tracking parameter -->
+    <script>
+        (function() {
+            try {
+                if (window.location && window.location.search && window.location.search.indexOf('fbclid=') !== -1) {
+                    var cleanSearch = window.location.search
+                        .replace(/[?&]fbclid=[^&#]+/g, '')
+                        .replace(/^&/, '?');
+                    var newUrl = window.location.pathname + (cleanSearch === '?' ? '' : cleanSearch) + window.location.hash;
+                    window.history.replaceState(null, '', newUrl);
+                }
+            } catch(e) {}
+        })();
+    </script>
     <title>Aseta — Hệ Thống Ôn Tập & Khảo Thí Trực Tuyến Đa Môn</title>
 
     <!-- Official Aseta Logo (Decorative Number 7) Favicon & App Icons -->
@@ -311,17 +326,7 @@
         </div>
     </div>
 
-    <!-- SVG Defs for GlassFolder Silhouette ClipPaths (3D Feature Preservation) -->
-    <svg width="0" height="0" class="absolute pointer-events-none" style="position: absolute; width: 0; height: 0; overflow: hidden;" aria-hidden="true">
-        <defs>
-            <clipPath id="gfBackClip" clipPathUnits="userSpaceOnUse">
-                <path d="M0 56A22 22 0 0 1 22 34L146 34C170 34 172 0 198 0L318 0A22 22 0 0 1 340 22L340 250A22 22 0 0 1 318 272L22 272A22 22 0 0 1 0 250Z"></path>
-            </clipPath>
-            <clipPath id="gfFrontClip" clipPathUnits="userSpaceOnUse">
-                <path d="M0 22A22 22 0 0 1 22 0L118 0C144 0 146 32 172 32L318 32A22 22 0 0 1 340 54L340 176A22 22 0 0 1 318 198L22 198A22 22 0 0 1 0 176Z"></path>
-            </clipPath>
-        </defs>
-    </svg>
+    <!-- WebKit Safe Vector Clip Paths Removed -->
 
     <!-- ======================================================== -->
     <!-- ACETERNITY UI GRID BACKGROUND & RADIAL VIGNETTE SYSTEM    -->
