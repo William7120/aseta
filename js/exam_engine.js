@@ -590,7 +590,7 @@ window.ExamEngine = (function() {
                 btn.type = "button";
                 btn.onclick = () => window.AzotaApp && window.AzotaApp.openUnit4VocabCheatSheet && window.AzotaApp.openUnit4VocabCheatSheet();
                 btn.className = "px-2.5 py-1 rounded-xl text-[11px] font-bold bg-amber-500/20 text-amber-500 hover:bg-amber-500/30 border border-amber-500/35 transition-all cursor-pointer inline-flex items-center gap-1 active:scale-95";
-                btn.innerHTML = "<span>📖</span><span>Bảng 40 Từ Vựng Gốc</span>";
+                btn.innerHTML = "<span>📖</span><span>Bảng 67 Từ Vựng Gốc</span>";
                 titleEl.parentElement.appendChild(btn);
             }
         }

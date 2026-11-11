@@ -1,14 +1,14 @@
 /**
  * VOCABULARY STUDY SUITE (HỆ THỐNG HỌC TỪ VỰNG THÔNG MINH Aseta 2.5)
- * Dành cho Unit 4: ASEAN and Vietnam - 40 Từ Vựng Trọng Tâm THPT Trần Văn Giàu
+ * Dành cho Unit 4: ASEAN and Vietnam - 67 Từ Vựng Trọng Tâm THPT Trần Văn Giàu
  * 
  * Các tính năng cao cấp:
  * 1. 🎴 3D Flip Flashcards (Thẻ ghi nhớ 3D, Spaced Repetition Leitner, Auto-Play, Shuffle, Starred Filter)
- * 2. 👩‍🏫 Cô Khảo Bài Miệng 40/40 (Khảo ngẫu nhiên câu hỏi tiếng Việt của cô, lặp lại các câu sai cho đến khi thuộc 100%)
+ * 2. 👩‍🏫 Cô Khảo Bài Miệng 67/67 (Khảo ngẫu nhiên câu hỏi tiếng Việt của cô, lặp lại các câu sai cho đến khi thuộc 100%)
  * 3. ⚡ Speed Matching Game (Trò chơi ghép cặp từ vựng tốc độ cao có bấm giờ & lưu kỷ lục)
  * 4. ✍️ Spelling & Dictation Master (Luyện nghe & viết chính tả từ vựng, tự động kiểm tra, gợi ý)
  * 5. 🎯 Quick Speed Quiz (Trắc nghiệm nhanh 4 lựa chọn phản xạ từ - nghĩa)
- * 6. 📖 Full Reference Explorer (Bảng 40 từ tra cứu trực quan, phát âm, live search)
+ * 6. 📖 Full Reference Explorer (Bảng 67 từ tra cứu trực quan, phát âm, live search)
  * 7. 🏆 LocalStorage Persistence (Lưu từ gắn sao, từ đã thuộc, kỷ lục thời gian ghép thẻ, tiến độ cô khảo bài)
  */
 
@@ -18,566 +18,944 @@
     // DỮ LIỆU CHUẨN 40 TỪ VỰNG ĐẦU TIÊN TỪ CƯƠNG UNIT 4
     const UNIT4_VOCAB_DATA = [
         {
-            stt: 1,
-            primaryWord: "Volunteer",
-            displayWord: "Volunteer / Volunteering / Compulsory",
-            ipa: "/ˌvɒlənˈtɪər/",
-            type: "n, v / v / adj",
-            typeCategory: "all",
-            primaryMeaning: "tình nguyện viên; làm tình nguyện",
-            fullMeaning: "tình nguyện viên; làm tình nguyện (trái nghĩa: compulsory - bắt buộc)",
-            teacherQuestion: "tình nguyện viên hoặc làm tình nguyện (trái nghĩa với bắt buộc)",
-            example: "Many high school students volunteer to support local community projects.",
-            exampleVi: "Nhiều học sinh cấp 3 tình nguyện hỗ trợ các dự án cộng đồng địa phương.",
-            note: "Compulsory (adj) = bắt buộc, mandatory"
+                "stt": 1,
+                "primaryWord": "volunteer",
+                "displayWord": "volunteer / volunteering / voluntary",
+                "ipa": "/ˌvɒlənˈtɪər/",
+                "type": "(n; v)",
+                "typeCategory": "noun",
+                "primaryMeaning": "tình nguyện viên, làm tình nguyện",
+                "fullMeaning": "tình nguyện viên / làm tình nguyện (voluntary: tình nguyện, tự nguyện; trái nghĩa: compulsory, mandatory - bắt buộc)",
+                "teacherQuestion": "tình nguyện viên, làm tình nguyện",
+                "example": "Many high school students volunteer at local charity organizations during summer.",
+                "exampleVi": "Nhiều học sinh cấp 3 làm tình nguyện tại các tổ chức từ thiện địa phương vào mùa hè.",
+                "note": "voluntary (adj) >< compulsory, mandatory (adj: bắt buộc); volunteering (n): hoạt động tình nguyện"
         },
         {
-            stt: 2,
-            primaryWord: "take part in",
-            displayWord: "take part in",
-            ipa: "/teɪk pɑːt ɪn/",
-            type: "v.phr",
-            typeCategory: "phrase",
-            primaryMeaning: "tham gia vào",
-            fullMeaning: "tham gia vào (= participate in / join)",
-            teacherQuestion: "tham gia vào một hoạt động hoặc sự kiện",
-            example: "Vietnam actively takes part in various ASEAN youth exchange activities.",
-            exampleVi: "Việt Nam tích cực tham gia vào nhiều hoạt động giao lưu thanh niên ASEAN.",
-            note: "take part in = participate in = join"
+                "stt": 2,
+                "primaryWord": "take part in",
+                "displayWord": "take part in / join in / participate in",
+                "ipa": "/teɪk pɑːt ɪn/",
+                "type": "v.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "tham gia",
+                "fullMeaning": "tham gia (= join in = participate in = engage in)",
+                "teacherQuestion": "tham gia",
+                "example": "Vietnam takes part in various cultural exchange programs across Southeast Asia.",
+                "exampleVi": "Việt Nam tham gia vào nhiều chương trình giao lưu văn hóa trên khắp Đông Nam Á.",
+                "note": "take part in = join in = participate in = engage in (+ V-ing / Noun)"
         },
         {
-            stt: 3,
-            primaryWord: "Development",
-            displayWord: "Development / develop / developmental",
-            ipa: "/dɪˈveləpmənt/",
-            type: "n / v / adj",
-            typeCategory: "noun",
-            primaryMeaning: "sự phát triển",
-            fullMeaning: "sự phát triển / phát triển / thuộc về sự phát triển",
-            teacherQuestion: "sự phát triển về kinh tế hoặc xã hội",
-            example: "ASEAN countries work together for economic and cultural development.",
-            exampleVi: "Các quốc gia ASEAN cùng hợp tác vì sự phát triển kinh tế và văn hóa.",
-            note: "develop (v) -> development (n) -> developmental (adj)"
+                "stt": 3,
+                "primaryWord": "development",
+                "displayWord": "development / develop / developmental",
+                "ipa": "/dɪˈveləpmənt/",
+                "type": "n",
+                "typeCategory": "noun",
+                "primaryMeaning": "sự phát triển",
+                "fullMeaning": "sự phát triển (động từ: develop; tính từ: developmental)",
+                "teacherQuestion": "sự phát triển",
+                "example": "Economic development is one of the top priorities of ASEAN member states.",
+                "exampleVi": "Phát triển kinh tế là một trong những ưu tiên hàng đầu của các quốc gia thành viên ASEAN.",
+                "note": "develop (v) -> development (n) -> developmental (adj)"
         },
         {
-            stt: 4,
-            primaryWord: "goals",
-            displayWord: "goals / aim / objective",
-            ipa: "/ɡəʊlz/",
-            type: "n",
-            typeCategory: "noun",
-            primaryMeaning: "các mục tiêu",
-            fullMeaning: "các mục tiêu, mục đích đặt ra",
-            teacherQuestion: "các mục tiêu hoặc mục đích đề ra",
-            example: "One of our main goals is to protect regional peace and stability.",
-            exampleVi: "Một trong những mục tiêu chính của chúng ta là bảo vệ hòa bình và ổn định khu vực.",
-            note: "set / achieve goals = đặt ra / đạt được mục tiêu"
+                "stt": 4,
+                "primaryWord": "goal",
+                "displayWord": "goal / aim",
+                "ipa": "/ɡəʊl/",
+                "type": "n",
+                "typeCategory": "noun",
+                "primaryMeaning": "mục tiêu",
+                "fullMeaning": "mục tiêu (= aim, objective, target)",
+                "teacherQuestion": "mục tiêu",
+                "example": "Our main goal is to promote peace and stability in the region.",
+                "exampleVi": "Mục tiêu chính của chúng tôi là thúc đẩy hòa bình và ổn định trong khu vực.",
+                "note": "achieve/set a goal; goal = aim (n)"
         },
         {
-            stt: 5,
-            primaryWord: "qualified (for)",
-            displayWord: "qualified (for) / qualify / qualification",
-            ipa: "/ˈkwɒlɪfaɪd fɔːr/",
-            type: "adj / v / n",
-            typeCategory: "adj",
-            primaryMeaning: "đủ tiêu chuẩn, đủ điều kiện",
-            fullMeaning: "đủ tiêu chuẩn, đủ điều kiện/trình độ (cho) / bằng cấp",
-            teacherQuestion: "đủ tiêu chuẩn, đủ điều kiện hoặc trình độ cho một vị trí",
-            example: "Applicants must be qualified for the ASEAN youth leadership scholarship.",
-            exampleVi: "Ứng viên phải đủ điều kiện nhận học bổng lãnh đạo thanh niên ASEAN.",
-            note: "be qualified for N / to V; qualification (n) = bằng cấp"
+                "stt": 5,
+                "primaryWord": "be qualified (for)",
+                "displayWord": "be qualified (for) / qualify / qualification",
+                "ipa": "/biː ˈkwɒlɪfaɪd fɔːr/",
+                "type": "adj",
+                "typeCategory": "adj",
+                "primaryMeaning": "đủ tiêu chuẩn (cho)",
+                "fullMeaning": "đủ tiêu chuẩn (cho), đủ điều kiện / năng lực (= be eligible for)",
+                "teacherQuestion": "đủ tiêu chuẩn, đủ điều kiện cho",
+                "example": "Candidates must be qualified for the ASEAN youth leadership exchange program.",
+                "exampleVi": "Các ứng viên phải có đủ điều kiện và tiêu chuẩn tham gia chương trình giao lưu lãnh đạo trẻ ASEAN.",
+                "note": "qualify (v) -> qualification (n: bằng cấp, tiêu chuẩn) -> qualified (adj)"
         },
         {
-            stt: 6,
-            primaryWord: "suggest + V-ing",
-            displayWord: "suggest + V-ing",
-            ipa: "/səˈdʒest/",
-            type: "v.phr",
-            typeCategory: "phrase",
-            primaryMeaning: "đề xuất / gợi ý làm gì",
-            fullMeaning: "đề xuất / gợi ý làm gì",
-            teacherQuestion: "cấu trúc đề xuất hoặc gợi ý cùng làm việc gì",
-            example: "The teacher suggested organizing a cultural exchange exhibition.",
-            exampleVi: "Giáo viên đề xuất tổ chức một buổi triển lãm giao lưu văn hóa.",
-            note: "suggest + V-ing / suggest that S + (should) + V-bare"
+                "stt": 6,
+                "primaryWord": "suggest + V-ing",
+                "displayWord": "suggest + V-ing",
+                "ipa": "/səˈdʒest/",
+                "type": "v.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "gợi ý làm gì",
+                "fullMeaning": "gợi ý, đề xuất làm gì (theo sau là V-ing hoặc that + S + (should) + V-inf)",
+                "teacherQuestion": "gợi ý, đề xuất làm gì",
+                "example": "The teacher suggested organizing a cultural exchange exhibition next week.",
+                "exampleVi": "Cô giáo đã gợi ý tổ chức một buổi triển lãm giao lưu văn hóa vào tuần tới.",
+                "note": "suggest + V-ing; suggest that S + (should) V-inf; suggestion (n)"
         },
         {
-            stt: 7,
-            primaryWord: "thank sb for V-ing",
-            displayWord: "thank sb for V-ing",
-            ipa: "/θæŋk/",
-            type: "v.phr",
-            typeCategory: "phrase",
-            primaryMeaning: "cảm ơn ai vì đã làm gì",
-            fullMeaning: "cảm ơn ai vì đã làm việc gì đó",
-            teacherQuestion: "cấu trúc cảm ơn ai vì đã làm điều gì đó",
-            example: "We thanked the delegates for sharing their inspiring experiences.",
-            exampleVi: "Chúng tôi cảm ơn các đại biểu vì đã chia sẻ những kinh nghiệm truyền cảm hứng.",
-            note: "thank sb for doing sth / be thankful for sth"
+                "stt": 7,
+                "primaryWord": "thank sb for V-ing",
+                "displayWord": "thank sb for V-ing",
+                "ipa": "/θæŋk/",
+                "type": "v.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "cảm ơn ai vì đã làm gì",
+                "fullMeaning": "cảm ơn ai đó vì đã làm gì",
+                "teacherQuestion": "cảm ơn ai vì đã làm gì",
+                "example": "The presenter thanked the audience for listening attentively.",
+                "exampleVi": "Người thuyết trình đã cảm ơn khán giả vì đã chăm chú lắng nghe.",
+                "note": "thank someone for doing something; thankful (adj) to sb for sth"
         },
         {
-            stt: 8,
-            primaryWord: "community",
-            displayWord: "community",
-            ipa: "/kəˈmjuːnəti/",
-            type: "n",
-            typeCategory: "noun",
-            primaryMeaning: "cộng đồng",
-            fullMeaning: "cộng đồng",
-            teacherQuestion: "cộng đồng những người cùng chung sống hoặc lợi ích",
-            example: "ASEAN represents a united and dynamic regional community.",
-            exampleVi: "ASEAN đại diện cho một cộng đồng khu vực đoàn kết và năng động.",
-            note: "community service = phục vụ cộng đồng"
+                "stt": 8,
+                "primaryWord": "community",
+                "displayWord": "community / communal",
+                "ipa": "/kəˈmjuːnəti/",
+                "type": "n",
+                "typeCategory": "noun",
+                "primaryMeaning": "cộng đồng",
+                "fullMeaning": "cộng đồng (tính từ: communal: thuộc về cộng đồng, chung)",
+                "teacherQuestion": "cộng đồng",
+                "example": "The ASEAN Community was established to bring Southeast Asian nations closer.",
+                "exampleVi": "Cộng đồng ASEAN được thành lập nhằm đưa các quốc gia Đông Nam Á lại gần nhau hơn.",
+                "note": "communal (adj): thuộc cộng đồng, công cộng; community work: công tác cộng đồng"
         },
         {
-            stt: 9,
-            primaryWord: "keen on",
-            displayWord: "keen on / keenness",
-            ipa: "/kiːn ɒn/",
-            type: "phr.v / n",
-            typeCategory: "phrase",
-            primaryMeaning: "thích thú, hào hứng với",
-            fullMeaning: "thích thú, hào hứng với (= fond of / interested in / excited about)",
-            teacherQuestion: "thích thú, say mê hoặc hào hứng với điều gì",
-            example: "Vietnamese teenagers are very keen on joining international volunteer programs.",
-            exampleVi: "Thanh thiếu niên Việt Nam rất hào hứng tham gia các chương trình tình nguyện quốc tế.",
-            note: "be keen on + V-ing / N = be fond of = be interested in"
+                "stt": 9,
+                "primaryWord": "be keen on",
+                "displayWord": "be keen on / interested in / fond of",
+                "ipa": "/biː kiːn ɒn/",
+                "type": "phr.v",
+                "typeCategory": "phrase",
+                "primaryMeaning": "yêu thích, say mê",
+                "fullMeaning": "yêu thích, say mê (= be interested in = be fond of = excited about)",
+                "teacherQuestion": "yêu thích, say mê điều gì",
+                "example": "She is keen on learning about diverse ASEAN cultural traditions.",
+                "exampleVi": "Cô ấy rất say mê tìm hiểu các truyền thống văn hóa đa dạng của ASEAN.",
+                "note": "be keen on = be interested in = be fond of = be keen on (+ V-ing/Noun); keenness (n)"
         },
         {
-            stt: 10,
-            primaryWord: "depend on",
-            displayWord: "depend on / reliant on",
-            ipa: "/dɪˈpend ɒn/",
-            type: "phr.v",
-            typeCategory: "phrase",
-            primaryMeaning: "phụ thuộc vào",
-            fullMeaning: "phụ thuộc vào (= rely on)",
-            teacherQuestion: "phụ thuộc hoặc dựa dẫm vào ai hoặc cái gì",
-            example: "The success of our presentation depends on great teamwork and preparation.",
-            exampleVi: "Sự thành công của bài thuyết trình phụ thuộc vào tinh thần làm việc nhóm và chuẩn bị chu đáo.",
-            note: "depend on = rely on; independent (adj) = độc lập"
+                "stt": 10,
+                "primaryWord": "depend on",
+                "displayWord": "depend on / dependent / dependence",
+                "ipa": "/dɪˈpend ɒn/",
+                "type": "phr.v",
+                "typeCategory": "phrase",
+                "primaryMeaning": "phụ thuộc vào",
+                "fullMeaning": "phụ thuộc vào (= rely on; tính từ: dependent; danh từ: dependence; trái nghĩa: independent from/of)",
+                "teacherQuestion": "phụ thuộc vào",
+                "example": "The success of the project depends on close cooperation among all members.",
+                "exampleVi": "Thành công của dự án phụ thuộc vào sự hợp tác chặt chẽ giữa tất cả các thành viên.",
+                "note": "depend on/upon; dependent (adj); dependence (n) >< independent from/of (adj)"
         },
         {
-            stt: 11,
-            primaryWord: "leadership skills",
-            displayWord: "leadership skills",
-            ipa: "/ˈliːdəʃɪp skɪlz/",
-            type: "n.phr",
-            typeCategory: "noun",
-            primaryMeaning: "kỹ năng lãnh đạo",
-            fullMeaning: "các kỹ năng lãnh đạo",
-            teacherQuestion: "các kỹ năng lãnh đạo, dẫn dắt đội ngũ",
-            example: "Leading school clubs helps students develop strong leadership skills.",
-            exampleVi: "Dẫn dắt các câu lạc bộ trường học giúp học sinh rèn luyện kỹ năng lãnh đạo vững vàng.",
-            note: "leader (n) -> leadership (n)"
+                "stt": 11,
+                "primaryWord": "leadership skills",
+                "displayWord": "leadership skills",
+                "ipa": "/ˈliːdəʃɪp skɪlz/",
+                "type": "n.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "kỹ năng lãnh đạo",
+                "fullMeaning": "kỹ năng lãnh đạo",
+                "teacherQuestion": "kỹ năng lãnh đạo",
+                "example": "Participating in youth forums helps students build valuable leadership skills.",
+                "exampleVi": "Tham gia diễn đàn thanh niên giúp học sinh xây dựng kỹ năng lãnh đạo quý báu.",
+                "note": "lead (v) -> leader (n: người lãnh đạo) -> leadership (n: năng lực lãnh đạo)"
         },
         {
-            stt: 12,
-            primaryWord: "contribution",
-            displayWord: "Contribution / make contribution / contributor / contribute to",
-            ipa: "/ˌkɒntrɪˈbjuːʃn/",
-            type: "n / v.phr / n / v",
-            typeCategory: "noun",
-            primaryMeaning: "sự đóng góp, cống hiến",
-            fullMeaning: "sự đóng góp, cống hiến / người đóng góp / đóng góp vào",
-            teacherQuestion: "sự đóng góp, cống hiến cho tập thể hoặc xã hội",
-            example: "Vietnam has made significant contributions to the prosperity of ASEAN.",
-            exampleVi: "Việt Nam đã có những đóng góp to lớn vào sự thịnh vượng của ASEAN.",
-            note: "make a contribution to = contribute to + V-ing/N"
+                "stt": 12,
+                "primaryWord": "contribution",
+                "displayWord": "contribution / contribute to / contributor",
+                "ipa": "/ˌkɒntrɪˈbjuːʃn/",
+                "type": "n",
+                "typeCategory": "noun",
+                "primaryMeaning": "sự đóng góp",
+                "fullMeaning": "sự đóng góp (động từ: contribute to; danh từ chỉ người: contributor; cụm từ: make contribution to)",
+                "teacherQuestion": "sự đóng góp",
+                "example": "Vietnam has made significant contributions to the prosperity of the region.",
+                "exampleVi": "Việt Nam đã có những đóng góp to lớn vào sự thịnh vượng của khu vực.",
+                "note": "make a contribution to = contribute to (v); contributor (n: người đóng góp)"
         },
         {
-            stt: 13,
-            primaryWord: "cultural exchange",
-            displayWord: "cultural exchange",
-            ipa: "/ˈkʌltʃərəl ɪksˈtʃeɪndʒ/",
-            type: "n.phr",
-            typeCategory: "noun",
-            primaryMeaning: "giao lưu / trao đổi văn hóa",
-            fullMeaning: "sự giao lưu / trao đổi văn hóa",
-            teacherQuestion: "sự giao lưu, trao đổi văn hóa giữa các quốc gia",
-            example: "Cultural exchange festivals bring ASEAN youth closer together.",
-            exampleVi: "Các lễ hội giao lưu văn hóa giúp thanh niên ASEAN gắn kết gần nhau hơn.",
-            note: "culture (n) -> cultural (adj)"
+                "stt": 13,
+                "primaryWord": "cultural exchange",
+                "displayWord": "cultural exchange",
+                "ipa": "/ˈkʌltʃərəl ɪksˈtʃeɪndʒ/",
+                "type": "n.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "giao lưu văn hoá",
+                "fullMeaning": "giao lưu văn hoá",
+                "teacherQuestion": "giao lưu văn hoá",
+                "example": "Cultural exchange programs strengthen friendly relations among ASEAN countries.",
+                "exampleVi": "Các chương trình giao lưu văn hóa củng cố mối quan hệ hữu nghị giữa các nước ASEAN.",
+                "note": "culture (n) -> cultural (adj); cultural exchange: giao lưu văn hóa"
         },
         {
-            stt: 14,
-            primaryWord: "current issues",
-            displayWord: "current issues",
-            ipa: "/ˈkʌrənt ˈɪʃuːz/",
-            type: "n.phr",
-            typeCategory: "noun",
-            primaryMeaning: "các vấn đề thời sự, hiện nay",
-            fullMeaning: "các vấn đề hiện tại / vấn đề thời sự nóng hổi",
-            teacherQuestion: "các vấn đề thời sự, vấn đề đang diễn ra hiện nay",
-            example: "The summit focused on current issues such as clean energy and food security.",
-            exampleVi: "Hội nghị thượng đỉnh tập trung vào các vấn đề thời sự như năng lượng sạch và an ninh lương thực.",
-            note: "current (adj) = hiện nay, hiện hành"
+                "stt": 14,
+                "primaryWord": "current issues",
+                "displayWord": "current issues",
+                "ipa": "/ˈkʌrənt ˈɪʃuːz/",
+                "type": "n.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "các vấn đề hiện tại",
+                "fullMeaning": "các vấn đề hiện nay, thời sự",
+                "teacherQuestion": "các vấn đề hiện tại, thời sự",
+                "example": "ASEAN summits always focus on discussing urgent current issues.",
+                "exampleVi": "Các hội nghị thượng đỉnh ASEAN luôn tập trung thảo luận các vấn đề thời sự cấp bách.",
+                "note": "current (adj: hiện hành, hiện tại); issue (n: vấn đề, đề tài)"
         },
         {
-            stt: 15,
-            primaryWord: "climate change",
-            displayWord: "climate change",
-            ipa: "/ˈklaɪmət tʃeɪndʒ/",
-            type: "n.phr",
-            typeCategory: "noun",
-            primaryMeaning: "biến đổi khí hậu",
-            fullMeaning: "biến đổi khí hậu toàn cầu",
-            teacherQuestion: "hiện tượng biến đổi khí hậu trên trái đất",
-            example: "All Southeast Asian countries are taking urgent actions to fight climate change.",
-            exampleVi: "Tất cả các nước Đông Nam Á đang hành động khẩn trương để chống lại biến đổi khí hậu.",
-            note: "fight / combat / tackle climate change"
+                "stt": 15,
+                "primaryWord": "climate change",
+                "displayWord": "climate change",
+                "ipa": "/ˈklaɪmət tʃeɪndʒ/",
+                "type": "n.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "biến đổi khí hậu",
+                "fullMeaning": "biến đổi khí hậu toàn cầu",
+                "teacherQuestion": "biến đổi khí hậu",
+                "example": "Climate change poses a serious threat to agriculture in the Mekong Delta.",
+                "exampleVi": "Biến đổi khí hậu gây ra mối đe dọa nghiêm trọng cho nông nghiệp Đồng bằng sông Cửu Long.",
+                "note": "fight/combat climate change; global warming"
         },
         {
-            stt: 16,
-            primaryWord: "convenient",
-            displayWord: "convenient / convenience",
-            ipa: "/kənˈviːniənt/",
-            type: "adj",
-            typeCategory: "adj",
-            primaryMeaning: "thuận tiện, tiện lợi",
-            fullMeaning: "thuận tiện, tiện lợi",
-            teacherQuestion: "thuận tiện, tiện lợi, dễ dàng sử dụng",
-            example: "Online meeting apps make it convenient for delegates to discuss remotely.",
-            exampleVi: "Các ứng dụng họp trực tuyến giúp các đại biểu thảo luận từ xa rất thuận tiện.",
-            note: "inconvenient (adj) = bất tiện; convenience (n)"
+                "stt": 16,
+                "primaryWord": "convenient",
+                "displayWord": "convenient / convenience",
+                "ipa": "/kənˈviːniənt/",
+                "type": "adj",
+                "typeCategory": "adj",
+                "primaryMeaning": "thuận tiện",
+                "fullMeaning": "thuận tiện, tiện lợi (danh từ: convenience; trái nghĩa: inconvenient)",
+                "teacherQuestion": "thuận tiện, tiện lợi",
+                "example": "Online conferences make it convenient for delegates to connect without traveling.",
+                "exampleVi": "Các hội nghị trực tuyến giúp đại biểu kết nối thuận tiện mà không cần di chuyển.",
+                "note": "convenience (n: sự thuận tiện) >< inconvenience; convenient (adj) >< inconvenient"
         },
         {
-            stt: 17,
-            primaryWord: "ability",
-            displayWord: "Ability / inability / disability",
-            ipa: "/əˈbɪləti/",
-            type: "n / n / n",
-            typeCategory: "noun",
-            primaryMeaning: "khả năng, năng lực",
-            fullMeaning: "khả năng, năng lực / không có khả năng / sự khuyết tật",
-            teacherQuestion: "khả năng, năng lực làm được việc gì đó",
-            example: "She has an outstanding ability to communicate in multiple foreign languages.",
-            exampleVi: "Cô ấy có khả năng xuất sắc trong việc giao tiếp bằng nhiều ngoại ngữ.",
-            note: "have the ability to do sth; disabled (adj)"
+                "stt": 17,
+                "primaryWord": "ability",
+                "displayWord": "ability / inability / disability",
+                "ipa": "/əˈbɪləti/",
+                "type": "n",
+                "typeCategory": "noun",
+                "primaryMeaning": "khả năng / có khả năng",
+                "fullMeaning": "khả năng (trái nghĩa: inability: sự không có khả năng; disability: khuyết tật)",
+                "teacherQuestion": "khả năng, năng lực",
+                "example": "He proved his ability to lead diverse multinational teams effectively.",
+                "exampleVi": "Anh ấy đã chứng minh khả năng lãnh đạo các đội ngũ đa quốc gia một cách hiệu quả.",
+                "note": "able (adj) -> ability (n) >< inability (n); disability (n: sự khuyết tật)"
         },
         {
-            stt: 18,
-            primaryWord: "managed to",
-            displayWord: "managed to (+ V-inf)",
-            ipa: "/ˈmænɪdʒd tuː/",
-            type: "v.phr",
-            typeCategory: "verb",
-            primaryMeaning: "xoay xở / làm được việc khó",
-            fullMeaning: "đã xoay xở / thành công làm được việc gì khó khăn",
-            teacherQuestion: "xoay xở hoặc thành công làm được một việc khó khăn",
-            example: "Despite technical difficulties, the organizers managed to complete the workshop on time.",
-            exampleVi: "Bất chấp khó khăn kỹ thuật, ban tổ chức đã xoay xở hoàn thành buổi hội thảo đúng giờ.",
-            note: "manage to do sth = succeed in doing sth"
+                "stt": 18,
+                "primaryWord": "managed to (+ V-inf)",
+                "displayWord": "managed to (+ V-inf)",
+                "ipa": "/ˈmænɪdʒd tuː/",
+                "type": "v.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "xoay xở thành công để làm gì",
+                "fullMeaning": "đã xoay xở thành công để làm gì (= succeed in V-ing)",
+                "teacherQuestion": "đã xoay xở thành công để làm gì",
+                "example": "Despite the heavy traffic, the delegation managed to arrive at the summit on time.",
+                "exampleVi": "Dù kẹt xe dữ dội, đoàn đại biểu đã xoay xở đến hội nghị thượng đỉnh đúng giờ.",
+                "note": "manage to do sth = succeed in doing sth; management (n)"
         },
         {
-            stt: 19,
-            primaryWord: "reach",
-            displayWord: "reach",
-            ipa: "/riːtʃ/",
-            type: "v",
-            typeCategory: "verb",
-            primaryMeaning: "đạt tới, chạm đến, tiếp cận",
-            fullMeaning: "đạt tới, chạm đến, tiếp cận",
-            teacherQuestion: "đạt tới mục tiêu, chạm đến hoặc tiếp cận",
-            example: "ASEAN leaders hope to reach an agreement on carbon reduction targets.",
-            exampleVi: "Các nhà lãnh đạo ASEAN hy vọng đạt được một thỏa thuận về mục tiêu giảm phát thải carbon.",
-            note: "reach an agreement / reach a goal"
+                "stt": 19,
+                "primaryWord": "reach",
+                "displayWord": "reach",
+                "ipa": "/riːtʃ/",
+                "type": "v",
+                "typeCategory": "verb",
+                "primaryMeaning": "đạt được",
+                "fullMeaning": "đạt được, chạm tới (= achieve, attain)",
+                "teacherQuestion": "đạt được, chạm tới",
+                "example": "ASEAN nations strive to reach a comprehensive agreement on environmental protection.",
+                "exampleVi": "Các quốc gia ASEAN nỗ lực đạt được thỏa thuận toàn diện về bảo vệ môi trường.",
+                "note": "reach an agreement / compromise / consensus (đạt được thỏa thuận/đồng thuận)"
         },
         {
-            stt: 20,
-            primaryWord: "aim",
-            displayWord: "aim (at) / goal / purpose",
-            ipa: "/eɪm/",
-            type: "n, v",
-            typeCategory: "verb",
-            primaryMeaning: "mục đích, mục tiêu; hướng tới",
-            fullMeaning: "mục đích, mục tiêu; hướng tới",
-            teacherQuestion: "mục đích, mục tiêu đề ra hoặc nhắm tới",
-            example: "The campaign aims to raise youth awareness about wildlife protection.",
-            exampleVi: "Chiến dịch hướng tới mục tiêu nâng cao nhận thức giới trẻ về bảo vệ động vật hoang dã.",
-            note: "aim at + V-ing / aim to do sth"
+                "stt": 20,
+                "primaryWord": "aim",
+                "displayWord": "aim",
+                "ipa": "/eɪm/",
+                "type": "(n; v)",
+                "typeCategory": "verb",
+                "primaryMeaning": "mục tiêu, nhắm đến",
+                "fullMeaning": "mục tiêu / nhắm đến, hướng tới (= goal, purpose; aim at / aim to do sth)",
+                "teacherQuestion": "mục tiêu hoặc nhắm đến",
+                "example": "The campaign aims to raise young people's awareness of regional cooperation.",
+                "exampleVi": "Chiến dịch nhắm đến việc nâng cao nhận thức của giới trẻ về hợp tác khu vực.",
+                "note": "aim to do sth / aim at V-ing; take aim at; with the aim of"
         },
         {
-            stt: 21,
-            primaryWord: "various",
-            displayWord: "Various = diverse",
-            ipa: "/ˈveəriəs/",
-            type: "adj",
-            typeCategory: "adj",
-            primaryMeaning: "đa dạng, nhiều loại khác nhau",
-            fullMeaning: "đa dạng, nhiều loại khác nhau (= diverse)",
-            teacherQuestion: "tính từ chỉ sự đa dạng, nhiều thể loại khác nhau",
-            example: "Participants come from various cultural backgrounds across Southeast Asia.",
-            exampleVi: "Những người tham gia đến từ nhiều nền văn hóa đa dạng khắp Đông Nam Á.",
-            note: "various = diverse; vary (v)"
+                "stt": 21,
+                "primaryWord": "various",
+                "displayWord": "various / diverse",
+                "ipa": "/ˈveəriəs/",
+                "type": "adj",
+                "typeCategory": "adj",
+                "primaryMeaning": "đa dạng, nhiều loại khác nhau",
+                "fullMeaning": "đa dạng, nhiều loại khác nhau (= diverse)",
+                "teacherQuestion": "đa dạng, nhiều loại khác nhau",
+                "example": "Youth delegates from various Asian nations gathered in Hanoi for the workshop.",
+                "exampleVi": "Các đại biểu thanh niên từ nhiều quốc gia châu Á khác nhau đã tụ họp tại Hà Nội.",
+                "note": "various = diverse (adj); vary (v: thay đổi, biến đổi)"
         },
         {
-            stt: 22,
-            primaryWord: "variety",
-            displayWord: "Variety = diversity / a variety of N",
-            ipa: "/vəˈraɪəti/",
-            type: "n",
-            typeCategory: "noun",
-            primaryMeaning: "sự đa dạng",
-            fullMeaning: "sự đa dạng (= diversity / a variety of: nhiều thứ khác nhau)",
-            teacherQuestion: "danh từ chỉ sự đa dạng, phong phú nhiều loại",
-            example: "The ASEAN food festival offered a wide variety of traditional dishes.",
-            exampleVi: "Lễ hội ẩm thực ASEAN mang đến sự đa dạng phong phú các món ăn truyền thống.",
-            note: "a variety of + plural noun = a wide range of"
+                "stt": 22,
+                "primaryWord": "variety",
+                "displayWord": "variety / a variety of / diversity",
+                "ipa": "/vəˈraɪəti/",
+                "type": "n",
+                "typeCategory": "noun",
+                "primaryMeaning": "sự đa dạng",
+                "fullMeaning": "sự đa dạng (= diversity; a variety of + danh từ số nhiều)",
+                "teacherQuestion": "sự đa dạng",
+                "example": "The festival features a wide variety of traditional dishes and costumes.",
+                "exampleVi": "Lễ hội giới thiệu rất nhiều món ăn và trang phục truyền thống đa dạng.",
+                "note": "a variety of + Ns = a wide range of + Ns; diversity (n)"
         },
         {
-            stt: 23,
-            primaryWord: "participant",
-            displayWord: "Participant / participation",
-            ipa: "/pɑːˈtɪsɪpənt/",
-            type: "n / n",
-            typeCategory: "noun",
-            primaryMeaning: "người tham gia",
-            fullMeaning: "người tham gia / sự tham gia, góp mặt, tham dự",
-            teacherQuestion: "người tham gia, người góp mặt trong sự kiện",
-            example: "Each participant received a certificate of completion at the end of the summit.",
-            exampleVi: "Mỗi người tham gia đều nhận được giấy chứng nhận hoàn thành khi kết thúc hội nghị.",
-            note: "participate in (v) -> participant (n người) -> participation (n sự)"
+                "stt": 23,
+                "primaryWord": "participant",
+                "displayWord": "participant / participation",
+                "ipa": "/pɑːˈtɪsɪpənt/",
+                "type": "n",
+                "typeCategory": "noun",
+                "primaryMeaning": "người tham gia",
+                "fullMeaning": "người tham gia, người tham dự (sự tham gia: participation)",
+                "teacherQuestion": "người tham gia, người tham dự",
+                "example": "Every participant in the forum received a certificate of completion.",
+                "exampleVi": "Mỗi người tham gia diễn đàn đều nhận được chứng chỉ hoàn thành.",
+                "note": "participate in (v) -> participant (n: người tham gia) -> participation (n: sự tham gia)"
         },
         {
-            stt: 24,
-            primaryWord: "take place",
-            displayWord: "take place",
-            ipa: "/teɪk pleɪs/",
-            type: "v.phr",
-            typeCategory: "phrase",
-            primaryMeaning: "diễn ra (có kế hoạch trước)",
-            fullMeaning: "diễn ra (= occur / happen theo lịch trình định sẵn)",
-            teacherQuestion: "diễn ra theo kế hoạch hoặc lịch trình định sẵn",
-            example: "The 43rd ASEAN Summit took place in Jakarta, Indonesia.",
-            exampleVi: "Hội nghị cấp cao ASEAN lần thứ 43 đã diễn ra tại Jakarta, Indonesia.",
-            note: "take place (có kế hoạch) # happen (bất ngờ, ngẫu nhiên)"
+                "stt": 24,
+                "primaryWord": "take place",
+                "displayWord": "take place / happen / occur",
+                "ipa": "/teɪk pleɪs/",
+                "type": "v.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "diễn ra",
+                "fullMeaning": "diễn ra (có kế hoạch trước; = happen = occur)",
+                "teacherQuestion": "diễn ra",
+                "example": "The next ASEAN summit will take place in Vientiane, Laos.",
+                "exampleVi": "Hội nghị thượng đỉnh ASEAN tiếp theo sẽ diễn ra tại Viêng Chăn, Lào.",
+                "note": "take place (có kế hoạch) >< happen / occur (tự nhiên, bất ngờ)"
         },
         {
-            stt: 25,
-            primaryWord: "live-streamed",
-            displayWord: "live-streamed",
-            ipa: "/ˈlaɪv striːmd/",
-            type: "adj/v",
-            typeCategory: "verb",
-            primaryMeaning: "phát sóng trực tiếp qua mạng",
-            fullMeaning: "được phát sóng trực tiếp (qua mạng Internet)",
-            teacherQuestion: "được phát sóng trực tiếp qua mạng Internet",
-            example: "The opening ceremony was live-streamed to millions of viewers worldwide.",
-            exampleVi: "Lễ khai mạc được phát sóng trực tiếp tới hàng triệu khán giả trên toàn thế giới.",
-            note: "broadcast live / streamed online in real time"
+                "stt": 25,
+                "primaryWord": "live-streamed",
+                "displayWord": "live-streamed",
+                "ipa": "/ˈlaɪv striːmd/",
+                "type": "adj/v",
+                "typeCategory": "adj",
+                "primaryMeaning": "được phát trực tiếp",
+                "fullMeaning": "được truyền hình trực tiếp, phát trực tuyến qua mạng",
+                "teacherQuestion": "được phát trực tiếp trên mạng",
+                "example": "The opening ceremony of the ASEAN festival was live-streamed worldwide.",
+                "exampleVi": "Lễ khai mạc lễ hội ASEAN đã được phát trực tiếp trên toàn thế giới.",
+                "note": "live stream (v, n); live-streamed (quá khứ/phân từ/adj)"
         },
         {
-            stt: 26,
-            primaryWord: "raise awareness",
-            displayWord: "raise awareness (of / about)",
-            ipa: "/reɪz əˈweənəs/",
-            type: "v.phr",
-            typeCategory: "phrase",
-            primaryMeaning: "nâng cao nhận thức",
-            fullMeaning: "nâng cao nhận thức (về một vấn đề)",
-            teacherQuestion: "cụm từ mang nghĩa nâng cao nhận thức của mọi người",
-            example: "Schools organized green campaigns to raise awareness about plastic recycling.",
-            exampleVi: "Các trường học tổ chức chiến dịch xanh để nâng cao nhận thức về tái chế rác nhựa.",
-            note: "raise awareness of/about sth; aware (adj) -> awareness (n)"
+                "stt": 26,
+                "primaryWord": "raise awareness of",
+                "displayWord": "raise awareness of",
+                "ipa": "/reɪz əˈweənəs əv/",
+                "type": "v.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "nâng cao nhận thức",
+                "fullMeaning": "nâng cao nhận thức về một vấn đề",
+                "teacherQuestion": "nâng cao nhận thức",
+                "example": "The youth campaign successfully raised public awareness of wildlife protection.",
+                "exampleVi": "Chiến dịch thanh niên đã nâng cao nhận thức cộng đồng thành công về bảo vệ động vật hoang dã.",
+                "note": "raise awareness of / about sth; aware (adj) -> awareness (n)"
         },
         {
-            stt: 27,
-            primaryWord: "promote",
-            displayWord: "promote / promotion",
-            ipa: "/prəˈməʊt/",
-            type: "v",
-            typeCategory: "verb",
-            primaryMeaning: "thúc đẩy, xúc tiến, quảng bá",
-            fullMeaning: "thúc đẩy, xúc tiến, quảng bá",
-            teacherQuestion: "thúc đẩy, xúc tiến hoặc quảng bá cái gì",
-            example: "The program aims to promote friendship and mutual understanding among member states.",
-            exampleVi: "Chương trình nhằm thúc đẩy tình hữu nghị và sự thấu hiểu lẫn nhau giữa các nước thành viên.",
-            note: "promote tourism / friendship / peace; promotion (n)"
+                "stt": 27,
+                "primaryWord": "promote",
+                "displayWord": "promote / promotion",
+                "ipa": "/prəˈməʊt/",
+                "type": "v",
+                "typeCategory": "verb",
+                "primaryMeaning": "thúc đẩy, quảng bá",
+                "fullMeaning": "thúc đẩy, phát triển, quảng bá (danh từ: promotion)",
+                "teacherQuestion": "thúc đẩy, quảng bá",
+                "example": "Member states work together to promote regional tourism and economic trade.",
+                "exampleVi": "Các nước thành viên hợp tác cùng nhau để thúc đẩy du lịch khu vực và thương mại kinh tế.",
+                "note": "promote (v) -> promotion (n: sự thúc đẩy / quảng bá / thăng chức)"
         },
         {
-            stt: 28,
-            primaryWord: "strengthen",
-            displayWord: "strengthen / strong / strength",
-            ipa: "/ˈstreŋθn/",
-            type: "v",
-            typeCategory: "verb",
-            primaryMeaning: "tăng cường, củng cố",
-            fullMeaning: "tăng cường, củng cố, làm mạnh thêm",
-            teacherQuestion: "động từ chỉ hành động tăng cường, củng cố cho vững mạnh hơn",
-            example: "Education partnerships help strengthen bilateral relations between nations.",
-            exampleVi: "Hợp tác giáo dục giúp tăng cường mối quan hệ song phương giữa các quốc gia.",
-            note: "strong (adj) -> strength (n) -> strengthen (v)"
+                "stt": 28,
+                "primaryWord": "strengthen",
+                "displayWord": "strengthen / strong / strength",
+                "ipa": "/ˈstreŋkθn/",
+                "type": "v",
+                "typeCategory": "verb",
+                "primaryMeaning": "củng cố, tăng cường",
+                "fullMeaning": "củng cố, làm cho mạnh mẽ hơn (tính từ: strong; danh từ: strength)",
+                "teacherQuestion": "củng cố, tăng cường",
+                "example": "Youth exchanges help strengthen mutual understanding between countries.",
+                "exampleVi": "Giao lưu thanh niên giúp củng cố sự hiểu biết lẫn nhau giữa các quốc gia.",
+                "note": "strong (adj) -> strength (n: sức mạnh) -> strengthen (v: củng cố)"
         },
         {
-            stt: 29,
-            primaryWord: "relation",
-            displayWord: "Relation (diplomatic/relatives) / relationship",
-            ipa: "/rɪˈleɪʃn/",
-            type: "n / n",
-            typeCategory: "noun",
-            primaryMeaning: "mối quan hệ (ngoại giao / tình cảm)",
-            fullMeaning: "mối quan hệ (relations: ngoại giao, đối ngoại / relationship: tình cảm, bạn bè, gia đình)",
-            teacherQuestion: "mối quan hệ ngoại giao giữa các quốc gia",
-            example: "Vietnam continues to expand diplomatic relations with countries around the globe.",
-            exampleVi: "Việt Nam tiếp tục mở rộng quan hệ ngoại giao với các nước trên toàn cầu.",
-            note: "diplomatic relations (ngoại giao) # close personal relationship"
+                "stt": 29,
+                "primaryWord": "relation",
+                "displayWord": "relation / relationship",
+                "ipa": "/rɪˈleɪʃn/",
+                "type": "n",
+                "typeCategory": "noun",
+                "primaryMeaning": "mối quan hệ",
+                "fullMeaning": "mối quan hệ (quốc tế/chính trị: relation; giữa người với người hoặc người với sự vật: relationship)",
+                "teacherQuestion": "mối quan hệ",
+                "example": "Diplomatic relations between Vietnam and other ASEAN countries have flourished.",
+                "exampleVi": "Quan hệ ngoại giao giữa Việt Nam và các nước ASEAN khác đã phát triển rực rỡ.",
+                "note": "diplomatic relations (quan hệ ngoại giao); relationship (n: mối quan hệ cá nhân/gắn kết)"
         },
         {
-            stt: 30,
-            primaryWord: "represent",
-            displayWord: "represent",
-            ipa: "/ˌreprɪˈzent/",
-            type: "v",
-            typeCategory: "verb",
-            primaryMeaning: "đại diện cho",
-            fullMeaning: "đại diện cho (quốc gia, tổ chức, tập thể)",
-            teacherQuestion: "đại diện cho một quốc gia, tổ chức hoặc tập thể",
-            example: "Ten youth ambassadors were selected to represent Vietnam at the summit.",
-            exampleVi: "Mười đại sứ trẻ đã được chọn để đại diện cho Việt Nam tại hội nghị thượng đỉnh.",
-            note: "represent a country / an organization"
+                "stt": 30,
+                "primaryWord": "represent",
+                "displayWord": "represent",
+                "ipa": "/ˌreprɪˈzent/",
+                "type": "v",
+                "typeCategory": "verb",
+                "primaryMeaning": "đại diện",
+                "fullMeaning": "đại diện cho, tượng trưng cho",
+                "teacherQuestion": "đại diện",
+                "example": "Two outstanding students were chosen to represent Vietnam at the summit.",
+                "exampleVi": "Hai học sinh xuất sắc đã được chọn để đại diện cho Việt Nam tại hội nghị thượng đỉnh.",
+                "note": "represent (v) -> representative (n: người đại diện; adj: tiêu biểu)"
         },
         {
-            stt: 31,
-            primaryWord: "representative",
-            displayWord: "representative",
-            ipa: "/ˌreprɪˈzentətɪv/",
-            type: "n / adj",
-            typeCategory: "noun",
-            primaryMeaning: "người đại diện, đại biểu",
-            fullMeaning: "người đại diện, đại biểu (adj: tiêu biểu)",
-            teacherQuestion: "người đại diện, đại biểu phát biểu ý kiến",
-            example: "The representative of the Ministry of Foreign Affairs delivered the keynote speech.",
-            exampleVi: "Đại diện của Bộ Ngoại giao đã có bài phát biểu quan trọng.",
-            note: "Lưu ý đuôi -ive nhưng đây là danh từ chỉ người đại diện!"
+                "stt": 31,
+                "primaryWord": "representative",
+                "displayWord": "representative",
+                "ipa": "/ˌreprɪˈzentətɪv/",
+                "type": "n",
+                "typeCategory": "noun",
+                "primaryMeaning": "người đại diện",
+                "fullMeaning": "người đại diện, đại biểu",
+                "teacherQuestion": "người đại diện, đại biểu",
+                "example": "Official representatives from 10 ASEAN countries signed the historic declaration.",
+                "exampleVi": "Các đại diện chính thức từ 10 quốc gia ASEAN đã ký kết tuyên bố lịch sử.",
+                "note": "representative (n: người đại diện; adj: mang tính đại diện)"
         },
         {
-            stt: 32,
-            primaryWord: "eye-opening",
-            displayWord: "eye-opening",
-            ipa: "/ˈaɪ əʊpnɪŋ/",
-            type: "adj",
-            typeCategory: "adj",
-            primaryMeaning: "mở mang tầm mắt, khai sáng",
-            fullMeaning: "mở mang tầm mắt, đem lại hiểu biết mới mẻ",
-            teacherQuestion: "mở mang tầm mắt, đem lại trải nghiệm bất ngờ thú vị",
-            example: "Visiting heritage sites across Southeast Asia was an eye-opening journey.",
-            exampleVi: "Tham quan các di sản khắp Đông Nam Á là một chuyến đi mở mang tầm mắt.",
-            note: "an eye-opening experience / journey"
+                "stt": 32,
+                "primaryWord": "eye-opening",
+                "displayWord": "eye-opening",
+                "ipa": "/ˈaɪ əʊpnɪŋ/",
+                "type": "adj",
+                "typeCategory": "adj",
+                "primaryMeaning": "mở mang tầm mắt",
+                "fullMeaning": "mở mang tầm mắt, bất ngờ và khai sáng",
+                "teacherQuestion": "mở mang tầm mắt",
+                "example": "Visiting cultural heritage sites across ASEAN was an eye-opening experience.",
+                "exampleVi": "Đến thăm các di sản văn hóa trên khắp ASEAN là một trải nghiệm mở mang tầm mắt.",
+                "note": "an eye-opening experience (trải nghiệm mở rộng tầm hiểu biết)"
         },
         {
-            stt: 33,
-            primaryWord: "opportunity",
-            displayWord: "opportunity = chance",
-            ipa: "/ˌɒpəˈtjuːnəti/",
-            type: "n",
-            typeCategory: "noun",
-            primaryMeaning: "cơ hội",
-            fullMeaning: "cơ hội (= chance)",
-            teacherQuestion: "cơ hội tốt để làm một điều gì đó",
-            example: "Studying abroad provides students with the opportunity to explore new cultures.",
-            exampleVi: "Du học mang lại cho học sinh cơ hội khám phá những nền văn hóa mới.",
-            note: "take / miss / seize an opportunity to do sth"
+                "stt": 33,
+                "primaryWord": "opportunity",
+                "displayWord": "opportunity",
+                "ipa": "/ˌɒpəˈtjuːnəti/",
+                "type": "n",
+                "typeCategory": "noun",
+                "primaryMeaning": "cơ hội",
+                "fullMeaning": "cơ hội, thời cơ thuận lợi (= chance)",
+                "teacherQuestion": "cơ hội",
+                "example": "Studying abroad provides students with great opportunities to broaden their minds.",
+                "exampleVi": "Du học đem lại cho học sinh những cơ hội tuyệt vời để mở rộng tư duy.",
+                "note": "seize/take/have an opportunity (nắm bắt/tận dụng cơ hội)"
         },
         {
-            stt: 34,
-            primaryWord: "equality",
-            displayWord: "Equality / gender equality",
-            ipa: "/iˈkwɒləti/",
-            type: "n / n.phr",
-            typeCategory: "noun",
-            primaryMeaning: "sự bình đẳng",
-            fullMeaning: "sự bình đẳng / bình đẳng giới (gender equality)",
-            teacherQuestion: "sự bình đẳng, công bằng trong xã hội",
-            example: "Promoting gender equality is an essential goal for modern society.",
-            exampleVi: "Thúc đẩy bình đẳng giới là một mục tiêu thiết yếu của xã hội hiện đại.",
-            note: "equal (adj) -> equality (n) # inequality"
+                "stt": 34,
+                "primaryWord": "equality",
+                "displayWord": "equality / equally / equal to",
+                "ipa": "/iˈkwɒləti/",
+                "type": "n",
+                "typeCategory": "noun",
+                "primaryMeaning": "sự bình đẳng",
+                "fullMeaning": "sự bình đẳng (phó từ: equally; tính từ: equal to)",
+                "teacherQuestion": "sự bình đẳng",
+                "example": "Gender equality is essential for sustainable social and economic progress.",
+                "exampleVi": "Bình đẳng giới là yếu tố thiết yếu cho sự tiến bộ xã hội và kinh tế bền vững.",
+                "note": "equal (adj) -> equally (adv) -> equality (n: sự bình đẳng) >< inequality"
         },
         {
-            stt: 35,
-            primaryWord: "have community work experience",
-            displayWord: "have community work experience",
-            ipa: "/hæv kəˈmjuːnəti wɜːk ɪkˈspɪəriəns/",
-            type: "v.phr",
-            typeCategory: "phrase",
-            primaryMeaning: "có kinh nghiệm làm việc cộng đồng",
-            fullMeaning: "có kinh nghiệm làm việc cộng đồng",
-            teacherQuestion: "cụm từ có kinh nghiệm tham gia các hoạt động cộng đồng",
-            example: "Candidates who have community work experience are highly preferred.",
-            exampleVi: "Những ứng viên có kinh nghiệm làm việc cộng đồng được ưu tiên rất cao.",
-            note: "work experience (danh từ không đếm được)"
+                "stt": 35,
+                "primaryWord": "have community work experience",
+                "displayWord": "have community work experience",
+                "ipa": "/hæv kəˈmjuːnəti wɜːk ɪkˈspɪəriəns/",
+                "type": "v.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "có kinh nghiệm làm công tác cộng đồng",
+                "fullMeaning": "có kinh nghiệm thực tế làm công tác cộng đồng / hoạt động xã hội",
+                "teacherQuestion": "có kinh nghiệm làm công tác cộng đồng",
+                "example": "Volunteers who have community work experience are highly preferred.",
+                "exampleVi": "Những tình nguyện viên có kinh nghiệm làm công tác cộng đồng được ưu tiên rất cao.",
+                "note": "community work experience: kinh nghiệm hoạt động tình nguyện cộng đồng"
         },
         {
-            stt: 36,
-            primaryWord: "be confident speakers",
-            displayWord: "be confident speakers",
-            ipa: "/biː ˈkɒnfɪdənt ˈspiːkəz/",
-            type: "v.phr",
-            typeCategory: "phrase",
-            primaryMeaning: "là những người nói tự tin",
-            fullMeaning: "là những người nói tự tin trước công chúng",
-            teacherQuestion: "là những người nói, diễn giả tự tin trước đám đông",
-            example: "Debate clubs train young students to be confident speakers in public.",
-            exampleVi: "Các câu lạc bộ tranh biện rèn luyện học sinh trẻ trở thành những người nói tự tin trước đám đông.",
-            note: "confidence (n) -> confident (adj) -> speak (v) -> speaker (n)"
+                "stt": 36,
+                "primaryWord": "be confident speakers",
+                "displayWord": "be confident speakers",
+                "ipa": "/biː ˈkɒnfɪdənt ˈspiːkəz/",
+                "type": "v.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "tự tin khi nói trước mọi người",
+                "fullMeaning": "tự tin khi nói trước mọi người, diễn giả tự tin trước đám đông",
+                "teacherQuestion": "tự tin khi nói trước mọi người",
+                "example": "Debate clubs train young students to be confident speakers in public.",
+                "exampleVi": "Các câu lạc bộ tranh biện rèn luyện học sinh trẻ trở thành những người nói tự tin trước đám đông.",
+                "note": "confident (adj: tự tin) -> confidence (n: sự tự tin); public speaking"
         },
         {
-            stt: 37,
-            primaryWord: "have teamwork skills",
-            displayWord: "have teamwork skills",
-            ipa: "/hæv ˈtiːmwɜːk skɪlz/",
-            type: "v.phr",
-            typeCategory: "phrase",
-            primaryMeaning: "có kỹ năng làm việc nhóm",
-            fullMeaning: "có kỹ năng làm việc nhóm hiệu quả",
-            teacherQuestion: "có kỹ năng phối hợp làm việc nhóm hiệu quả",
-            example: "To complete complex group projects, students must have good teamwork skills.",
-            exampleVi: "Để hoàn thành các dự án nhóm phức tạp, học sinh phải có kỹ năng làm việc nhóm tốt.",
-            note: "teamwork spirit = tinh thần đồng đội"
+                "stt": 37,
+                "primaryWord": "have teamwork skills",
+                "displayWord": "have teamwork skills",
+                "ipa": "/hæv ˈtiːmwɜːk skɪlz/",
+                "type": "v.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "có kỹ năng làm việc nhóm",
+                "fullMeaning": "có kỹ năng làm việc nhóm hiệu quả",
+                "teacherQuestion": "có kỹ năng làm việc nhóm",
+                "example": "Students need to have teamwork skills to collaborate successfully on projects.",
+                "exampleVi": "Học sinh cần có kỹ năng làm việc nhóm để cộng tác thành công trong các dự án.",
+                "note": "teamwork (n: làm việc nhóm) -> teamwork skills: kỹ năng phối hợp đồng đội"
         },
         {
-            stt: 38,
-            primaryWord: "practical skills",
-            displayWord: "practical skills",
-            ipa: "/ˈpræktɪkl skɪlz/",
-            type: "n.phr",
-            typeCategory: "noun",
-            primaryMeaning: "kỹ năng thực hành, thực tế",
-            fullMeaning: "kỹ năng thực hành, kỹ năng thực tế",
-            teacherQuestion: "các kỹ năng thực hành, thực tế trong đời sống",
-            example: "Workshops equip young volunteers with practical skills for emergency response.",
-            exampleVi: "Các buổi tập huấn trang bị cho tình nguyện viên trẻ các kỹ năng thực tế để ứng phó khẩn cấp.",
-            note: "practice (n) -> practical (adj) # theoretical (lý thuyết)"
+                "stt": 38,
+                "primaryWord": "practical skills",
+                "displayWord": "practical skills",
+                "ipa": "/ˈpræktɪkl skɪlz/",
+                "type": "n.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "kỹ năng thực hành",
+                "fullMeaning": "kỹ năng thực tế, thực hành ứng dụng",
+                "teacherQuestion": "kỹ năng thực hành, thực tế",
+                "example": "Vocational schools equip students with practical skills for the modern job market.",
+                "exampleVi": "Các trường dạy nghề trang bị cho học sinh những kỹ năng thực hành cho thị trường việc làm hiện đại.",
+                "note": "practice (n, v) -> practical (adj: thực tế, thực hành)"
         },
         {
-            stt: 39,
-            primaryWord: "understand different cultures",
-            displayWord: "understand different cultures",
-            ipa: "/ˌʌndəˈstænd ˈdɪfrənt ˈkʌltʃəz/",
-            type: "v.phr",
-            typeCategory: "phrase",
-            primaryMeaning: "thấu hiểu các nền văn hóa khác nhau",
-            fullMeaning: "thấu hiểu các nền văn hóa khác nhau trên thế giới",
-            teacherQuestion: "thấu hiểu và tôn trọng các nền văn hóa khác nhau",
-            example: "Living with host families helps exchange students understand different cultures deeply.",
-            exampleVi: "Sống cùng gia đình bản xứ giúp học sinh trao đổi thấu hiểu sâu sắc các nền văn hóa khác nhau.",
-            note: "cultural diversity = sự đa dạng văn hóa"
+                "stt": 39,
+                "primaryWord": "understand different cultures",
+                "displayWord": "understand different cultures",
+                "ipa": "/ˌʌndəˈstænd ˈdɪfrənt ˈkʌltʃəz/",
+                "type": "v.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "hiểu các nền văn hóa khác nhau",
+                "fullMeaning": "thấu hiểu và tôn trọng sự đa dạng của các nền văn hóa khác nhau",
+                "teacherQuestion": "hiểu các nền văn hóa khác nhau",
+                "example": "International exchanges help youths understand different cultures and make friends.",
+                "exampleVi": "Giao lưu quốc tế giúp thanh thiếu niên thấu hiểu các nền văn hóa khác nhau và kết bạn.",
+                "note": "culture (n: văn hóa) -> different cultures: các nền văn hóa đa dạng"
         },
         {
-            stt: 40,
-            primaryWord: "offer solution",
-            displayWord: "offer solution / propose a solution",
-            ipa: "/ˈɒfə səˈluːʃn/",
-            type: "v.phr",
-            typeCategory: "phrase",
-            primaryMeaning: "đưa ra giải pháp",
-            fullMeaning: "đưa ra giải pháp giải quyết vấn đề",
-            teacherQuestion: "đưa ra giải pháp giải quyết một vấn đề nan giải",
-            example: "Youth delegates collaborated to offer innovative solutions to marine pollution.",
-            exampleVi: "Các đại biểu trẻ đã cùng nhau đưa ra các giải pháp sáng tạo cho vấn đề ô nhiễm biển.",
-            note: "solve (v) -> solution (n) -> offer/find a solution"
+                "stt": 40,
+                "primaryWord": "offer solution",
+                "displayWord": "offer solution",
+                "ipa": "/ˈɒfə səˈluːʃn/",
+                "type": "v.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "đưa ra giải pháp",
+                "fullMeaning": "đưa ra giải pháp, đề xuất cách xử lý vấn đề",
+                "teacherQuestion": "đưa ra giải pháp",
+                "example": "The committee met this morning to discuss issues and offer practical solutions.",
+                "exampleVi": "Ủy ban đã họp sáng nay để thảo luận các vấn đề và đưa ra những giải pháp thiết thực.",
+                "note": "solve (v: giải quyết) -> solution (n: giải pháp); offer a solution: đưa ra giải pháp"
+        },
+        {
+                "stt": 41,
+                "primaryWord": "welcome event",
+                "displayWord": "welcome event",
+                "ipa": "/ˈwelkəm ɪˈvent/",
+                "type": "n.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "sự kiện chào mừng",
+                "fullMeaning": "sự kiện chào mừng, buổi lễ đón tiếp (sự chào mừng)",
+                "teacherQuestion": "sự kiện chào mừng, buổi đón tiếp",
+                "example": "The school organized a warm welcome event for exchange students from Thailand.",
+                "exampleVi": "Nhà trường đã tổ chức một sự kiện chào mừng nồng nhiệt cho các bạn học sinh trao đổi đến từ Thái Lan.",
+                "note": "welcome (v, n, adj); welcome event: sự kiện / tiệc chào đón"
+        },
+        {
+                "stt": 42,
+                "primaryWord": "make friends with",
+                "displayWord": "make friends with",
+                "ipa": "/meɪk frendz wɪð/",
+                "type": "v.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "kết bạn với",
+                "fullMeaning": "kết bạn với ai đó (= befriend)",
+                "teacherQuestion": "kết bạn với ai",
+                "example": "It is easy to make friends with peers from different ASEAN nations.",
+                "exampleVi": "Rất dễ dàng để kết bạn với những bạn cùng trang lứa đến từ các quốc gia ASEAN khác nhau.",
+                "note": "make friends with sb (kết bạn với ai - luôn có 's' ở friends)"
+        },
+        {
+                "stt": 43,
+                "primaryWord": "contribute",
+                "displayWord": "contribute / contribute to",
+                "ipa": "/kənˈtrɪbjuːt/",
+                "type": "v",
+                "typeCategory": "verb",
+                "primaryMeaning": "đóng góp",
+                "fullMeaning": "đóng góp, góp phần (thường đi với giới từ to)",
+                "teacherQuestion": "đóng góp",
+                "example": "Every member country strives to contribute to peace and economic prosperity.",
+                "exampleVi": "Mỗi quốc gia thành viên đều nỗ lực đóng góp cho hòa bình và thịnh vượng kinh tế.",
+                "note": "contribute to + V-ing / N; contribution (n: sự đóng góp); contributor (n: người đóng góp)"
+        },
+        {
+                "stt": 44,
+                "primaryWord": "region",
+                "displayWord": "region / regional",
+                "ipa": "/ˈriːdʒən/",
+                "type": "n",
+                "typeCategory": "noun",
+                "primaryMeaning": "khu vực",
+                "fullMeaning": "khu vực, vùng miền (tính từ: regional)",
+                "teacherQuestion": "khu vực, vùng miền",
+                "example": "Southeast Asia is a dynamic region with rapid economic growth.",
+                "exampleVi": "Đông Nam Á là một khu vực năng động với tốc độ tăng trưởng kinh tế nhanh chóng.",
+                "note": "region (n: khu vực) -> regional (adj: thuộc về khu vực)"
+        },
+        {
+                "stt": 45,
+                "primaryWord": "discuss",
+                "displayWord": "discuss",
+                "ipa": "/dɪˈskʌs/",
+                "type": "v",
+                "typeCategory": "verb",
+                "primaryMeaning": "thảo luận",
+                "fullMeaning": "thảo luận, bàn luận về điều gì (không dùng 'discuss about')",
+                "teacherQuestion": "thảo luận",
+                "example": "Ministers gathered to discuss urgent environmental and educational issues.",
+                "exampleVi": "Các bộ trưởng đã tập trung để thảo luận các vấn đề cấp bách về môi trường và giáo dục.",
+                "note": "discuss sth (không dùng discuss about); discuss (v) -> discussion (n)"
+        },
+        {
+                "stt": 46,
+                "primaryWord": "discussion",
+                "displayWord": "discussion",
+                "ipa": "/dɪˈskʌʃn/",
+                "type": "n",
+                "typeCategory": "noun",
+                "primaryMeaning": "cuộc thảo luận",
+                "fullMeaning": "cuộc thảo luận, buổi trao đổi bàn bạc",
+                "teacherQuestion": "cuộc thảo luận",
+                "example": "The panel discussion on youth employment attracted hundreds of attendees.",
+                "exampleVi": "Cuộc thảo luận bàn tròn về việc làm cho thanh niên đã thu hút hàng trăm người tham dự.",
+                "note": "have a discussion with sb about sth; under discussion: đang được thảo luận"
+        },
+        {
+                "stt": 47,
+                "primaryWord": "benefit",
+                "displayWord": "benefit",
+                "ipa": "/ˈbenɪfɪt/",
+                "type": "(n; v)",
+                "typeCategory": "noun",
+                "primaryMeaning": "lợi ích, có lợi cho",
+                "fullMeaning": "lợi ích (n) / có lợi cho, mang lại lợi ích cho (v)",
+                "teacherQuestion": "lợi ích hoặc có lợi cho",
+                "example": "Visa-free travel across ASEAN brings huge benefits to international tourists.",
+                "exampleVi": "Chính sách miễn thị thực đi lại khắp ASEAN mang lại những lợi ích khổng lồ cho khách du lịch quốc tế.",
+                "note": "benefit from sth (hưởng lợi từ); be of benefit to sb; beneficial (adj)"
+        },
+        {
+                "stt": 48,
+                "primaryWord": "beneficial",
+                "displayWord": "beneficial",
+                "ipa": "/ˌbenɪˈfɪʃl/",
+                "type": "adj",
+                "typeCategory": "adj",
+                "primaryMeaning": "có lợi, hữu ích",
+                "fullMeaning": "có lợi, hữu ích, mang lại điều tốt (= advantageous, helpful)",
+                "teacherQuestion": "có lợi, hữu ích",
+                "example": "Cultural exchange is extremely beneficial to mutual understanding.",
+                "exampleVi": "Giao lưu văn hóa vô cùng có lợi cho sự hiểu biết lẫn nhau.",
+                "note": "beneficial to / for sth (có lợi cho); benefit (n, v)"
+        },
+        {
+                "stt": 49,
+                "primaryWord": "host",
+                "displayWord": "host",
+                "ipa": "/həʊst/",
+                "type": "(n; v)",
+                "typeCategory": "verb",
+                "primaryMeaning": "chủ nhà, đăng cai, tổ chức",
+                "fullMeaning": "chủ nhà, người đăng cai (n) / đăng cai tổ chức (v)",
+                "teacherQuestion": "chủ nhà, đăng cai tổ chức",
+                "example": "Vietnam successfully hosted the 31st SEA Games with great enthusiasm.",
+                "exampleVi": "Việt Nam đã đăng cai tổ chức thành công SEA Games 31 với sự hưởng ứng nhiệt tình to lớn.",
+                "note": "host country (nước chủ nhà); host an event (đăng cai tổ chức sự kiện)"
+        },
+        {
+                "stt": 50,
+                "primaryWord": "proposal",
+                "displayWord": "proposal / propose",
+                "ipa": "/prəˈpəʊzl/",
+                "type": "n",
+                "typeCategory": "noun",
+                "primaryMeaning": "đề xuất",
+                "fullMeaning": "bản đề xuất, sự đề xuất (động từ: propose)",
+                "teacherQuestion": "đề xuất, bản đề xuất",
+                "example": "The committee submitted an innovative proposal to reduce plastic waste.",
+                "exampleVi": "Ủy ban đã đệ trình một bản đề xuất sáng tạo nhằm giảm thiểu rác thải nhựa.",
+                "note": "propose (v: đề xuất, cầu hôn) -> proposal (n: bản đề xuất)"
+        },
+        {
+                "stt": 51,
+                "primaryWord": "break the ice",
+                "displayWord": "break the ice",
+                "ipa": "/breɪk ði aɪs/",
+                "type": "v.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "phá vỡ sự ngại ngùng",
+                "fullMeaning": "phá vỡ sự ngại ngùng, xóa tan bầu không khí e dè ban đầu",
+                "teacherQuestion": "phá vỡ sự ngại ngùng",
+                "example": "The host played a funny game to break the ice among international students.",
+                "exampleVi": "Người dẫn chương trình đã chơi một trò chơi vui nhộn để phá vỡ sự ngại ngùng giữa các bạn học sinh quốc tế.",
+                "note": "break the ice (thành ngữ: phá vỡ sự xa lạ, ngại ngùng ban đầu); ice-breaker (trò chơi mở đầu)"
+        },
+        {
+                "stt": 52,
+                "primaryWord": "create bonds with sb",
+                "displayWord": "create bonds with sb",
+                "ipa": "/kriˈeɪt bɒndz wɪð/",
+                "type": "v.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "tạo dựng sự gắn kết với ai",
+                "fullMeaning": "tạo dựng sự gắn kết, mối liên kết thân thiết với ai đó",
+                "teacherQuestion": "tạo dựng sự gắn kết với ai",
+                "example": "Volunteering together helps youths create strong bonds with each other.",
+                "exampleVi": "Cùng làm tình nguyện giúp thanh niên tạo dựng sự gắn kết bền chặt với nhau.",
+                "note": "create bonds with someone (tạo dựng mối dây gắn kết bền chặt với ai)"
+        },
+        {
+                "stt": 53,
+                "primaryWord": "create shared values",
+                "displayWord": "create shared values",
+                "ipa": "/kriˈeɪt ʃeəd ˈvæljuːz/",
+                "type": "v.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "tạo ra những giá trị chung",
+                "fullMeaning": "tạo ra những giá trị chung, giá trị cùng chia sẻ",
+                "teacherQuestion": "tạo ra những giá trị chung",
+                "example": "Collaborative educational initiatives create shared values for all ASEAN partners.",
+                "exampleVi": "Các sáng kiến giáo dục hợp tác tạo ra những giá trị chung cho tất cả các đối tác ASEAN.",
+                "note": "shared values: những giá trị chung, cùng sẻ chia"
+        },
+        {
+                "stt": 54,
+                "primaryWord": "build a community",
+                "displayWord": "build a community",
+                "ipa": "/bɪld ə kəˈmjuːnəti/",
+                "type": "v.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "xây dựng cộng đồng",
+                "fullMeaning": "xây dựng cộng đồng vững mạnh và gắn bó",
+                "teacherQuestion": "xây dựng cộng đồng",
+                "example": "All member countries are working hard together to build a peaceful ASEAN community.",
+                "exampleVi": "Tất cả các quốc gia thành viên đang nỗ lực cùng nhau xây dựng một cộng đồng ASEAN hòa bình.",
+                "note": "build / develop / foster a community (xây dựng, phát triển cộng đồng)"
+        },
+        {
+                "stt": 55,
+                "primaryWord": "training workshop",
+                "displayWord": "training workshop",
+                "ipa": "/ˈtreɪnɪŋ ˈwɜːkʃɒp/",
+                "type": "n.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "hội thảo tập huấn",
+                "fullMeaning": "buổi hội thảo tập huấn, đào tạo kỹ năng",
+                "teacherQuestion": "hội thảo tập huấn",
+                "example": "The training workshop equipped volunteers with essential emergency first-aid skills.",
+                "exampleVi": "Buổi hội thảo tập huấn đã trang bị cho tình nguyện viên các kỹ năng sơ cứu khẩn cấp thiết yếu.",
+                "note": "training (n: đào tạo) + workshop (n: hội thảo thực hành)"
+        },
+        {
+                "stt": 56,
+                "primaryWord": "make arrangements",
+                "displayWord": "make arrangements",
+                "ipa": "/meɪk əˈreɪndʒmənts/",
+                "type": "v.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "sắp xếp, chuẩn bị",
+                "fullMeaning": "sắp xếp, chuẩn bị trước các kế hoạch (= prepare, organize)",
+                "teacherQuestion": "sắp xếp, chuẩn bị",
+                "example": "The school made careful arrangements for the international delegates' accommodation.",
+                "exampleVi": "Nhà trường đã sắp xếp, chuẩn bị chu đáo chỗ ở cho các đại biểu quốc tế.",
+                "note": "arrange (v) -> make arrangements for sth (chuẩn bị, thu xếp cho việc gì)"
+        },
+        {
+                "stt": 57,
+                "primaryWord": "appreciate",
+                "displayWord": "appreciate",
+                "ipa": "/əˈpriːʃieɪt/",
+                "type": "v",
+                "typeCategory": "verb",
+                "primaryMeaning": "trân trọng, đánh giá cao",
+                "fullMeaning": "trân trọng, đánh giá cao, biết ơn sự giúp đỡ (= value, admire)",
+                "teacherQuestion": "trân trọng, đánh giá cao",
+                "example": "We deeply appreciate all the hard work contributed by the young volunteers.",
+                "exampleVi": "Chúng tôi vô cùng trân trọng tất cả những nỗ lực làm việc do các bạn tình nguyện viên trẻ đóng góp.",
+                "note": "appreciate (v: trân trọng) -> appreciation (n: sự cảm kích) -> appreciative (adj)"
+        },
+        {
+                "stt": 58,
+                "primaryWord": "appreciated",
+                "displayWord": "appreciated",
+                "ipa": "/əˈpriːʃieɪtɪd/",
+                "type": "adj",
+                "typeCategory": "adj",
+                "primaryMeaning": "được đánh giá cao",
+                "fullMeaning": "được đánh giá cao, được trân trọng, được biết ơn",
+                "teacherQuestion": "được đánh giá cao, được trân trọng",
+                "example": "Your kind assistance during the seminar is greatly appreciated by the whole team.",
+                "exampleVi": "Sự hỗ trợ nhiệt tình của bạn trong buổi hội thảo được toàn đội vô cùng trân trọng đánh giá cao.",
+                "note": "be greatly appreciated (được trân trọng, đánh giá rất cao)"
+        },
+        {
+                "stt": 59,
+                "primaryWord": "grateful",
+                "displayWord": "grateful",
+                "ipa": "/ˈɡreɪtfl/",
+                "type": "adj",
+                "typeCategory": "adj",
+                "primaryMeaning": "biết ơn",
+                "fullMeaning": "biết ơn, cảm kích (= thankful)",
+                "teacherQuestion": "biết ơn, cảm kích",
+                "example": "I am truly grateful to my teacher for encouraging me to participate in the contest.",
+                "exampleVi": "Tôi thực sự biết ơn cô giáo vì đã khuyến khích tôi tham gia cuộc thi.",
+                "note": "be grateful to sb for sth (biết ơn ai vì điều gì); gratitude (n: lòng biết ơn)"
+        },
+        {
+                "stt": 60,
+                "primaryWord": "pleased",
+                "displayWord": "pleased",
+                "ipa": "/pliːzd/",
+                "type": "adj",
+                "typeCategory": "adj",
+                "primaryMeaning": "hài lòng",
+                "fullMeaning": "hài lòng, vui lòng (= happy, satisfied)",
+                "teacherQuestion": "hài lòng, vui lòng",
+                "example": "The organizers were very pleased with the enthusiastic participation of the students.",
+                "exampleVi": "Ban tổ chức rất hài lòng với sự tham gia nhiệt tình của các bạn học sinh.",
+                "note": "be pleased with sth (hài lòng với cái gì); please (v) -> pleasant (adj) -> pleasure (n)"
+        },
+        {
+                "stt": 61,
+                "primaryWord": "present",
+                "displayWord": "present",
+                "ipa": "/prɪˈzent/",
+                "type": "v",
+                "typeCategory": "verb",
+                "primaryMeaning": "thuyết trình, trình bày",
+                "fullMeaning": "thuyết trình, trình bày trước đám đông (động từ phát âm là /prɪˈzent/)",
+                "teacherQuestion": "thuyết trình, trình bày",
+                "example": "Each group will present their research project on ASEAN biodiversity.",
+                "exampleVi": "Mỗi nhóm sẽ thuyết trình đề án nghiên cứu của mình về đa dạng sinh học ASEAN.",
+                "note": "present (v: /prɪˈzent/ thuyết trình) >< present (n/adj: /ˈpreznt/ món quà, hiện tại)"
+        },
+        {
+                "stt": 62,
+                "primaryWord": "presentation",
+                "displayWord": "presentation",
+                "ipa": "/ˌpreznˈteɪʃn/",
+                "type": "n",
+                "typeCategory": "noun",
+                "primaryMeaning": "bài thuyết trình",
+                "fullMeaning": "bài thuyết trình, phần trình bày",
+                "teacherQuestion": "bài thuyết trình",
+                "example": "Her presentation on green cities won the first prize in the school competition.",
+                "exampleVi": "Bài thuyết trình của cô ấy về các thành phố xanh đã đoạt giải nhất trong cuộc thi của trường.",
+                "note": "give / make a presentation on sth (thực hiện một bài thuyết trình về cái gì)"
+        },
+        {
+                "stt": 63,
+                "primaryWord": "presenter",
+                "displayWord": "presenter",
+                "ipa": "/prɪˈzentər/",
+                "type": "n",
+                "typeCategory": "noun",
+                "primaryMeaning": "người thuyết trình",
+                "fullMeaning": "người thuyết trình, người dẫn chương trình",
+                "teacherQuestion": "người thuyết trình, người trình bày",
+                "example": "The keynote presenter gave an inspiring speech on ASEAN cultural preservation.",
+                "exampleVi": "Người thuyết trình chính đã có một bài phát biểu đầy cảm hứng về bảo tồn văn hóa ASEAN.",
+                "note": "presenter (n: người thuyết trình / MC dẫn chương trình)"
+        },
+        {
+                "stt": 64,
+                "primaryWord": "informative",
+                "displayWord": "informative",
+                "ipa": "/ɪnˈfɔːmətɪv/",
+                "type": "adj",
+                "typeCategory": "adj",
+                "primaryMeaning": "cung cấp nhiều thông tin",
+                "fullMeaning": "cung cấp nhiều thông tin bổ ích, hữu ích (= instructive, revealing)",
+                "teacherQuestion": "cung cấp nhiều thông tin bổ ích",
+                "example": "The lecture was very informative and helped us understand ASEAN trade policies better.",
+                "exampleVi": "Bài giảng cung cấp rất nhiều thông tin bổ ích và giúp chúng tôi hiểu rõ hơn chính sách thương mại ASEAN.",
+                "note": "inform (v) -> information (n) -> informative (adj: nhiều thông tin hữu ích)"
+        },
+        {
+                "stt": 65,
+                "primaryWord": "well-organised",
+                "displayWord": "well-organised",
+                "ipa": "/ˌwel ˈɔːɡənaɪzd/",
+                "type": "adj",
+                "typeCategory": "adj",
+                "primaryMeaning": "được tổ chức tốt",
+                "fullMeaning": "được tổ chức tốt, sắp xếp chu đáo, có trật tự",
+                "teacherQuestion": "được tổ chức tốt, sắp xếp chu đáo",
+                "example": "The youth festival was well-organised, and all activities ran smoothly on schedule.",
+                "exampleVi": "Lễ hội thanh niên được tổ chức rất tốt và mọi hoạt động đều diễn ra suôn sẻ theo đúng lịch trình.",
+                "note": "organise (v) -> organisation (n) -> well-organised (adj: có tổ chức tốt)"
+        },
+        {
+                "stt": 66,
+                "primaryWord": "put effort into",
+                "displayWord": "put effort into",
+                "ipa": "/pʊt ˈefət ˈɪntuː/",
+                "type": "v.phr",
+                "typeCategory": "phrase",
+                "primaryMeaning": "nỗ lực, dồn nỗ lực vào",
+                "fullMeaning": "nỗ lực, dồn tâm huyết và sức lực vào làm việc gì",
+                "teacherQuestion": "nỗ lực, dồn công sức vào việc gì",
+                "example": "The students put a lot of effort into preparing for the ASEAN speech contest.",
+                "exampleVi": "Các bạn học sinh đã dồn rất nhiều nỗ lực vào việc chuẩn bị cho cuộc thi hùng biện ASEAN.",
+                "note": "put effort into + V-ing / N (dồn nỗ lực vào việc gì); make an effort to do sth"
+        },
+        {
+                "stt": 67,
+                "primaryWord": "compliment",
+                "displayWord": "compliment",
+                "ipa": "/ˈkɒmplɪmənt/",
+                "type": "(n; v)",
+                "typeCategory": "noun",
+                "primaryMeaning": "lời khen",
+                "fullMeaning": "lời khen ngợi (n) / khen ngợi (v) (= praise)",
+                "teacherQuestion": "lời khen",
+                "example": "The teacher gave the student a warm compliment on her excellent essay.",
+                "exampleVi": "Cô giáo đã dành cho bạn học sinh một lời khen ấm áp vì bài viết luận xuất sắc của bạn.",
+                "note": "pay sb a compliment (khen ngợi ai); compliment sb on sth (khen ai về điều gì)"
         }
-    ];
+];
 
     // CÁC KHÓA LƯU TRỮ LOCALSTORAGE
     const STORAGE_KEY_STARRED = "azota_vocab_starred_u4";
@@ -649,26 +1027,31 @@
     // VOICE SYNTHESIS: GIỌNG NỮ CHUẨN CỦA CÔ GIÁO & BẢN XỨ TIẾNG ANH
     // ==========================================
     
-    // 1. TÌM GIỌNG NỮ TIẾNG VIỆT (ƯU TIÊN TUYỆT ĐỐI GIỌNG NỮ, LOẠI BỎ MICROSOFT AN)
+        // ==========================================
+    // BỘ PHÁT ÂM TIẾNG VIỆT GIỌNG NỮ 100% (GOOGLE TTS NỮ + FALLBACK NỮ WEBSPEECH)
+    // Đã loại bỏ hoàn toàn giọng nam (Microsoft An), chỉ đọc câu hỏi, không đọc đáp án
+    // ==========================================
+    
+    function isMaleVoice(name) {
+        const n = (name || '').toLowerCase();
+        return n.includes('microsoft an') || 
+               n.includes(' an online') || 
+               n.includes(' an ') ||
+               n.endsWith(' an') || 
+               n.includes(' male') || 
+               n.includes('nam') || 
+               n.includes('david') || 
+               n.includes('mark') ||
+               n.includes('george') ||
+               n.includes('guy') ||
+               n.includes('man');
+    }
+
     function getVietnameseFemaleVoice() {
         if (!('speechSynthesis' in window)) return null;
         try {
             const voices = window.speechSynthesis.getVoices() || [];
             if (!voices.length) return null;
-
-            // Bộ lọc loại bỏ triệt để giọng nam (đặc biệt Microsoft An, Nam, Male, David...)
-            const isMale = (name) => {
-                const n = (name || '').toLowerCase();
-                return n.includes('microsoft an') || 
-                       n.includes(' an online') || 
-                       n.includes(' an ') ||
-                       n.endsWith(' an') || 
-                       n.includes(' male') || 
-                       n.includes('nam') || 
-                       n.includes('david') || 
-                       n.includes('mark') ||
-                       n.includes(' đàn ông ');
-            };
 
             const viVoices = voices.filter(v => {
                 const l = (v.lang || '').toLowerCase();
@@ -676,70 +1059,57 @@
                 return l.startsWith('vi') || l.includes('vi-vn') || n.includes('vietnam') || n.includes('tiếng việt');
             });
 
-            // Ưu tiên 1: Giọng nữ tiếng Việt phổ biến (HoaiMy trên Windows 10/11, Linh trên iOS/macOS, Mai, Google)
+            // Ưu tiên các giọng nữ nổi tiếng
             const femaleVi = viVoices.find(v => {
                 const n = (v.name || '').toLowerCase();
-                return !isMale(n) && (
+                return !isMaleVoice(n) && (
                     n.includes('hoaimy') || 
                     n.includes('hoài my') || 
                     n.includes('linh') || 
                     n.includes('mai') || 
                     n.includes('google') || 
-                    n.includes('female') || 
-                    n.includes('vic') || 
-                    n.includes('vif')
+                    n.includes('female')
                 );
             });
             if (femaleVi) return femaleVi;
 
-            // Ưu tiên 2: Bất kỳ giọng tiếng Việt nào không phải nam
-            const nonMaleVi = viVoices.find(v => !isMale(v.name));
+            // Bất kỳ giọng nào không phải giọng nam
+            const nonMaleVi = viVoices.find(v => !isMaleVoice(v.name));
             if (nonMaleVi) return nonMaleVi;
 
-            return viVoices[0] || null;
+            return null; // Tuyệt đối không trả về Microsoft An nam
         } catch (e) {
             return null;
         }
     }
 
-    // 2. TÌM GIỌNG NỮ TIẾNG ANH (JENNY, ARIA, SAMANTHA, GOOGLE US ENGLISH)
     function getEnglishFemaleVoice() {
         if (!('speechSynthesis' in window)) return null;
         try {
             const voices = window.speechSynthesis.getVoices() || [];
             if (!voices.length) return null;
 
-            const isMale = (name) => {
-                const n = (name || '').toLowerCase();
-                return n.includes(' male') || n.includes('david') || n.includes('mark') || n.includes('george') || n.includes('guy');
-            };
-
             const engVoices = voices.filter(v => (v.lang || '').toLowerCase().startsWith('en'));
-
-            // Ưu tiên các giọng nữ tự nhiên nổi tiếng
             const femaleEng = engVoices.find(v => {
                 const n = (v.name || '').toLowerCase();
-                return !isMale(n) && (
+                return !isMaleVoice(n) && (
                     n.includes('jenny') || 
                     n.includes('aria') || 
                     n.includes('samantha') || 
                     n.includes('zira') || 
                     n.includes('google us') || 
-                    n.includes('victoria') || 
-                    n.includes('female') || 
-                    n.includes('natural')
+                    n.includes('female')
                 );
             });
             if (femaleEng) return femaleEng;
 
-            const nonMaleEng = engVoices.find(v => !isMale(v.name));
+            const nonMaleEng = engVoices.find(v => !isMaleVoice(v.name));
             return nonMaleEng || engVoices[0] || null;
         } catch (e) {
             return null;
         }
     }
 
-    // Hiệu ứng sóng âm khi cô giáo đang nói
     function setTeacherSpeakingStatus(isSpeaking, customText) {
         oralIsSpeaking = isSpeaking;
         const waveBox = document.getElementById("oralSoundWaveBox");
@@ -775,8 +1145,96 @@
         }
     }
 
-    // PHÁT ÂM TIẾNG ANH (GIỌNG NỮ BẢN XỨ CHUẨN)
+    // PHÁT ÂM TIẾNG VIỆT CÔ GIÁO (CHỈ ĐỌC CÂU HỎI BẰNG GIỌNG NỮ 100%)
+    function speakTeacherQuestion(vietnameseText) {
+        // Hủy bất kỳ âm thanh hay phát âm đang chạy
+        if (window._currentTeacherAudio) {
+            try {
+                window._currentTeacherAudio.pause();
+                window._currentTeacherAudio.currentTime = 0;
+            } catch(e) {}
+            window._currentTeacherAudio = null;
+        }
+        if ('speechSynthesis' in window) {
+            try { window.speechSynthesis.cancel(); } catch(e) {}
+        }
+
+        setTeacherSpeakingStatus(true, "Cô Kiều Anh đang hỏi...");
+
+        const cleanPrompt = `Từ nào có nghĩa là: ${vietnameseText}?`;
+
+        // 1. Ưu tiên hàng đầu: Google TTS Tiếng Việt chuẩn giọng nữ thanh thoát
+        try {
+            const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=vi&q=${encodeURIComponent(cleanPrompt)}`;
+            const audio = new Audio(ttsUrl);
+            window._currentTeacherAudio = audio;
+
+            audio.onended = () => {
+                setTeacherSpeakingStatus(false);
+                window._currentTeacherAudio = null;
+            };
+            audio.onerror = () => {
+                speakTeacherQuestionFallback(cleanPrompt);
+            };
+
+            const p = audio.play();
+            if (p !== undefined) {
+                p.catch(() => {
+                    speakTeacherQuestionFallback(cleanPrompt);
+                });
+            }
+        } catch (err) {
+            speakTeacherQuestionFallback(cleanPrompt);
+        }
+    }
+
+    function speakTeacherQuestionFallback(cleanPrompt) {
+        if (!('speechSynthesis' in window)) {
+            setTeacherSpeakingStatus(false);
+            return;
+        }
+        try {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(cleanPrompt);
+            utterance.lang = 'vi-VN';
+            utterance.rate = 0.96;
+            utterance.pitch = 1.35; // Nâng pitch nữ tự nhiên
+
+            const viVoice = getVietnameseFemaleVoice();
+            if (viVoice && !isMaleVoice(viVoice.name)) {
+                utterance.voice = viVoice;
+            }
+
+            utterance.onend = () => {
+                setTeacherSpeakingStatus(false);
+            };
+            utterance.onerror = () => {
+                setTeacherSpeakingStatus(false);
+            };
+
+            window.speechSynthesis.speak(utterance);
+        } catch(e) {
+            setTeacherSpeakingStatus(false);
+        }
+    }
+
+    // KHÔNG ĐỌC ĐÁP ÁN (NGƯỜI DÙNG YÊU CẦU: "đáp án thì cứ kệ đi")
+    function stopAllSpeech() {
+        if (window._currentTeacherAudio) {
+            try {
+                window._currentTeacherAudio.pause();
+                window._currentTeacherAudio.currentTime = 0;
+            } catch(e) {}
+            window._currentTeacherAudio = null;
+        }
+        if ('speechSynthesis' in window) {
+            try { window.speechSynthesis.cancel(); } catch(e) {}
+        }
+        setTeacherSpeakingStatus(false);
+    }
+
     function speakWord(text, onEndCallback) {
+        // Chỉ dùng khi người dùng chủ động bấm icon loa 🔊 ở bảng từ
         if (!('speechSynthesis' in window)) return;
         try {
             window.speechSynthesis.cancel();
@@ -784,7 +1242,7 @@
             const utterance = new SpeechSynthesisUtterance(cleanWord);
             utterance.lang = 'en-US';
             utterance.rate = 0.92;
-            utterance.pitch = 1.08; // Giọng nữ cao, trong trẻo
+            utterance.pitch = 1.08;
 
             const engVoice = getEnglishFemaleVoice();
             if (engVoice) utterance.voice = engVoice;
@@ -793,86 +1251,6 @@
                 utterance.onend = onEndCallback;
                 utterance.onerror = onEndCallback;
             }
-
-            window.speechSynthesis.speak(utterance);
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    // PHÁT ÂM TIẾNG VIỆT GIỌNG CÔ GIÁO (CHUẨN GIỌNG NỮ 100%)
-    function speakTeacherQuestion(vietnameseText) {
-        if (!('speechSynthesis' in window)) return;
-        try {
-            window.speechSynthesis.cancel();
-            const questionPrompt = `Từ nào có nghĩa là: ${vietnameseText}?`;
-            const utterance = new SpeechSynthesisUtterance(questionPrompt);
-            utterance.lang = 'vi-VN';
-            utterance.rate = 0.98;
-            utterance.pitch = 1.22; // Tone nữ ấm áp, thanh thoát, sư phạm của cô giáo
-
-            const viVoice = getVietnameseFemaleVoice();
-            if (viVoice) utterance.voice = viVoice;
-
-            setTeacherSpeakingStatus(true, "Cô Kiều Anh đang hỏi...");
-
-            utterance.onend = () => {
-                setTeacherSpeakingStatus(false);
-            };
-            utterance.onerror = () => {
-                setTeacherSpeakingStatus(false);
-            };
-
-            window.speechSynthesis.speak(utterance);
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    // CÔ GIÁO PHẢN HỒI BẰNG GIỌNG NỮ (KHEN NGỢI HOẶC ĐỘNG VIÊN)
-    function speakTeacherFeedback(isCorrect, wordToPronounce) {
-        if (!('speechSynthesis' in window)) return;
-        try {
-            window.speechSynthesis.cancel();
-            let feedbackText = "";
-            if (isCorrect) {
-                const praises = [
-                    "Chính xác! Rất giỏi em nhé!",
-                    "Đúng rồi! Tiếp tục phát huy nào!",
-                    "Tuyệt vời! Em nhớ từ vựng rất chuẩn!",
-                    "Chuẩn xác luôn! Cô cộng một điểm thuộc bài!"
-                ];
-                feedbackText = praises[Math.floor(Math.random() * praises.length)];
-            } else {
-                const encourages = [
-                    "Chưa đúng rồi! Em hãy xem lại và gõ lại từ này nhé!",
-                    "Gần đúng rồi! Em nhìn kỹ từ này và gõ lại để nhớ sâu nhé!",
-                    "Chưa chính xác! Cô sẽ hỏi lại câu này sau, em gõ lại từ này nhé!"
-                ];
-                feedbackText = encourages[Math.floor(Math.random() * encourages.length)];
-            }
-
-            const utterance = new SpeechSynthesisUtterance(feedbackText);
-            utterance.lang = 'vi-VN';
-            utterance.rate = 1.0;
-            utterance.pitch = 1.24; // Tone nữ ngọt ngào, khích lệ
-
-            const viVoice = getVietnameseFemaleVoice();
-            if (viVoice) utterance.voice = viVoice;
-
-            setTeacherSpeakingStatus(true, isCorrect ? "🥰 Cô Kiều Anh khen ngợi!" : "🧐 Cô Kiều Anh hướng dẫn...");
-
-            utterance.onend = () => {
-                setTeacherSpeakingStatus(false);
-                // Sau câu nói tiếng Việt của cô, đọc ngay từ tiếng Anh chuẩn bản xứ
-                if (wordToPronounce) {
-                    setTimeout(() => speakWord(wordToPronounce), 300);
-                }
-            };
-            utterance.onerror = () => {
-                setTeacherSpeakingStatus(false);
-                if (wordToPronounce) setTimeout(() => speakWord(wordToPronounce), 200);
-            };
 
             window.speechSynthesis.speak(utterance);
         } catch (e) {
@@ -918,7 +1296,7 @@
     // ==========================================
     // STATE: CÔ KHẢO BÀI (ORAL MASTERY DRILL)
     // ==========================================
-    let oralRemainingList = [];   // Danh sách các từ CHƯA THUỘC (ban đầu 40 từ)
+    let oralRemainingList = [];   // Danh sách các từ CHƯA THUỘC (ban đầu 67 từ)
     let oralMasteredList = [];    // Danh sách các từ ĐÃ THUỘC (ban đầu 0 từ)
     let oralCurrentItem = null;   // Từ đang được cô hỏi
     let oralMode = 'choice';      // 'choice' (4 đáp án) hoặc 'type' (gõ chữ)
@@ -1011,7 +1389,7 @@
         
         container.innerHTML = `
             <!-- HEADER TÍCH HỢP -->
-            <div class="px-4 sm:px-6 py-3.5 bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border-b border-slate-800 flex items-center justify-between shrink-0">
+            <div class="px-4 sm:px-6 py-3.5 bg-gradient-to-r from-slate-900 via-indigo-950/67 to-slate-900 border-b border-slate-800 flex items-center justify-between shrink-0">
                 <div class="flex items-center gap-2.5">
                     <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-rose-500 via-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/25 shrink-0 text-lg">
                         👩‍🏫
@@ -1022,7 +1400,7 @@
                                 Khảo Bài Miệng Unit 4: ASEAN and Vietnam
                             </h2>
                             <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-500/20 text-rose-400 border border-rose-500/30 animate-pulse">
-                                Thuộc Đủ 40/40 Câu
+                                Thuộc Đủ 67/67 Câu
                             </span>
                         </div>
                         <p class="text-[11px] text-slate-400 hidden sm:block">
@@ -1044,7 +1422,7 @@
             <!-- TABS ĐIỀU HƯỚNG CHẾ ĐỘ HỌC -->
             <div class="px-3 sm:px-6 py-2 bg-slate-950/60 border-b border-slate-800/80 flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar shrink-0">
                 <button type="button" data-tab="oral" class="vocab-tab-btn px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
-                    <span>👩‍🏫</span> <span>Cô Khảo Bài (40/40)</span>
+                    <span>👩‍🏫</span> <span>Cô Khảo Bài (67/67)</span>
                 </button>
                 <button type="button" data-tab="flashcards" class="vocab-tab-btn px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
                     <span>🎴</span> <span>Flashcard 3D</span>
@@ -1059,7 +1437,7 @@
                     <span>🎯</span> <span>Trắc Nghiệm Phản Xạ</span>
                 </button>
                 <button type="button" data-tab="list" class="vocab-tab-btn px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
-                    <span>📖</span> <span>Bảng 40 Từ</span>
+                    <span>📖</span> <span>Bảng 67 Từ</span>
                 </button>
                 <button type="button" id="vocabGoToExamBtn" class="ml-auto px-3 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-xs transition-all flex items-center gap-1 shrink-0 cursor-pointer active:scale-95">
                     <span>📝</span> <span class="hidden sm:inline">Khảo Sát</span> <span>40 Câu</span>
@@ -1128,7 +1506,7 @@
 
         statsEl.innerHTML = `
             <span class="px-2 py-0.5 rounded-lg bg-rose-500/15 text-rose-300 border border-rose-500/20 flex items-center gap-1">
-                👩‍🏫 Thuộc: ${oralMasteredCount}/40
+                👩‍🏫 Thuộc: ${oralMasteredCount}/67
             </span>
             <span class="px-2 py-0.5 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-500/20 flex items-center gap-1">
                 ⭐ ${starredCount} từ khó
@@ -1193,7 +1571,7 @@
 
     // ==========================================
     // 1. CHẾ ĐỘ CÔ KHẢO BÀI (ORAL MASTERY DRILL)
-    // Hỏi bất kì câu tiếng Việt, sai lặp lại đến khi thuộc 40/40
+    // Hỏi bất kì câu tiếng Việt, sai lặp lại đến khi thuộc 67/67
     // ==========================================
     function initOralTest() {
         oralRemainingList = shuffleArray([...UNIT4_VOCAB_DATA]);
@@ -1235,7 +1613,7 @@
     }
 
     function renderOralTab(container) {
-        // Kiểm tra nếu đã hoàn thành đủ 40 câu
+        // Kiểm tra nếu đã hoàn thành đủ 67 câu
         if (oralRemainingList.length === 0 && oralMasteredList.length === UNIT4_VOCAB_DATA.length) {
             showOralVictoryScreen(container);
             return;
@@ -1295,7 +1673,7 @@
             <div class="w-full max-w-xl p-5 sm:p-6 rounded-3xl bg-gradient-to-b from-slate-800/95 via-slate-900 to-slate-950 border-2 ${
                 oralIsAnswered 
                     ? (oralIsCorrect ? 'border-emerald-500/70 shadow-emerald-500/20' : 'border-rose-500/70 shadow-rose-500/20') 
-                    : 'border-indigo-500/40 shadow-indigo-500/10'
+                    : 'border-indigo-500/67 shadow-indigo-500/10'
             } shadow-2xl flex flex-col justify-between my-auto transition-all">
                 
                 <!-- HỘI THOẠI CỦA CÔ GIÁO & BẢNG ĐEN CÂU HỎI -->
@@ -1389,7 +1767,7 @@
                 ` : `
                     <!-- MÀN HÌNH PHẢN HỒI KẾT QUẢ CỦA CÔ -->
                     <div class="p-4 rounded-2xl ${
-                        oralIsCorrect ? 'bg-emerald-950/40 border border-emerald-500/50' : 'bg-rose-950/40 border border-rose-500/50'
+                        oralIsCorrect ? 'bg-emerald-950/67 border border-emerald-500/50' : 'bg-rose-950/67 border border-rose-500/50'
                     } flex flex-col gap-2.5 animate-fadeIn">
                         
                         <div class="flex items-center justify-between">
@@ -1453,8 +1831,8 @@
 
             <!-- Footer note -->
             <div class="w-full max-w-xl flex items-center justify-between text-[11px] text-slate-500 mt-2 px-1 flex-wrap gap-1">
-                <span>💡 Quy tắc: Bất kỳ câu nào trả lời sai sẽ được cô hỏi lại đến khi nào thuộc 40/40!</span>
-                <span>Tiến độ: <strong class="text-emerald-400">${masteredCount}/40 câu</strong></span>
+                <span>💡 Quy tắc: Bất kỳ câu nào trả lời sai sẽ được cô hỏi lại đến khi nào thuộc 67/67!</span>
+                <span>Tiến độ: <strong class="text-emerald-400">${masteredCount}/67 câu</strong></span>
             </div>
         `;
 
@@ -1668,7 +2046,7 @@
         if ('speechSynthesis' in window) {
             try {
                 window.speechSynthesis.cancel();
-                const utter = new SpeechSynthesisUtterance("Chúc mừng em! Em đã xuất sắc thuộc làu làu toàn bộ 40 từ vựng Unit 4!");
+                const utter = new SpeechSynthesisUtterance("Chúc mừng em! Em đã xuất sắc thuộc làu làu toàn bộ 67 từ vựng Unit 4!");
                 utter.lang = 'vi-VN';
                 utter.pitch = 1.25;
                 const v = getVietnameseFemaleVoice();
@@ -1684,12 +2062,12 @@
                     👩‍🏫💯
                 </div>
 
-                <div class="inline-block px-3 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 mb-2">
+                <div class="inline-block px-3 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/67 mb-2">
                     XUẤT SẮC ĐẠT 10 ĐIỂM BÀI KHẢO MIỆNG
                 </div>
 
                 <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight mb-2">
-                    Chúc Mừng Em Đã Thuộc Lào Lào 40/40 Từ Vựng!
+                    Chúc Mừng Em Đã Thuộc Lào Lào 40/67 Từ Vựng!
                 </h3>
                 <p class="text-xs text-slate-300 mb-5 leading-relaxed">
                     Em đã xuất sắc vượt qua toàn bộ câu hỏi bất kì bằng tiếng Việt của cô Kiều Anh. Mọi từ sai trước đó đều đã được em rèn luyện và ghi nhớ thành thạo 100%!
@@ -1851,7 +2229,7 @@
                     </div>
 
                     <!-- MẶT SAU (VIETNAMESE & EXAMPLES) -->
-                    <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl p-6 sm:p-8 flex flex-col justify-between border-2 border-indigo-500/40 bg-gradient-to-b from-indigo-950/60 via-slate-900 to-slate-950 shadow-2xl transition-all">
+                    <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl p-6 sm:p-8 flex flex-col justify-between border-2 border-indigo-500/67 bg-gradient-to-b from-indigo-950/60 via-slate-900 to-slate-950 shadow-2xl transition-all">
                         <!-- Top Back -->
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-bold text-indigo-400 flex items-center gap-1">
@@ -2114,7 +2492,7 @@
         matchIsCompleted = false;
         matchElapsedSeconds = 0;
 
-        // Bốc 6 từ ngẫu nhiên từ 40 từ
+        // Bốc 6 từ ngẫu nhiên từ 67 từ
         const picked = shuffleArray(UNIT4_VOCAB_DATA).slice(0, 6);
         const cards = [];
 
@@ -2193,8 +2571,8 @@
                             isSelected 
                                 ? 'border-amber-400 bg-amber-500/25 ring-2 ring-amber-400/60 shadow-amber-500/20 text-white scale-102' 
                                 : card.lang === 'en'
-                                    ? 'border-blue-500/40 bg-gradient-to-b from-blue-950/40 to-slate-900 hover:border-blue-400/80 text-white'
-                                    : 'border-purple-500/40 bg-gradient-to-b from-purple-950/40 to-slate-900 hover:border-purple-400/80 text-slate-200'
+                                    ? 'border-blue-500/67 bg-gradient-to-b from-blue-950/67 to-slate-900 hover:border-blue-400/80 text-white'
+                                    : 'border-purple-500/67 bg-gradient-to-b from-purple-950/67 to-slate-900 hover:border-purple-400/80 text-slate-200'
                         }">
                             <span class="text-xs sm:text-sm font-black leading-snug line-clamp-2">${card.text}</span>
                             <span class="text-[10px] text-slate-400 font-mono mt-1 opacity-75">${card.subText}</span>
@@ -2304,7 +2682,7 @@
                         ${timeSec.toFixed(1)} giây
                     </div>
                     ${isNewRecord ? `
-                        <div class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                        <div class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black bg-amber-500/20 text-amber-300 border border-amber-500/67">
                             🎉 KỶ LỤC TỐT NHẤT MỚI!
                         </div>
                     ` : ''}
@@ -2565,9 +2943,9 @@
 
                     if (quizAnswerSubmitted) {
                         if (opt.isCorrect) {
-                            btnStyle = "border-emerald-500 bg-emerald-950/40 text-emerald-300 ring-2 ring-emerald-500/40 font-bold";
+                            btnStyle = "border-emerald-500 bg-emerald-950/67 text-emerald-300 ring-2 ring-emerald-500/67 font-bold";
                         } else if (quizSelectedAnswer === idx) {
-                            btnStyle = "border-rose-500 bg-rose-950/40 text-rose-300 ring-2 ring-rose-500/40";
+                            btnStyle = "border-rose-500 bg-rose-950/67 text-rose-300 ring-2 ring-rose-500/67";
                         } else {
                             btnStyle = "border-slate-800 bg-slate-900/60 text-slate-500 opacity-50";
                         }
@@ -2647,7 +3025,7 @@
 
                 <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
                     <button type="button" data-type-filter="all" class="list-filter-btn px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${listTypeFilter === 'all' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}">
-                        Tất cả (40)
+                        Tất cả (67)
                     </button>
                     <button type="button" data-type-filter="starred" class="list-filter-btn px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${listTypeFilter === 'starred' ? 'bg-amber-500 text-slate-950 font-black' : 'bg-slate-800 text-slate-400 hover:text-amber-400'}">
                         ⭐ Có sao
@@ -2659,7 +3037,7 @@
             </div>
 
             <!-- TABLE CONTAINER -->
-            <div class="flex-1 overflow-y-auto rounded-2xl border border-slate-800 bg-slate-950/40">
+            <div class="flex-1 overflow-y-auto rounded-2xl border border-slate-800 bg-slate-950/67">
                 <table class="w-full text-left text-xs text-slate-300 border-collapse">
                     <thead class="bg-slate-900/90 text-slate-400 font-bold sticky top-0 z-10 border-b border-slate-800">
                         <tr>
@@ -2729,7 +3107,7 @@
             const badge = getTypeBadge(item.type);
 
             return `
-                <tr class="hover:bg-slate-800/40 transition-colors">
+                <tr class="hover:bg-slate-800/67 transition-colors">
                     <td class="py-2.5 px-3 text-center font-bold text-slate-400 font-mono text-[11px]">
                         ${item.stt}
                     </td>

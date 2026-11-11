@@ -1010,7 +1010,7 @@ window.TimetableEngine = (function() {
                         <button type="button" 
                                 onclick="if(window.VocabHub){window.VocabHub.openOralTest();}else if(window.AzotaApp&&window.AzotaApp.openOralTest){window.AzotaApp.openOralTest();}" 
                                 class="px-2.5 py-1 rounded-lg text-[10px] font-black bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 hover:from-rose-500 hover:to-purple-500 text-white shadow-xs transition-all flex items-center gap-1 cursor-pointer active:scale-95"
-                                title="👩‍🏫 Học & Khảo Bài Unit 4: Flashcard 3D, Cô Khảo Bài 40/40, Ghép Thẻ & Trắc Nghiệm">
+                                title="👩‍🏫 Học & Khảo Bài Unit 4 (67 Từ): Flashcard 3D, Cô Khảo Bài 67/67, Ghép Thẻ & Trắc Nghiệm">
                             <span>👩‍🏫</span>
                             <span>Học &amp; Khảo Bài Unit 4</span>
                         </button>

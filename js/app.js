@@ -1264,11 +1264,11 @@ window.AzotaApp = (function() {
             progressTextColor: "text-blue-400 font-bold",
             defaultProgress: 100,
             defaultFiles: 1,
-            defaultQuestions: 40,
+            defaultQuestions: 67,
             colorClass: "from-blue-600 to-indigo-600",
             bgLight: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-            description: "40 Từ vựng trọng tâm Unit 4: ASEAN and Vietnam. Đầy đủ phát âm, Cô khảo bài và Flashcard 3D.",
-            tags: ["Unit 4 Vocab", "40 Từ Vựng", "ASEAN & VN"]
+            description: "Trọn bộ 67 từ vựng trọng tâm Unit 4: ASEAN and Vietnam. Đầy đủ phát âm, Cô khảo bài và Flashcard 3D.",
+            tags: ["Unit 4 Vocab", "67 Từ Vựng", "ASEAN & VN"]
         },
         {
             id: "Ngữ Văn",
@@ -1949,11 +1949,11 @@ window.AzotaApp = (function() {
             id: "ta-11",
             subjectName: "Tiếng Anh",
             title: "Tiếng Anh 11",
-            meta: "1 đề • 40 từ vựng Unit 4",
+            meta: "1 đề • Trọn bộ 67 từ vựng Unit 4",
             category: "tracnghiem",
             art: "glacier",
             sheets: [
-                { id: "ta-unit4-vocab-40", name: "Unit 4: 40 Từ Vựng ASEAN & VN", meta: "40 câu • 35p", art: "aurora" }
+                { id: "ta-unit4-vocab-40", name: "Unit 4: 67 Từ Vựng ASEAN & VN", meta: "67 câu • 45p", art: "aurora" }
             ]
         },
         {
@@ -2417,7 +2417,7 @@ window.AzotaApp = (function() {
 
         container.appendChild(headerDiv);
 
-        // HERO CARD: UNIT 4 ASEAN AND VIETNAM (40 TỪ VỰNG TRỌNG TÂM)
+        // HERO CARD: UNIT 4 ASEAN AND VIETNAM (TRỌN BỘ 67 TỪ VỰNG)
         const unit4Hero = document.createElement("div");
         unit4Hero.className = "mb-6 p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-blue-900/40 via-indigo-950/60 to-purple-900/40 border border-blue-500/30 shadow-xl backdrop-blur-md relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-5";
         unit4Hero.innerHTML = `
@@ -2435,10 +2435,10 @@ window.AzotaApp = (function() {
                         </span>
                     </div>
                     <h2 class="text-lg sm:text-xl font-black text-white tracking-tight">
-                        Bài Học 40 Từ Vựng Cốt Lõi Unit 4
+                        Bài Học Trọn Bộ 67 Từ Vựng Cốt Lõi Unit 4
                     </h2>
                     <p class="text-xs text-slate-300 mt-1 max-w-xl leading-relaxed">
-                        Chắt lọc 40 từ vựng cốt lõi đầu tiên từ đề cương THPT Trần Văn Giàu. Tích hợp Cô Khảo Bài (Giọng nói nữ tương tác), Flashcard 3D và Trắc nghiệm 40 câu!
+                        Tổng hợp toàn bộ 67 từ vựng cốt lõi Unit 4 (cả 2 trang đề cương) từ đề cương THPT Trần Văn Giàu. Tích hợp Cô Khảo Bài (Giọng nói nữ tương tác), Flashcard 3D và Trắc nghiệm 40 câu!
                     </p>
                 </div>
             </div>
@@ -2448,7 +2448,7 @@ window.AzotaApp = (function() {
                         onclick="if(window.VocabHub){window.VocabHub.openOralTest();}else{AzotaApp.openUnit4VocabCheatSheet();}" 
                         class="px-4 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 hover:from-rose-500 hover:to-pink-500 text-white shadow-md shadow-rose-500/25 transition-all cursor-pointer flex items-center gap-2 active:scale-95">
                     <span>👩‍🏫</span>
-                    <span>Cô Khảo Bài (40/40)</span>
+                    <span>Cô Khảo Bài (67/67)</span>
                 </button>
                 <button type="button" 
                         onclick="if(window.VocabHub){window.VocabHub.openFlashcards();}else{AzotaApp.openUnit4VocabCheatSheet();}" 
@@ -2460,7 +2460,7 @@ window.AzotaApp = (function() {
                         onclick="AzotaApp.startExam('ta-unit4-vocab-40', 'practice')" 
                         class="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-sky-600 hover:bg-sky-500 text-white shadow-md transition-all cursor-pointer flex items-center gap-2 active:scale-95">
                     <span>📝</span>
-                    <span>Khảo Sát 40 Câu</span>
+                    <span>Khảo Sát 67 Câu</span>
                 </button>
             </div>
         `;
@@ -3187,26 +3187,26 @@ window.AzotaApp = (function() {
                     <span class="text-2xl">🇬🇧</span>
                     <div>
                         <div class="font-extrabold text-sm text-blue-900 dark:text-blue-100 flex items-center gap-2">
-                            <span>Bài Học 40 Từ Vựng Unit 4: ASEAN and Vietnam</span>
+                            <span>Bài Học Trọn Bộ 67 Từ Vựng Unit 4: ASEAN and Vietnam</span>
                             <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-blue-500 text-white">Mới Nhất</span>
                         </div>
                         <div class="text-slate-600 dark:text-slate-300 mt-0.5">
-                            Trích xuất 40 từ vựng cốt lõi đầu tiên từ tài liệu cương trường THPT Trần Văn Giàu. Đầy đủ phát âm, từ loại và tra cứu nhanh!
+                            Tổng hợp toàn bộ 67 từ vựng Unit 4 từ tài liệu đề cương chính thức của trường THPT Trần Văn Giàu. Đầy đủ phát âm, từ loại và tra cứu nhanh!
                         </div>
                     </div>
                 </div>
                 <div class="flex items-center gap-2 shrink-0 flex-wrap">
                     <button type="button" onclick="if(window.VocabHub){window.VocabHub.openOralTest();}else{AzotaApp.openUnit4VocabCheatSheet();}" class="px-3.5 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 hover:from-rose-500 hover:to-pink-500 text-white transition-all cursor-pointer flex items-center gap-1.5 shadow-md shadow-rose-500/25 active:scale-95">
-                        <span>👩‍🏫</span> Cô Khảo Bài (40/40)
+                        <span>👩‍🏫</span> Cô Khảo Bài (67/67)
                     </button>
                     <button type="button" onclick="if(window.VocabHub){window.VocabHub.openFlashcards();}else{AzotaApp.openUnit4VocabCheatSheet();}" class="px-3.5 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white transition-all cursor-pointer flex items-center gap-1.5 shadow-md active:scale-95">
                         <span>🎴</span> Flashcard 3D & Game
                     </button>
                     <button type="button" onclick="if(window.VocabHub){window.VocabHub.openCheatSheet();}else{AzotaApp.openUnit4VocabCheatSheet();}" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition-all cursor-pointer flex items-center gap-1.5 shadow-md active:scale-95">
-                        <span>📖</span> Bảng 40 Từ
+                        <span>📖</span> Bảng 67 Từ
                     </button>
                     <button type="button" onclick="AzotaApp.startExam('ta-unit4-vocab-40', 'practice')" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white transition-all cursor-pointer flex items-center gap-1.5 shadow-md active:scale-95">
-                        <span>📝</span> Làm Khảo Sát 40 Câu
+                        <span>📝</span> Làm Khảo Sát 67 Câu
                     </button>
                 </div>
             `;
@@ -4455,9 +4455,9 @@ window.AzotaApp = (function() {
                         <div>
                             <div class="flex items-center gap-2">
                                 <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">
-                                    40 Từ Vựng Cốt Lõi Unit 4: ASEAN and Vietnam
+                                    Trọn Bộ 67 Từ Vựng Unit 4: ASEAN and Vietnam
                                 </h3>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500 text-white">40 Từ Đầu Tiên</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500 text-white">Trọn Bộ 67 Từ</span>
                             </div>
                             <div class="text-xs text-slate-500 dark:text-slate-400">
                                 Tiếng Anh 11 Global Success • Trường THPT Trần Văn Giàu
@@ -4513,7 +4513,7 @@ window.AzotaApp = (function() {
                 <!-- Footer -->
                 <div class="p-3 sm:px-5 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/80 flex items-center justify-between text-xs text-slate-500 shrink-0">
                     <div>
-                        <span>Hiển thị đầy đủ đúng <strong>40 từ vựng đầu tiên</strong> trong tài liệu giải chi tiết.</span>
+                        <span>Hiển thị đầy đủ đúng <strong>toàn bộ 67 từ vựng</strong> trong tài liệu đề cương.</span>
                     </div>
                     <button type="button" 
                             onclick="document.getElementById('unit4VocabModal').remove()" 
