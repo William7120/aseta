@@ -645,8 +645,138 @@
         }
     }
 
-    // PHÁT ÂM AUDIO BẢN XỨ (TTS)
-    function speakWord(text) {
+    // ==========================================
+    // VOICE SYNTHESIS: GIỌNG NỮ CHUẨN CỦA CÔ GIÁO & BẢN XỨ TIẾNG ANH
+    // ==========================================
+    
+    // 1. TÌM GIỌNG NỮ TIẾNG VIỆT (ƯU TIÊN TUYỆT ĐỐI GIỌNG NỮ, LOẠI BỎ MICROSOFT AN)
+    function getVietnameseFemaleVoice() {
+        if (!('speechSynthesis' in window)) return null;
+        try {
+            const voices = window.speechSynthesis.getVoices() || [];
+            if (!voices.length) return null;
+
+            // Bộ lọc loại bỏ triệt để giọng nam (đặc biệt Microsoft An, Nam, Male, David...)
+            const isMale = (name) => {
+                const n = (name || '').toLowerCase();
+                return n.includes('microsoft an') || 
+                       n.includes(' an online') || 
+                       n.includes(' an ') ||
+                       n.endsWith(' an') || 
+                       n.includes(' male') || 
+                       n.includes('nam') || 
+                       n.includes('david') || 
+                       n.includes('mark') ||
+                       n.includes(' đàn ông ');
+            };
+
+            const viVoices = voices.filter(v => {
+                const l = (v.lang || '').toLowerCase();
+                const n = (v.name || '').toLowerCase();
+                return l.startsWith('vi') || l.includes('vi-vn') || n.includes('vietnam') || n.includes('tiếng việt');
+            });
+
+            // Ưu tiên 1: Giọng nữ tiếng Việt phổ biến (HoaiMy trên Windows 10/11, Linh trên iOS/macOS, Mai, Google)
+            const femaleVi = viVoices.find(v => {
+                const n = (v.name || '').toLowerCase();
+                return !isMale(n) && (
+                    n.includes('hoaimy') || 
+                    n.includes('hoài my') || 
+                    n.includes('linh') || 
+                    n.includes('mai') || 
+                    n.includes('google') || 
+                    n.includes('female') || 
+                    n.includes('vic') || 
+                    n.includes('vif')
+                );
+            });
+            if (femaleVi) return femaleVi;
+
+            // Ưu tiên 2: Bất kỳ giọng tiếng Việt nào không phải nam
+            const nonMaleVi = viVoices.find(v => !isMale(v.name));
+            if (nonMaleVi) return nonMaleVi;
+
+            return viVoices[0] || null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    // 2. TÌM GIỌNG NỮ TIẾNG ANH (JENNY, ARIA, SAMANTHA, GOOGLE US ENGLISH)
+    function getEnglishFemaleVoice() {
+        if (!('speechSynthesis' in window)) return null;
+        try {
+            const voices = window.speechSynthesis.getVoices() || [];
+            if (!voices.length) return null;
+
+            const isMale = (name) => {
+                const n = (name || '').toLowerCase();
+                return n.includes(' male') || n.includes('david') || n.includes('mark') || n.includes('george') || n.includes('guy');
+            };
+
+            const engVoices = voices.filter(v => (v.lang || '').toLowerCase().startsWith('en'));
+
+            // Ưu tiên các giọng nữ tự nhiên nổi tiếng
+            const femaleEng = engVoices.find(v => {
+                const n = (v.name || '').toLowerCase();
+                return !isMale(n) && (
+                    n.includes('jenny') || 
+                    n.includes('aria') || 
+                    n.includes('samantha') || 
+                    n.includes('zira') || 
+                    n.includes('google us') || 
+                    n.includes('victoria') || 
+                    n.includes('female') || 
+                    n.includes('natural')
+                );
+            });
+            if (femaleEng) return femaleEng;
+
+            const nonMaleEng = engVoices.find(v => !isMale(v.name));
+            return nonMaleEng || engVoices[0] || null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    // Hiệu ứng sóng âm khi cô giáo đang nói
+    function setTeacherSpeakingStatus(isSpeaking, customText) {
+        oralIsSpeaking = isSpeaking;
+        const waveBox = document.getElementById("oralSoundWaveBox");
+        const statusText = document.getElementById("oralTeacherStatusText");
+        const teacherAvatar = document.getElementById("oralTeacherAvatar");
+
+        if (waveBox) {
+            if (isSpeaking) {
+                waveBox.classList.remove("opacity-20");
+                waveBox.classList.add("opacity-100");
+                waveBox.querySelectorAll(".oral-sound-bar").forEach(bar => bar.classList.add("animate-soundWave"));
+            } else {
+                waveBox.classList.add("opacity-20");
+                waveBox.classList.remove("opacity-100");
+                waveBox.querySelectorAll(".oral-sound-bar").forEach(bar => bar.classList.remove("animate-soundWave"));
+            }
+        }
+
+        if (statusText) {
+            if (customText) {
+                statusText.textContent = customText;
+            } else {
+                statusText.textContent = isSpeaking ? "Cô Kiều Anh đang hỏi..." : "Đang chờ em trả lời...";
+            }
+        }
+
+        if (teacherAvatar) {
+            if (isSpeaking) {
+                teacherAvatar.classList.add("ring-4", "ring-pink-500/80", "shadow-pink-500/40");
+            } else {
+                teacherAvatar.classList.remove("ring-4", "ring-pink-500/80", "shadow-pink-500/40");
+            }
+        }
+    }
+
+    // PHÁT ÂM TIẾNG ANH (GIỌNG NỮ BẢN XỨ CHUẨN)
+    function speakWord(text, onEndCallback) {
         if (!('speechSynthesis' in window)) return;
         try {
             window.speechSynthesis.cancel();
@@ -654,11 +784,15 @@
             const utterance = new SpeechSynthesisUtterance(cleanWord);
             utterance.lang = 'en-US';
             utterance.rate = 0.92;
-            utterance.pitch = 1.0;
+            utterance.pitch = 1.08; // Giọng nữ cao, trong trẻo
 
-            const voices = window.speechSynthesis.getVoices();
-            const engVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha')));
+            const engVoice = getEnglishFemaleVoice();
             if (engVoice) utterance.voice = engVoice;
+
+            if (onEndCallback) {
+                utterance.onend = onEndCallback;
+                utterance.onerror = onEndCallback;
+            }
 
             window.speechSynthesis.speak(utterance);
         } catch (e) {
@@ -666,7 +800,7 @@
         }
     }
 
-    // PHÁT ÂM TIẾNG VIỆT GIỌNG CÔ GIÁO
+    // PHÁT ÂM TIẾNG VIỆT GIỌNG CÔ GIÁO (CHUẨN GIỌNG NỮ 100%)
     function speakTeacherQuestion(vietnameseText) {
         if (!('speechSynthesis' in window)) return;
         try {
@@ -675,11 +809,70 @@
             const utterance = new SpeechSynthesisUtterance(questionPrompt);
             utterance.lang = 'vi-VN';
             utterance.rate = 0.98;
-            utterance.pitch = 1.1; // Giọng cô giáo trẻ trung, rõ ràng
+            utterance.pitch = 1.22; // Tone nữ ấm áp, thanh thoát, sư phạm của cô giáo
 
-            const voices = window.speechSynthesis.getVoices();
-            const viVoice = voices.find(v => v.lang.startsWith('vi') || v.name.includes('Vietnamese') || v.name.includes('Linh') || v.name.includes('An'));
+            const viVoice = getVietnameseFemaleVoice();
             if (viVoice) utterance.voice = viVoice;
+
+            setTeacherSpeakingStatus(true, "Cô Kiều Anh đang hỏi...");
+
+            utterance.onend = () => {
+                setTeacherSpeakingStatus(false);
+            };
+            utterance.onerror = () => {
+                setTeacherSpeakingStatus(false);
+            };
+
+            window.speechSynthesis.speak(utterance);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    // CÔ GIÁO PHẢN HỒI BẰNG GIỌNG NỮ (KHEN NGỢI HOẶC ĐỘNG VIÊN)
+    function speakTeacherFeedback(isCorrect, wordToPronounce) {
+        if (!('speechSynthesis' in window)) return;
+        try {
+            window.speechSynthesis.cancel();
+            let feedbackText = "";
+            if (isCorrect) {
+                const praises = [
+                    "Chính xác! Rất giỏi em nhé!",
+                    "Đúng rồi! Tiếp tục phát huy nào!",
+                    "Tuyệt vời! Em nhớ từ vựng rất chuẩn!",
+                    "Chuẩn xác luôn! Cô cộng một điểm thuộc bài!"
+                ];
+                feedbackText = praises[Math.floor(Math.random() * praises.length)];
+            } else {
+                const encourages = [
+                    "Chưa đúng rồi! Em hãy xem lại và gõ lại từ này nhé!",
+                    "Gần đúng rồi! Em nhìn kỹ từ này và gõ lại để nhớ sâu nhé!",
+                    "Chưa chính xác! Cô sẽ hỏi lại câu này sau, em gõ lại từ này nhé!"
+                ];
+                feedbackText = encourages[Math.floor(Math.random() * encourages.length)];
+            }
+
+            const utterance = new SpeechSynthesisUtterance(feedbackText);
+            utterance.lang = 'vi-VN';
+            utterance.rate = 1.0;
+            utterance.pitch = 1.24; // Tone nữ ngọt ngào, khích lệ
+
+            const viVoice = getVietnameseFemaleVoice();
+            if (viVoice) utterance.voice = viVoice;
+
+            setTeacherSpeakingStatus(true, isCorrect ? "🥰 Cô Kiều Anh khen ngợi!" : "🧐 Cô Kiều Anh hướng dẫn...");
+
+            utterance.onend = () => {
+                setTeacherSpeakingStatus(false);
+                // Sau câu nói tiếng Việt của cô, đọc ngay từ tiếng Anh chuẩn bản xứ
+                if (wordToPronounce) {
+                    setTimeout(() => speakWord(wordToPronounce), 300);
+                }
+            };
+            utterance.onerror = () => {
+                setTeacherSpeakingStatus(false);
+                if (wordToPronounce) setTimeout(() => speakWord(wordToPronounce), 200);
+            };
 
             window.speechSynthesis.speak(utterance);
         } catch (e) {
@@ -728,7 +921,7 @@
     let oralRemainingList = [];   // Danh sách các từ CHƯA THUỘC (ban đầu 40 từ)
     let oralMasteredList = [];    // Danh sách các từ ĐÃ THUỘC (ban đầu 0 từ)
     let oralCurrentItem = null;   // Từ đang được cô hỏi
-    let oralMode = 'type';        // 'type' (gõ chữ) hoặc 'choice' (chọn 4 đáp án)
+    let oralMode = 'choice';      // 'choice' (4 đáp án) hoặc 'type' (gõ chữ)
     let oralMistakesCount = 0;    // Số lần làm sai
     let oralQuestionNumber = 0;   // Lần khảo thứ mấy
     let oralIsAnswered = false;   // Đã kiểm tra câu hiện tại chưa
@@ -736,6 +929,9 @@
     let oralFeedbackMessage = ""; // Lời cô giáo nói
     let oralSelectedChoice = null;// Index nếu ở mode choice
     let oralChoices = [];         // 4 lựa chọn nếu ở mode choice
+    let oralStreak = 0;           // Chuỗi đúng liên tiếp
+    let oralMaxStreak = 0;        // Kỷ lục chuỗi đúng
+    let oralIsSpeaking = false;   // Trạng thái giọng nói cô giáo
 
     // State cho Game Ghép Thẻ
     let matchCards = [];
@@ -1004,6 +1200,8 @@
         oralMasteredList = [];
         oralMistakesCount = 0;
         oralQuestionNumber = 0;
+        oralStreak = 0;
+        oralMaxStreak = 0;
         pickNextOralQuestion();
     }
 
@@ -1030,8 +1228,10 @@
             { text: otherItems[2].primaryWord, isCorrect: false }
         ]);
 
-        // Đọc câu hỏi tiếng Việt của cô
-        speakTeacherQuestion(oralCurrentItem.primaryMeaning);
+        // Đọc câu hỏi tiếng Việt của cô (giọng nữ thanh thoát)
+        setTimeout(() => {
+            speakTeacherQuestion(oralCurrentItem.primaryMeaning);
+        }, 120);
     }
 
     function renderOralTab(container) {
@@ -1054,23 +1254,28 @@
         container.innerHTML = `
             <!-- Top Controls & Thống kê tiến độ thuộc bài -->
             <div class="w-full max-w-xl flex flex-col gap-2 mb-2 px-1">
-                <div class="flex items-center justify-between text-xs text-slate-300">
+                <div class="flex items-center justify-between text-xs text-slate-300 flex-wrap gap-2">
                     <div class="flex items-center gap-2 flex-wrap">
                         <span class="font-black text-rose-400 flex items-center gap-1.5 text-sm">
-                            <span>👩‍🏫</span> <span>Cô Đang Khảo Bài</span>
+                            <span>👩‍🏫</span> <span>Cô Kiều Anh Khảo Bài</span>
                         </span>
                         <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                            Đã thuộc: ${masteredCount} / ${totalCount} từ
+                            Đã thuộc: ${masteredCount} / ${totalCount} từ (${progressPercent}%)
                         </span>
+                        ${oralStreak > 1 ? `
+                            <span class="px-2 py-0.5 rounded-full text-[11px] font-black bg-orange-500/20 text-orange-400 border border-orange-500/30 animate-pulse flex items-center gap-1">
+                                <span>🔥</span> <span>${oralStreak} câu liên tiếp!</span>
+                            </span>
+                        ` : ''}
                     </div>
 
                     <div class="flex items-center gap-2">
                         <!-- Toggle Mode: Gõ chữ vs Trắc nghiệm -->
-                        <button type="button" id="oralToggleModeBtn" class="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all flex items-center gap-1 cursor-pointer active:scale-95" title="Đổi cách trả lời: Gõ bàn phím hoặc Chọn 4 đáp án">
-                            <span>${oralMode === 'type' ? '⌨️ Chế độ Gõ chữ' : '🎯 Chọn 4 đáp án'}</span>
+                        <button type="button" id="oralToggleModeBtn" class="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all flex items-center gap-1 cursor-pointer active:scale-95" title="Đổi cách trả lời: Chọn 4 đáp án (Phím 1-4) hoặc Gõ bàn phím (Enter)">
+                            <span>${oralMode === 'type' ? '⌨️ Chế độ Gõ chữ' : '🎯 4 Đáp Án (Phím 1-4)'}</span>
                         </button>
-                        <button type="button" id="oralResetBtn" class="px-2 py-1 rounded-xl text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-all cursor-pointer" title="Khảo lại từ đầu">
-                            🔄
+                        <button type="button" id="oralResetBtn" class="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 transition-all cursor-pointer flex items-center gap-1" title="Khảo lại từ đầu">
+                            <span>🔄</span> <span>Khảo lại</span>
                         </button>
                     </div>
                 </div>
@@ -1082,39 +1287,56 @@
 
                 <div class="flex items-center justify-between text-[11px] text-slate-400">
                     <span>Còn lại cần thuộc: <strong class="text-white">${remainingCount} từ</strong></span>
-                    <span>Số lần làm sai / khảo lại: <strong class="${oralMistakesCount > 0 ? 'text-rose-400' : 'text-slate-400'}">${oralMistakesCount} lần</strong></span>
+                    <span>Số lần khảo lại: <strong class="${oralMistakesCount > 0 ? 'text-rose-400' : 'text-slate-400'}">${oralMistakesCount} lần</strong></span>
                 </div>
             </div>
 
             <!-- TEACHER CLASSROOM CARD -->
-            <div class="w-full max-w-xl p-5 sm:p-7 rounded-3xl bg-gradient-to-b from-slate-800/95 via-slate-900 to-slate-950 border-2 ${
+            <div class="w-full max-w-xl p-5 sm:p-6 rounded-3xl bg-gradient-to-b from-slate-800/95 via-slate-900 to-slate-950 border-2 ${
                 oralIsAnswered 
                     ? (oralIsCorrect ? 'border-emerald-500/70 shadow-emerald-500/20' : 'border-rose-500/70 shadow-rose-500/20') 
                     : 'border-indigo-500/40 shadow-indigo-500/10'
             } shadow-2xl flex flex-col justify-between my-auto transition-all">
                 
-                <!-- HỘI THOẠI CỦA CÔ GIÁO -->
+                <!-- HỘI THOẠI CỦA CÔ GIÁO & BẢNG ĐEN CÂU HỎI -->
                 <div class="flex items-start gap-3.5 mb-4">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-pink-500 to-rose-600 flex items-center justify-center text-2xl shadow-lg shadow-pink-500/30 shrink-0 select-none">
+                    <!-- Avatar Cô Kiều Anh có hiệu ứng phát sáng -->
+                    <div id="oralTeacherAvatar" class="w-13 h-13 rounded-2xl bg-gradient-to-tr from-pink-500 via-rose-500 to-purple-600 flex items-center justify-center text-3xl shadow-lg shadow-pink-500/30 shrink-0 select-none transition-all duration-300">
                         ${oralIsAnswered ? (oralIsCorrect ? '🥰' : '🧐') : '👩‍🏫'}
                     </div>
-                    <div class="flex-1 bg-slate-900/90 border border-slate-700/80 rounded-2xl p-3.5 relative">
-                        <div class="text-[11px] font-bold text-rose-300 flex items-center justify-between mb-1">
-                            <span>Cô Kiều Anh gọi trả lời bài cũ:</span>
-                            <button type="button" id="oralTeacherVoiceBtn" class="text-blue-400 hover:text-blue-300 font-bold flex items-center gap-1 cursor-pointer transition-all" title="Nghe cô đọc lại câu hỏi tiếng Việt">
-                                <span>🔊</span> <span class="text-[10px]">Nghe cô hỏi</span>
+
+                    <div class="flex-1 bg-slate-900/90 border border-slate-700/80 rounded-2xl p-3.5 relative overflow-hidden">
+                        <!-- Header hội thoại & Sóng âm trực tiếp -->
+                        <div class="text-[11px] font-bold text-rose-300 flex items-center justify-between mb-1.5">
+                            <div class="flex items-center gap-2">
+                                <span id="oralTeacherStatusText">Cô Kiều Anh đang khảo bài:</span>
+                                <!-- Sóng âm Equalizer -->
+                                <div id="oralSoundWaveBox" class="flex items-end gap-0.5 h-3.5 opacity-20 transition-opacity">
+                                    <span class="oral-sound-bar w-0.5 bg-pink-400 rounded-full h-1.5"></span>
+                                    <span class="oral-sound-bar w-0.5 bg-pink-400 rounded-full h-3"></span>
+                                    <span class="oral-sound-bar w-0.5 bg-pink-400 rounded-full h-2"></span>
+                                    <span class="oral-sound-bar w-0.5 bg-pink-400 rounded-full h-3.5"></span>
+                                    <span class="oral-sound-bar w-0.5 bg-pink-400 rounded-full h-1.5"></span>
+                                </div>
+                            </div>
+                            <button type="button" id="oralTeacherVoiceBtn" class="text-sky-400 hover:text-sky-300 font-bold flex items-center gap-1 cursor-pointer transition-all px-2 py-0.5 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/25 active:scale-95" title="Nghe cô đọc lại câu hỏi tiếng Việt (Phím Space)">
+                                <span>🔊</span> <span class="text-[10px]">Nghe lại cô hỏi (Space)</span>
                             </button>
                         </div>
-                        <div class="text-sm sm:text-base font-black text-white leading-relaxed">
-                            "Em hãy cho cô biết từ tiếng Anh có nghĩa là:"
+
+                        <div class="text-xs sm:text-sm font-semibold text-slate-300 mb-1">
+                            "Em hãy cho cô biết từ tiếng Anh nào có nghĩa là:"
                         </div>
-                        <!-- CÂU HỎI TIẾNG VIỆT TO RÕ -->
-                        <div class="text-lg sm:text-2xl font-black text-amber-300 tracking-tight my-1.5 py-1 px-3 rounded-xl bg-amber-500/10 border border-amber-500/25">
+
+                        <!-- CÂU HỎI TIẾNG VIỆT ĐẶC BIỆT NỔI BẬT -->
+                        <div class="text-base sm:text-xl font-black text-amber-300 tracking-wide my-1.5 py-2 px-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 shadow-inner leading-snug">
                             👉 "${oralCurrentItem.primaryMeaning}"
                         </div>
-                        <div class="text-[11px] text-slate-400 flex items-center gap-2">
-                            <span class="px-2 py-0.2 rounded-md bg-blue-500/15 text-blue-300 font-bold border border-blue-500/25">${oralCurrentItem.type}</span>
-                            <span>Từ này có <strong>${oralCurrentItem.primaryWord.length} chữ cái</strong></span>
+
+                        <div class="text-[11px] text-slate-400 flex items-center gap-2 mt-2">
+                            <span class="px-2 py-0.2 rounded-md ${getTypeBadge(oralCurrentItem.type).bg} text-white font-bold border border-white/10 text-[10px]">${oralCurrentItem.type}</span>
+                            <span>Từ này gồm <strong>${oralCurrentItem.primaryWord.length} chữ cái</strong></span>
+                            <span class="text-slate-500">• Bấm số 1-4 để chọn nhanh</span>
                         </div>
                     </div>
                 </div>
@@ -1127,10 +1349,10 @@
                             <div class="relative">
                                 <input type="text" id="oralInput" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" 
                                        placeholder="Gõ từ tiếng Anh vào đây rồi nhấn Enter..." 
-                                       class="w-full px-4 py-3 text-center text-base sm:text-lg font-black rounded-2xl bg-slate-900 border-2 border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30 transition-all">
+                                       class="w-full px-4 py-3.5 text-center text-base sm:text-lg font-black rounded-2xl bg-slate-900 border-2 border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30 transition-all shadow-inner">
                             </div>
 
-                            <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center justify-between gap-2 flex-wrap">
                                 <button type="button" id="oralHintBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-amber-400 border border-slate-700 transition-all cursor-pointer active:scale-95">
                                     💡 Gợi ý chữ cái đầu
                                 </button>
@@ -1143,16 +1365,22 @@
                             </div>
                         </form>
                     ` : `
-                        <!-- MODE CHỌN 4 ĐÁP ÁN NHANH -->
+                        <!-- MODE CHỌN 4 ĐÁP ÁN NHANH (CÓ PHÍM TẮT 1-4) -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                             ${oralChoices.map((choice, idx) => {
                                 const letters = ['A', 'B', 'C', 'D'];
+                                const keys = ['1', '2', '3', '4'];
                                 return `
-                                    <button type="button" data-choice-idx="${idx}" class="oral-choice-btn p-3 rounded-2xl border-2 border-slate-700 bg-slate-800/80 hover:border-pink-500 hover:bg-slate-750 text-white font-bold text-left text-xs sm:text-sm flex items-center gap-2.5 transition-all cursor-pointer active:scale-98">
-                                        <span class="w-6 h-6 rounded-lg bg-slate-700 font-black text-xs flex items-center justify-center shrink-0 text-slate-300">
-                                            ${letters[idx]}
+                                    <button type="button" data-choice-idx="${idx}" class="oral-choice-btn group p-3 sm:p-3.5 rounded-2xl border-2 border-slate-700/80 bg-slate-800/80 hover:border-pink-500 hover:bg-slate-750 text-white font-bold text-left text-xs sm:text-sm flex items-center justify-between gap-2.5 transition-all cursor-pointer active:scale-98 shadow-sm">
+                                        <div class="flex items-center gap-2.5 min-w-0">
+                                            <span class="w-7 h-7 rounded-xl bg-slate-700 group-hover:bg-pink-600 group-hover:text-white font-black text-xs flex items-center justify-center shrink-0 text-slate-300 transition-colors">
+                                                ${letters[idx]}
+                                            </span>
+                                            <span class="truncate font-bold">${choice.text}</span>
+                                        </div>
+                                        <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-900/60 text-slate-400 group-hover:text-pink-300 border border-white/5">
+                                            Phím [${keys[idx]}]
                                         </span>
-                                        <span class="truncate">${choice.text}</span>
                                     </button>
                                 `;
                             }).join('')}
@@ -1166,49 +1394,55 @@
                         
                         <div class="flex items-center justify-between">
                             <span class="text-xs sm:text-sm font-black ${oralIsCorrect ? 'text-emerald-400' : 'text-rose-400'} flex items-center gap-1.5">
-                                <span>${oralIsCorrect ? '✅ XUẤT SẮC! CÔ CỘNG 1 ĐIỂM THUỘC BÀI' : '❌ CHƯA ĐÚNG RỒI! CÔ SẼ KHẢO LẠI CÂU NÀY'}</span>
+                                <span>${oralIsCorrect ? '✅ XUẤT SẮC! CÔ CỘNG 1 ĐIỂM THUỘC BÀI' : '❌ CHƯA CHÍNH XÁC! CÔ SẼ KHẢO LẠI CÂU NÀY'}</span>
                             </span>
-                            <button type="button" onclick="window.VocabHub.speak('${oralCurrentItem.primaryWord}')" class="text-blue-400 hover:text-blue-300 text-xs font-bold flex items-center gap-1 cursor-pointer">
-                                <span>🔊</span> <span>Nghe phát âm</span>
+                            <button type="button" onclick="window.VocabHub.speak('${oralCurrentItem.primaryWord}')" class="text-sky-400 hover:text-sky-300 text-xs font-bold flex items-center gap-1 cursor-pointer px-2 py-0.5 rounded-lg bg-sky-500/10 border border-sky-500/25">
+                                <span>🔊</span> <span>Nghe lại phát âm</span>
                             </button>
                         </div>
 
-                        <!-- Đáp án chuẩn -->
-                        <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+                        <!-- Đáp án chuẩn chi tiết -->
+                        <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800">
                             <div class="flex items-center gap-2 flex-wrap">
-                                <span class="text-base sm:text-lg font-black text-white">${oralCurrentItem.primaryWord}</span>
-                                <span class="text-xs text-blue-400 font-mono font-bold">${oralCurrentItem.ipa}</span>
-                                <span class="text-[10px] px-2 py-0.5 rounded-full ${getTypeBadge(oralCurrentItem.type).bg} border">${oralCurrentItem.type}</span>
+                                <span class="text-lg sm:text-xl font-black text-white">${oralCurrentItem.primaryWord}</span>
+                                <span class="text-xs text-sky-400 font-mono font-bold">${oralCurrentItem.ipa}</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded-full ${getTypeBadge(oralCurrentItem.type).bg} text-white font-bold border border-white/10">${oralCurrentItem.type}</span>
                             </div>
-                            <div class="text-xs text-emerald-300 font-bold mt-1">
+                            <div class="text-xs sm:text-sm text-emerald-300 font-bold mt-1">
                                 👉 Nghĩa: ${oralCurrentItem.primaryMeaning}
                             </div>
-                            <div class="text-xs text-slate-400 italic mt-1">
+                            <div class="text-xs text-slate-300 italic mt-1.5 bg-slate-950/50 p-2 rounded-lg border border-white/5">
                                 "${oralCurrentItem.example}"
-                            </div>
-                            <div class="text-[11px] text-slate-400">
-                                🇻🇳 ${oralCurrentItem.exampleVi}
+                                <div class="text-[11px] text-slate-400 not-italic mt-0.5">
+                                    🇻🇳 ${oralCurrentItem.exampleVi}
+                                </div>
                             </div>
                             ${oralCurrentItem.note ? `
-                                <div class="text-[10px] text-amber-300 font-bold mt-1">
-                                    📌 Lưu ý: ${oralCurrentItem.note}
+                                <div class="text-[10px] text-amber-300 font-bold mt-1.5 flex items-center gap-1">
+                                    <span>📌</span> <span>Lưu ý: ${oralCurrentItem.note}</span>
                                 </div>
                             ` : ''}
                         </div>
 
                         ${!oralIsCorrect ? `
                             <!-- BẮT BUỘC GÕ LẠI 1 LẦN NẾU SAI ĐỂ KHẮC SÂU TRÍ NHỚ -->
-                            <form id="oralRetryForm" class="flex items-center gap-2 mt-1">
-                                <input type="text" id="oralRetryInput" placeholder="Gõ lại '${oralCurrentItem.primaryWord}' để khắc sâu trí nhớ..." 
-                                       class="flex-1 px-3.5 py-2 text-xs font-bold rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-all">
-                                <button type="submit" class="px-4 py-2 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-500 text-white transition-all cursor-pointer active:scale-95 shrink-0">
-                                    Đã Nhớ, Khảo Tiếp →
-                                </button>
-                            </form>
+                            <div class="mt-1">
+                                <div class="text-[11px] text-rose-300 font-semibold mb-1 flex items-center gap-1">
+                                    <span>✍️</span> <span>Em hãy gõ lại từ <strong>"${oralCurrentItem.primaryWord}"</strong> để khắc sâu trí nhớ:</span>
+                                </div>
+                                <form id="oralRetryForm" class="flex items-center gap-2">
+                                    <input type="text" id="oralRetryInput" placeholder="Gõ lại '${oralCurrentItem.primaryWord}' vào đây..." 
+                                           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                                           class="flex-1 px-3.5 py-2.5 text-xs font-bold rounded-xl bg-slate-900 border-2 border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-all">
+                                    <button type="submit" class="px-4 py-2.5 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-500 text-white transition-all cursor-pointer active:scale-95 shrink-0 flex items-center gap-1">
+                                        <span>Đã Thuộc, Khảo Tiếp</span> <span>→</span>
+                                    </button>
+                                </form>
+                            </div>
                         ` : `
                             <div class="flex items-center justify-end mt-1">
                                 <button type="button" id="oralNextBtn" class="px-5 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md shadow-emerald-500/25 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5">
-                                    <span>Cô hỏi câu tiếp theo</span> <span>→</span>
+                                    <span>Cô hỏi câu tiếp theo (Enter)</span> <span>→</span>
                                 </button>
                             </div>
                         `}
@@ -1218,7 +1452,7 @@
             </div>
 
             <!-- Footer note -->
-            <div class="w-full max-w-xl flex items-center justify-between text-[11px] text-slate-500 mt-2 px-1">
+            <div class="w-full max-w-xl flex items-center justify-between text-[11px] text-slate-500 mt-2 px-1 flex-wrap gap-1">
                 <span>💡 Quy tắc: Bất kỳ câu nào trả lời sai sẽ được cô hỏi lại đến khi nào thuộc 40/40!</span>
                 <span>Tiến độ: <strong class="text-emerald-400">${masteredCount}/40 câu</strong></span>
             </div>
@@ -1246,14 +1480,57 @@
         const resetBtn = container.querySelector("#oralResetBtn");
         if (resetBtn) {
             resetBtn.addEventListener("click", () => {
-                if (confirm("Em có chắc chắn muốn cô khảo bài lại từ đầu không?")) {
+                if (confirm("Em có chắc chắn muốn cô Kiều Anh khảo bài lại từ đầu không?")) {
                     initOralTest();
                     renderCurrentTab();
                 }
             });
         }
 
-        // 4. Nếu đang ở mode nhập liệu (chưa trả lời)
+        // 4. BIND KEYBOARD SHORTCUTS CHO MODAL CÔ KHẢO BÀI
+        const handleOralKeyDown = (e) => {
+            if (currentTab !== 'oral') return;
+
+            // Spacebar: Nghe lại cô hỏi (chỉ khi không đang gõ trong input text)
+            if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
+                e.preventDefault();
+                speakTeacherQuestion(oralCurrentItem.primaryMeaning);
+                return;
+            }
+
+            // Nếu chưa trả lời & ở mode trắc nghiệm: bấm phím 1, 2, 3, 4 hoặc A, B, C, D
+            if (!oralIsAnswered && oralMode === 'choice' && e.target.tagName !== 'INPUT') {
+                let choiceIdx = -1;
+                if (e.key === '1' || e.key.toLowerCase() === 'a') choiceIdx = 0;
+                else if (e.key === '2' || e.key.toLowerCase() === 'b') choiceIdx = 1;
+                else if (e.key === '3' || e.key.toLowerCase() === 'c') choiceIdx = 2;
+                else if (e.key === '4' || e.key.toLowerCase() === 'd') choiceIdx = 3;
+
+                if (choiceIdx >= 0 && choiceIdx < oralChoices.length) {
+                    e.preventDefault();
+                    handleOralAnswer(oralChoices[choiceIdx].isCorrect);
+                    return;
+                }
+            }
+
+            // Nếu đã trả lời đúng: bấm Enter để chuyển câu tiếp theo
+            if (oralIsAnswered && oralIsCorrect && e.key === 'Enter') {
+                e.preventDefault();
+                pickNextOralQuestion();
+                renderCurrentTab();
+                return;
+            }
+        };
+
+        // Gắn listener 1 lần
+        if (!container._oralKeyBound) {
+            container._oralKeyBound = true;
+            window.removeEventListener("keydown", container._oralHandler || (() => {}));
+            container._oralHandler = handleOralKeyDown;
+            window.addEventListener("keydown", handleOralKeyDown);
+        }
+
+        // 5. Nếu đang ở mode nhập liệu (chưa trả lời)
         if (!oralIsAnswered) {
             if (oralMode === 'type') {
                 const inputEl = container.querySelector("#oralInput");
@@ -1319,9 +1596,18 @@
 
                 retryForm.addEventListener("submit", (e) => {
                     e.preventDefault();
-                    // Chuyển sang câu tiếp theo trong hàng đợi
-                    pickNextOralQuestion();
-                    renderCurrentTab();
+                    const typed = retryInput.value;
+                    const isMatch = checkOralAnswer(typed, oralCurrentItem);
+                    if (isMatch || typed.trim().length >= 2) {
+                        // Đã gõ lại từ đúng để khắc sâu, chuyển sang câu tiếp theo
+                        if (window.AudioHelper && window.AudioHelper.playPlip) window.AudioHelper.playPlip();
+                        pickNextOralQuestion();
+                        renderCurrentTab();
+                    } else {
+                        retryInput.classList.add("border-rose-500", "animate-shake");
+                        retryInput.placeholder = `Hãy gõ đúng từ: ${oralCurrentItem.primaryWord}`;
+                        setTimeout(() => retryInput.classList.remove("animate-shake"), 500);
+                    }
                 });
             }
         }
@@ -1332,7 +1618,10 @@
         oralIsCorrect = isMatch;
 
         if (isMatch) {
-            // ĐÚNG: Cô khen, loại khỏi hàng đợi chưa thuộc, thêm vào đã thuộc!
+            // ĐÚNG: Cô khen giọng nữ, tăng streak, loại khỏi hàng đợi chưa thuộc, thêm vào đã thuộc!
+            oralStreak++;
+            if (oralStreak > oralMaxStreak) oralMaxStreak = oralStreak;
+
             if (window.AudioHelper && window.AudioHelper.playPlip) window.AudioHelper.playPlip();
             if (window.confetti) {
                 window.confetti({ particleCount: 35, spread: 60, origin: { y: 0.7 } });
@@ -1345,24 +1634,26 @@
                 oralMasteredList.push(oralCurrentItem);
             }
 
-            // Đọc phát âm tiếng Anh cho học sinh nghe lại
-            speakWord(oralCurrentItem.primaryWord);
+            // Cô giáo khen ngợi bằng giọng nữ và sau đó phát âm từ tiếng Anh
+            speakTeacherFeedback(true, oralCurrentItem.primaryWord);
 
-            // Tự động chuyển câu sau 1.4s nếu ở mode choice
+            // Tự động chuyển câu sau 1.8s nếu ở mode choice để học sinh nghe cô khen xong
             if (oralMode === 'choice') {
                 setTimeout(() => {
                     if (currentTab === 'oral' && oralIsAnswered && oralIsCorrect) {
                         pickNextOralQuestion();
                         renderCurrentTab();
                     }
-                }, 1300);
+                }, 1800);
             }
         } else {
-            // SAI: Tăng số lần sai, giữ lại trong hàng đợi để khảo lại ở các câu tiếp theo!
+            // SAI: Reset streak, tăng số lần sai, giữ lại trong hàng đợi để khảo lại ở các câu tiếp theo!
+            oralStreak = 0;
             oralMistakesCount++;
             // Xáo trộn lại remainingList để câu này xuất hiện lại bất ngờ
             oralRemainingList = shuffleArray(oralRemainingList);
-            speakWord(oralCurrentItem.primaryWord);
+            // Cô giáo động viên bằng giọng nữ và sau đó phát âm từ tiếng Anh
+            speakTeacherFeedback(false, oralCurrentItem.primaryWord);
         }
 
         renderCurrentTab();
@@ -1370,7 +1661,20 @@
 
     function showOralVictoryScreen(container) {
         if (window.confetti) {
-            window.confetti({ particleCount: 120, spread: 90, origin: { y: 0.5 } });
+            window.confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 } });
+        }
+
+        // Cô giáo phát biểu chúc mừng bằng giọng nữ
+        if ('speechSynthesis' in window) {
+            try {
+                window.speechSynthesis.cancel();
+                const utter = new SpeechSynthesisUtterance("Chúc mừng em! Em đã xuất sắc thuộc làu làu toàn bộ 40 từ vựng Unit 4!");
+                utter.lang = 'vi-VN';
+                utter.pitch = 1.25;
+                const v = getVietnameseFemaleVoice();
+                if (v) utter.voice = v;
+                window.speechSynthesis.speak(utter);
+            } catch (e) {}
         }
 
         container.className = "flex-1 overflow-y-auto p-4 flex flex-col justify-center items-center";
@@ -1398,8 +1702,8 @@
                         <div class="text-lg sm:text-xl font-black text-emerald-400">40 / 40</div>
                     </div>
                     <div class="p-2 rounded-xl bg-slate-800/60">
-                        <div class="text-[10px] text-slate-400 font-bold mb-0.5">Số lượt khảo</div>
-                        <div class="text-lg sm:text-xl font-black text-blue-400">${oralQuestionNumber} lượt</div>
+                        <div class="text-[10px] text-slate-400 font-bold mb-0.5">Kỷ lục chuỗi</div>
+                        <div class="text-lg sm:text-xl font-black text-orange-400">🔥 ${oralMaxStreak}</div>
                     </div>
                     <div class="p-2 rounded-xl bg-slate-800/60">
                         <div class="text-[10px] text-slate-400 font-bold mb-0.5">Khắc phục sai</div>
@@ -2505,6 +2809,7 @@
     window.VocabHub = {
         data: UNIT4_VOCAB_DATA,
         open: openVocabModal,
+        close: closeModal,
         openOralTest: () => openVocabModal('oral'),
         openFlashcards: () => openVocabModal('flashcards'),
         openMatchGame: () => openVocabModal('match'),

@@ -1251,126 +1251,6 @@ window.AzotaApp = (function() {
 
     const SUBJECT_FOLDERS = [
         {
-            id: "Ngữ Văn",
-            title: "Ngữ Văn 11",
-            abbr: "NV",
-            grade: "11",
-            icon: "📖",
-            category: "tracnghiem",
-            isLop11: true,
-            folderBoxBg: "bg-rose-950/70 border border-rose-500/40 text-rose-400",
-            badgeBg: "bg-rose-500 text-white",
-            lineBg: "bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.7)]",
-            progressTextColor: "text-rose-400 font-bold",
-            defaultProgress: 0,
-            defaultFiles: 0,
-            defaultQuestions: 0,
-            colorClass: "from-rose-500 via-pink-600 to-red-600",
-            bgLight: "bg-rose-500/10 text-rose-400 border-rose-500/20",
-            description: "Đọc hiểu văn bản, nghị luận văn học, nghị luận xã hội & phân tích tác phẩm văn học 11.",
-            tags: ["⭐ Tạm Thời Rỗng", "Nghị Luận Văn Học", "Đọc Hiểu", "Đang Cập Nhật"]
-        },
-        {
-            id: "Hoc_Tu_Luan",
-            title: "Học Tự Luận",
-            abbr: "TL",
-            grade: "Đa môn",
-            icon: "📝",
-            category: "tuluan",
-            isLop11: true,
-            folderBoxBg: "bg-emerald-950/70 border border-emerald-500/40 text-emerald-400",
-            badgeBg: "bg-emerald-500 text-slate-950",
-            lineBg: "bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.7)]",
-            progressTextColor: "text-emerald-400 font-bold",
-            defaultProgress: 67,
-            defaultFiles: 1,
-            defaultQuestions: 6,
-            colorClass: "from-emerald-500 via-teal-600 to-green-600",
-            bgLight: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-            description: "Thư viện học tự luận: Bấm vào để chọn môn học. Hỗ trợ Flashcard 3D lật thẻ, Che khuyết từ khóa (Active Recall) và AI chấm điểm.",
-            tags: ["⭐ Tự Luận Trọng Tâm", "Flashcard 3D & AI", "Active Recall", "Địa Lí 11"]
-        },
-        {
-            id: "Địa Lí",
-            title: "Địa Lí 11",
-            abbr: "DL",
-            grade: "11",
-            icon: "🌍",
-            category: "tracnghiem",
-            isLop11: true,
-            folderBoxBg: "bg-teal-950/70 border border-cyan-500/40 text-cyan-400",
-            badgeBg: "bg-cyan-500 text-slate-950",
-            lineBg: "bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.7)]",
-            progressTextColor: "text-cyan-400 font-bold",
-            defaultProgress: 80,
-            defaultFiles: 9,
-            defaultQuestions: 140,
-            colorClass: "from-teal-500 via-cyan-600 to-blue-600",
-            bgLight: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
-            description: "Toàn bộ 64 câu trắc nghiệm chuẩn SGK chia theo 6 chủ đề + Đề ôn tập Full 64 câu + Đúng/Sai & Nhận dạng biểu đồ.",
-            tags: ["⭐ Full 64 Câu", "6 Chủ Đề Ôn Tập", "Đúng / Sai", "Nhận Dạng Biểu Đồ"]
-        },
-        {
-            id: "Tin Học",
-            title: "Tin Học 11",
-            abbr: "TH",
-            grade: "11",
-            icon: "💻",
-            category: "tracnghiem",
-            isLop11: true,
-            folderBoxBg: "bg-rose-950/70 border border-rose-500/40 text-rose-400",
-            badgeBg: "bg-rose-500 text-white",
-            lineBg: "bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.7)]",
-            progressTextColor: "text-rose-400 font-bold",
-            defaultProgress: 45,
-            defaultFiles: 6,
-            defaultQuestions: 200,
-            colorClass: "from-rose-500 via-pink-600 to-purple-600",
-            bgLight: "bg-rose-500/10 text-rose-500 border-rose-500/20",
-            description: "Hệ điều hành, Mã nguồn mở, Phần cứng CPU, Kết nối thiết bị số, Lưu trữ đám mây.",
-            tags: ["⭐ Trọng tâm", "Full 100 câu", "Bài 1, 3, 4, 5, 6"]
-        },
-        {
-            id: "GDKT&PL",
-            title: "GDKT & PL 11",
-            abbr: "PL",
-            grade: "11",
-            icon: "⚖️",
-            category: "tracnghiem",
-            isLop11: true,
-            folderBoxBg: "bg-purple-950/70 border border-purple-500/40 text-purple-400",
-            badgeBg: "bg-purple-500 text-white",
-            lineBg: "bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.7)]",
-            progressTextColor: "text-purple-400 font-bold",
-            defaultProgress: 55,
-            defaultFiles: 3,
-            defaultQuestions: 98,
-            colorClass: "from-purple-600 to-fuchsia-600",
-            bgLight: "bg-purple-500/10 text-purple-500 border-purple-500/20",
-            description: "Cạnh tranh, Cung cầu, Lạm phát, Thất nghiệp và Khảo sát nhận định Đúng / Sai.",
-            tags: ["Kinh tế", "Pháp luật", "98 câu hỏi"]
-        },
-        {
-            id: "Lịch Sử",
-            title: "Lịch Sử 11",
-            abbr: "LS",
-            grade: "11",
-            icon: "🏛️",
-            category: "tracnghiem",
-            isLop11: true,
-            folderBoxBg: "bg-amber-950/70 border border-amber-500/40 text-amber-400",
-            badgeBg: "bg-amber-500 text-slate-950",
-            lineBg: "bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.7)]",
-            progressTextColor: "text-amber-400 font-bold",
-            defaultProgress: 92,
-            defaultFiles: 3,
-            defaultQuestions: 86,
-            colorClass: "from-amber-500 to-orange-600",
-            bgLight: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-            description: "Kháng chiến chống thực dân Pháp, Kháng chiến chống Mỹ và Quá trình gia nhập ASEAN.",
-            tags: ["Kháng chiến", "ASEAN", "79 câu"]
-        },
-        {
             id: "Tiếng Anh",
             title: "Tiếng Anh 11",
             abbr: "EN",
@@ -1382,73 +1262,13 @@ window.AzotaApp = (function() {
             badgeBg: "bg-blue-500 text-white",
             lineBg: "bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.7)]",
             progressTextColor: "text-blue-400 font-bold",
-            defaultProgress: 85,
-            defaultFiles: 3,
-            defaultQuestions: 85,
+            defaultProgress: 100,
+            defaultFiles: 1,
+            defaultQuestions: 40,
             colorClass: "from-blue-600 to-indigo-600",
             bgLight: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-            description: "40 Từ vựng trọng tâm Unit 4 (ASEAN and Vietnam), Từ vựng Unit 1-2-3 & Đề Smart Cities.",
-            tags: ["Unit 4 Vocab", "40 Từ Vựng", "ASEAN", "85 câu"]
-        },
-        {
-            id: "Toán",
-            title: "Toán 11",
-            abbr: "TO",
-            grade: "11",
-            icon: "📐",
-            category: "tracnghiem",
-            isLop11: true,
-            folderBoxBg: "bg-blue-950/70 border border-blue-500/40 text-blue-400",
-            badgeBg: "bg-blue-600 text-white",
-            lineBg: "bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.7)]",
-            progressTextColor: "text-blue-400 font-bold",
-            defaultProgress: 0,
-            defaultFiles: 0,
-            defaultQuestions: 0,
-            colorClass: "from-blue-600 to-indigo-600",
-            bgLight: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-            description: "Đại số & Giải tích: Hàm số lượng giác, dãy số, cấp số; Hình học không gian: Quan hệ song song, vuông góc.",
-            tags: ["Toán 11", "Đại số & Giải tích", "Hình học không gian"]
-        },
-        {
-            id: "Vật Lí",
-            title: "Vật Lí 11",
-            abbr: "VL",
-            grade: "11",
-            icon: "⚡",
-            category: "tracnghiem",
-            isLop11: true,
-            folderBoxBg: "bg-amber-950/70 border border-amber-500/40 text-amber-400",
-            badgeBg: "bg-amber-500 text-slate-950",
-            lineBg: "bg-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.7)]",
-            progressTextColor: "text-amber-400 font-bold",
-            defaultProgress: 0,
-            defaultFiles: 0,
-            defaultQuestions: 0,
-            colorClass: "from-amber-500 to-orange-600",
-            bgLight: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-            description: "Dao động điều hòa, Sóng cơ & sóng âm, Điện trường, Dòng điện không đổi & Từ trường.",
-            tags: ["Vật Lí 11", "Dao động điều hòa", "Sóng & Điện"]
-        },
-        {
-            id: "GDQP&AN",
-            title: "GDQP & AN 11",
-            abbr: "QP",
-            grade: "11",
-            icon: "🛡️",
-            category: "tracnghiem",
-            isLop11: true,
-            folderBoxBg: "bg-emerald-950/70 border border-emerald-500/40 text-emerald-400",
-            badgeBg: "bg-emerald-500 text-slate-950",
-            lineBg: "bg-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.7)]",
-            progressTextColor: "text-emerald-400 font-bold",
-            defaultProgress: 0,
-            defaultFiles: 0,
-            defaultQuestions: 0,
-            colorClass: "from-emerald-600 to-teal-600",
-            bgLight: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-            description: "Bảo vệ an ninh quốc gia, trật tự an toàn xã hội, truyền thống vẻ vang của lực lượng vũ trang nhân dân Việt Nam.",
-            tags: ["GDQP & AN 11", "An ninh quốc gia", "Quốc phòng toàn dân"]
+            description: "40 Từ vựng trọng tâm Unit 4: ASEAN and Vietnam. Đầy đủ phát âm, từ loại và tra cứu nhanh!",
+            tags: ["⭐ Unit 4 Vocab", "40 Từ Vựng", "ASEAN and Vietnam", "Cô Khảo Bài"]
         }
     ];
 
@@ -1946,129 +1766,14 @@ window.AzotaApp = (function() {
     // ==========================================
     const GLASS_FOLDER_SUBJECTS = [
         {
-            id: "van-11",
-            subjectName: "Ngữ Văn",
-            title: "Ngữ Văn 11",
-            meta: "0 đề • Tạm thời rỗng",
-            category: "tracnghiem",
-            art: "dusk",
-            sheets: [
-                { id: "van-11-coming", name: "Chưa có đề thi", meta: "Đang cập nhật", art: "dusk", isEmpty: true },
-                { id: "van-11-coming-2", name: "Tạm thời rỗng", meta: "Chờ import", lines: true, isEmpty: true }
-            ]
-        },
-        {
-            id: "dia-11",
-            subjectName: "Địa Lí",
-            title: "Địa Lí 11",
-            meta: "9 đề • 140 câu",
-            category: "tracnghiem",
-            art: "aurora",
-            sheets: [
-                { id: "dia-11-full-64", name: "FULL 64 Câu Cương", meta: "64 câu • 50p", art: "aurora" },
-                { id: "dia-11-cd-1", name: "CĐ 1: Nhóm Nước", meta: "8 câu • 15p", art: "dusk" },
-                { id: "dia-11-cd-2", name: "CĐ 2: Toàn Cầu Hóa", meta: "12 câu • 20p", lines: true }
-            ]
-        },
-        {
-            id: "th-11",
-            subjectName: "Tin Học",
-            title: "Tin Học 11",
-            meta: "6 đề • 200 câu",
-            category: "tracnghiem",
-            art: "ember",
-            sheets: [
-                { id: "th-11-full-100", name: "FULL 100 Câu SGK", meta: "100 câu • 45p", art: "ember" },
-                { id: "th-11-b1", name: "Hệ Điều Hành & PM Mở", meta: "20 câu • 20p", art: "glacier" },
-                { id: "th-11-b4", name: "Bên Trong Máy Tính", meta: "20 câu • 20p", lines: true }
-            ]
-        },
-        {
-            id: "tuluan",
-            subjectName: "Hoc_Tu_Luan",
-            title: "Học Tự Luận",
-            meta: "1 đề • 6 câu & biểu đồ",
-            category: "tuluan",
-            art: "verdant",
-            sheets: [
-                { id: "dia-11-tu-luan", name: "Toàn Cầu Hóa Kinh Tế", meta: "Câu 1 & Câu 4", art: "verdant", isEssay: true },
-                { id: "dia-11-tu-luan", name: "Mỹ La-tinh & EU", meta: "Câu 2, 3 & 6", art: "aurora", isEssay: true },
-                { id: "dia-11-tu-luan", name: "Nhận Dạng Biểu Đồ", meta: "Bí kíp 4 dạng", lines: true, isEssay: true }
-            ]
-        },
-        {
-            id: "ls-11",
-            subjectName: "Lịch Sử",
-            title: "Lịch Sử 11",
-            meta: "3 đề • 86 câu",
-            category: "tracnghiem",
-            art: "dusk",
-            sheets: [
-                { id: "ls-11-b1", name: "Cách Mạng Tư Sản", meta: "52 câu • 45p", art: "dusk" },
-                { id: "ls-11-b2", name: "Chủ Nghĩa Tư Bản", meta: "27 câu • 30p", art: "aurora" },
-                { id: "ls-11-dung-sai", name: "Đúng/Sai Tư Liệu", meta: "7 câu • 15p", lines: true }
-            ]
-        },
-        {
-            id: "gdkt-11",
-            subjectName: "GDKT&PL",
-            title: "GDKT & PL 11",
-            meta: "3 đề • 98 câu",
-            category: "tracnghiem",
-            art: "dusk",
-            sheets: [
-                { id: "gdkt-11-de1", name: "Cạnh Tranh & Cung Cầu", meta: "40 câu • 40p", art: "dusk" },
-                { id: "gdkt-11-de2", name: "Thị Trường Lao Động", meta: "42 câu • 40p", art: "glacier" },
-                { id: "gdkt-11-dung-sai", name: "Đúng/Sai Cấu Trúc Mới", meta: "16 câu • 20p", lines: true }
-            ]
-        },
-        {
             id: "ta-11",
             subjectName: "Tiếng Anh",
             title: "Tiếng Anh 11",
-            meta: "3 đề • 85 câu",
+            meta: "1 đề • 40 từ vựng Unit 4",
             category: "tracnghiem",
             art: "glacier",
             sheets: [
-                { id: "ta-unit4-vocab-40", name: "Unit 4: 40 Từ Vựng ASEAN", meta: "40 câu • 35p", art: "aurora" },
-                { id: "ta-vocab-unit1-2-3", name: "Từ Vựng Unit 1, 2, 3", meta: "30 câu • 30p", art: "glacier" },
-                { id: "ta-de-01", name: "Smart Cities & Future", meta: "15 câu • 20p", lines: true }
-            ]
-        },
-        {
-            id: "toan-11",
-            subjectName: "Toán",
-            title: "Toán 11",
-            meta: "0 đề • Tạm thời rỗng",
-            category: "tracnghiem",
-            art: "aurora",
-            sheets: [
-                { id: "toan-11-coming", name: "Chưa có đề thi", meta: "Đang cập nhật", art: "aurora", isEmpty: true },
-                { id: "toan-11-coming-2", name: "Tạm thời rỗng", meta: "Chờ import", lines: true, isEmpty: true }
-            ]
-        },
-        {
-            id: "ly-11",
-            subjectName: "Vật Lí",
-            title: "Vật Lí 11",
-            meta: "0 đề • Tạm thời rỗng",
-            category: "tracnghiem",
-            art: "ember",
-            sheets: [
-                { id: "ly-11-coming", name: "Chưa có đề thi", meta: "Đang cập nhật", art: "ember", isEmpty: true },
-                { id: "ly-11-coming-2", name: "Tạm thời rỗng", meta: "Chờ import", lines: true, isEmpty: true }
-            ]
-        },
-        {
-            id: "gdqp-11",
-            subjectName: "GDQP&AN",
-            title: "GDQP & AN 11",
-            meta: "0 đề • Tạm thời rỗng",
-            category: "tracnghiem",
-            art: "verdant",
-            sheets: [
-                { id: "gdqp-11-coming", name: "Chưa có đề thi", meta: "Đang cập nhật", art: "verdant", isEmpty: true },
-                { id: "gdqp-11-coming-2", name: "Tạm thời rỗng", meta: "Chờ import", lines: true, isEmpty: true }
+                { id: "ta-unit4-vocab-40", name: "Unit 4: 40 Từ Vựng ASEAN & VN", meta: "40 câu • 35p", art: "aurora" }
             ]
         }
     ];
@@ -2423,6 +2128,55 @@ window.AzotaApp = (function() {
         }
 
         container.appendChild(headerDiv);
+
+        // HERO CARD: UNIT 4 ASEAN AND VIETNAM (40 TỪ VỰNG TRỌNG TÂM)
+        const unit4Hero = document.createElement("div");
+        unit4Hero.className = "mb-6 p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-blue-900/40 via-indigo-950/60 to-purple-900/40 border border-blue-500/30 shadow-xl backdrop-blur-md relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-5";
+        unit4Hero.innerHTML = `
+            <div class="flex items-start gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-3xl shadow-lg shadow-blue-500/30 shrink-0 select-none">
+                    🇬🇧
+                </div>
+                <div>
+                    <div class="flex items-center gap-2 flex-wrap mb-1">
+                        <span class="text-xs font-black px-2.5 py-0.5 rounded-full bg-blue-500 text-white shadow-xs">
+                            TRỌNG TÂM ÔN TẬP
+                        </span>
+                        <span class="text-xs font-bold text-sky-400">
+                            Unit 4: ASEAN and Vietnam
+                        </span>
+                    </div>
+                    <h2 class="text-lg sm:text-xl font-black text-white tracking-tight">
+                        Bài Học 40 Từ Vựng Cốt Lõi Unit 4
+                    </h2>
+                    <p class="text-xs text-slate-300 mt-1 max-w-xl leading-relaxed">
+                        Chắt lọc 40 từ vựng cốt lõi đầu tiên từ đề cương THPT Trần Văn Giàu. Tích hợp Cô Khảo Bài (Giọng nói nữ tương tác), Flashcard 3D và Trắc nghiệm 40 câu!
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2.5 flex-wrap shrink-0">
+                <button type="button" 
+                        onclick="if(window.VocabHub){window.VocabHub.openOralTest();}else{AzotaApp.openUnit4VocabCheatSheet();}" 
+                        class="px-4 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 hover:from-rose-500 hover:to-pink-500 text-white shadow-md shadow-rose-500/25 transition-all cursor-pointer flex items-center gap-2 active:scale-95">
+                    <span>👩‍🏫</span>
+                    <span>Cô Khảo Bài (40/40)</span>
+                </button>
+                <button type="button" 
+                        onclick="if(window.VocabHub){window.VocabHub.openFlashcards();}else{AzotaApp.openUnit4VocabCheatSheet();}" 
+                        class="px-3.5 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-md transition-all cursor-pointer flex items-center gap-2 active:scale-95">
+                    <span>🎴</span>
+                    <span>Flashcard 3D &amp; Ghép Thẻ</span>
+                </button>
+                <button type="button" 
+                        onclick="AzotaApp.startExam('ta-unit4-vocab-40', 'practice')" 
+                        class="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-sky-600 hover:bg-sky-500 text-white shadow-md transition-all cursor-pointer flex items-center gap-2 active:scale-95">
+                    <span>📝</span>
+                    <span>Khảo Sát 40 Câu</span>
+                </button>
+            </div>
+        `;
+        container.appendChild(unit4Hero);
 
         if (activeSubjects.length === 0) {
             const emptyDiv = document.createElement("div");

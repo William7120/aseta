@@ -968,7 +968,7 @@ window.TimetableEngine = (function() {
             badgeClass: "bg-slate-500/15 text-slate-300 border-slate-500/20"
         };
 
-        const hasExams = !!meta.examFolderId;
+        const hasExams = (window.INITIAL_EXAMS || []).some(e => e.subject === subjectKey || (subjectKey === "Ngoại ngữ" && e.subject === "Tiếng Anh"));
         const suppliesSummary = meta.supplies ? meta.supplies.map(s => s.name).join(", ") : "";
 
         // BỐ CỤC 2 TẦNG CHUYÊN NGHIỆP:
@@ -1005,17 +1005,16 @@ window.TimetableEngine = (function() {
                     `}
                 </div>
 
-                <div class="flex items-center gap-1.5 shrink-0">
+                <div class="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
                     ${(subjectKey === "Ngoại ngữ") ? `
                         <button type="button" 
                                 onclick="if(window.VocabHub){window.VocabHub.openOralTest();}else if(window.AzotaApp&&window.AzotaApp.openOralTest){window.AzotaApp.openOralTest();}" 
                                 class="px-2.5 py-1 rounded-lg text-[10px] font-black bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 hover:from-rose-500 hover:to-purple-500 text-white shadow-xs transition-all flex items-center gap-1 cursor-pointer active:scale-95"
                                 title="👩‍🏫 Học & Khảo Bài Unit 4: Flashcard 3D, Cô Khảo Bài 40/40, Ghép Thẻ & Trắc Nghiệm">
                             <span>👩‍🏫</span>
-                            <span>Học &amp; Khảo Bài</span>
+                            <span>Học &amp; Khảo Bài Unit 4</span>
                         </button>
-                    ` : ''}
-                    ${hasExams ? `
+                    ` : (hasExams ? `
                         <button type="button" 
                                 onclick="window.AzotaApp.openFileExplorer('${meta.examFolderId}')" 
                                 class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 border border-sky-500/25 transition-all flex items-center gap-1 cursor-pointer active:scale-95"
@@ -1027,7 +1026,7 @@ window.TimetableEngine = (function() {
                         <span class="text-[9px] text-slate-400 font-medium px-2 py-0.5 rounded bg-slate-500/5">
                             Chính khóa
                         </span>
-                    `}
+                    `)}
                 </div>
             </div>
         `;
