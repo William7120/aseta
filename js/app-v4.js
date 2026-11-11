@@ -1267,8 +1267,188 @@ window.AzotaApp = (function() {
             defaultQuestions: 40,
             colorClass: "from-blue-600 to-indigo-600",
             bgLight: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-            description: "40 Từ vựng trọng tâm Unit 4: ASEAN and Vietnam. Đầy đủ phát âm, từ loại và tra cứu nhanh!",
-            tags: ["⭐ Unit 4 Vocab", "40 Từ Vựng", "ASEAN and Vietnam", "Cô Khảo Bài"]
+            description: "40 Từ vựng trọng tâm Unit 4: ASEAN and Vietnam. Đầy đủ phát âm, Cô khảo bài và Flashcard 3D.",
+            tags: ["Unit 4 Vocab", "40 Từ Vựng", "ASEAN & VN"]
+        },
+        {
+            id: "Ngữ Văn",
+            title: "Ngữ Văn 11",
+            abbr: "NV",
+            grade: "11",
+            icon: "📖",
+            category: "tracnghiem",
+            isLop11: true,
+            folderBoxBg: "bg-rose-950/70 border border-rose-500/40 text-rose-400",
+            badgeBg: "bg-rose-500 text-white",
+            lineBg: "bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.7)]",
+            progressTextColor: "text-rose-400 font-bold",
+            defaultProgress: 0,
+            defaultFiles: 0,
+            defaultQuestions: 0,
+            colorClass: "from-rose-500 via-pink-600 to-red-600",
+            bgLight: "bg-rose-500/10 text-rose-400 border-rose-500/20",
+            description: "Đọc hiểu văn bản, nghị luận văn học, nghị luận xã hội & phân tích tác phẩm văn học 11.",
+            tags: ["⭐ Tạm Thời Rỗng", "Đã Qua Cuối Kì", "Chờ Cập Nhật"]
+        },
+        {
+            id: "Toán",
+            title: "Toán 11",
+            abbr: "TO",
+            grade: "11",
+            icon: "📐",
+            category: "tracnghiem",
+            isLop11: true,
+            folderBoxBg: "bg-blue-950/70 border border-blue-500/40 text-blue-400",
+            badgeBg: "bg-blue-600 text-white",
+            lineBg: "bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.7)]",
+            progressTextColor: "text-blue-400 font-bold",
+            defaultProgress: 0,
+            defaultFiles: 0,
+            defaultQuestions: 0,
+            colorClass: "from-blue-600 to-indigo-600",
+            bgLight: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+            description: "Đại số & Giải tích, Hình học không gian 11.",
+            tags: ["⭐ Tạm Thời Rỗng", "Đã Qua Cuối Kì", "Chờ Cập Nhật"]
+        },
+        {
+            id: "Vật Lí",
+            title: "Vật Lí 11",
+            abbr: "VL",
+            grade: "11",
+            icon: "⚡",
+            category: "tracnghiem",
+            isLop11: true,
+            folderBoxBg: "bg-amber-950/70 border border-amber-500/40 text-amber-400",
+            badgeBg: "bg-amber-500 text-slate-950",
+            lineBg: "bg-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.7)]",
+            progressTextColor: "text-amber-400 font-bold",
+            defaultProgress: 0,
+            defaultFiles: 0,
+            defaultQuestions: 0,
+            colorClass: "from-amber-500 to-orange-600",
+            bgLight: "bg-amber-500/10 text-amber-500 border-amber-500/20",
+            description: "Dao động điều hòa, Sóng cơ & sóng âm, Điện trường.",
+            tags: ["⭐ Tạm Thời Rỗng", "Đã Qua Cuối Kì", "Chờ Cập Nhật"]
+        },
+        {
+            id: "Địa Lí",
+            title: "Địa Lí 11",
+            abbr: "DL",
+            grade: "11",
+            icon: "🌍",
+            category: "tracnghiem",
+            isLop11: true,
+            folderBoxBg: "bg-teal-950/70 border border-cyan-500/40 text-cyan-400",
+            badgeBg: "bg-cyan-500 text-slate-950",
+            lineBg: "bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.7)]",
+            progressTextColor: "text-cyan-400 font-bold",
+            defaultProgress: 0,
+            defaultFiles: 0,
+            defaultQuestions: 0,
+            colorClass: "from-teal-500 via-cyan-600 to-blue-600",
+            bgLight: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
+            description: "Địa lí kinh tế - xã hội thế giới & khu vực.",
+            tags: ["⭐ Tạm Thời Rỗng", "Đã Qua Cuối Kì", "Chờ Cập Nhật"]
+        },
+        {
+            id: "Tin Học",
+            title: "Tin Học 11",
+            abbr: "TH",
+            grade: "11",
+            icon: "💻",
+            category: "tracnghiem",
+            isLop11: true,
+            folderBoxBg: "bg-rose-950/70 border border-rose-500/40 text-rose-400",
+            badgeBg: "bg-rose-500 text-white",
+            lineBg: "bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.7)]",
+            progressTextColor: "text-rose-400 font-bold",
+            defaultProgress: 0,
+            defaultFiles: 0,
+            defaultQuestions: 0,
+            colorClass: "from-rose-500 via-pink-600 to-purple-600",
+            bgLight: "bg-rose-500/10 text-rose-500 border-rose-500/20",
+            description: "Hệ điều hành, Kiến trúc máy tính & Lưu trữ đám mây.",
+            tags: ["⭐ Tạm Thời Rỗng", "Đã Qua Cuối Kì", "Chờ Cập Nhật"]
+        },
+        {
+            id: "Lịch Sử",
+            title: "Lịch Sử 11",
+            abbr: "LS",
+            grade: "11",
+            icon: "🏛️",
+            category: "tracnghiem",
+            isLop11: true,
+            folderBoxBg: "bg-amber-950/70 border border-amber-500/40 text-amber-400",
+            badgeBg: "bg-amber-500 text-slate-950",
+            lineBg: "bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.7)]",
+            progressTextColor: "text-amber-400 font-bold",
+            defaultProgress: 0,
+            defaultFiles: 0,
+            defaultQuestions: 0,
+            colorClass: "from-amber-500 to-orange-600",
+            bgLight: "bg-amber-500/10 text-amber-500 border-amber-500/20",
+            description: "Lịch sử thế giới cận hiện đại & Lịch sử Việt Nam.",
+            tags: ["⭐ Tạm Thời Rỗng", "Đã Qua Cuối Kì", "Chờ Cập Nhật"]
+        },
+        {
+            id: "GDKT&PL",
+            title: "GDKT & PL 11",
+            abbr: "PL",
+            grade: "11",
+            icon: "⚖️",
+            category: "tracnghiem",
+            isLop11: true,
+            folderBoxBg: "bg-purple-950/70 border border-purple-500/40 text-purple-400",
+            badgeBg: "bg-purple-500 text-white",
+            lineBg: "bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.7)]",
+            progressTextColor: "text-purple-400 font-bold",
+            defaultProgress: 0,
+            defaultFiles: 0,
+            defaultQuestions: 0,
+            colorClass: "from-purple-600 to-fuchsia-600",
+            bgLight: "bg-purple-500/10 text-purple-500 border-purple-500/20",
+            description: "Giáo dục kinh tế & pháp luật 11.",
+            tags: ["⭐ Tạm Thời Rỗng", "Đã Qua Cuối Kì", "Chờ Cập Nhật"]
+        },
+        {
+            id: "GDQP&AN",
+            title: "GDQP & AN 11",
+            abbr: "QP",
+            grade: "11",
+            icon: "🛡️",
+            category: "tracnghiem",
+            isLop11: true,
+            folderBoxBg: "bg-emerald-950/70 border border-emerald-500/40 text-emerald-400",
+            badgeBg: "bg-emerald-500 text-slate-950",
+            lineBg: "bg-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.7)]",
+            progressTextColor: "text-emerald-400 font-bold",
+            defaultProgress: 0,
+            defaultFiles: 0,
+            defaultQuestions: 0,
+            colorClass: "from-emerald-600 to-teal-600",
+            bgLight: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+            description: "Giáo dục quốc phòng & an ninh 11.",
+            tags: ["⭐ Tạm Thời Rỗng", "Đã Qua Cuối Kì", "Chờ Cập Nhật"]
+        },
+        {
+            id: "Hoc_Tu_Luan",
+            title: "Học Tự Luận",
+            abbr: "TL",
+            grade: "Đa môn",
+            icon: "📝",
+            category: "tuluan",
+            isLop11: true,
+            folderBoxBg: "bg-emerald-950/70 border border-emerald-500/40 text-emerald-400",
+            badgeBg: "bg-emerald-500 text-slate-950",
+            lineBg: "bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.7)]",
+            progressTextColor: "text-emerald-400 font-bold",
+            defaultProgress: 0,
+            defaultFiles: 0,
+            defaultQuestions: 0,
+            colorClass: "from-emerald-500 via-teal-600 to-green-600",
+            bgLight: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+            description: "Thư viện học tự luận 11: Flashcard 3D, Active Recall & Chấm điểm AI.",
+            tags: ["⭐ Tạm Thời Rỗng", "Đã Qua Cuối Kì", "Chờ Cập Nhật"]
         }
     ];
 
@@ -1774,6 +1954,114 @@ window.AzotaApp = (function() {
             art: "glacier",
             sheets: [
                 { id: "ta-unit4-vocab-40", name: "Unit 4: 40 Từ Vựng ASEAN & VN", meta: "40 câu • 35p", art: "aurora" }
+            ]
+        },
+        {
+            id: "van-11",
+            subjectName: "Ngữ Văn",
+            title: "Ngữ Văn 11",
+            meta: "0 đề • Tạm thời rỗng",
+            category: "tracnghiem",
+            art: "dusk",
+            sheets: [
+                { id: "van-11-coming", name: "Chưa có đề thi", meta: "Đã qua cuối kì", art: "dusk", isEmpty: true },
+                { id: "van-11-coming-2", name: "Tạm thời rỗng", meta: "Chờ cập nhật", lines: true, isEmpty: true }
+            ]
+        },
+        {
+            id: "toan-11",
+            subjectName: "Toán",
+            title: "Toán 11",
+            meta: "0 đề • Tạm thời rỗng",
+            category: "tracnghiem",
+            art: "aurora",
+            sheets: [
+                { id: "toan-11-coming", name: "Chưa có đề thi", meta: "Đã qua cuối kì", art: "aurora", isEmpty: true },
+                { id: "toan-11-coming-2", name: "Tạm thời rỗng", meta: "Chờ cập nhật", lines: true, isEmpty: true }
+            ]
+        },
+        {
+            id: "ly-11",
+            subjectName: "Vật Lí",
+            title: "Vật Lí 11",
+            meta: "0 đề • Tạm thời rỗng",
+            category: "tracnghiem",
+            art: "ember",
+            sheets: [
+                { id: "ly-11-coming", name: "Chưa có đề thi", meta: "Đã qua cuối kì", art: "ember", isEmpty: true },
+                { id: "ly-11-coming-2", name: "Tạm thời rỗng", meta: "Chờ cập nhật", lines: true, isEmpty: true }
+            ]
+        },
+        {
+            id: "dia-11",
+            subjectName: "Địa Lí",
+            title: "Địa Lí 11",
+            meta: "0 đề • Tạm thời rỗng",
+            category: "tracnghiem",
+            art: "aurora",
+            sheets: [
+                { id: "dia-11-coming", name: "Chưa có đề thi", meta: "Đã qua cuối kì", art: "aurora", isEmpty: true },
+                { id: "dia-11-coming-2", name: "Tạm thời rỗng", meta: "Chờ cập nhật", lines: true, isEmpty: true }
+            ]
+        },
+        {
+            id: "th-11",
+            subjectName: "Tin Học",
+            title: "Tin Học 11",
+            meta: "0 đề • Tạm thời rỗng",
+            category: "tracnghiem",
+            art: "ember",
+            sheets: [
+                { id: "th-11-coming", name: "Chưa có đề thi", meta: "Đã qua cuối kì", art: "ember", isEmpty: true },
+                { id: "th-11-coming-2", name: "Tạm thời rỗng", meta: "Chờ cập nhật", lines: true, isEmpty: true }
+            ]
+        },
+        {
+            id: "ls-11",
+            subjectName: "Lịch Sử",
+            title: "Lịch Sử 11",
+            meta: "0 đề • Tạm thời rỗng",
+            category: "tracnghiem",
+            art: "dusk",
+            sheets: [
+                { id: "ls-11-coming", name: "Chưa có đề thi", meta: "Đã qua cuối kì", art: "dusk", isEmpty: true },
+                { id: "ls-11-coming-2", name: "Tạm thời rỗng", meta: "Chờ cập nhật", lines: true, isEmpty: true }
+            ]
+        },
+        {
+            id: "gdkt-11",
+            subjectName: "GDKT&PL",
+            title: "GDKT & PL 11",
+            meta: "0 đề • Tạm thời rỗng",
+            category: "tracnghiem",
+            art: "dusk",
+            sheets: [
+                { id: "gdkt-11-coming", name: "Chưa có đề thi", meta: "Đã qua cuối kì", art: "dusk", isEmpty: true },
+                { id: "gdkt-11-coming-2", name: "Tạm thời rỗng", meta: "Chờ cập nhật", lines: true, isEmpty: true }
+            ]
+        },
+        {
+            id: "gdqp-11",
+            subjectName: "GDQP&AN",
+            title: "GDQP & AN 11",
+            meta: "0 đề • Tạm thời rỗng",
+            category: "tracnghiem",
+            art: "verdant",
+            sheets: [
+                { id: "gdqp-11-coming", name: "Chưa có đề thi", meta: "Đã qua cuối kì", art: "verdant", isEmpty: true },
+                { id: "gdqp-11-coming-2", name: "Tạm thời rỗng", meta: "Chờ cập nhật", lines: true, isEmpty: true }
+            ]
+        },
+        {
+            id: "tuluan",
+            subjectName: "Hoc_Tu_Luan",
+            title: "Học Tự Luận",
+            meta: "0 đề • Tạm thời rỗng",
+            category: "tuluan",
+            art: "verdant",
+            sheets: [
+                { id: "tl-coming", name: "Chưa có đề thi", meta: "Đã qua cuối kì", art: "verdant", isEmpty: true },
+                { id: "tl-coming-2", name: "Tạm thời rỗng", meta: "Chờ cập nhật", lines: true, isEmpty: true }
             ]
         }
     ];
@@ -2849,10 +3137,6 @@ window.AzotaApp = (function() {
     }
 
     function renderExplorerSubjectFiles(container, subjectName) {
-        if (subjectName === "Hoc_Tu_Luan") {
-            renderExplorerHocTuLuan(container);
-            return;
-        }
 
         container.innerHTML = "";
 
