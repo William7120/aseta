@@ -2438,7 +2438,7 @@ window.AzotaApp = (function() {
                         Bài Học Trọn Bộ 67 Từ Vựng Cốt Lõi Unit 4
                     </h2>
                     <p class="text-xs text-slate-300 mt-1 max-w-xl leading-relaxed">
-                        Tổng hợp toàn bộ 67 từ vựng cốt lõi Unit 4 (cả 2 trang đề cương) từ đề cương THPT Trần Văn Giàu. Tích hợp Cô Khảo Bài (Giọng nói nữ tương tác), Flashcard 3D và Trắc nghiệm 40 câu!
+                        Tổng hợp toàn bộ 67 từ vựng cốt lõi Unit 4 (cả 2 trang đề cương) từ đề cương THPT Trần Văn Giàu. Tích hợp Cô Khảo Bài (Giọng nói nữ tương tác), Flashcard 3D và Trắc nghiệm 67 câu!
                     </p>
                 </div>
             </div>
