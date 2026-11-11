@@ -1618,32 +1618,54 @@ window.AzotaApp = (function() {
     }
 
     function checkInProgressExam() {
-        const inProgress = window.ExamEngine.restoreInProgress();
+        const resumeBanner = document.getElementById("resumeExamBanner");
+        if (!resumeBanner) return;
+        const inProgress = window.ExamEngine ? window.ExamEngine.restoreInProgress() : null;
         if (inProgress && inProgress.exam) {
-            const resumeBanner = document.getElementById("resumeExamBanner");
-            if (resumeBanner) {
-                resumeBanner.classList.remove("hidden");
-                const titleEl = document.getElementById("resumeExamTitle");
-                if (titleEl) titleEl.textContent = inProgress.exam.title;
+            resumeBanner.classList.remove("hidden");
+            const titleEl = document.getElementById("resumeExamTitle");
+            if (titleEl) {
+                const totalQ = inProgress.questions ? inProgress.questions.length : 0;
+                const currentNum = (typeof inProgress.currentIndex === 'number' ? inProgress.currentIndex : 0) + 1;
+                titleEl.textContent = `${inProgress.exam.title} • Đang dừng ở Câu ${currentNum}/${totalQ}`;
             }
+        } else {
+            resumeBanner.classList.add("hidden");
         }
     }
 
     function resumeExam() {
-        if (window.ExamEngine && typeof window.ExamEngine.resumeExam === "function") {
-            const ok = window.ExamEngine.resumeExam();
-            if (ok) {
-                showView("exam");
-                return;
+        let resumed = false;
+        try {
+            if (window.ExamEngine && typeof window.ExamEngine.resumeExam === "function") {
+                resumed = window.ExamEngine.resumeExam();
             }
+        } catch(e) {
+            console.error("[Aseta] Error calling ExamEngine.resumeExam:", e);
+            resumed = false;
         }
-        const inProgress = window.ExamEngine.restoreInProgress();
-        if (inProgress && inProgress.exam) {
-            window.ExamEngine.startExam(inProgress.exam, inProgress.mode, {
-                layout: inProgress.layout,
-                duration: Math.round(inProgress.totalDurationSeconds / 60)
-            });
+
+        if (resumed) {
             showView("exam");
+            const resumeBanner = document.getElementById("resumeExamBanner");
+            if (resumeBanner) resumeBanner.classList.add("hidden");
+            return;
+        }
+
+        // Fallback: if direct resume returned false, re-start with stored exam
+        try {
+            const inProgress = window.ExamEngine ? window.ExamEngine.restoreInProgress() : null;
+            if (inProgress && inProgress.exam) {
+                window.ExamEngine.startExam(inProgress.exam, inProgress.mode, {
+                    layout: inProgress.layout,
+                    duration: inProgress.totalDurationSeconds > 0 ? Math.round(inProgress.totalDurationSeconds / 60) : -1
+                });
+                showView("exam");
+                const resumeBanner = document.getElementById("resumeExamBanner");
+                if (resumeBanner) resumeBanner.classList.add("hidden");
+            }
+        } catch(err) {
+            console.error("[Aseta] Fallback resume failed:", err);
         }
     }
 
@@ -1762,6 +1784,7 @@ window.AzotaApp = (function() {
             updateActiveAppName("Kho Đề & Môn Học");
             updateSidebarActive("sidebar-folder-root");
             renderFileExplorer();
+            checkInProgressExam();
         } else if (viewId === "home") {
             openFileExplorer('root');
             return;

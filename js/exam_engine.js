@@ -98,6 +98,10 @@ window.ExamEngine = (function() {
 
     function startTimer() {
         clearInterval(state.timerInterval);
+        if (state.totalDurationSeconds === 0 || state.mode !== "exam") {
+            updateTimerUI();
+            return;
+        }
         state.timerInterval = setInterval(() => {
             if (state.timeRemaining > 0) {
                 state.timeRemaining--;
@@ -956,7 +960,7 @@ window.ExamEngine = (function() {
         state.questions = inProgress.questions;
         state.userAnswers = inProgress.userAnswers || {};
         state.flags = inProgress.flags || {};
-        state.totalDurationSeconds = inProgress.totalDurationSeconds || 900;
+        state.totalDurationSeconds = (typeof inProgress.totalDurationSeconds === "number") ? inProgress.totalDurationSeconds : (state.mode === "practice" ? 0 : 900);
         state.timeRemaining = (typeof inProgress.timeRemaining === "number") ? inProgress.timeRemaining : state.totalDurationSeconds;
         state.startTime = inProgress.startTime || Date.now();
         state.isSubmitted = false;
@@ -964,8 +968,8 @@ window.ExamEngine = (function() {
             ? inProgress.currentIndex
             : 0;
 
-        renderExamHeader();
         renderExamView();
+        setupKeyboardShortcuts();
 
         // Direct restoration to the exact question user was on!
         goToQuestion(state.currentIndex);
@@ -976,9 +980,13 @@ window.ExamEngine = (function() {
         });
         updatePaletteActive();
 
-        // Restart ticking clock if time remains
+        // Restart ticking clock only if exam mode and positive duration
         clearInterval(state.timerInterval);
-        startTimer();
+        if (state.mode === "exam" && state.timeRemaining > 0 && state.totalDurationSeconds > 0) {
+            startTimer();
+        } else {
+            updateTimerUI();
+        }
 
         // Hide resume banner
         const resumeBanner = document.getElementById("resumeExamBanner");
