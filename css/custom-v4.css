@@ -2971,6 +2971,15 @@ mark {
   background: rgba(255, 255, 255, 0.035);
   border: 1px solid rgba(255, 255, 255, 0.06);
   transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.timetable-period-row button {
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 .timetable-period-row:hover {

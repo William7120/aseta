@@ -1145,65 +1145,75 @@
         }
     }
 
-    // PHÁT ÂM TIẾNG VIỆT CÔ GIÁO (CHỈ ĐỌC CÂU HỎI BẰNG GIỌNG NỮ 100%)
-    function speakTeacherQuestion(vietnameseText) {
+    // PHÁT ÂM TIẾNG VIỆT CÔ GIÁO (CHỈ ĐỌC CÂU HỎI BẰNG GIỌNG NỮ 100%, TUYỆT ĐỐI KHÔNG DÙNG GIỌNG NAM)
+    function speakTeacherQuestion(vietnameseText, itemIndex) {
         // Hủy bất kỳ âm thanh hay phát âm đang chạy
-        if (window._currentTeacherAudio) {
-            try {
-                window._currentTeacherAudio.pause();
-                window._currentTeacherAudio.currentTime = 0;
-            } catch(e) {}
-            window._currentTeacherAudio = null;
-        }
-        if ('speechSynthesis' in window) {
-            try { window.speechSynthesis.cancel(); } catch(e) {}
-        }
+        stopAllSpeech();
 
         setTeacherSpeakingStatus(true, "Cô Kiều Anh đang hỏi...");
 
-        const cleanPrompt = `Từ nào có nghĩa là: ${vietnameseText}?`;
-
-        // 1. Ưu tiên hàng đầu: Google TTS Tiếng Việt chuẩn giọng nữ thanh thoát
-        try {
-            const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=vi&q=${encodeURIComponent(cleanPrompt)}`;
-            const audio = new Audio(ttsUrl);
-            window._currentTeacherAudio = audio;
-
-            audio.onended = () => {
-                setTeacherSpeakingStatus(false);
-                window._currentTeacherAudio = null;
-            };
-            audio.onerror = () => {
-                speakTeacherQuestionFallback(cleanPrompt);
-            };
-
-            const p = audio.play();
-            if (p !== undefined) {
-                p.catch(() => {
-                    speakTeacherQuestionFallback(cleanPrompt);
-                });
-            }
-        } catch (err) {
-            speakTeacherQuestionFallback(cleanPrompt);
+        // Xác định số thứ tự câu hỏi (stt: 1..67)
+        let stt = itemIndex;
+        if (!stt && oralCurrentItem) {
+            stt = oralCurrentItem.stt;
         }
+
+        // 1. ƯU TIÊN SỐ 1: BẢN ÂM THANH MP3 GIỌNG NỮ THUẦN VIỆT ĐƯỢC ĐÓNG GÓI SẴN (CỰC NHANH, 100% GIỌNG NỮ, KHÔNG CÓ GIỌNG NAM)
+        if (stt && stt >= 1 && stt <= 67) {
+            try {
+                const audioPath = `audio/teacher_unit4/q${stt}.mp3`;
+                const audio = new Audio(audioPath);
+                window._currentTeacherAudio = audio;
+
+                audio.onended = () => {
+                    setTeacherSpeakingStatus(false);
+                    window._currentTeacherAudio = null;
+                };
+
+                audio.onerror = () => {
+                    console.warn(`[Teacher Audio] Không tải được file audio: ${audioPath}`);
+                    speakTeacherFemaleVoiceOnly(vietnameseText);
+                };
+
+                const p = audio.play();
+                if (p !== undefined) {
+                    p.catch(err => {
+                        console.warn("[Teacher Audio] Play interrupted:", err.message);
+                        setTeacherSpeakingStatus(false);
+                    });
+                }
+                return;
+            } catch (err) {
+                console.warn("[Teacher Audio] Audio init failed:", err);
+            }
+        }
+
+        speakTeacherFemaleVoiceOnly(vietnameseText);
     }
 
-    function speakTeacherQuestionFallback(cleanPrompt) {
+    // CHỈ CHO PHÉP GIỌNG NỮ VIỆT NAM (HOÀI MY, MAI, LINH) NÓI
+    // NẾU HỆ THỐNG CHỈ CÓ MICROSOFT AN HOẶC GIỌNG NAM -> KHÔNG BAO GIỜ GỌI ĐỂ TRÁNH GIỌNG NAM LÀM PHIỀN NGƯỜI DÙNG!
+    function speakTeacherFemaleVoiceOnly(vietnameseText) {
         if (!('speechSynthesis' in window)) {
             setTeacherSpeakingStatus(false);
             return;
         }
+
+        const femaleVi = getVietnameseFemaleVoice();
+        if (!femaleVi || isMaleVoice(femaleVi.name)) {
+            // TUYỆT ĐỐI KHÔNG ĐỂ MICROSOFT AN PHÁT TIẾNG
+            setTeacherSpeakingStatus(false);
+            return;
+        }
+
         try {
             window.speechSynthesis.cancel();
+            const cleanPrompt = `Từ nào có nghĩa là: ${vietnameseText}?`;
             const utterance = new SpeechSynthesisUtterance(cleanPrompt);
+            utterance.voice = femaleVi;
             utterance.lang = 'vi-VN';
-            utterance.rate = 0.96;
-            utterance.pitch = 1.35; // Nâng pitch nữ tự nhiên
-
-            const viVoice = getVietnameseFemaleVoice();
-            if (viVoice && !isMaleVoice(viVoice.name)) {
-                utterance.voice = viVoice;
-            }
+            utterance.rate = 0.95;
+            utterance.pitch = 1.25;
 
             utterance.onend = () => {
                 setTeacherSpeakingStatus(false);
@@ -1440,7 +1450,7 @@
                     <span>📖</span> <span>Bảng 67 Từ</span>
                 </button>
                 <button type="button" id="vocabGoToExamBtn" class="ml-auto px-3 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-xs transition-all flex items-center gap-1 shrink-0 cursor-pointer active:scale-95">
-                    <span>📝</span> <span class="hidden sm:inline">Khảo Sát</span> <span>40 Câu</span>
+                    <span>📝</span> <span class="hidden sm:inline">Khảo Sát</span> <span>67 Câu</span>
                 </button>
             </div>
 
@@ -1608,7 +1618,7 @@
 
         // Đọc câu hỏi tiếng Việt của cô (giọng nữ thanh thoát)
         setTimeout(() => {
-            speakTeacherQuestion(oralCurrentItem.primaryMeaning);
+            speakTeacherQuestion(oralCurrentItem.primaryMeaning, oralCurrentItem.stt);
         }, 120);
     }
 
@@ -1841,7 +1851,7 @@
         const voiceBtn = container.querySelector("#oralTeacherVoiceBtn");
         if (voiceBtn) {
             voiceBtn.addEventListener("click", () => {
-                speakTeacherQuestion(oralCurrentItem.primaryMeaning);
+                speakTeacherQuestion(oralCurrentItem.primaryMeaning, oralCurrentItem.stt);
             });
         }
 
@@ -1872,7 +1882,7 @@
             // Spacebar: Nghe lại cô hỏi (chỉ khi không đang gõ trong input text)
             if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
                 e.preventDefault();
-                speakTeacherQuestion(oralCurrentItem.primaryMeaning);
+                speakTeacherQuestion(oralCurrentItem.primaryMeaning, oralCurrentItem.stt);
                 return;
             }
 
@@ -2012,17 +2022,17 @@
                 oralMasteredList.push(oralCurrentItem);
             }
 
-            // Cô giáo khen ngợi bằng giọng nữ và sau đó phát âm từ tiếng Anh
-            speakTeacherFeedback(true, oralCurrentItem.primaryWord);
+            // Tự động tắt giọng đọc cô nếu đang phát, không đọc đáp án (theo yêu cầu: "đáp án thì cứ kệ đi")
+            stopAllSpeech();
 
-            // Tự động chuyển câu sau 1.8s nếu ở mode choice để học sinh nghe cô khen xong
+            // Tự động chuyển câu sau 1.2s nếu ở mode choice
             if (oralMode === 'choice') {
                 setTimeout(() => {
                     if (currentTab === 'oral' && oralIsAnswered && oralIsCorrect) {
                         pickNextOralQuestion();
                         renderCurrentTab();
                     }
-                }, 1800);
+                }, 1200);
             }
         } else {
             // SAI: Reset streak, tăng số lần sai, giữ lại trong hàng đợi để khảo lại ở các câu tiếp theo!
@@ -2030,8 +2040,8 @@
             oralMistakesCount++;
             // Xáo trộn lại remainingList để câu này xuất hiện lại bất ngờ
             oralRemainingList = shuffleArray(oralRemainingList);
-            // Cô giáo động viên bằng giọng nữ và sau đó phát âm từ tiếng Anh
-            speakTeacherFeedback(false, oralCurrentItem.primaryWord);
+            // Dừng mọi âm thanh (không đọc đáp án)
+            stopAllSpeech();
         }
 
         renderCurrentTab();
@@ -2042,18 +2052,13 @@
             window.confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 } });
         }
 
-        // Cô giáo phát biểu chúc mừng bằng giọng nữ
-        if ('speechSynthesis' in window) {
-            try {
-                window.speechSynthesis.cancel();
-                const utter = new SpeechSynthesisUtterance("Chúc mừng em! Em đã xuất sắc thuộc làu làu toàn bộ 67 từ vựng Unit 4!");
-                utter.lang = 'vi-VN';
-                utter.pitch = 1.25;
-                const v = getVietnameseFemaleVoice();
-                if (v) utter.voice = v;
-                window.speechSynthesis.speak(utter);
-            } catch (e) {}
-        }
+        // Cô giáo phát biểu chúc mừng bằng giọng nữ từ file victory.mp3
+        try {
+            stopAllSpeech();
+            const victoryAudio = new Audio('audio/teacher_unit4/victory.mp3');
+            window._currentTeacherAudio = victoryAudio;
+            victoryAudio.play().catch(() => {});
+        } catch (e) {}
 
         container.className = "flex-1 overflow-y-auto p-4 flex flex-col justify-center items-center";
         container.innerHTML = `
@@ -2067,7 +2072,7 @@
                 </div>
 
                 <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight mb-2">
-                    Chúc Mừng Em Đã Thuộc Lào Lào 40/67 Từ Vựng!
+                    Chúc Mừng Em Đã Thuộc Lào Lào Trọn Bộ 67/67 Từ Vựng!
                 </h3>
                 <p class="text-xs text-slate-300 mb-5 leading-relaxed">
                     Em đã xuất sắc vượt qua toàn bộ câu hỏi bất kì bằng tiếng Việt của cô Kiều Anh. Mọi từ sai trước đó đều đã được em rèn luyện và ghi nhớ thành thạo 100%!
@@ -2076,8 +2081,8 @@
                 <!-- Thống kê thành tích -->
                 <div class="grid grid-cols-3 gap-2.5 p-4 rounded-2xl bg-slate-900/90 border border-slate-800 mb-6">
                     <div class="p-2 rounded-xl bg-slate-800/60">
-                        <div class="text-[10px] text-slate-400 font-bold mb-0.5">Đã thuộc</div>
-                        <div class="text-lg sm:text-xl font-black text-emerald-400">40 / 40</div>
+                        <div class="text-[10px] text-slate-400 font-bold mb-0.5">Đã thuộc làu</div>
+                        <div class="text-lg sm:text-xl font-black text-emerald-400">67 / 67</div>
                     </div>
                     <div class="p-2 rounded-xl bg-slate-800/60">
                         <div class="text-[10px] text-slate-400 font-bold mb-0.5">Kỷ lục chuỗi</div>
@@ -2094,7 +2099,7 @@
                         🔄 Khảo Lại Từ Đầu
                     </button>
                     <button type="button" id="oralGoToQuizBtn" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-600 text-white transition-all cursor-pointer active:scale-95">
-                        📝 Làm Khảo Sát 40 Câu
+                        📝 Làm Khảo Sát 67 Câu
                     </button>
                     <button type="button" id="oralBackToFlashBtn" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 transition-all cursor-pointer active:scale-95">
                         🎴 Về Flashcards
