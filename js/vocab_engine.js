@@ -1118,11 +1118,11 @@
 
         if (waveBox) {
             if (isSpeaking) {
-                waveBox.classList.remove("opacity-20");
+                waveBox.classList.remove("opacity-0");
                 waveBox.classList.add("opacity-100");
                 waveBox.querySelectorAll(".oral-sound-bar").forEach(bar => bar.classList.add("animate-soundWave"));
             } else {
-                waveBox.classList.add("opacity-20");
+                waveBox.classList.add("opacity-0");
                 waveBox.classList.remove("opacity-100");
                 waveBox.querySelectorAll(".oral-sound-bar").forEach(bar => bar.classList.remove("animate-soundWave"));
             }
@@ -1488,28 +1488,28 @@
                 </div>
             </div>
 
-            <!-- TABS ĐIỀU HƯỚNG CHẾ ĐỘ HỌC -->
-            <div class="px-3 sm:px-6 py-2 bg-slate-950/60 border-b border-slate-800/80 flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar shrink-0">
-                <button type="button" data-tab="oral" class="vocab-tab-btn px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
-                    <span>👩‍🏫</span> <span>Cô Khảo Bài (67/67)</span>
+            <!-- TABS ĐIỀU HƯỚNG CHẾ ĐỘ HỌC (GỌN GÀNG, KHÔNG BỊ TRÀN HAY KHUẤT CHỮ) -->
+            <div class="px-2 sm:px-4 py-2 bg-slate-950/70 border-b border-slate-800 flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar shrink-0">
+                <button type="button" data-tab="oral" class="vocab-tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
+                    <span>👩‍🏫</span> <span>Cô Khảo Bài</span>
                 </button>
-                <button type="button" data-tab="flashcards" class="vocab-tab-btn px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
-                    <span>🎴</span> <span>Flashcard 3D</span>
+                <button type="button" data-tab="flashcards" class="vocab-tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
+                    <span>🎴</span> <span>Flashcard</span>
                 </button>
-                <button type="button" data-tab="match" class="vocab-tab-btn px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
-                    <span>⚡</span> <span>Ghép Thẻ Nhanh</span>
+                <button type="button" data-tab="match" class="vocab-tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
+                    <span>⚡</span> <span>Ghép Thẻ</span>
                 </button>
-                <button type="button" data-tab="spelling" class="vocab-tab-btn px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
+                <button type="button" data-tab="spelling" class="vocab-tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
                     <span>✍️</span> <span>Luyện Viết</span>
                 </button>
-                <button type="button" data-tab="quiz" class="vocab-tab-btn px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
-                    <span>🎯</span> <span>Trắc Nghiệm Phản Xạ</span>
+                <button type="button" data-tab="quiz" class="vocab-tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
+                    <span>🎯</span> <span>Trắc Nghiệm</span>
                 </button>
-                <button type="button" data-tab="list" class="vocab-tab-btn px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
-                    <span>📖</span> <span>Bảng 67 Từ</span>
+                <button type="button" data-tab="list" class="vocab-tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
+                    <span>📖</span> <span>Bảng Từ (67)</span>
                 </button>
-                <button type="button" id="vocabGoToExamBtn" class="ml-auto px-3 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-xs transition-all flex items-center gap-1 shrink-0 cursor-pointer active:scale-95">
-                    <span>📝</span> <span class="hidden sm:inline">Khảo Sát</span> <span>67 Câu</span>
+                <button type="button" id="vocabGoToExamBtn" class="px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-xs transition-all flex items-center gap-1 shrink-0 cursor-pointer active:scale-95 ml-auto sm:ml-1">
+                    <span>📝</span> <span>Đề Khảo Sát</span>
                 </button>
             </div>
 
@@ -1735,26 +1735,26 @@
 
                 <!-- BỘ 3 TÙY CHỌN CHẾ ĐỘ HIỆN ĐẠI (SEGMENTED SWITCHER) -->
                 <div class="w-full grid grid-cols-3 gap-1.5 p-1 bg-slate-950/70 border border-slate-800 rounded-2xl shadow-inner mt-0.5">
-                    <button type="button" data-mode="choice" class="oral-mode-pill py-2 px-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
+                    <button type="button" data-mode="choice" class="oral-mode-pill py-2.5 px-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
                         oralMode === 'choice' 
                             ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-lg shadow-pink-500/30 ring-1 ring-white/20' 
                             : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
                     }" title="Chế độ 1: Chọn A B C D (Phím 1-4)">
                         <span>🎯</span> <span class="truncate">1. Chọn A-B-C-D</span>
                     </button>
-                    <button type="button" data-mode="type_en" class="oral-mode-pill py-2 px-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
+                    <button type="button" data-mode="type_en" class="oral-mode-pill py-2.5 px-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
                         oralMode === 'type_en' 
                             ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-lg shadow-pink-500/30 ring-1 ring-white/20' 
                             : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
                     }" title="Chế độ 2: Cô đọc tiếng Việt, bạn ghi tiếng Anh">
-                        <span>🔤</span> <span class="truncate">2. Gõ Tiếng Anh</span>
+                        <span class="px-1.5 py-0.5 rounded-md bg-blue-500/30 text-sky-200 font-mono font-black text-[10px] border border-blue-400/40">EN</span> <span class="truncate">2. Gõ Tiếng Anh</span>
                     </button>
-                    <button type="button" data-mode="type_vi" class="oral-mode-pill py-2 px-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
+                    <button type="button" data-mode="type_vi" class="oral-mode-pill py-2.5 px-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
                         oralMode === 'type_vi' 
                             ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-lg shadow-pink-500/30 ring-1 ring-white/20' 
                             : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
                     }" title="Chế độ 3: Cô đọc tiếng Anh, bạn ghi tiếng Việt">
-                        <span>✍️</span> <span class="truncate">3. Ghi Tiếng Việt</span>
+                        <span class="px-1.5 py-0.5 rounded-md bg-red-500/30 text-yellow-300 font-mono font-black text-[10px] border border-red-400/40">★ VN</span> <span class="truncate">3. Ghi Tiếng Việt</span>
                     </button>
                 </div>
             </div>
@@ -1773,16 +1773,15 @@
                         <!-- Header hội thoại & Sóng âm trực tiếp -->
                         <div class="text-xs font-bold text-rose-300 flex items-center justify-between mb-1.5 flex-wrap gap-2">
                             <div class="flex items-center gap-2">
-                                <span id="oralTeacherStatusText" class="font-extrabold text-slate-200">
-                                    ${oralMode === 'type_vi' ? 'Cô Kiều Anh đang phát âm:' : 'Cô Kiều Anh đang khảo bài:'}
+                                <span id="oralTeacherStatusText" class="px-2.5 py-1 rounded-xl text-xs font-black bg-rose-500/10 text-rose-300 border border-rose-500/20 flex items-center gap-1.5">
+                                    <span>👩‍🏫</span> <span>${oralMode === 'type_vi' ? 'Cô đang phát âm Tiếng Anh:' : 'Cô Kiều Anh đang khảo bài:'}</span>
                                 </span>
-                                <!-- Sóng âm Equalizer -->
-                                <div id="oralSoundWaveBox" class="flex items-end gap-0.5 h-3.5 opacity-20 transition-opacity">
-                                    <span class="oral-sound-bar w-0.5 bg-pink-400 rounded-full h-1.5"></span>
-                                    <span class="oral-sound-bar w-0.5 bg-pink-400 rounded-full h-3"></span>
-                                    <span class="oral-sound-bar w-0.5 bg-pink-400 rounded-full h-2"></span>
-                                    <span class="oral-sound-bar w-0.5 bg-pink-400 rounded-full h-3.5"></span>
-                                    <span class="oral-sound-bar w-0.5 bg-pink-400 rounded-full h-1.5"></span>
+                                <!-- Sóng âm Equalizer (Ẩn khi nghỉ, hiện khi nói) -->
+                                <div id="oralSoundWaveBox" class="flex items-end gap-0.5 h-3 opacity-0 transition-opacity">
+                                    <span class="oral-sound-bar w-1 bg-pink-400 rounded-full h-1.5"></span>
+                                    <span class="oral-sound-bar w-1 bg-pink-400 rounded-full h-3"></span>
+                                    <span class="oral-sound-bar w-1 bg-pink-400 rounded-full h-2"></span>
+                                    <span class="oral-sound-bar w-1 bg-pink-400 rounded-full h-3.5"></span>
                                 </div>
                             </div>
                             <button type="button" id="oralTeacherVoiceBtn" class="text-sky-400 hover:text-sky-300 font-bold flex items-center gap-1.5 cursor-pointer transition-all px-2.5 py-1 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/25 active:scale-95 text-xs shadow-xs" title="${oralMode === 'type_vi' ? 'Nghe phát âm tiếng Anh (Phím Space)' : 'Nghe cô đọc lại câu hỏi (Phím Space)'}">
@@ -1856,14 +1855,16 @@
                                        class="w-full px-5 py-4 text-center text-base sm:text-lg font-black rounded-2xl bg-slate-950/90 border-2 border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 transition-all shadow-inner">
                             </div>
 
-                            <div class="flex items-center justify-between gap-2 flex-wrap">
-                                <button type="button" id="oralHintBtn" class="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-amber-300 border border-slate-700 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5">
-                                    <span>💡</span> <span>Gợi ý nghĩa</span>
-                                </button>
-                                <button type="button" id="oralSkipBtn" class="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-slate-400 hover:text-rose-400 border border-slate-700 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5" title="Nếu chưa nhớ, bấm để cô chỉ bài và khảo lại sau">
-                                    <span>❓</span> <span>Em chưa nhớ (Khảo lại sau)</span>
-                                </button>
-                                <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-500/25 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5">
+                            <div class="flex items-center justify-between gap-2 flex-wrap pt-1">
+                                <div class="flex items-center gap-2">
+                                    <button type="button" id="oralHintBtn" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-amber-300 border border-slate-700 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5">
+                                        <span>💡</span> <span>Gợi ý nghĩa</span>
+                                    </button>
+                                    <button type="button" id="oralSkipBtn" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-slate-400 hover:text-rose-400 border border-slate-700 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5" title="Nếu chưa nhớ, bấm để cô chỉ bài và khảo lại sau">
+                                        <span>❓</span> <span>Em chưa nhớ (Khảo lại sau)</span>
+                                    </button>
+                                </div>
+                                <button type="submit" class="px-6 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-500/25 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5 ml-auto">
                                     <span>Trả Lời (Enter)</span> <span>↵</span>
                                 </button>
                             </div>
@@ -1877,14 +1878,16 @@
                                        class="w-full px-5 py-4 text-center text-base sm:text-lg font-black rounded-2xl bg-slate-950/90 border-2 border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-pink-500 focus:ring-4 focus:ring-pink-500/20 transition-all shadow-inner">
                             </div>
 
-                            <div class="flex items-center justify-between gap-2 flex-wrap">
-                                <button type="button" id="oralHintBtn" class="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-amber-300 border border-slate-700 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5">
-                                    <span>💡</span> <span>Gợi ý chữ cái</span>
-                                </button>
-                                <button type="button" id="oralSkipBtn" class="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-slate-400 hover:text-rose-400 border border-slate-700 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5" title="Nếu chưa nhớ, bấm để cô chỉ bài và khảo lại sau">
-                                    <span>❓</span> <span>Em chưa nhớ (Khảo lại sau)</span>
-                                </button>
-                                <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white shadow-lg shadow-rose-500/25 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5">
+                            <div class="flex items-center justify-between gap-2 flex-wrap pt-1">
+                                <div class="flex items-center gap-2">
+                                    <button type="button" id="oralHintBtn" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-amber-300 border border-slate-700 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5">
+                                        <span>💡</span> <span>Gợi ý chữ cái</span>
+                                    </button>
+                                    <button type="button" id="oralSkipBtn" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-slate-400 hover:text-rose-400 border border-slate-700 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5" title="Nếu chưa nhớ, bấm để cô chỉ bài và khảo lại sau">
+                                        <span>❓</span> <span>Em chưa nhớ (Khảo lại sau)</span>
+                                    </button>
+                                </div>
+                                <button type="submit" class="px-6 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-400 hover:to-pink-400 text-white shadow-lg shadow-pink-500/25 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5 ml-auto">
                                     <span>Trả Lời (Enter)</span> <span>↵</span>
                                 </button>
                             </div>
