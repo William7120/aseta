@@ -389,9 +389,15 @@ window.TimetableEngine = (function() {
             if (window.AudioHelper && window.AudioHelper.playPlip) {
                 window.AudioHelper.playPlip();
             }
+            const listEl = document.getElementById("backpackSuppliesList");
+            const prevScroll = listEl ? listEl.scrollTop : 0;
             renderDayView(dayCode);
+            const newListEl = document.getElementById("backpackSuppliesList");
+            if (newListEl && prevScroll) {
+                newListEl.scrollTop = prevScroll;
+            }
         } catch (e) {
-            console.error(e);
+            console.error("Lỗi đặt lại checklist:", e);
         }
     }
 
@@ -843,16 +849,14 @@ window.TimetableEngine = (function() {
                 <div class="p-2.5 rounded-2xl bg-slate-500/5 dark:bg-white/5 border border-slate-200/60 dark:border-white/5 space-y-1">
                     <div class="flex items-center justify-between text-xs font-bold">
                         <span class="text-slate-700 dark:text-slate-300">Tiến độ soạn cặp:</span>
-                        <span class="${percent === 100 ? 'text-emerald-500' : 'text-sky-500'} font-black">${checkedCount}/${totalItems} (${percent}%)</span>
+                        <span id="backpackProgressText" class="${percent === 100 ? 'text-emerald-500' : 'text-sky-500'} font-black">${checkedCount}/${totalItems} (${percent}%)</span>
                     </div>
                     <div class="w-full h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
-                        <div class="h-full rounded-full transition-all duration-300 ${percent === 100 ? 'bg-emerald-500 shadow-sm shadow-emerald-500/50' : 'bg-gradient-to-r from-sky-500 to-indigo-600'}" style="width: ${percent}%;"></div>
+                        <div id="backpackProgressBarFill" class="h-full rounded-full transition-all duration-300 ${percent === 100 ? 'bg-emerald-500 shadow-sm shadow-emerald-500/50' : 'bg-gradient-to-r from-sky-500 to-indigo-600'}" style="width: ${percent}%;"></div>
                     </div>
-                    ${percent === 100 ? `
-                        <div class="text-[10px] font-bold text-emerald-500 flex items-center gap-1 pt-0.5">
-                            <span>🎉</span><span>Tuyệt vời! Đã đủ 100% sách vở vào cặp.</span>
-                        </div>
-                    ` : ''}
+                    <div id="backpackSuccessBadge" class="${percent === 100 ? '' : 'hidden'} text-[10px] font-bold text-emerald-500 flex items-center gap-1 pt-0.5">
+                        <span>🎉</span><span>Tuyệt vời! Đã đủ 100% sách vở vào cặp.</span>
+                    </div>
                 </div>
 
                 <!-- Danh sách checklist từng môn (scrollable) -->
@@ -886,33 +890,82 @@ window.TimetableEngine = (function() {
                 subSection.appendChild(subHeader);
 
                 grp.supplies.forEach(item => {
-                    const isChecked = !!checkedMap[item.id];
+                    let isChecked = !!checkedMap[item.id];
                     const itemEl = document.createElement("div");
                     itemEl.className = `backpack-checkbox-item ${isChecked ? 'is-checked' : ''}`;
-                    itemEl.innerHTML = `
-                        <div class="w-4 h-4 rounded-md flex items-center justify-center shrink-0 border transition-all text-[10px] font-black ${
-                            isChecked 
-                                ? 'bg-emerald-500 border-emerald-500 text-white' 
-                                : 'border-slate-300 dark:border-white/20 bg-white/40 dark:bg-slate-800/60'
-                        }">
-                            ${isChecked ? '✓' : ''}
-                        </div>
-                        <div class="flex-1 text-[11px] item-text font-medium leading-tight">
-                            ${item.name}
-                            ${item.optional ? '<span class="text-[9px] text-amber-500 font-bold ml-0.5">(Tùy chọn)</span>' : ''}
-                            ${item.highlight ? '<span class="text-[9px] text-orange-400 font-bold ml-0.5">🔥 Quan trọng</span>' : ''}
-                        </div>
+                    
+                    const boxEl = document.createElement("div");
+                    boxEl.className = `w-4 h-4 rounded-md flex items-center justify-center shrink-0 border transition-all text-[10px] font-black ${
+                        isChecked 
+                            ? 'bg-emerald-500 border-emerald-500 text-white' 
+                            : 'border-slate-300 dark:border-white/20 bg-white/40 dark:bg-slate-800/60'
+                    }`;
+                    boxEl.textContent = isChecked ? '✓' : '';
+
+                    const textEl = document.createElement("div");
+                    textEl.className = "flex-1 text-[11px] item-text font-medium leading-tight";
+                    textEl.innerHTML = `
+                        ${item.name}
+                        ${item.optional ? '<span class="text-[9px] text-amber-500 font-bold ml-0.5">(Tùy chọn)</span>' : ''}
+                        ${item.highlight ? '<span class="text-[9px] text-orange-400 font-bold ml-0.5">🔥 Quan trọng</span>' : ''}
                     `;
 
-                    itemEl.onclick = () => {
-                        const newCheckedState = !isChecked;
-                        setSupplyChecked(dayCode, item.id, newCheckedState);
+                    itemEl.appendChild(boxEl);
+                    itemEl.appendChild(textEl);
+
+                    itemEl.onclick = (e) => {
+                        e.stopPropagation();
+                        isChecked = !isChecked;
+                        setSupplyChecked(dayCode, item.id, isChecked);
+
+                        // CẬP NHẬT GIAO DIỆN TẠI CHỖ (IN-PLACE DOM UPDATE)
+                        // TUYỆT ĐỐI KHÔNG GỌI renderDayView -> GIỮ NGUYÊN VỊ TRÍ CUỘN, KHÔNG BỊ NHẢY LÊN TRÊN!
+                        if (isChecked) {
+                            itemEl.classList.add("is-checked");
+                            boxEl.className = "w-4 h-4 rounded-md flex items-center justify-center shrink-0 border transition-all text-[10px] font-black bg-emerald-500 border-emerald-500 text-white";
+                            boxEl.textContent = '✓';
+                        } else {
+                            itemEl.classList.remove("is-checked");
+                            boxEl.className = "w-4 h-4 rounded-md flex items-center justify-center shrink-0 border transition-all text-[10px] font-black border-slate-300 dark:border-white/20 bg-white/40 dark:bg-slate-800/60";
+                            boxEl.textContent = '';
+                        }
+
                         if (window.AudioHelper && window.AudioHelper.playClick) {
                             window.AudioHelper.playClick();
                         }
-                        
-                        // Check if just reached 100%
-                        if (newCheckedState && totalItems > 0 && checkedCount + 1 === totalItems) {
+
+                        // Tính lại tiến độ và cập nhật thanh tiến độ tại chỗ
+                        const curCheckedMap = getCheckedSupplies(dayCode);
+                        let curCount = 0;
+                        daySupplies.forEach(g => {
+                            g.supplies.forEach(s => {
+                                if (curCheckedMap[s.id]) curCount++;
+                            });
+                        });
+                        const curPercent = totalItems > 0 ? Math.round((curCount / totalItems) * 100) : 100;
+
+                        const progressText = col3Backpack.querySelector("#backpackProgressText");
+                        const progressBarFill = col3Backpack.querySelector("#backpackProgressBarFill");
+                        const successBadge = col3Backpack.querySelector("#backpackSuccessBadge");
+
+                        if (progressText) {
+                            progressText.textContent = `${curCount}/${totalItems} (${curPercent}%)`;
+                            progressText.className = `${curPercent === 100 ? 'text-emerald-500' : 'text-sky-500'} font-black`;
+                        }
+                        if (progressBarFill) {
+                            progressBarFill.style.width = `${curPercent}%`;
+                            progressBarFill.className = `h-full rounded-full transition-all duration-300 ${curPercent === 100 ? 'bg-emerald-500 shadow-sm shadow-emerald-500/50' : 'bg-gradient-to-r from-sky-500 to-indigo-600'}`;
+                        }
+                        if (successBadge) {
+                            if (curPercent === 100) {
+                                successBadge.classList.remove("hidden");
+                            } else {
+                                successBadge.classList.add("hidden");
+                            }
+                        }
+
+                        // Pháo hoa ăn mừng khi hoàn thành 100%
+                        if (isChecked && totalItems > 0 && curCount === totalItems) {
                             if (window.confetti) {
                                 window.confetti({
                                     particleCount: 50,
@@ -921,8 +974,6 @@ window.TimetableEngine = (function() {
                                 });
                             }
                         }
-
-                        renderDayView(dayCode, targetContainer);
                     };
 
                     subSection.appendChild(itemEl);
