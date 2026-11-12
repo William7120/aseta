@@ -195,12 +195,36 @@
                 engine.render();
             }
             try {
-                const res = await fetch(GIST_RAW_URL + "?t=" + Date.now(), {
-                    method: "GET",
-                    headers: { "Cache-Control": "no-cache" }
-                });
-                if (!res.ok) return false;
-                const data = await res.json();
+                let data = null;
+                const token = getAdminSyncKey();
+                const headers = { "Accept": "application/vnd.github+json" };
+                if (token) headers["Authorization"] = "Bearer " + token;
+
+                // 1. Fetch trực tiếp từ GitHub Gist API (Instant Realtime, cập nhật ngay lập tức không bị CDN cache)
+                try {
+                    const apiRes = await fetch(GIST_API_URL + "?t=" + Date.now(), { headers });
+                    if (apiRes.ok) {
+                        const apiJson = await apiRes.json();
+                        if (apiJson && apiJson.files && apiJson.files["aseta_solutions.json"] && apiJson.files["aseta_solutions.json"].content) {
+                            data = JSON.parse(apiJson.files["aseta_solutions.json"].content);
+                        }
+                    }
+                } catch(apiErr) {
+                    console.warn("[Aseta Cloud] API gist fetch error, trying raw fallback:", apiErr);
+                }
+
+                // 2. Nếu API gặp sự cố, fallback sang raw Gist
+                if (!data || !Array.isArray(data.folders) || !Array.isArray(data.solutions)) {
+                    try {
+                        const rawRes = await fetch(GIST_RAW_URL + "?t=" + Date.now());
+                        if (rawRes.ok) {
+                            data = await rawRes.json();
+                        }
+                    } catch(rawErr) {
+                        console.warn("[Aseta Cloud] Raw gist fallback error:", rawErr);
+                    }
+                }
+
                 if (data && Array.isArray(data.folders) && Array.isArray(data.solutions)) {
                     // Update local storage with Safari Quota protection
                     try {
@@ -229,14 +253,29 @@
 
         syncToCloud: async function(engine) {
             if (isCloudSyncing) return false;
+            // Bảo vệ quyền: Chỉ tài khoản Admin được phép đồng bộ lên đám mây
+            if (engine && typeof engine.isAuthorizedToUpload === "function") {
+                if (!engine.isAuthorizedToUpload()) {
+                    console.warn("[Aseta Cloud] User unauthorized to sync to cloud.");
+                    return false;
+                }
+            }
+
+            const folders = (engine && typeof engine.getAllFolders === "function") ? engine.getAllFolders() : [];
+            const solutions = (engine && typeof engine.getAllSolutions === "function") ? engine.getAllSolutions() : [];
+
+            // Bảo vệ chống vô tình ghi đè rỗng lên Đám mây
+            if (folders.length === 0 && solutions.length === 0) {
+                console.warn("[Aseta Cloud] Protected: Prevented overwriting cloud with empty list.");
+                return false;
+            }
+
             isCloudSyncing = true;
             if (engine && typeof engine.updateCloudStatusBadge === "function") {
                 engine.updateCloudStatusBadge("syncing");
             }
             try {
                 const token = getAdminSyncKey();
-                const folders = (engine && typeof engine.getAllFolders === "function") ? engine.getAllFolders() : [];
-                const solutions = (engine && typeof engine.getAllSolutions === "function") ? engine.getAllSolutions() : [];
                 
                 const payload = {
                     files: {
@@ -459,6 +498,7 @@
             const deletedCount = solutions.filter(s => s.folderId === folderId).length;
             solutions = solutions.filter(s => s.folderId !== folderId);
             this.saveSolutions(solutions);
+            this.syncToCloud();
 
             if (currentFolderId === folderId) {
                 currentFolderId = null;
@@ -518,6 +558,7 @@
             let currentList = this.getAllSolutions();
             currentList = currentList.filter(s => s.id !== id);
             this.saveSolutions(currentList);
+            this.syncToCloud();
 
             if (window.AudioHelper && window.AudioHelper.playClick) window.AudioHelper.playClick();
             if (window.SecurityGuard && window.SecurityGuard.showSecurityToast) {
@@ -777,6 +818,35 @@
                     </div>
                 `;
                 grid.appendChild(headerDiv);
+
+                // Khối bài giải mới chia sẻ gần đây trên đám mây (Hiển thị ngay cho bạn bè thấy)
+                if (allList.length > 0) {
+                    const recentSection = document.createElement("div");
+                    recentSection.className = "mb-8 p-5 sm:p-6 rounded-3xl bg-slate-900/90 border border-emerald-500/40 backdrop-blur-xl shadow-2xl space-y-4";
+                    recentSection.innerHTML = `
+                        <div class="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-white/10">
+                            <div class="flex items-center gap-2.5">
+                                <span class="flex h-3 w-3 relative">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                                </span>
+                                <h4 class="text-sm sm:text-base font-black text-white flex items-center gap-2">
+                                    <span>🌟</span> <span>Bài Giải & Đề Cương Mới Nhất (Đám Mây Aseta)</span>
+                                </h4>
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                    ${allList.length} bài đã đăng
+                                </span>
+                            </div>
+                            <span class="text-xs text-slate-400 flex items-center gap-1">
+                                <span>☁️</span> <span>Tất cả bạn bè đều xem được • Nhấp vào ảnh để phóng to</span>
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                            ${allList.slice(0, 6).map(item => this.renderSolutionCard(item, canUpload)).join('')}
+                        </div>
+                    `;
+                    grid.appendChild(recentSection);
+                }
 
                 // 3D Glass Folders Container (Exact same class & styling as Kho Đề!)
                 const foldersContainer = document.createElement("div");

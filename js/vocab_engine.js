@@ -1450,11 +1450,11 @@
 
         const modal = document.createElement("div");
         modal.id = "vocabMasterModal";
-        modal.className = "fixed inset-0 z-[120] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 md:p-6 animate-fadeIn select-none";
+        modal.className = "fixed inset-0 z-[120] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 md:p-6 animate-fadeIn";
 
         // Khung Modal chính
         const container = document.createElement("div");
-        container.className = "relative w-full max-w-4xl max-h-[95vh] h-full sm:h-auto sm:max-h-[92vh] flex flex-col bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden transition-all";
+        container.className = "relative w-full max-w-4xl max-h-[96vh] h-full sm:h-[88vh] flex flex-col bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden transition-all";
         
         container.innerHTML = `
             <!-- HEADER TÍCH HỢP -->
@@ -1514,7 +1514,7 @@
             </div>
 
             <!-- NỘI DUNG CHÍNH (THEO TAB) -->
-            <div id="vocabTabContent" class="flex-1 overflow-y-auto p-3 sm:p-5 flex flex-col justify-center">
+            <div id="vocabTabContent" class="flex-1 overflow-y-auto p-2 sm:p-5 flex flex-col items-center justify-start overscroll-contain">
                 <!-- Nội dung các tab sẽ render ở đây -->
             </div>
         `;
@@ -1701,93 +1701,79 @@
         const progressPercent = Math.round((masteredCount / totalCount) * 100);
         const remainingCount = oralRemainingList.length;
 
-        container.className = "flex-1 overflow-y-auto p-2 sm:p-5 flex flex-col justify-between items-center";
+        container.className = "w-full max-w-2xl flex flex-col items-center gap-3.5 pb-8";
         container.innerHTML = `
-            <!-- Top Controls & Thống kê tiến độ thuộc bài -->
-            <div class="w-full max-w-xl flex flex-col gap-2 mb-2 px-1">
+            <!-- TOP BAR: TIẾN ĐỘ THUỘC BÀI & CÁC THỐNG KÊ GỌN GÀNG -->
+            <div class="w-full flex flex-col gap-2 px-1">
                 <div class="flex items-center justify-between text-xs text-slate-300 flex-wrap gap-2">
-                    <div class="flex items-center gap-2 flex-wrap">
+                    <div class="flex items-center gap-2">
                         <span class="font-black text-rose-400 flex items-center gap-1.5 text-sm">
                             <span>👩‍🏫</span> <span>Cô Kiều Anh Khảo Bài</span>
                         </span>
                         <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                            Đã thuộc: ${masteredCount} / ${totalCount} từ (${progressPercent}%)
+                            Đã thuộc: ${masteredCount}/${totalCount} từ (${progressPercent}%)
                         </span>
                         ${oralStreak > 1 ? `
                             <span class="px-2 py-0.5 rounded-full text-[11px] font-black bg-orange-500/20 text-orange-400 border border-orange-500/30 animate-pulse flex items-center gap-1">
-                                <span>🔥</span> <span>${oralStreak} câu liên tiếp!</span>
+                                <span>🔥</span> <span>${oralStreak} câu</span>
                             </span>
                         ` : ''}
                     </div>
 
-                    <div class="flex items-center gap-2">
-                        <button type="button" id="oralResetBtn" class="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 transition-all cursor-pointer flex items-center gap-1" title="Khảo lại từ đầu">
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="text-slate-400 text-[11px]">Còn lại: <strong class="text-white">${remainingCount} từ</strong></span>
+                        <button type="button" id="oralResetBtn" class="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 transition-all cursor-pointer flex items-center gap-1 active:scale-95" title="Khảo lại từ đầu">
                             <span>🔄</span> <span>Khảo lại</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Bộ 3 Chế Độ Khảo Bài (Segmented Control) -->
-                <div class="w-full p-1.5 bg-slate-900/90 rounded-2xl border border-slate-700/80 shadow-md">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1 pb-1 flex items-center justify-between">
-                        <span>🎮 Chọn hình thức khảo:</span>
-                        <span class="text-rose-400 font-normal">Lưu tự động</span>
-                    </div>
-                    <div class="grid grid-cols-3 gap-1">
-                        <button type="button" data-mode="choice" class="oral-mode-pill py-2 px-1 rounded-xl text-[11px] sm:text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1 text-center ${
-                            oralMode === 'choice' 
-                                ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-md shadow-pink-500/30 ring-1 ring-white/20' 
-                                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/80 bg-slate-950/40'
-                        }" title="Chế độ 1: Chọn A B C D (Phím 1-4)">
-                            <span>🎯</span> <span class="truncate">1: Chọn A-B-C-D</span>
-                        </button>
-                        <button type="button" data-mode="type_en" class="oral-mode-pill py-2 px-1 rounded-xl text-[11px] sm:text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1 text-center ${
-                            oralMode === 'type_en' 
-                                ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-md shadow-pink-500/30 ring-1 ring-white/20' 
-                                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/80 bg-slate-950/40'
-                        }" title="Chế độ 2: Cô đọc tiếng Việt, bạn ghi tiếng Anh">
-                            <span>🇻🇳➔🇬🇧</span> <span class="truncate">2: Ghi Tiếng Anh</span>
-                        </button>
-                        <button type="button" data-mode="type_vi" class="oral-mode-pill py-2 px-1 rounded-xl text-[11px] sm:text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1 text-center ${
-                            oralMode === 'type_vi' 
-                                ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-md shadow-pink-500/30 ring-1 ring-white/20' 
-                                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/80 bg-slate-950/40'
-                        }" title="Chế độ 3: Cô đọc tiếng Anh, bạn ghi tiếng Việt">
-                            <span>🇬🇧➔🇻🇳</span> <span class="truncate">3: Ghi Tiếng Việt</span>
-                        </button>
-                    </div>
+                <!-- Progress Bar thanh mảnh, sang trọng -->
+                <div class="w-full h-2 bg-slate-800/80 rounded-full overflow-hidden border border-slate-700/50 p-0.5">
+                    <div class="h-full bg-gradient-to-r from-rose-500 via-pink-500 to-emerald-500 rounded-full transition-all duration-500 shadow-sm shadow-pink-500/50" style="width: ${progressPercent}%"></div>
                 </div>
 
-                <!-- Progress Bar động -->
-                <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden border border-slate-700/60 p-0.5">
-                    <div class="h-full bg-gradient-to-r from-rose-500 via-pink-500 to-emerald-500 rounded-full transition-all duration-500" style="width: ${progressPercent}%"></div>
-                </div>
-
-                <div class="flex items-center justify-between text-[11px] text-slate-400">
-                    <span>Còn lại cần thuộc: <strong class="text-white">${remainingCount} từ</strong></span>
-                    <span>Số lần khảo lại: <strong class="${oralMistakesCount > 0 ? 'text-rose-400' : 'text-slate-400'}">${oralMistakesCount} lần</strong></span>
+                <!-- BỘ 3 TÙY CHỌN CHẾ ĐỘ HIỆN ĐẠI (SEGMENTED SWITCHER) -->
+                <div class="w-full grid grid-cols-3 gap-1.5 p-1 bg-slate-950/70 border border-slate-800 rounded-2xl shadow-inner mt-0.5">
+                    <button type="button" data-mode="choice" class="oral-mode-pill py-2 px-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
+                        oralMode === 'choice' 
+                            ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-lg shadow-pink-500/30 ring-1 ring-white/20' 
+                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+                    }" title="Chế độ 1: Chọn A B C D (Phím 1-4)">
+                        <span>🎯</span> <span class="truncate">1. Chọn A-B-C-D</span>
+                    </button>
+                    <button type="button" data-mode="type_en" class="oral-mode-pill py-2 px-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
+                        oralMode === 'type_en' 
+                            ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-lg shadow-pink-500/30 ring-1 ring-white/20' 
+                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+                    }" title="Chế độ 2: Cô đọc tiếng Việt, bạn ghi tiếng Anh">
+                        <span>⌨️</span> <span class="truncate">2. Gõ Tiếng Anh</span>
+                    </button>
+                    <button type="button" data-mode="type_vi" class="oral-mode-pill py-2 px-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
+                        oralMode === 'type_vi' 
+                            ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-lg shadow-pink-500/30 ring-1 ring-white/20' 
+                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+                    }" title="Chế độ 3: Cô đọc tiếng Anh, bạn ghi tiếng Việt">
+                        <span>🇻🇳</span> <span class="truncate">3. Ghi Tiếng Việt</span>
+                    </button>
                 </div>
             </div>
 
-            <!-- TEACHER CLASSROOM CARD -->
-            <div class="w-full max-w-xl p-5 sm:p-6 rounded-3xl bg-gradient-to-b from-slate-800/95 via-slate-900 to-slate-950 border-2 ${
-                oralIsAnswered 
-                    ? (oralIsCorrect ? 'border-emerald-500/70 shadow-emerald-500/20' : 'border-rose-500/70 shadow-rose-500/20') 
-                    : 'border-indigo-500/67 shadow-indigo-500/10'
-            } shadow-2xl flex flex-col justify-between my-auto transition-all">
+            <!-- TEACHER CLASSROOM CARD (THIẾT KẾ STUDIO CAO CẤP) -->
+            <div class="w-full p-5 sm:p-7 rounded-3xl bg-gradient-to-b from-slate-800/95 via-slate-900 to-slate-950 border border-slate-700/70 shadow-2xl flex flex-col gap-5 transition-all">
                 
-                <!-- HỘI THOẠI CỦA CÔ GIÁO & BẢNG ĐEN CÂU HỎI -->
-                <div class="flex items-start gap-3.5 mb-4">
-                    <!-- Avatar Cô Kiều Anh có hiệu ứng phát sáng -->
-                    <div id="oralTeacherAvatar" class="w-13 h-13 rounded-2xl bg-gradient-to-tr from-pink-500 via-rose-500 to-purple-600 flex items-center justify-center text-3xl shadow-lg shadow-pink-500/30 shrink-0 select-none transition-all duration-300">
+                <!-- HỘI THOẠI CỦA CÔ GIÁO & CÂU HỎI TRỌNG TÂM -->
+                <div class="flex items-start gap-4">
+                    <!-- Avatar Cô Kiều Anh hiệu ứng ánh sáng nhẹ -->
+                    <div id="oralTeacherAvatar" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-tr from-pink-500 via-rose-500 to-purple-600 flex items-center justify-center text-3xl shadow-lg shadow-pink-500/25 shrink-0 select-none transition-all duration-300 ring-2 ring-white/10">
                         ${oralIsAnswered ? (oralIsCorrect ? '🥰' : '🧐') : '👩‍🏫'}
                     </div>
 
-                    <div class="flex-1 bg-slate-900/90 border border-slate-700/80 rounded-2xl p-3.5 relative overflow-hidden">
+                    <div class="flex-1 min-w-0">
                         <!-- Header hội thoại & Sóng âm trực tiếp -->
-                        <div class="text-[11px] font-bold text-rose-300 flex items-center justify-between mb-1.5">
+                        <div class="text-xs font-bold text-rose-300 flex items-center justify-between mb-1.5 flex-wrap gap-2">
                             <div class="flex items-center gap-2">
-                                <span id="oralTeacherStatusText">
+                                <span id="oralTeacherStatusText" class="font-extrabold text-slate-200">
                                     ${oralMode === 'type_vi' ? 'Cô Kiều Anh đang phát âm:' : 'Cô Kiều Anh đang khảo bài:'}
                                 </span>
                                 <!-- Sóng âm Equalizer -->
@@ -1799,39 +1785,39 @@
                                     <span class="oral-sound-bar w-0.5 bg-pink-400 rounded-full h-1.5"></span>
                                 </div>
                             </div>
-                            <button type="button" id="oralTeacherVoiceBtn" class="text-sky-400 hover:text-sky-300 font-bold flex items-center gap-1 cursor-pointer transition-all px-2 py-0.5 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/25 active:scale-95" title="${oralMode === 'type_vi' ? 'Nghe phát âm tiếng Anh (Phím Space)' : 'Nghe cô đọc lại câu hỏi (Phím Space)'}">
-                                <span>🔊</span> <span class="text-[10px]">${oralMode === 'type_vi' ? 'Nghe phát âm (Space)' : 'Nghe lại cô hỏi (Space)'}</span>
+                            <button type="button" id="oralTeacherVoiceBtn" class="text-sky-400 hover:text-sky-300 font-bold flex items-center gap-1.5 cursor-pointer transition-all px-2.5 py-1 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/25 active:scale-95 text-xs shadow-xs" title="${oralMode === 'type_vi' ? 'Nghe phát âm tiếng Anh (Phím Space)' : 'Nghe cô đọc lại câu hỏi (Phím Space)'}">
+                                <span>🔊</span> <span>${oralMode === 'type_vi' ? 'Nghe phát âm (Space)' : 'Nghe lại cô hỏi (Space)'}</span>
                             </button>
                         </div>
 
                         ${oralMode === 'type_vi' ? `
-                            <div class="text-xs sm:text-sm font-semibold text-slate-300 mb-1">
+                            <div class="text-xs text-slate-400 mb-1 font-medium">
                                 "Em hãy lắng nghe và cho cô biết nghĩa tiếng Việt của từ:"
                             </div>
 
-                            <!-- CÂU HỎI TIẾNG ANH ĐẶC BIỆT NỔI BẬT -->
-                            <div class="text-base sm:text-xl font-black text-emerald-300 tracking-wide my-1.5 py-2 px-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 shadow-inner leading-snug flex items-center justify-between flex-wrap gap-2">
-                                <span class="text-white text-lg sm:text-2xl">${oralCurrentItem.primaryWord}</span>
-                                <span class="text-xs sm:text-sm font-mono text-sky-400 font-semibold">${oralCurrentItem.ipa}</span>
+                            <!-- BẢNG TỪ TIẾNG ANH & PHIÊN ÂM IPA NỔI BẬT -->
+                            <div class="my-2 py-3 px-4 rounded-2xl bg-slate-950/80 border border-emerald-500/30 shadow-inner flex items-center justify-between flex-wrap gap-2">
+                                <span class="text-white text-xl sm:text-2xl font-black tracking-wide">${oralCurrentItem.primaryWord}</span>
+                                <span class="text-xs sm:text-sm font-mono text-cyan-400 font-bold px-2.5 py-0.5 rounded-lg bg-cyan-950/40 border border-cyan-800/40">${oralCurrentItem.ipa}</span>
                             </div>
 
-                            <div class="text-[11px] text-slate-400 flex items-center gap-2 mt-2">
-                                <span class="px-2 py-0.2 rounded-md ${getTypeBadge(oralCurrentItem.type).bg} text-white font-bold border border-white/10 text-[10px]">${oralCurrentItem.type}</span>
-                                <span>Ghi nghĩa tiếng Việt & nhấn Enter</span>
+                            <div class="text-xs text-slate-400 flex items-center gap-2 mt-1.5">
+                                <span class="px-2 py-0.5 rounded-md ${getTypeBadge(oralCurrentItem.type).bg} text-white font-bold text-[11px] border border-white/10">${oralCurrentItem.type}</span>
+                                <span>Ghi nghĩa tiếng Việt rồi nhấn Enter</span>
                             </div>
                         ` : `
-                            <div class="text-xs sm:text-sm font-semibold text-slate-300 mb-1">
+                            <div class="text-xs text-slate-400 mb-1 font-medium">
                                 "Em hãy cho cô biết từ tiếng Anh nào có nghĩa là:"
                             </div>
 
-                            <!-- CÂU HỎI TIẾNG VIỆT ĐẶC BIỆT NỔI BẬT -->
-                            <div class="text-base sm:text-xl font-black text-amber-300 tracking-wide my-1.5 py-2 px-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 shadow-inner leading-snug">
-                                👉 "${oralCurrentItem.primaryMeaning}"
+                            <!-- CÂU HỎI TIẾNG VIỆT NỔI BẬT -->
+                            <div class="my-2 py-3 px-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 shadow-inner">
+                                <span class="text-amber-300 text-lg sm:text-2xl font-black tracking-wide">👉 "${oralCurrentItem.primaryMeaning}"</span>
                             </div>
 
-                            <div class="text-[11px] text-slate-400 flex items-center gap-2 mt-2">
-                                <span class="px-2 py-0.2 rounded-md ${getTypeBadge(oralCurrentItem.type).bg} text-white font-bold border border-white/10 text-[10px]">${oralCurrentItem.type}</span>
-                                <span>Từ này gồm <strong>${oralCurrentItem.primaryWord.length} chữ cái</strong></span>
+                            <div class="text-xs text-slate-400 flex items-center gap-2 mt-1.5 flex-wrap">
+                                <span class="px-2 py-0.5 rounded-md ${getTypeBadge(oralCurrentItem.type).bg} text-white font-bold text-[11px] border border-white/10">${oralCurrentItem.type}</span>
+                                <span>Từ này gồm <strong class="text-white">${oralCurrentItem.primaryWord.length} chữ cái</strong></span>
                                 ${oralMode === 'choice' ? '<span class="text-slate-500">• Bấm số 1-4 để chọn nhanh</span>' : '<span class="text-slate-500">• Gõ từ tiếng Anh & Enter</span>'}
                             </div>
                         `}
@@ -1842,19 +1828,19 @@
                 ${!oralIsAnswered ? `
                     ${oralMode === 'choice' ? `
                         <!-- MODE 1: CHỌN 4 ĐÁP ÁN NHANH (CÓ PHÍM TẮT 1-4) -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
                             ${oralChoices.map((choice, idx) => {
                                 const letters = ['A', 'B', 'C', 'D'];
                                 const keys = ['1', '2', '3', '4'];
                                 return `
-                                    <button type="button" data-choice-idx="${idx}" class="oral-choice-btn group p-3 sm:p-3.5 rounded-2xl border-2 border-slate-700/80 bg-slate-800/80 hover:border-pink-500 hover:bg-slate-750 text-white font-bold text-left text-xs sm:text-sm flex items-center justify-between gap-2.5 transition-all cursor-pointer active:scale-98 shadow-sm">
-                                        <div class="flex items-center gap-2.5 min-w-0">
-                                            <span class="w-7 h-7 rounded-xl bg-slate-700 group-hover:bg-pink-600 group-hover:text-white font-black text-xs flex items-center justify-center shrink-0 text-slate-300 transition-colors">
+                                    <button type="button" data-choice-idx="${idx}" class="oral-choice-btn group p-3.5 sm:p-4 rounded-2xl border border-slate-700/80 bg-slate-800/60 hover:border-pink-500/80 hover:bg-slate-800 text-white font-bold text-left text-sm flex items-center justify-between gap-3 transition-all cursor-pointer active:scale-98 shadow-sm">
+                                        <div class="flex items-center gap-3 min-w-0">
+                                            <span class="w-8 h-8 rounded-xl bg-slate-700/80 group-hover:bg-gradient-to-tr group-hover:from-rose-500 group-hover:to-pink-500 group-hover:text-white font-black text-xs flex items-center justify-center shrink-0 text-slate-300 transition-all shadow-xs">
                                                 ${letters[idx]}
                                             </span>
-                                            <span class="truncate font-bold">${choice.text}</span>
+                                            <span class="truncate font-black text-sm">${choice.text}</span>
                                         </div>
-                                        <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-900/60 text-slate-400 group-hover:text-pink-300 border border-white/5">
+                                        <span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded-lg bg-slate-900/80 text-slate-400 group-hover:text-pink-300 border border-white/5">
                                             Phím [${keys[idx]}]
                                         </span>
                                     </button>
@@ -1863,80 +1849,78 @@
                         </div>
                     ` : (oralMode === 'type_vi' ? `
                         <!-- MODE 3: NGHE TIẾNG ANH - GHI NGHĨA TIẾNG VIỆT -->
-                        <form id="oralAnswerForm" class="flex flex-col gap-3">
+                        <form id="oralAnswerForm" class="flex flex-col gap-3.5 mt-1">
                             <div class="relative">
                                 <input type="text" id="oralInput" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" 
                                        placeholder="Ghi nghĩa tiếng Việt của từ này rồi nhấn Enter..." 
-                                       class="w-full px-4 py-3.5 text-center text-base sm:text-lg font-black rounded-2xl bg-slate-900 border-2 border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all shadow-inner">
+                                       class="w-full px-5 py-4 text-center text-base sm:text-lg font-black rounded-2xl bg-slate-950/90 border-2 border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 transition-all shadow-inner">
                             </div>
 
                             <div class="flex items-center justify-between gap-2 flex-wrap">
-                                <button type="button" id="oralHintBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-amber-400 border border-slate-700 transition-all cursor-pointer active:scale-95">
-                                    💡 Gợi ý nghĩa
+                                <button type="button" id="oralHintBtn" class="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-amber-300 border border-slate-700 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5">
+                                    <span>💡</span> <span>Gợi ý nghĩa</span>
                                 </button>
-                                <button type="button" id="oralSkipBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-slate-400 hover:text-rose-400 border border-slate-700 transition-all cursor-pointer active:scale-95" title="Nếu chưa nhớ, bấm để cô chỉ bài và khảo lại sau">
-                                    ❓ Em chưa nhớ (Khảo lại sau)
+                                <button type="button" id="oralSkipBtn" class="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-slate-400 hover:text-rose-400 border border-slate-700 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5" title="Nếu chưa nhớ, bấm để cô chỉ bài và khảo lại sau">
+                                    <span>❓</span> <span>Em chưa nhớ (Khảo lại sau)</span>
                                 </button>
-                                <button type="submit" class="px-5 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md shadow-emerald-500/25 transition-all cursor-pointer active:scale-95">
-                                    Trả Lời (Enter)
+                                <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-500/25 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5">
+                                    <span>Trả Lời (Enter)</span> <span>↵</span>
                                 </button>
                             </div>
                         </form>
                     ` : `
                         <!-- MODE 2: CÔ ĐỌC TIẾNG VIỆT - GÕ TỪ TIẾNG ANH -->
-                        <form id="oralAnswerForm" class="flex flex-col gap-3">
+                        <form id="oralAnswerForm" class="flex flex-col gap-3.5 mt-1">
                             <div class="relative">
                                 <input type="text" id="oralInput" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" 
                                        placeholder="Gõ từ tiếng Anh vào đây rồi nhấn Enter..." 
-                                       class="w-full px-4 py-3.5 text-center text-base sm:text-lg font-black rounded-2xl bg-slate-900 border-2 border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/30 transition-all shadow-inner">
+                                       class="w-full px-5 py-4 text-center text-base sm:text-lg font-black rounded-2xl bg-slate-950/90 border-2 border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-pink-500 focus:ring-4 focus:ring-pink-500/20 transition-all shadow-inner">
                             </div>
 
                             <div class="flex items-center justify-between gap-2 flex-wrap">
-                                <button type="button" id="oralHintBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-amber-400 border border-slate-700 transition-all cursor-pointer active:scale-95">
-                                    💡 Gợi ý chữ cái đầu
+                                <button type="button" id="oralHintBtn" class="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-amber-300 border border-slate-700 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5">
+                                    <span>💡</span> <span>Gợi ý chữ cái</span>
                                 </button>
-                                <button type="button" id="oralSkipBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-slate-400 hover:text-rose-400 border border-slate-700 transition-all cursor-pointer active:scale-95" title="Nếu chưa nhớ, bấm để cô chỉ bài và khảo lại sau">
-                                    ❓ Em chưa nhớ (Khảo lại sau)
+                                <button type="button" id="oralSkipBtn" class="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-750 text-slate-400 hover:text-rose-400 border border-slate-700 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5" title="Nếu chưa nhớ, bấm để cô chỉ bài và khảo lại sau">
+                                    <span>❓</span> <span>Em chưa nhớ (Khảo lại sau)</span>
                                 </button>
-                                <button type="submit" class="px-5 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white shadow-md shadow-rose-500/25 transition-all cursor-pointer active:scale-95">
-                                    Trả Lời (Enter)
+                                <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white shadow-lg shadow-rose-500/25 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5">
+                                    <span>Trả Lời (Enter)</span> <span>↵</span>
                                 </button>
                             </div>
                         </form>
                     `)}
                 ` : `
                     <!-- MÀN HÌNH PHẢN HỒI KẾT QUẢ CỦA CÔ -->
-                    <div class="p-4 rounded-2xl ${
-                        oralIsCorrect ? 'bg-emerald-950/67 border border-emerald-500/50' : 'bg-rose-950/67 border border-rose-500/50'
-                    } flex flex-col gap-2.5 animate-fadeIn">
+                    <div class="p-4 sm:p-5 rounded-2xl ${
+                        oralIsCorrect ? 'bg-emerald-950/60 border border-emerald-500/50 shadow-lg shadow-emerald-500/10' : 'bg-rose-950/60 border border-rose-500/50 shadow-lg shadow-rose-500/10'
+                    } flex flex-col gap-3 animate-fadeIn">
                         
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs sm:text-sm font-black ${oralIsCorrect ? 'text-emerald-400' : 'text-rose-400'} flex items-center gap-1.5">
-                                <span>${oralIsCorrect ? '✅ XUẤT SẮC! CÔ CỘNG 1 ĐIỂM THUỘC BÀI' : '❌ CHƯA CHÍNH XÁC! CÔ SẼ KHẢO LẠI CÂU NÀY'}</span>
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <span class="text-xs sm:text-sm font-black ${oralIsCorrect ? 'text-emerald-300' : 'text-rose-300'} flex items-center gap-2">
+                                <span>${oralIsCorrect ? '✅ XUẤT SẮC! CÔ CỘNG 1 ĐIỂM THUỘC BÀI' : '❌ CHƯA CHÍNH XÁC! CÔ SẼ KHẢO LẠI CÂU NÀY SAU'}</span>
                             </span>
-                            <button type="button" onclick="window.VocabHub.speak('${oralCurrentItem.primaryWord}')" class="text-sky-400 hover:text-sky-300 text-xs font-bold flex items-center gap-1 cursor-pointer px-2 py-0.5 rounded-lg bg-sky-500/10 border border-sky-500/25">
-                                <span>🔊</span> <span>Nghe lại phát âm</span>
+                            <button type="button" onclick="window.VocabHub.speak('${oralCurrentItem.primaryWord}')" class="text-sky-400 hover:text-sky-300 text-xs font-bold flex items-center gap-1 cursor-pointer px-2.5 py-1 rounded-lg bg-sky-500/10 border border-sky-500/25 transition-all active:scale-95">
+                                <span>🔊</span> <span>Phát âm lại</span>
                             </button>
                         </div>
 
                         <!-- Đáp án chuẩn chi tiết -->
-                        <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800">
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <span class="text-lg sm:text-xl font-black text-white">${oralCurrentItem.primaryWord}</span>
-                                <span class="text-xs text-sky-400 font-mono font-bold">${oralCurrentItem.ipa}</span>
-                                <span class="text-[10px] px-2 py-0.5 rounded-full ${getTypeBadge(oralCurrentItem.type).bg} text-white font-bold border border-white/10">${oralCurrentItem.type}</span>
+                        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">
+                            <div class="flex items-center gap-2.5 flex-wrap">
+                                <span class="text-xl sm:text-2xl font-black text-white">${oralCurrentItem.primaryWord}</span>
+                                <span class="text-xs sm:text-sm text-sky-400 font-mono font-bold px-2 py-0.5 rounded bg-slate-950 border border-sky-900/50">${oralCurrentItem.ipa}</span>
+                                <span class="text-[11px] px-2.5 py-0.5 rounded-full ${getTypeBadge(oralCurrentItem.type).bg} text-white font-bold border border-white/10">${oralCurrentItem.type}</span>
                             </div>
-                            <div class="text-xs sm:text-sm text-emerald-300 font-bold mt-1">
+                            <div class="text-sm sm:text-base text-emerald-300 font-bold">
                                 👉 Nghĩa: ${oralCurrentItem.primaryMeaning}
                             </div>
-                            <div class="text-xs text-slate-300 italic mt-1.5 bg-slate-950/50 p-2 rounded-lg border border-white/5">
-                                "${oralCurrentItem.example}"
-                                <div class="text-[11px] text-slate-400 not-italic mt-0.5">
-                                    🇻🇳 ${oralCurrentItem.exampleVi}
-                                </div>
+                            <div class="text-xs text-slate-300 italic bg-slate-950/60 p-3 rounded-xl border border-white/5 space-y-1">
+                                <div>"${oralCurrentItem.example}"</div>
+                                <div class="text-[11px] text-slate-400 not-italic">🇻🇳 ${oralCurrentItem.exampleVi}</div>
                             </div>
                             ${oralCurrentItem.note ? `
-                                <div class="text-[10px] text-amber-300 font-bold mt-1.5 flex items-center gap-1">
+                                <div class="text-xs text-amber-300 font-bold flex items-center gap-1.5 pt-1">
                                     <span>📌</span> <span>Lưu ý: ${oralCurrentItem.note}</span>
                                 </div>
                             ` : ''}
@@ -1944,28 +1928,28 @@
 
                         ${!oralIsCorrect ? `
                             <!-- BẮT BUỘC GÕ LẠI 1 LẦN NẾU SAI ĐỂ KHẮC SÂU TRÍ NHỚ -->
-                            <div class="mt-1">
+                            <div class="mt-1 space-y-1.5">
                                 ${oralMode === 'type_vi' ? `
-                                    <div class="text-[11px] text-rose-300 font-semibold mb-1 flex items-center gap-1">
-                                        <span>✍️</span> <span>Em hãy gõ lại nghĩa tiếng Việt: <strong class="text-amber-300">"${oralCurrentItem.primaryMeaning}"</strong> để khắc sâu trí nhớ:</span>
+                                    <div class="text-xs text-rose-300 font-semibold flex items-center gap-1.5">
+                                        <span>✍️</span> <span>Em hãy gõ lại nghĩa tiếng Việt: <strong class="text-amber-300 underline font-black">"${oralCurrentItem.primaryMeaning}"</strong> để khắc sâu trí nhớ:</span>
                                     </div>
                                     <form id="oralRetryForm" class="flex items-center gap-2">
                                         <input type="text" id="oralRetryInput" placeholder="Gõ lại '${oralCurrentItem.primaryMeaning}' vào đây..." 
                                                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                                               class="flex-1 px-3.5 py-2.5 text-xs font-bold rounded-xl bg-slate-900 border-2 border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-all">
-                                        <button type="submit" class="px-4 py-2.5 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-500 text-white transition-all cursor-pointer active:scale-95 shrink-0 flex items-center gap-1">
+                                               class="flex-1 px-4 py-3 text-xs sm:text-sm font-bold rounded-xl bg-slate-900 border-2 border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-all">
+                                        <button type="submit" class="px-5 py-3 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-500 text-white transition-all cursor-pointer active:scale-95 shrink-0 flex items-center gap-1.5 shadow-md shadow-emerald-600/30">
                                             <span>Đã Thuộc, Khảo Tiếp</span> <span>→</span>
                                         </button>
                                     </form>
                                 ` : `
-                                    <div class="text-[11px] text-rose-300 font-semibold mb-1 flex items-center gap-1">
-                                        <span>✍️</span> <span>Em hãy gõ lại từ <strong class="text-amber-300">"${oralCurrentItem.primaryWord}"</strong> để khắc sâu trí nhớ:</span>
+                                    <div class="text-xs text-rose-300 font-semibold flex items-center gap-1.5">
+                                        <span>✍️</span> <span>Em hãy gõ lại từ: <strong class="text-amber-300 underline font-black">"${oralCurrentItem.primaryWord}"</strong> để khắc sâu trí nhớ:</span>
                                     </div>
                                     <form id="oralRetryForm" class="flex items-center gap-2">
                                         <input type="text" id="oralRetryInput" placeholder="Gõ lại '${oralCurrentItem.primaryWord}' vào đây..." 
                                                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-                                               class="flex-1 px-3.5 py-2.5 text-xs font-bold rounded-xl bg-slate-900 border-2 border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-all">
-                                        <button type="submit" class="px-4 py-2.5 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-500 text-white transition-all cursor-pointer active:scale-95 shrink-0 flex items-center gap-1">
+                                               class="flex-1 px-4 py-3 text-xs sm:text-sm font-bold rounded-xl bg-slate-900 border-2 border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-all">
+                                        <button type="submit" class="px-5 py-3 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-500 text-white transition-all cursor-pointer active:scale-95 shrink-0 flex items-center gap-1.5 shadow-md shadow-emerald-600/30">
                                             <span>Đã Thuộc, Khảo Tiếp</span> <span>→</span>
                                         </button>
                                     </form>
@@ -1973,7 +1957,7 @@
                             </div>
                         ` : `
                             <div class="flex items-center justify-end mt-1">
-                                <button type="button" id="oralNextBtn" class="px-5 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md shadow-emerald-500/25 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5">
+                                <button type="button" id="oralNextBtn" class="px-6 py-3 rounded-xl text-xs sm:text-sm font-black bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-500/30 transition-all cursor-pointer active:scale-95 flex items-center gap-2">
                                     <span>Cô hỏi câu tiếp theo (Enter)</span> <span>→</span>
                                 </button>
                             </div>
@@ -1983,10 +1967,10 @@
 
             </div>
 
-            <!-- Footer note -->
-            <div class="w-full max-w-xl flex items-center justify-between text-[11px] text-slate-500 mt-2 px-1 flex-wrap gap-1">
-                <span>💡 Quy tắc: Bất kỳ câu nào trả lời sai sẽ được cô hỏi lại đến khi nào thuộc 67/67!</span>
-                <span>Tiến độ: <strong class="text-emerald-400">${masteredCount}/67 câu</strong></span>
+            <!-- FOOTER INFO: RÕ RÀNG, TINH TẾ -->
+            <div class="w-full flex items-center justify-between text-[11px] text-slate-500 px-2 flex-wrap gap-2">
+                <span>💡 Quy tắc: Bất kỳ câu nào sai cô sẽ khảo lại đến khi thuộc 67/67!</span>
+                <span>Số lần làm lại: <strong class="${oralMistakesCount > 0 ? 'text-rose-400 font-bold' : 'text-slate-400'}">${oralMistakesCount} lần</strong></span>
             </div>
         `;
 
