@@ -1454,7 +1454,7 @@
 
         // Khung Modal chính
         const container = document.createElement("div");
-        container.className = "relative w-full max-w-4xl max-h-[96vh] h-full sm:h-[88vh] flex flex-col bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden transition-all";
+        container.className = "relative w-full max-w-4xl max-h-[96vh] flex flex-col bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden transition-all";
         
         container.innerHTML = `
             <!-- HEADER TÍCH HỢP -->
@@ -1747,14 +1747,14 @@
                             ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-lg shadow-pink-500/30 ring-1 ring-white/20' 
                             : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
                     }" title="Chế độ 2: Cô đọc tiếng Việt, bạn ghi tiếng Anh">
-                        <span>⌨️</span> <span class="truncate">2. Gõ Tiếng Anh</span>
+                        <span>🔤</span> <span class="truncate">2. Gõ Tiếng Anh</span>
                     </button>
                     <button type="button" data-mode="type_vi" class="oral-mode-pill py-2 px-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
                         oralMode === 'type_vi' 
                             ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-lg shadow-pink-500/30 ring-1 ring-white/20' 
                             : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
                     }" title="Chế độ 3: Cô đọc tiếng Anh, bạn ghi tiếng Việt">
-                        <span>🇻🇳</span> <span class="truncate">3. Ghi Tiếng Việt</span>
+                        <span>✍️</span> <span class="truncate">3. Ghi Tiếng Việt</span>
                     </button>
                 </div>
             </div>
