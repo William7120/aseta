@@ -571,6 +571,24 @@
                         </span>
                     </button>
 
+                    <!-- Tính Điểm & Xếp Loại THPT (Thông Tư 22) -->
+                    <button type="button" 
+                            id="sidebar-util-grade-calc" 
+                            onclick="AzotaApp.showView('gradeCalc')" 
+                            style="--gradient-from: #f59e0b; --gradient-to: #d97706;" 
+                            class="gradient-menu-btn nav-item-modern group" 
+                            title="Tính Điểm Trung Bình & Dự Báo Xếp Loại THPT (TT 22)">
+                        <span class="gradient-menu-bg"></span>
+                        <span class="gradient-menu-glow"></span>
+                        <span class="gradient-menu-icon"><span class="text-xl">🧮</span></span>
+                        <span class="gradient-menu-title">Tính Điểm</span>
+                        <span class="gradient-active-dot"></span>
+                        <span class="mobile-drawer-label hidden">
+                            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Tính Điểm & Xếp Loại</span>
+                            <span class="liquid-tag-pill bg-amber-500/15 text-amber-400 border border-amber-500/25">TT 22</span>
+                        </span>
+                    </button>
+
                 </div>
             </div>
 
@@ -1425,6 +1443,13 @@
                     </div>
                 </section>
 
+                <!-- VIEW 9: GRADE CALCULATOR & PREDICTION VIEW (TÍNH ĐIỂM & DỰ BÁO XẾP LOẠI THPT TT 22) -->
+                <section id="gradeCalcView" class="hidden space-y-6">
+                    <div id="gradeCalcContainer" class="w-full">
+                        <!-- Populated dynamically by GradeCalcEngine.render() -->
+                    </div>
+                </section>
+
             </main>
         </div>
     </div>
@@ -1943,6 +1968,7 @@
     <script src="js/solution_engine.js"></script>
     <script src="js/timetable_engine.js"></script>
     <script src="js/vocab_engine.js"></script>
+    <script src="js/grade_calc_engine.js"></script>
     <script src="js/app-v4.js"></script>
 
     <!-- DIRECT INLINE RUNTIME FAIL-SAFE FOR file:/// BROWSER CACHE & 3D TILT EFFECT -->

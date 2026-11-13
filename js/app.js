@@ -1755,7 +1755,7 @@ window.AzotaApp = (function() {
     function showView(viewId) {
         if (!SecurityGuard.checkRateLimit("chuyển trang")) return;
 
-        const views = ["explorerView", "homeView", "examView", "essayView", "resultView", "notebookView", "creatorView", "bankView", "historyView", "leaderboardView", "solutionsView"];
+        const views = ["explorerView", "homeView", "examView", "essayView", "resultView", "notebookView", "creatorView", "bankView", "historyView", "leaderboardView", "solutionsView", "gradeCalcView"];
         views.forEach(v => {
             const el = document.getElementById(v);
             if (el) {
@@ -1797,6 +1797,12 @@ window.AzotaApp = (function() {
                 } else if (typeof window.SolutionEngine.render === "function") {
                     window.SolutionEngine.render();
                 }
+            }
+        } else if (viewId === "gradeCalc") {
+            updateActiveAppName("Tính Điểm & Xếp Loại THPT (TT 22)");
+            updateSidebarActive("sidebar-util-grade-calc");
+            if (window.GradeCalcEngine && typeof window.GradeCalcEngine.render === "function") {
+                window.GradeCalcEngine.render("gradeCalcContainer");
             }
         } else if (viewId === "essay") {
             updateActiveAppName("Học Tự Luận Siêu Tốc — Môn Địa");
@@ -4554,6 +4560,7 @@ window.AzotaApp = (function() {
     return {
         init: init,
         showView: showView,
+        openGradeCalculator: () => showView("gradeCalc"),
         openFileExplorer: openFileExplorer,
         openEssayStudy: openEssayStudy,
         openUnit4VocabCheatSheet: openUnit4VocabCheatSheet,

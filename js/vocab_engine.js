@@ -1452,9 +1452,9 @@
         modal.id = "vocabMasterModal";
         modal.className = "fixed inset-0 z-[120] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 md:p-6 animate-fadeIn";
 
-        // Khung Modal chính
+        // Khung Modal chính (Bố cục 2 cột: Sidebar chức năng dọc bên trái + Vùng học bên phải)
         const container = document.createElement("div");
-        container.className = "relative w-full max-w-4xl max-h-[96vh] flex flex-col bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden transition-all";
+        container.className = "relative w-full max-w-5xl max-h-[92vh] h-full sm:h-[86vh] flex flex-col bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden transition-all";
         
         container.innerHTML = `
             <!-- HEADER TÍCH HỢP -->
@@ -1488,34 +1488,119 @@
                 </div>
             </div>
 
-            <!-- TABS ĐIỀU HƯỚNG CHẾ ĐỘ HỌC (GỌN GÀNG, KHÔNG BỊ TRÀN HAY KHUẤT CHỮ) -->
-            <div class="px-2 sm:px-4 py-2 bg-slate-950/70 border-b border-slate-800 flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar shrink-0">
-                <button type="button" data-tab="oral" class="vocab-tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
-                    <span>👩‍🏫</span> <span>Cô Khảo Bài</span>
-                </button>
-                <button type="button" data-tab="flashcards" class="vocab-tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
-                    <span>🎴</span> <span>Flashcard</span>
-                </button>
-                <button type="button" data-tab="match" class="vocab-tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
-                    <span>⚡</span> <span>Ghép Thẻ</span>
-                </button>
-                <button type="button" data-tab="spelling" class="vocab-tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
-                    <span>✍️</span> <span>Luyện Viết</span>
-                </button>
-                <button type="button" data-tab="quiz" class="vocab-tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
-                    <span>🎯</span> <span>Trắc Nghiệm</span>
-                </button>
-                <button type="button" data-tab="list" class="vocab-tab-btn px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer">
-                    <span>📖</span> <span>Bảng Từ (67)</span>
-                </button>
-                <button type="button" id="vocabGoToExamBtn" class="px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-xs transition-all flex items-center gap-1 shrink-0 cursor-pointer active:scale-95 ml-auto sm:ml-1">
-                    <span>📝</span> <span>Đề Khảo Sát</span>
-                </button>
-            </div>
+            <!-- BODY 2 CỘT: CỘT DỌC CHỌN CHỨC NĂNG BÊN TAY TRÁI + NỘI DUNG BÊN PHẢI -->
+            <div class="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
+                
+                <!-- CỘT DỌC BÊN TAY TRÁI (THEO YÊU CẦU: NÚT CHỨC NĂNG DỌC BÊN TRÁI TRÁNH TRỐNG POPUP) -->
+                <div class="w-full md:w-60 lg:w-64 bg-slate-950/80 border-b md:border-b-0 md:border-r border-slate-800/90 p-2.5 sm:p-3 flex md:flex-col gap-1.5 overflow-x-auto md:overflow-y-auto no-scrollbar shrink-0">
+                    
+                    <div class="hidden md:flex items-center justify-between px-2.5 py-1 text-[11px] font-black text-slate-400 uppercase tracking-wider">
+                        <span class="flex items-center gap-1.5">
+                            <span>⚡</span> <span>Chức Năng</span>
+                        </span>
+                        <span class="text-[9px] px-1.5 py-0.5 rounded-md bg-rose-500/15 text-rose-300 border border-rose-500/25">67 TỪ</span>
+                    </div>
 
-            <!-- NỘI DUNG CHÍNH (THEO TAB) -->
-            <div id="vocabTabContent" class="flex-1 overflow-y-auto p-2 sm:p-5 flex flex-col items-center justify-start overscroll-contain">
-                <!-- Nội dung các tab sẽ render ở đây -->
+                    <!-- Nút 1: Cô Khảo Bài -->
+                    <button type="button" data-tab="oral" class="vocab-tab-btn w-full px-3 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-between gap-2 shrink-0 cursor-pointer text-left">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="text-base shrink-0">👩‍🏫</span>
+                            <div class="truncate">
+                                <div class="font-black text-xs leading-tight">Cô Khảo Bài</div>
+                                <div class="text-[10px] text-slate-400 font-normal hidden md:block">Vấn đáp giọng nữ 3 chế độ</div>
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- Nút 2: Flashcard 3D -->
+                    <button type="button" data-tab="flashcards" class="vocab-tab-btn w-full px-3 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-between gap-2 shrink-0 cursor-pointer text-left">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="text-base shrink-0">🎴</span>
+                            <div class="truncate">
+                                <div class="font-black text-xs leading-tight">Flashcard 3D</div>
+                                <div class="text-[10px] text-slate-400 font-normal hidden md:block">Lật thẻ từ vựng & phiên âm</div>
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- Nút 3: Ghép Thẻ Nhanh -->
+                    <button type="button" data-tab="match" class="vocab-tab-btn w-full px-3 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-between gap-2 shrink-0 cursor-pointer text-left">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="text-base shrink-0">⚡</span>
+                            <div class="truncate">
+                                <div class="font-black text-xs leading-tight">Ghép Thẻ Nhanh</div>
+                                <div class="text-[10px] text-slate-400 font-normal hidden md:block">Nối từ Anh - Việt tính giờ</div>
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- Nút 4: Luyện Viết -->
+                    <button type="button" data-tab="spelling" class="vocab-tab-btn w-full px-3 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-between gap-2 shrink-0 cursor-pointer text-left">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="text-base shrink-0">✍️</span>
+                            <div class="truncate">
+                                <div class="font-black text-xs leading-tight">Luyện Viết Từ</div>
+                                <div class="text-[10px] text-slate-400 font-normal hidden md:block">Gõ chính tả chuẩn từng chữ</div>
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- Nút 5: Trắc Nghiệm Phản Xạ -->
+                    <button type="button" data-tab="quiz" class="vocab-tab-btn w-full px-3 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-between gap-2 shrink-0 cursor-pointer text-left">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="text-base shrink-0">🎯</span>
+                            <div class="truncate">
+                                <div class="font-black text-xs leading-tight">Trắc Nghiệm Phản Xạ</div>
+                                <div class="text-[10px] text-slate-400 font-normal hidden md:block">4 đáp án tính thời gian</div>
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- Nút 6: Bảng 67 Từ Vựng -->
+                    <button type="button" data-tab="list" class="vocab-tab-btn w-full px-3 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-between gap-2 shrink-0 cursor-pointer text-left">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="text-base shrink-0">📖</span>
+                            <div class="truncate">
+                                <div class="font-black text-xs leading-tight">Bảng 67 Từ</div>
+                                <div class="text-[10px] text-slate-400 font-normal hidden md:block">Tra cứu nghĩa & đánh dấu sao</div>
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- Nút 7: Đề Khảo Sát -->
+                    <button type="button" id="vocabGoToExamBtn" class="w-full px-3 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-md shadow-blue-500/25 transition-all flex items-center justify-between gap-2 shrink-0 cursor-pointer active:scale-95 text-left md:mt-2">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="text-base shrink-0">📝</span>
+                            <div class="truncate">
+                                <div class="font-black text-xs leading-tight">Đề Khảo Sát Unit 4</div>
+                                <div class="text-[10px] text-blue-200 font-normal hidden md:block">67 câu trắc nghiệm tính điểm</div>
+                            </div>
+                        </div>
+                        <span class="text-xs shrink-0 hidden md:inline">→</span>
+                    </button>
+
+                    <!-- Hộp thống kê tiến độ nhỏ gọn ở đáy sidebar -->
+                    <div id="vocabSidebarStatsBox" class="hidden md:flex flex-col gap-1.5 p-3 rounded-2xl bg-slate-900/90 border border-slate-800 text-[11px] text-slate-400 mt-auto">
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium text-slate-300">Đã thuộc bài:</span>
+                            <span id="vocabSidebarMasteredVal" class="text-emerald-400 font-black">0 / 67</span>
+                        </div>
+                        <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                            <div id="vocabSidebarProgressBar" class="h-full bg-gradient-to-r from-rose-500 to-emerald-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                        <div class="flex items-center justify-between text-[10px] text-slate-500">
+                            <span>Tỉ lệ: <strong id="vocabSidebarPercentVal" class="text-white">0%</strong></span>
+                            <span>Unit 4 THPT</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- CỘT BÊN PHẢI: NỘI DUNG CHÍNH (THEO TAB ĐANG CHỌN) -->
+                <div id="vocabTabContent" class="flex-1 overflow-y-auto p-3 sm:p-5 flex flex-col items-center justify-start overscroll-contain">
+                    <!-- Nội dung các tab sẽ render ở đây -->
+                </div>
+
             </div>
         `;
 
@@ -1568,24 +1653,35 @@
 
     function updateHeaderStats() {
         const statsEl = document.getElementById("vocabHeaderStats");
-        if (!statsEl) return;
         const starredCount = Object.keys(getStarredMap()).length;
         const oralMasteredCount = oralMasteredList.length;
         const bestTime = getBestMatchTime();
+        const total = UNIT4_VOCAB_DATA.length;
+        const pct = Math.round((oralMasteredCount / total) * 100);
 
-        statsEl.innerHTML = `
-            <span class="px-2 py-0.5 rounded-lg bg-rose-500/15 text-rose-300 border border-rose-500/20 flex items-center gap-1">
-                👩‍🏫 Thuộc: ${oralMasteredCount}/67
-            </span>
-            <span class="px-2 py-0.5 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-500/20 flex items-center gap-1">
-                ⭐ ${starredCount} từ khó
-            </span>
-            ${bestTime !== null ? `
-                <span class="px-2 py-0.5 rounded-lg bg-purple-500/15 text-purple-300 border border-purple-500/20 flex items-center gap-1">
-                    ⚡ Kỷ lục: ${bestTime.toFixed(1)}s
+        if (statsEl) {
+            statsEl.innerHTML = `
+                <span class="px-2 py-0.5 rounded-lg bg-rose-500/15 text-rose-300 border border-rose-500/20 flex items-center gap-1">
+                    👩‍🏫 Thuộc: ${oralMasteredCount}/67
                 </span>
-            ` : ''}
-        `;
+                <span class="px-2 py-0.5 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-500/20 flex items-center gap-1">
+                    ⭐ ${starredCount} từ khó
+                </span>
+                ${bestTime !== null ? `
+                    <span class="px-2 py-0.5 rounded-lg bg-purple-500/15 text-purple-300 border border-purple-500/20 flex items-center gap-1">
+                        ⚡ Kỷ lục: ${bestTime.toFixed(1)}s
+                    </span>
+                ` : ''}
+            `;
+        }
+
+        // Cập nhật thống kê cột bên trái
+        const sidebarMastered = document.getElementById("vocabSidebarMasteredVal");
+        const sidebarProgress = document.getElementById("vocabSidebarProgressBar");
+        const sidebarPercent = document.getElementById("vocabSidebarPercentVal");
+        if (sidebarMastered) sidebarMastered.textContent = `${oralMasteredCount} / ${total}`;
+        if (sidebarProgress) sidebarProgress.style.width = `${pct}%`;
+        if (sidebarPercent) sidebarPercent.textContent = `${pct}%`;
     }
 
     function switchTab(tab) {
@@ -1597,18 +1693,18 @@
     }
 
     function renderCurrentTab() {
-        // Cập nhật tab active classes
+        // Cập nhật tab active classes (cột dọc bên trái)
         const tabBtns = document.querySelectorAll(".vocab-tab-btn");
         tabBtns.forEach(btn => {
             const tab = btn.getAttribute("data-tab");
             if (tab === currentTab) {
                 if (tab === 'oral') {
-                    btn.className = "vocab-tab-btn px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 text-white shadow-md shadow-pink-500/20 ring-2 ring-pink-400/40";
+                    btn.className = "vocab-tab-btn w-full px-3 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-between gap-2 shrink-0 cursor-pointer text-left bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 text-white shadow-lg shadow-pink-500/25 ring-1 ring-white/20";
                 } else {
-                    btn.className = "vocab-tab-btn px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20";
+                    btn.className = "vocab-tab-btn w-full px-3 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-between gap-2 shrink-0 cursor-pointer text-left bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/25 ring-1 ring-white/20";
                 }
             } else {
-                btn.className = "vocab-tab-btn px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shrink-0 cursor-pointer text-slate-400 hover:text-slate-200 hover:bg-slate-800/60";
+                btn.className = "vocab-tab-btn w-full px-3 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-between gap-2 shrink-0 cursor-pointer text-left text-slate-400 hover:text-white hover:bg-slate-900/80 border border-transparent hover:border-slate-800";
             }
         });
 
