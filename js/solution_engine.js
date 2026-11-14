@@ -334,15 +334,19 @@
 
         isAuthorizedToUpload: function() {
             try {
+                // Must be actively authenticated
+                if (typeof window.AuthGate !== "undefined" && typeof window.AuthGate.isAuthenticated === "function") {
+                    if (!window.AuthGate.isAuthenticated()) return false;
+                }
+                const isSessionActive = typeof sessionStorage !== "undefined" && sessionStorage.getItem("azota_session_active_3d") === "true";
+                if (!isSessionActive) return false;
+
                 if (window.AccountManager && typeof window.AccountManager.getCurrentAccount === "function") {
                     const user = window.AccountManager.getCurrentAccount();
                     if (user) {
                         return (user.isAdmin === true && (user.id === "acc_vanthua" || (user.nickname && user.nickname.toLowerCase() === "vanthua")));
                     }
                 }
-
-                const currId = localStorage.getItem("azota_current_account_id") || localStorage.getItem("aseta_current_account_id");
-                if (currId === "acc_vanthua") return true;
 
                 return false;
             } catch(e) {

@@ -318,6 +318,7 @@ window.AzotaApp = (function() {
                     role: "🌟 Khách Tự Do",
                     pin: "0000",
                     avatar: "🦊",
+                    isAdmin: false,
                     goal: "Trải nghiệm Aseta",
                     createdAt: new Date().toISOString()
                 },
@@ -448,7 +449,13 @@ window.AzotaApp = (function() {
 
         getCurrentAccountId: function() {
             try {
-                return localStorage.getItem(this.CURRENT_KEY) || "acc_minhtri";
+                const id = localStorage.getItem(this.CURRENT_KEY) || "acc_minhtri";
+                // Extra protection: if id is admin but session is not valid in sessionStorage, force acc_minhtri
+                if (id === "acc_vanthua" || id === "acc_admin") {
+                    const isSessionValid = typeof sessionStorage !== "undefined" && sessionStorage.getItem("azota_session_active_3d") === "true";
+                    if (!isSessionValid) return "acc_minhtri";
+                }
+                return id;
             } catch(e) {
                 return "acc_minhtri";
             }
@@ -457,14 +464,58 @@ window.AzotaApp = (function() {
         getCurrentAccount: function() {
             const list = this.getAllAccounts();
             const currId = this.getCurrentAccountId();
-            return list.find(a => a.id === currId) || list.find(a => a.id === "acc_minhtri") || list.find(a => !a.isAdmin) || list[0];
+            let acc = list.find(a => a.id === currId);
+            // Extra protection: if acc is Admin but session is not valid in sessionStorage, force student
+            if (acc && (acc.isAdmin === true || acc.id === "acc_vanthua")) {
+                const isSessionValid = typeof sessionStorage !== "undefined" && sessionStorage.getItem("azota_session_active_3d") === "true";
+                if (!isSessionValid) {
+                    acc = null;
+                }
+            }
+            return acc || list.find(a => a.id === "acc_minhtri") || list.find(a => !a.isAdmin) || {
+                id: "acc_minhtri",
+                name: "Minh Trí",
+                nickname: "MinhTri",
+                grade: "Lớp 11",
+                role: "🎓 Học Sinh",
+                avatar: "👦",
+                isAdmin: false
+            };
         },
 
         switchAccount: function(accountId) {
             if (!SecurityGuard.checkRateLimit("chuyển tài khoản")) return;
             const list = this.getAllAccounts();
-            const target = list.find(a => a.id === accountId);
+            let target = list.find(a => a.id === accountId);
+            if (!target && accountId === "acc_guest") {
+                target = {
+                    id: "acc_guest",
+                    name: "Khách Trải Nghiệm",
+                    nickname: "guest",
+                    grade: "Lớp 11",
+                    role: "🌟 Khách Tự Do",
+                    pin: "0000",
+                    avatar: "🦊",
+                    isAdmin: false
+                };
+            }
             if (!target) return;
+
+            // Security gate: Switching to Admin REQUIRES PIN verification
+            if (target.isAdmin === true || target.id === "acc_vanthua") {
+                const isSessionValid = typeof sessionStorage !== "undefined" && sessionStorage.getItem("azota_session_active_3d") === "true";
+                if (!isCurrentUserAdmin() && !isSessionValid) {
+                    const enteredPin = prompt("Vui lòng nhập Mã PIN Quản Trị Viên (Admin) để xác thực chuyển tài khoản:");
+                    if (!enteredPin || enteredPin.trim() !== (target.pin || "712010")) {
+                        SecurityGuard.showSecurityToast("❌ Mã PIN Admin không đúng! Quyền truy cập bị từ chối.");
+                        if (window.AudioHelper) window.AudioHelper.playIncorrect();
+                        return;
+                    }
+                    if (typeof sessionStorage !== "undefined") {
+                        sessionStorage.setItem("azota_session_active_3d", "true");
+                    }
+                }
+            }
 
             localStorage.setItem(this.CURRENT_KEY, target.id);
             // Sync with UserProfile
@@ -689,7 +740,18 @@ window.AzotaApp = (function() {
             try {
                 const ls = this.getStorage(false);
                 const ss = this.getStorage(true);
-                loggedIn = (ls && ls.getItem(this.SESSION_KEY)) || (ss && ss.getItem(this.SESSION_KEY));
+                const currAccId = ls ? ls.getItem("azota_current_account_id") : null;
+                // Extra shield: Admin cannot rely on localStorage alone
+                if (currAccId === "acc_vanthua" || currAccId === "acc_admin") {
+                    loggedIn = ss ? ss.getItem(this.SESSION_KEY) : null;
+                    if (loggedIn !== "true" && ls) {
+                        ls.removeItem(this.SESSION_KEY);
+                        ls.removeItem("azota_auth_logged_in");
+                        ls.setItem("azota_current_account_id", "acc_minhtri");
+                    }
+                } else {
+                    loggedIn = (ls && ls.getItem(this.SESSION_KEY)) || (ss && ss.getItem(this.SESSION_KEY));
+                }
             } catch (e) {}
             return loggedIn === "true";
         },
@@ -895,12 +957,24 @@ window.AzotaApp = (function() {
                     ls.removeItem(this.LOCKOUT_UNTIL_KEY);
                 }
 
-                if (remember) {
-                    if (ls) ls.setItem(this.SESSION_KEY, "true");
-                    if (ss) ss.removeItem(this.SESSION_KEY);
-                } else {
+                const isAccAdmin = (account.isAdmin === true || account.id === "acc_vanthua" || (account.nickname && account.nickname.toLowerCase() === "vanthua"));
+
+                if (isAccAdmin) {
+                    // CRITICAL SECURITY: Admin session is ONLY permitted in sessionStorage (current browser tab).
+                    // NEVER persist Admin session across browser restarts or shared link opens via localStorage!
                     if (ss) ss.setItem(this.SESSION_KEY, "true");
-                    if (ls) ls.removeItem(this.SESSION_KEY);
+                    if (ls) {
+                        ls.removeItem(this.SESSION_KEY);
+                        ls.removeItem("azota_auth_logged_in");
+                    }
+                } else {
+                    if (remember) {
+                        if (ls) ls.setItem(this.SESSION_KEY, "true");
+                        if (ss) ss.removeItem(this.SESSION_KEY);
+                    } else {
+                        if (ss) ss.setItem(this.SESSION_KEY, "true");
+                        if (ls) ls.removeItem(this.SESSION_KEY);
+                    }
                 }
             } catch (e) {}
 
@@ -940,8 +1014,18 @@ window.AzotaApp = (function() {
         },
 
         loginAsGuest: function() {
-            const accounts = AccountManager.getAllAccounts();
-            const guestAcc = accounts.find(a => a.id === "acc_guest" || a.nickname === "guest") || accounts[0];
+            // Strictly isolated Guest Account (Zero admin access guaranteed, never fallback to accounts[0])
+            const guestAcc = {
+                id: "acc_guest",
+                name: "Khách Trải Nghiệm",
+                nickname: "guest",
+                grade: "Lớp 11",
+                role: "🎓 Khách Trải Nghiệm",
+                pin: "",
+                avatar: "🦊",
+                isAdmin: false,
+                isDefault: false
+            };
             this.loginSuccess(guestAcc, false);
         },
 
@@ -994,7 +1078,8 @@ window.AzotaApp = (function() {
         renderQuickAccounts: function() {
             const container = document.getElementById("loginQuickAccountsList");
             if (!container) return;
-            const accounts = AccountManager.getAllAccounts();
+            // CRITICAL: NEVER display or suggest Admin account in quick fill list
+            const accounts = AccountManager.getAllAccounts().filter(a => !a.isAdmin && a.nickname.toLowerCase() !== "vanthua");
 
             container.innerHTML = accounts.map(a => `
                 <button type="button" 
@@ -1053,8 +1138,10 @@ window.AzotaApp = (function() {
 
         showPinHelp: function() {
             const accounts = AccountManager.getAllAccounts();
-            const info = accounts.map(a => `@${a.nickname} (PIN: ${a.pin || '1234'}) - ${a.role || 'Học Sinh'}`).join('\n• ');
-            AzotaModal.alert(`Danh sách tài khoản & mã PIN trên hệ thống:\n• ${info}\n\nNhập Tên đăng nhập và Mã PIN ở trên để đăng nhập!`, "Tài Khoản & Mã PIN", "🔑");
+            // CRITICAL SECURITY: Never leak Admin account (@VanThua) or Admin PIN in help modal!
+            const safeAccounts = accounts.filter(a => !a.isAdmin && a.nickname.toLowerCase() !== "vanthua");
+            const info = safeAccounts.map(a => `@${a.nickname} (PIN: ${a.pin || '123'}) - ${a.role || 'Học Sinh'}`).join('\n• ');
+            AzotaModal.alert(`Danh sách tài khoản học sinh trải nghiệm:\n• ${info}\n\nNhập Tên đăng nhập và Mã PIN ở trên để đăng nhập!`, "Tài Khoản Học Sinh", "🔑");
         }
     };
 
@@ -1062,9 +1149,17 @@ window.AzotaApp = (function() {
     window.AuthGate = AuthGate;
     window.AccountManager = AccountManager;
 
-    // HELPER: KIỂM TRA QUYỀN ADMIN (QUẢN TRỊ VIÊN)
+    // HELPER: KIỂM TRA QUYỀN ADMIN (QUẢN TRỊ VIÊN) - BẢO MẬT TUYỆT ĐỐI
     function isCurrentUserAdmin() {
         try {
+            // Must be authenticated in AuthGate
+            if (typeof AuthGate !== "undefined" && typeof AuthGate.isAuthenticated === "function") {
+                if (!AuthGate.isAuthenticated()) return false;
+            }
+            // Admin session MUST be active in sessionStorage (current browser tab/session)
+            const isSessionActive = typeof sessionStorage !== "undefined" && sessionStorage.getItem("azota_session_active_3d") === "true";
+            if (!isSessionActive) return false;
+
             const acc = AccountManager.getCurrentAccount();
             if (acc) {
                 // Strict Admin: Only genuine VanThua Admin Account with isAdmin: true
@@ -1076,6 +1171,8 @@ window.AzotaApp = (function() {
         } catch(e) {}
         return false;
     }
+    window.isCurrentUserAdmin = isCurrentUserAdmin;
+    window.AuthGate.isCurrentUserAdmin = isCurrentUserAdmin;
 
     // USER PROFILE CONTROLLER
     const UserProfile = {

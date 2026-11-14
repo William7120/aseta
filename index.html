@@ -4,16 +4,39 @@
     <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Immediate Mobile In-App / Safari URL sanitizer: strip heavy fbclid tracking parameter -->
+    <!-- Immediate Mobile In-App / Safari URL sanitizer & Admin Auto-Login Shield -->
     <script>
         (function() {
             try {
+                // 1. Strip external tracking params (fbclid, etc.)
                 if (window.location && window.location.search && window.location.search.indexOf('fbclid=') !== -1) {
                     var cleanSearch = window.location.search
                         .replace(/[?&]fbclid=[^&#]+/g, '')
                         .replace(/^&/, '?');
                     var newUrl = window.location.pathname + (cleanSearch === '?' ? '' : cleanSearch) + window.location.hash;
                     window.history.replaceState(null, '', newUrl);
+                }
+
+                // 2. CRITICAL SECURITY: Never allow opening a link to land inside Admin account
+                // Admin sessions are strictly bound to sessionStorage of an active logged-in tab.
+                // In a fresh tab, link click from Messenger, or external browser, sessionStorage is empty.
+                var storedAccId = localStorage.getItem("azota_current_account_id");
+                var ssActive = sessionStorage.getItem("azota_session_active_3d");
+                if (storedAccId === "acc_vanthua" || storedAccId === "acc_admin") {
+                    if (ssActive !== "true") {
+                        localStorage.removeItem("azota_session_active_3d");
+                        localStorage.removeItem("azota_auth_logged_in");
+                        localStorage.setItem("azota_current_account_id", "acc_minhtri");
+                        try {
+                            var profStr = localStorage.getItem("azota_user_profile");
+                            if (profStr) {
+                                var prof = JSON.parse(profStr);
+                                if (prof && (prof.isAdmin || (prof.nickname && prof.nickname.toLowerCase() === "vanthua"))) {
+                                    localStorage.removeItem("azota_user_profile");
+                                }
+                            }
+                        } catch(e) {}
+                    }
                 }
             } catch(e) {}
         })();
@@ -1979,8 +2002,20 @@
             // Synchronize visibility of the 3D Auth Gate
             function syncAuthVisibility() {
                 try {
+                    var storedAccId = typeof localStorage !== "undefined" ? localStorage.getItem("azota_current_account_id") : null;
                     var ls = typeof localStorage !== "undefined" ? localStorage.getItem("azota_session_active_3d") : null;
                     var ss = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("azota_session_active_3d") : null;
+
+                    // Extra shield: Admin cannot rely on localStorage alone
+                    if (storedAccId === "acc_vanthua" || storedAccId === "acc_admin") {
+                        if (ss !== "true") {
+                            localStorage.removeItem("azota_session_active_3d");
+                            localStorage.removeItem("azota_auth_logged_in");
+                            localStorage.setItem("azota_current_account_id", "acc_minhtri");
+                            ls = null;
+                        }
+                    }
+
                     var isAuth = (ls === "true") || (ss === "true");
                     var gate = document.getElementById("authGateView");
                     if (!isAuth && gate) {
