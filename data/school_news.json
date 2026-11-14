@@ -1,0 +1,564 @@
+{
+  "source": "https://thpttranvangiau.hcm.edu.vn",
+  "schoolName": "Trường THPT Trần Văn Giàu",
+  "lastUpdated": "2026-11-14T06:38:04.905Z",
+  "lastUpdatedText": "lúc 13:38:04 Thứ Bảy, 14 tháng 11, 2026",
+  "scheduleWeeks": [
+    {
+      "weekNum": 10,
+      "title": "Lịch công tác tuần 10 từ ngày 09/11/2026 đến ngày 15/11/2026.",
+      "link": "https://thpttranvangiau.hcm.edu.vn/lich-cong-tac-tuan/lich-cong-tac-tuan-10-tu-ngay-09112026-den-ngay-15112026/ct/42158/583256",
+      "isLatest": true,
+      "tableRows": [
+        {
+          "day": "Thứ Hai 09/11/2026",
+          "content": "- 07g00 : Bắt đầu áp dụng thời khóa biểu mới.",
+          "assignee": "Toàn trường",
+          "location": "",
+          "onDuty": "Cô Hồng, Thầy Đức Thịnh"
+        },
+        {
+          "day": "Thứ Hai 09/11/2026",
+          "content": "- 11g00: Nộp hồ sơ Hội nghị CB-CC-VC-NLĐ cấp tổ về Thầy Nghĩa",
+          "assignee": "Tổ trưởng chuyên môn",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Hai 09/11/2026",
+          "content": "- 17g00 : Hạn cuối tổ Ngữ Văn trang trí bảng tin học tập tại sảnh A.",
+          "assignee": "Tổ Ngữ Văn",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Hai 09/11/2026",
+          "content": "- Báo cáo Sở giáo dục công tác tổ chức thực hiện phòng chống rác thải nhựa.",
+          "assignee": "Thầy Thuận",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Hai 09/11/2026",
+          "content": "- Báo cáo năm về văn phòng Đảng ủy phường - Báo cáo số liệu thống kê theo mẫu về Ban dân vận",
+          "assignee": "Cô Hiền (thư viện)",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Ba 10/11/2026",
+          "content": "",
+          "assignee": "",
+          "location": "",
+          "onDuty": "Ban Lãnh Đạo"
+        },
+        {
+          "day": "Thứ Tư 11/11/2026",
+          "content": "- 10g45: Họp liên tịch (dự kiến)",
+          "assignee": "BLĐ, Tổ trưởng, Đại diện các đoàn thể",
+          "location": "Phòng họp",
+          "onDuty": "Cô Hồng"
+        },
+        {
+          "day": "Thứ Năm 12/11/2026",
+          "content": "- 09g00: Hạn cuối GVBM Văn khối 12 nộp phiếu điểm tại phòng học vụ (Thầy Ngọc, Cô Phương)",
+          "assignee": "GVBM Ngữ Văn 12 và nhân viên học vụ",
+          "location": "",
+          "onDuty": "Cô Hồng"
+        },
+        {
+          "day": "Thứ Năm 12/11/2026",
+          "content": "- Kiểm tra hồ sơ công tác BHYT năm 2026.",
+          "assignee": "Thầy Thịnh, Cô Giang",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Năm 12/11/2026",
+          "content": "- Báo cáo công tác năm, bảng điểm tự chấm công tác dân vận và thang điểm về học theo Bác về Đảng ủy phường",
+          "assignee": "Cô Hồng",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Năm 12/11/2026",
+          "content": "- Báo cáo công tác dân chủ về Sở",
+          "assignee": "Cô Hồng",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Sáu 13/11/2026",
+          "content": "- 17g00: Hạn cuối học vụ nhập xong điểm kiểm tra giữa kỳ đối với các môn Toán, Văn của khối 12.",
+          "assignee": "Thầy Goky",
+          "location": "",
+          "onDuty": "Thầy Đạt"
+        },
+        {
+          "day": "Thứ Bảy 14/11/2026",
+          "content": "- Tổ chức cho học sinh tham gia tiết học ngoài nhà trường (Đi xem kịch)",
+          "assignee": "Tổ Ngữ Văn",
+          "location": "",
+          "onDuty": "Ban Lãnh Đạo"
+        },
+        {
+          "day": "Thứ Bảy 14/11/2026",
+          "content": "- Phát động “Chiến dịch đào tạo kỹ năng lái xe mô tô, xe gắn máy an toàn” trên địa bàn phường Bình Lợi Trung",
+          "assignee": "Đoàn thanh niên",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Bảy 14/11/2026",
+          "content": "- 08g30: Tham dự lễ kỷ niệm tại trường THPT Hoàng Hoa Thám",
+          "assignee": "Cô Hồng",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Bảy 14/11/2026",
+          "content": "- 11g00: Hạn cuối các Tổ trưởng chuyên môn nộp nội dung ôn tập thi cuối kỳ 1 qua Zalo thầy Đạt",
+          "assignee": "Tổ trưởng chuyên môn, GVBM",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Bảy 14/11/2026",
+          "content": "- 13g30: Tổ chức Hội nghị viên chức, người lao động theo quy định của Luật Thực hiện dân chủ cơ sở năm học 2026-2027.",
+          "assignee": "Toàn thể CB-GV-NV",
+          "location": "Hội trường",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Bảy 14/11/2026",
+          "content": "- 17g00: Hạn cuối GVBM nhập điểm kiểm tra giữa kỳ 1 tại lớp lên hệ thống Vietschool.",
+          "assignee": "GVBM và thầy Goky",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Chủ Nhật 15/11/2026",
+          "content": "- 07g00: Tham dự lễ kỷ niệm tại trường THPT Nguyễn Công Trứ",
+          "assignee": "Cô Hồng",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Trong tuần",
+          "content": "- Họp tổ chuyên môn lần 1, lồng ghép trả lời các ý kiến của Hội nghị viên chức, người lao động cấp Tổ.",
+          "assignee": "Tổ chuyên môn",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Trong tuần",
+          "content": "- Rà soát học sinh nợ học phí tháng 9+10 và thu nợ.",
+          "assignee": "Tổ Văn Phòng",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Trong tuần",
+          "content": "- Kiểm tra công tác an toàn trong nhà trường",
+          "assignee": "Thầy Thịnh Thầy Goky, Cô Giang",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Trong tuần",
+          "content": "- Hỗ trợ tổ chức Lễ khai mạc giải thể thao học sinh năm học 2026 - 2027 - Triển khai kế hoạch và bảng phân công hỗ trợ Lễ kỷ niệm 44 năm Ngày nhà giáo Việt Nam (20/11/1982 – 20/11/2026). - Tổ chức các Cuộc thi chào mừng 44 năm Ngày nhà giáo Việt Nam (20/11/1982 – 20/11/2026).",
+          "assignee": "Đoàn TN + Chi đoàn GV",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Trong tuần",
+          "content": "- Tiếp tục bồi dưỡng học sinh Giỏi lớp 11, 12.",
+          "assignee": "GV được phân công",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "DỰ KIẾN LỊCH CÔNG TÁC TUẦN 11",
+          "content": "",
+          "assignee": "",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Hai 16/11/2026",
+          "content": "- 17g00: Hạn cuối trả bài kiểm tra giữa kỳ 1 cho học sinh - Triển khai kế hoạch và lịch kiểm tra học kỳ I - Thông báo danh sách khen thưởng HS khối 12 năm học 2025-2026 đạt kết quả kỳ thi TN THPT năm 2026.",
+          "assignee": "",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Tư 18/11/2026",
+          "content": "- 11g00: Hạn cuối điều chỉnh sai sót điểm số cho học sinh trên hệ thống nếu có cộng sai, sót điểm học sinh. Sau đó hệ thống sẽ khóa điểm. -16g30: Hoàn tất công tác chuẩn bị cho Lễ Nhà giáo Việt Nam 20/11",
+          "assignee": "",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Năm 19/11/2026",
+          "content": "- 7g00: Tổ chức lễ kỷ niệm ngày Nhà giáo Việt Nam 20/11; - 09g00-17g05: HS ba Khối vẫn học bình thường theo quy định",
+          "assignee": "",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Sáu 20/11/2026",
+          "content": "- Toàn trường được nghỉ lễ",
+          "assignee": "",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Bảy 21/11/2026",
+          "content": "- 07g00: Tham dự lễ kỷ niệm tại trường THPT Phú Nhuận (Cô Hồng) - 17g00: Hạn cuối thông báo điểm số điện tử về cha mẹ học sinh",
+          "assignee": "",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Trong tuần",
+          "content": "- Tiếp tục bồi dưỡng học sinh Giỏi lớp 11, 12. - Tổ chức Lễ Kỷ niệm 44 năm Ngày nhà giáo Việt Nam 20/11.",
+          "assignee": "",
+          "location": "",
+          "onDuty": ""
+        }
+      ]
+    },
+    {
+      "weekNum": 9,
+      "title": "Lịch công tác tuần 09 từ ngày 02/11/2026 đến ngày 08/11/2026.",
+      "link": "https://thpttranvangiau.hcm.edu.vn/lich-cong-tac-tuan/lich-cong-tac-tuan-09-tu-ngay-02112026-den-ngay-08112026/ct/42158/582320",
+      "isLatest": false,
+      "tableRows": [
+        {
+          "day": "Thứ Hai 02/11/2026",
+          "content": "- 07g00-08g30 : Học sinh K12 kiểm tra ĐGGKI môn Văn",
+          "assignee": "GV được phân công (có mặt trước giờ kiểm tra 20 phút)",
+          "location": "",
+          "onDuty": "Cô Hồng, Thầy Đức Thịnh"
+        },
+        {
+          "day": "Thứ Hai 02/11/2026",
+          "content": "- 07g00-08g35 : Học sinh K10, K11 nghỉ ở nhà ôn bài và các em tới trường để bắt đầu học từ tiết 3.",
+          "assignee": "HS Khối 10, 11",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "- 09g00: HS ba khối thực hiện tiết học thứ 3",
+          "content": "HS ba khối",
+          "assignee": "",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Ba 03/11/2026",
+          "content": "- 13g00: Tham gia lớp tập huấn, bồi dưỡng nâng cao năng lực về bảo vệ môi trường, giáo dục và truyền thông về bảo vệ môi trường cho đội ngũ cán bộ, công chức, viên chức, giáo viên, nhân viên ngành giáo dục và đào tạo trên địa bàn Thành phố năm 2026",
+          "assignee": "Thầy Đức Thịnh",
+          "location": "Trường THCS-THPT Trần Đại Nghĩa",
+          "onDuty": "Ban Lãnh Đạo"
+        },
+        {
+          "day": "Thứ Tư 04/11/2026",
+          "content": "- 10g45: Họp Chi bộ",
+          "assignee": "Toàn bộ Đảng viên",
+          "location": "Phòng họp",
+          "onDuty": "Cô Hồng"
+        },
+        {
+          "day": "Thứ Năm 05/11/2026",
+          "content": "",
+          "assignee": "",
+          "location": "",
+          "onDuty": "Cô Hồng"
+        },
+        {
+          "day": "Thứ Sáu 06/11/2026",
+          "content": "- 10g45: Họp liên tịch",
+          "assignee": "BLĐ, Tổ trưởng, Đại diện các đoàn thể",
+          "location": "Phòng họp",
+          "onDuty": "Thầy Đạt"
+        },
+        {
+          "day": "Thứ Bảy 07/11/2026",
+          "content": "- 07g00-08g30 : Học sinh K12 kiểm tra ĐGGKI môn Toán",
+          "assignee": "GV được phân công (có mặt trước giờ kiểm tra 20 phút)",
+          "location": "",
+          "onDuty": "Ban Lãnh Đạo"
+        },
+        {
+          "day": "Chủ Nhật 08/11/2026",
+          "content": "",
+          "assignee": "",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Trong tuần",
+          "content": "- Tổ chức kiểm tra giữa kỳ theo kế hoạch ( 02/11-06/11)",
+          "assignee": "Toàn trường",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Trong tuần",
+          "content": "- Tiếp tục bồi dưỡng học sinh Giỏi lớp 11, 12.",
+          "assignee": "GV được phân công",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "DỰ KIẾN LỊCH CÔNG TÁC TUẦN 10",
+          "content": "",
+          "assignee": "",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Bảy 14/11/2026",
+          "content": "- Phát động “Chiến dịch đào tạo kỹ năng lái xe mô tô, xe gắn máy an toàn” trên địa bàn phường Bình Lợi Trung - 14g00: Hội nghị cán bộ, viên chức cấp trường năm học 2026-2027.",
+          "assignee": "",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Trong tuần",
+          "content": "- Tiếp tục bồi dưỡng học sinh Giỏi lớp 11, 12.",
+          "assignee": "",
+          "location": "",
+          "onDuty": ""
+        }
+      ]
+    },
+    {
+      "weekNum": 8,
+      "title": "Lịch công tác tuần 08 từ ngày 26/10/2026 đến ngày 01/11/2026.",
+      "link": "https://thpttranvangiau.hcm.edu.vn/lich-cong-tac-tuan/lich-cong-tac-tuan-08-tu-ngay-26102026-den-ngay-01112026/ct/42158/581463",
+      "isLatest": false,
+      "tableRows": [
+        {
+          "day": "Thứ Hai 26/10/2026",
+          "content": "- 07g00-07g45 : Tổ chức đối thoại giữa Ban lãnh đạo nhà trường và học sinh",
+          "assignee": "Đoàn thanh niên",
+          "location": "",
+          "onDuty": "Cô Hồng, Thầy Đức Thịnh"
+        },
+        {
+          "day": "Thứ Hai 26/10/2026",
+          "content": "- 08g35 : Họp HĐSP với Ban lãnh đạo để triển khai một số công tác đầu năm",
+          "assignee": "Toàn bộ GV-NV",
+          "location": "Hội trường",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Hai 26/10/2026",
+          "content": "- Hạn cuối nhập điểm tháng 9/2026, 10/2026 trên hệ thống theo kế hoạch.",
+          "assignee": "GVBM",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Ba 27/10/2026",
+          "content": "",
+          "assignee": "",
+          "location": "",
+          "onDuty": "Ban Lãnh Đạo"
+        },
+        {
+          "day": "Thứ Tư 28/10/2026",
+          "content": "- 08g00-16g00: Tham gia Lớp Bồi dưỡng kỹ năng phòng ngừa vi phạm trong lĩnh vực tài chính, đầu tư và một số lĩnh vực khác",
+          "assignee": "Cô Hồng",
+          "location": "Trường Chính sách Công và Phát triển Nông thôn (hội trường A)",
+          "onDuty": "Cô Hồng"
+        },
+        {
+          "day": "Thứ Năm 29/10/2026",
+          "content": "- 08g00-16g00: Tham gia Lớp Bồi dưỡng kỹ năng phòng ngừa vi phạm trong lĩnh vực tài chính, đầu tư và một số lĩnh vực khác",
+          "assignee": "Cô Hồng",
+          "location": "Trường Chính sách Công và Phát triển Nông thôn (hội trường A)",
+          "onDuty": "Cô Hồng"
+        },
+        {
+          "day": "Thứ Năm 29/10/2026",
+          "content": "- Trước 15g00: báo cáo kết quả, cập nhật danh sách cơ sở giáo dục cho Uỷ ban nhân dân Thành phố.",
+          "assignee": "Cô Giang",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Sáu 30/10/2026",
+          "content": "- 08g00-16g00: Tham gia Lớp Bồi dưỡng kỹ năng phòng ngừa vi phạm trong lĩnh vực tài chính, đầu tư và một số lĩnh vực khác",
+          "assignee": "Cô Hồng",
+          "location": "Trường Chính sách Công và Phát triển Nông thôn (hội trường A)",
+          "onDuty": "Thầy Đạt"
+        },
+        {
+          "day": "Thứ Sáu 30/10/2026",
+          "content": "- 17g00: Hạn cuối GVBM nộp đề gốc kiểm tra giữa kỳ đúng quy định về thầy Đạt. (link nộp như đã thông báo)",
+          "assignee": "GVBM",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Bảy 31/10/2026",
+          "content": "- Hạn cuối các đội tuyển tổ chức kiểm tra, sàng lọc đội tuyển HSG và báo danh sách về Zalo thầy Đạt để tiếp tục giảng dạy trong giai đoạn tiếp theo.",
+          "assignee": "GV dạy đội tuyển HSG khối 11, 12.",
+          "location": "",
+          "onDuty": "Ban Lãnh Đạo"
+        },
+        {
+          "day": "Chủ Nhật 01/11/2026",
+          "content": "",
+          "assignee": "",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Trong tuần",
+          "content": "- Sinh hoạt chủ điểm tháng 10 - Triển khai quy chế xét danh hiệu “Học sinh 3 tốt” các cấp",
+          "assignee": "Đoàn thanh niên",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Trong tuần",
+          "content": "- Tiếp tục bồi dưỡng học sinh Giỏi lớp 11, 12.",
+          "assignee": "GV được phân công",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Trong tuần",
+          "content": "- Tổ chức đối thoại giữa Ban lãnh đạo nhà trường và học sinh",
+          "assignee": "Đoàn thanh niên",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "DỰ KIẾN LỊCH CÔNG TÁC TUẦN 09",
+          "content": "",
+          "assignee": "",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Tư 04/11/2026",
+          "content": "- 13g30: Họp Chi bộ - 15g30: BLĐ họp Tổ trưởng, Đại diện các đoàn thể tại Phòng họp.",
+          "assignee": "",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Bảy 07/11/2026",
+          "content": "- 07g30: Họp tổ chuyên môn để tổ chức Hội nghị cán bộ, viên chức cấp tổ năm học 2026-2027.",
+          "assignee": "",
+          "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Trong tuần",
+          "content": "- Tổ chức kiểm tra giữa kỳ theo kế hoạch ( 02/11-06/11)",
+          "assignee": "",
+          "location": "",
+          "onDuty": ""
+        }
+      ]
+    }
+  ],
+  "mealsWeeks": [
+    {
+      "weekNum": 10,
+      "title": "Thực đơn bán trú tuần 10 (từ ngày 09/11/2026 đến ngày 13/11/2026)",
+      "link": "https://thpttranvangiau.hcm.edu.vn/ban-tru/thuc-don-ban-tru-tuan-10-tu-ngay-09112026-den-ngay-13112026/ct/84621/583313",
+      "isLatest": true,
+      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/k3K5G3VKgaEVRYRZj_dViU6h0-GalODZne6DwFNm1xjrc4noRB5IrpOrK1-wQ6bMvDDd_58sGn59z5hgHbiQS9jtnzVImxUB89Oq5l_kokN_onW1GpgzqQDLfBTRiDu-V-uVKSqDYwNkPjSBjWOAxl5_6Fdw1TwfTs5pozgdNxfyqXVk7JU8FKdjfe6hF-Xl2lY4VBH9/lA3lXOVsbGXNK2usRnUvxB7_8e432OPWKswHNTofOMnNTmMEWuNZ6x435zztu-ja6gS8/thuc-don-ban-tru-09-13-11-2026.pdf",
+      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/9b545d9d3ca6b185fa1a1f7576cf4f5e.pdf/thuc-don-ban-tru-09-13-11-2026-811202617.pdf&urlgoc=%2Ftai%2FP79f4_Q7d7QnCpky3eAkSowOZlWUM9NfVFnYdBCJ27W9ygC2a1AtfQeJ4EioeUnz4lanPVNg1p5VVDbo05ZvHP0QR3mkWvoopknhOgCfI9-rbsQK8RkYEy_Fg9QSi4OadNtgwXUki4PucPKf8WcHxsFnBNv9tS0HzpAK7sn5pa6qUDSFO6cZ4VDCoIgVRQGbzlNw5JpH%2Fq828OwcZbNRxrG57VWmw4r2DZodtoxg0d9QcYoC3HyHu9y7W02uHDq6-bXlMqjTM0_-5fZZd9Mi6OHxssQ%2Fthuc-don-ban-tru-09-13-11-2026-811202617.pdf",
+      "summary": "Thực đơn bán trú tuần 10 (từ ngày 09/11/2026 đến ngày 13/11/2026)"
+    },
+    {
+      "weekNum": 9,
+      "title": "Thực đơn bán trú tuần 9 (từ ngày 02/11/2026 đến ngày 06/11/2026)",
+      "link": "https://thpttranvangiau.hcm.edu.vn/ban-tru/thuc-don-ban-tru-tuan-9-tu-ngay-02112026-den-ngay-06112026/ct/84621/582460",
+      "isLatest": false,
+      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/PcLrDXprPz6sios2MQzOomIGFOARoH8mCWYaupff6nH_n-IpIL3KQVGgJiz2fjt0RTMaDwjh-CwBAHm5JQo-n81HCs4AXjjKdvclt6dNQ4pNRBQxEJxX8V_AcefUD1OBIcs_JFSE4K-DrkOGSQ2sCZzUw2IcXP4BfCBbH6O5ktnow5Va70H2oVuFywnWdiwfKURlui0T/eqCbDtInd5mhV5d65koRnwkjXVuj_VqAdKxmTHJ3doO1SRzF8Nhq/thuc-don-ban-tru-02-06-11-2026.pdf",
+      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/5958ae7de2c21e2201974249b44f7322.pdf/thuc-don-ban-tru-02-06-11-2026-21120269.pdf&urlgoc=%2Ftai%2FpiHyCuPVbBHrYQoaRv_bZlT462P-Vf0tG8Sl-spW9CRmuBw54FGVa2q1lzh8M3eISKGGAWf6Y716eyxnuLg2s-xMswiU-Z84oUlnL7JWGJJve88LlErprlttv_UGmuZc6V6JH0NjKTalzhuFVVldf7w2ctIBbnf6weWCKFM7o5L8Q2InMl4VFH15buIt9H99X8J65-8c%2FONsyvDpKDE67Fj_cHBPGue_0K161S6B2K3fZeVRimNowvP4FASOSURLHDE8j-aYi%2Fthuc-don-ban-tru-02-06-11-2026-21120269.pdf",
+      "summary": "Thực đơn bán trú tuần 9 (từ ngày 02/11/2026 đến ngày 06/11/2026)"
+    },
+    {
+      "weekNum": 8,
+      "title": "Thực đơn bán trú tuần 8 (từ ngày 26/10/2026 đến ngày 30/10/2026)",
+      "link": "https://thpttranvangiau.hcm.edu.vn/ban-tru/thuc-don-ban-tru-tuan-8-tu-ngay-26102026-den-ngay-30102026/ct/84621/581620",
+      "isLatest": false,
+      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/eNRJ2vpt-BKlWX7cpYA5wxcO3_cNMnmUdPM9qMHEZd4K8TL-gUu5vI9bLsKlbXCKC3Xw9elTMbha3I5F2TEl061KmAeFdcjbt-CmwBCdrC7sj7RgSyYs1ztQXwBW-5RvjCpmVg19QxrUOOHIzQj7IUVAMC08t-NgkMFBRnwRBU3C9rSWf6xu2lArjx6nFM-u_Eg1Nrjg/zsWNVjCC51zeI7MEieK0xVGOAJVO0I8npWBP6HK9ZMuxCbIkp6C8RGd7/thuc-don-ban-tru-26-30-10-2026.pdf",
+      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/f452c85295a7cc2fec52c7de40d2ef9e.pdf/thuc-don-ban-tru-26-30-10-2026-2610202610.pdf&urlgoc=%2Ftai%2Fi5M_OODCWnvFIjVXyNyGDshi-MfHIAYTddECe-zKKcubofJDIzrIlelGRYnXwd7S4-RjRiJhcrQcCfhnnBiXL2FGVoSQc0Kjrl4SYmNAztyravEEesOAkq4-Qj4ALnm9vyh0VVVatAkAUvuefAD4rDPb2Oy0j9K1cTCBtXkcKICYAQMibi0YGnWpzgKHG87EofsnJt3Y%2F0lz6xWd-GcIEDon1lCoSrrKTGugU9sg2Gq8bRsA7KEdb8nJrvUf8plZbooA13oZ7qQJFsnU%2Fthuc-don-ban-tru-26-30-10-2026-2610202610.pdf",
+      "summary": "Thực đơn bán trú tuần 8 (từ ngày 26/10/2026 đến ngày 30/10/2026)"
+    }
+  ],
+  "generalNotices": [
+    {
+      "id": "notice_1",
+      "title": "Về công tác phối hợp giáo dục học sinh chưa thực hiện đúng quy định về giữ gìn an ninh trật tự nơi công cộng",
+      "link": "https://thpttranvangiau.hcm.edu.vn/thong-bao/ve-cong-tac-phoi-hop-giao-duc-hoc-sinh-chua-thuc-hien-dung-quy-dinh-ve-giu-gin/ct/42154/583448",
+      "isNew": true
+    },
+    {
+      "id": "notice_2",
+      "title": "Thực đơn bán trú tuần 10 (từ ngày 09/11/2026 đến ngày 13/11/2026)",
+      "link": "https://thpttranvangiau.hcm.edu.vn/ban-tru/thuc-don-ban-tru-tuan-10-tu-ngay-09112026-den-ngay-13112026/ct/84621/583313",
+      "isNew": true
+    },
+    {
+      "id": "notice_3",
+      "title": "Kế hoạch tổ chức Giải thể thao học sinh lần thứ 28 - Năm học 2026 - 2027",
+      "link": "https://thpttranvangiau.hcm.edu.vn/thong-bao/ke-hoach-to-chuc-giai-the-thao-hoc-sinh-lan-thu-28-nam-hoc-2026-2027/ct/42154/582747",
+      "isNew": true
+    },
+    {
+      "id": "notice_4",
+      "title": "Thực đơn bán trú tuần 9 (từ ngày 02/11/2026 đến ngày 06/11/2026)",
+      "link": "https://thpttranvangiau.hcm.edu.vn/ban-tru/thuc-don-ban-tru-tuan-9-tu-ngay-02112026-den-ngay-06112026/ct/84621/582460",
+      "isNew": false
+    },
+    {
+      "id": "notice_5",
+      "title": "Thực đơn bán trú tuần 8 (từ ngày 26/10/2026 đến ngày 30/10/2026)",
+      "link": "https://thpttranvangiau.hcm.edu.vn/ban-tru/thuc-don-ban-tru-tuan-8-tu-ngay-26102026-den-ngay-30102026/ct/84621/581620",
+      "isNew": false
+    },
+    {
+      "id": "notice_6",
+      "title": "Kế hoạch Xét tặng Giải thưởng Võ Trường Toản năm 2026.",
+      "link": "https://thpttranvangiau.hcm.edu.vn/thong-bao/ke-hoach-xet-tang-giai-thuong-vo-truong-toan-nam-2026/ct/42154/581267",
+      "isNew": false
+    },
+    {
+      "id": "notice_7",
+      "title": "Nội dung ôn tập kỳ Kiểm tra đánh giá Giữa HKI năm học 2026-2027.",
+      "link": "https://thpttranvangiau.hcm.edu.vn/thong-bao/noi-dung-on-tap-ky-kiem-tra-danh-gia-giua-hki-nam-hoc-2026-2027/ct/42154/580911",
+      "isNew": false
+    },
+    {
+      "id": "notice_8",
+      "title": "Kế hoạch Kiểm tra đánh giá giữa học kỳ I năm học 2026 – 2027.",
+      "link": "https://thpttranvangiau.hcm.edu.vn/thong-bao/ke-hoach-kiem-tra-danh-gia-giua-hoc-ky-i-nam-hoc-2026-2027/ct/42154/580854",
+      "isNew": false
+    },
+    {
+      "id": "notice_9",
+      "title": "Thực đơn bán trú tuần 7 (từ ngày 19/10/2026 đến ngày 23/10/2026)",
+      "link": "https://thpttranvangiau.hcm.edu.vn/ban-tru/thuc-don-ban-tru-tuan-7-tu-ngay-19102026-den-ngay-23102026/ct/84621/580595",
+      "isNew": false
+    },
+    {
+      "id": "notice_10",
+      "title": "Lịch tiếp công dân - Năm học 2026 - 2027.",
+      "link": "https://thpttranvangiau.hcm.edu.vn/thong-bao/lich-tiep-cong-dan-nam-hoc-2026-2027/ct/42154/580373",
+      "isNew": false
+    }
+  ]
+}
