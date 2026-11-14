@@ -10,7 +10,7 @@
 (function(window) {
     'use strict';
 
-    const CACHE_KEY = 'aseta_tvg_school_news_cache';
+    const CACHE_KEY = 'aseta_tvg_school_news_cache_v6';
     const CACHE_TTL_MS = 5 * 60 * 1000; // 5 phút
 
     const SchoolNewsEngine = {
@@ -24,18 +24,23 @@
         init: function() {
             this.loadCachedData();
             this.bindGlobalKeys();
-            // Pre-fetch in background if cache is stale
+            // Pre-fetch in background if cache is stale or missing imageUrl
             setTimeout(() => {
                 this.checkAndRefreshBackground();
-            }, 1000);
+            }, 500);
         },
 
         loadCachedData: function() {
             try {
+                // Clear any legacy caches to ensure clean image view
+                ['aseta_tvg_school_news_cache', 'aseta_tvg_school_news_cache_v3', 'aseta_tvg_school_news_cache_v4', 'aseta_tvg_school_news_cache_v5'].forEach(k => {
+                    localStorage.removeItem(k);
+                });
+
                 const raw = localStorage.getItem(CACHE_KEY);
                 if (raw) {
                     const parsed = JSON.parse(raw);
-                    if (parsed && parsed.data) {
+                    if (parsed && parsed.data && parsed.data.mealsWeeks && parsed.data.mealsWeeks[0] && parsed.data.mealsWeeks[0].imageUrl) {
                         this.data = parsed.data;
                         this.lastFetched = parsed.timestamp;
                     }
@@ -45,7 +50,8 @@
 
         checkAndRefreshBackground: async function() {
             const now = Date.now();
-            if (!this.data || !this.lastFetched || (now - this.lastFetched > CACHE_TTL_MS)) {
+            const hasImages = this.data && this.data.mealsWeeks && this.data.mealsWeeks[0] && this.data.mealsWeeks[0].imageUrl;
+            if (!this.data || !hasImages || !this.lastFetched || (now - this.lastFetched > CACHE_TTL_MS)) {
                 await this.fetchNews(false);
             }
         },
@@ -328,6 +334,7 @@
 
             const currentMeal = mealsWeeks[this.selectedWeekIdx] || mealsWeeks[0];
             const pdfFileUrl = currentMeal.localPdfUrl || 'data/pdf/thuc_don_latest.pdf';
+            const imgUrl = currentMeal.imageUrl || `data/pdf/thuc_don_tuan_${currentMeal.weekNum}.png` || 'data/pdf/thuc_don_latest.png';
 
             // Week Selector
             let weekSelectorHtml = '<div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">';
@@ -360,53 +367,48 @@
                     ${weekSelectorHtml}
 
                     <!-- Action Bar: View Fullscreen & Download Buttons -->
-                    <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-red-950/40 via-slate-900/80 to-amber-950/30 border border-red-500/20 flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div class="flex items-center gap-3.5">
-                            <div class="w-12 h-12 rounded-xl bg-red-500/15 text-red-400 border border-red-500/30 flex items-center justify-center text-2xl shrink-0">
+                    <div class="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br from-red-950/40 via-slate-900/80 to-amber-950/30 border border-red-500/20 flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-red-500/15 text-red-400 border border-red-500/30 flex items-center justify-center text-xl shrink-0">
                                 📄
                             </div>
-                            <div>
-                                <h4 class="text-sm sm:text-base font-bold text-white">${currentMeal.title}</h4>
-                                <p class="text-xs text-slate-400 mt-0.5">Tệp PDF gốc từ bộ phận quản lý bán trú THPT Trần Văn Giàu</p>
+                            <div class="min-w-0">
+                                <h4 class="text-xs sm:text-sm font-bold text-white truncate">${currentMeal.title}</h4>
+                                <p class="text-[11px] text-slate-400">Tệp gốc bộ phận bán trú THPT Trần Văn Giàu</p>
                             </div>
                         </div>
                         <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto shrink-0">
-                            <a href="${pdfFileUrl}" target="_blank" rel="noopener noreferrer"
-                               class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-bold text-xs shadow-md shadow-red-500/20 flex items-center justify-center gap-1.5 transition-all">
-                                <span>🚀 Mở Xem PDF Toàn Màn Hình</span>
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                            <a href="${imgUrl}" target="_blank" rel="noopener noreferrer"
+                               class="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-bold text-xs shadow-md shadow-red-500/20 flex items-center justify-center gap-1.5 transition-all">
+                                <span>🔍 Phóng To Ảnh ↗</span>
                             </a>
                             <a href="${pdfFileUrl}" download="Thuc_Don_Tuan_${currentMeal.weekNum}.pdf"
-                               class="flex-1 sm:flex-initial px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-500/20 flex items-center justify-center gap-1.5 transition-all">
+                               class="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-500/20 flex items-center justify-center gap-1.5 transition-all">
                                 <span>📥 Tải File PDF</span>
                             </a>
                         </div>
                     </div>
 
-                    <!-- PDF Viewer Box (Same-Origin & Native Fallback) -->
-                    <div class="rounded-2xl overflow-hidden border border-white/10 bg-slate-900 w-full flex flex-col shadow-xl">
-                        <div class="px-4 py-2.5 bg-slate-800/90 border-b border-white/5 flex items-center justify-between text-xs text-slate-300">
-                            <span class="flex items-center gap-1.5 font-bold text-amber-400">
-                                <span>📄</span> Bản Xem Trước PDF (Tuần ${currentMeal.weekNum})
+                    <!-- Menu Image Display (100% Reliable on Every Browser & Phone!) -->
+                    <div class="rounded-2xl overflow-hidden border border-white/10 bg-slate-900 w-full flex flex-col shadow-2xl">
+                        <div class="px-4 py-3 bg-gradient-to-r from-red-950/60 via-slate-900 to-amber-950/40 border-b border-white/10 flex items-center justify-between text-xs text-slate-300">
+                            <span class="flex items-center gap-2 font-bold text-amber-300 text-xs sm:text-sm">
+                                <span>🍱</span> Bảng Thực Đơn Tuần ${currentMeal.weekNum} (Chính Thức)
                             </span>
-                            <a href="${pdfFileUrl}" target="_blank" class="text-sky-400 hover:text-sky-300 transition-colors font-medium flex items-center gap-1">
-                                <span>Phóng to tab riêng</span>
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                            <a href="${imgUrl}" target="_blank" rel="noopener noreferrer" 
+                               class="px-2.5 py-1 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/30 font-semibold transition-all flex items-center gap-1 cursor-pointer text-xs">
+                                <span>Phóng to ảnh ↗</span>
                             </a>
                         </div>
-                        <div class="w-full aspect-[4/3] sm:aspect-[16/10] bg-black/90 relative">
-                            <object data="${pdfFileUrl}" type="application/pdf" class="w-full h-full border-0">
-                                <div class="h-full flex flex-col items-center justify-center p-6 text-center space-y-3">
-                                    <div class="text-4xl">📄</div>
-                                    <p class="text-sm font-semibold text-white">Tệp PDF Thực Đơn Bán Trú Đã Sẵn Sàng</p>
-                                    <p class="text-xs text-slate-400 max-w-sm">Trình duyệt trên điện thoại cần mở tab mới để phóng to đọc thực đơn rõ nét nhất.</p>
-                                    <a href="${pdfFileUrl}" target="_blank" rel="noopener noreferrer"
-                                       class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 text-white font-bold text-xs shadow-md shadow-red-500/25 flex items-center gap-1.5">
-                                        <span>🚀 Mở Xem PDF Toàn Màn Hình</span>
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                                    </a>
-                                </div>
-                            </object>
+                        <div class="w-full bg-slate-950/80 p-2 sm:p-4 flex flex-col items-center justify-center">
+                            <img src="${imgUrl}" 
+                                 alt="Thực đơn bán trú tuần ${currentMeal.weekNum}"
+                                 class="w-full h-auto max-h-[75vh] object-contain rounded-xl shadow-xl border border-white/10 cursor-pointer hover:brightness-105 transition-all"
+                                 onclick="window.open(this.src, '_blank')"
+                                 title="Bấm vào ảnh để mở xem phóng to toàn màn hình">
+                            <p class="text-[11px] text-slate-400 mt-2.5 flex items-center gap-1">
+                                <span>💡</span> <span>Chạm hoặc bấm vào ảnh để phóng to toàn màn hình rõ nét nhất</span>
+                            </p>
                         </div>
                     </div>
                 </div>`;

@@ -232,12 +232,14 @@ async function scrapeAll() {
         }
       }
 
+      const imgFilename = `thuc_don_tuan_${weekNum}.png`;
       result.mealsWeeks.push({
         weekNum,
         title: art.title,
         link: BASE_URL + art.link,
         isLatest: (i === 0),
         localPdfUrl: localPdfUrl,
+        imageUrl: `data/pdf/${imgFilename}`,
         downloadUrl: detail.downloadUrl,
         viewerUrl: detail.viewerUrl,
         summary: detail.audioText
