@@ -106,6 +106,25 @@ function parseScheduleTable(html) {
   return rows;
 }
 
+function downloadFile(url, dest) {
+  return new Promise((resolve) => {
+    https.get(url, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }, rejectUnauthorized: false }, res => {
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        return downloadFile(res.headers.location, dest).then(resolve);
+      }
+      if (res.statusCode !== 200) {
+        return resolve(false);
+      }
+      const file = fs.createWriteStream(dest);
+      res.pipe(file);
+      file.on('finish', () => {
+        file.close();
+        resolve(true);
+      });
+    }).on('error', () => resolve(false));
+  });
+}
+
 function parseBanTruDetail(html) {
   // Download link
   let downloadUrl = null;
@@ -193,11 +212,32 @@ async function scrapeAll() {
       const weekMatch = art.title.match(/tuần\s*(\d+)/i);
       const weekNum = weekMatch ? parseInt(weekMatch[1], 10) : i + 1;
 
+      let localPdfUrl = null;
+      if (detail.downloadUrl) {
+        try {
+          const pdfDir = path.join(__dirname, '..', 'data', 'pdf');
+          if (!fs.existsSync(pdfDir)) fs.mkdirSync(pdfDir, { recursive: true });
+          const filename = `thuc_don_tuan_${weekNum}.pdf`;
+          const dest = path.join(pdfDir, filename);
+          console.log(`   Đang tải tệp PDF thực đơn: ${filename}...`);
+          const ok = await downloadFile(detail.downloadUrl, dest);
+          if (ok) {
+            localPdfUrl = `data/pdf/${filename}`;
+            if (i === 0) {
+              fs.copyFileSync(dest, path.join(pdfDir, 'thuc_don_latest.pdf'));
+            }
+          }
+        } catch (err) {
+          console.warn('   Lỗi tải PDF:', err.message);
+        }
+      }
+
       result.mealsWeeks.push({
         weekNum,
         title: art.title,
         link: BASE_URL + art.link,
         isLatest: (i === 0),
+        localPdfUrl: localPdfUrl,
         downloadUrl: detail.downloadUrl,
         viewerUrl: detail.viewerUrl,
         summary: detail.audioText

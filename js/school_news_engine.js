@@ -327,6 +327,7 @@
             }
 
             const currentMeal = mealsWeeks[this.selectedWeekIdx] || mealsWeeks[0];
+            const pdfFileUrl = currentMeal.localPdfUrl || 'data/pdf/thuc_don_latest.pdf';
 
             // Week Selector
             let weekSelectorHtml = '<div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">';
@@ -358,7 +359,7 @@
 
                     ${weekSelectorHtml}
 
-                    <!-- Feature Card: Quick Actions -->
+                    <!-- Action Bar: View Fullscreen & Download Buttons -->
                     <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-red-950/40 via-slate-900/80 to-amber-950/30 border border-red-500/20 flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div class="flex items-center gap-3.5">
                             <div class="w-12 h-12 rounded-xl bg-red-500/15 text-red-400 border border-red-500/30 flex items-center justify-center text-2xl shrink-0">
@@ -369,28 +370,44 @@
                                 <p class="text-xs text-slate-400 mt-0.5">Tệp PDF gốc từ bộ phận quản lý bán trú THPT Trần Văn Giàu</p>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2 w-full sm:w-auto shrink-0">
-                            ${currentMeal.downloadUrl ? `
-                            <a href="${currentMeal.downloadUrl}" target="_blank" download
-                               class="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-500/20 flex items-center justify-center gap-1.5 transition-all">
+                        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto shrink-0">
+                            <a href="${pdfFileUrl}" target="_blank" rel="noopener noreferrer"
+                               class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-bold text-xs shadow-md shadow-red-500/20 flex items-center justify-center gap-1.5 transition-all">
+                                <span>🚀 Mở Xem PDF Toàn Màn Hình</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                            </a>
+                            <a href="${pdfFileUrl}" download="Thuc_Don_Tuan_${currentMeal.weekNum}.pdf"
+                               class="flex-1 sm:flex-initial px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-500/20 flex items-center justify-center gap-1.5 transition-all">
                                 <span>📥 Tải File PDF</span>
-                            </a>` : ''}
-                            ${currentMeal.viewerUrl ? `
-                            <button type="button" onclick="SchoolNewsEngine.togglePdfViewer('${currentMeal.viewerUrl}')"
-                                    class="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-bold text-xs shadow-md shadow-red-500/20 flex items-center justify-center gap-1.5 transition-all">
-                                <span>👁️ Xem Trực Tiếp</span>
-                            </button>` : ''}
+                            </a>
                         </div>
                     </div>
 
-                    <!-- PDF Viewer Container (Collapsible) -->
-                    <div id="schoolNewsPdfViewerBox" class="rounded-2xl overflow-hidden border border-white/10 bg-black/80 aspect-[4/3] sm:aspect-[16/10] w-full ${currentMeal.viewerUrl ? '' : 'hidden'}">
-                        ${currentMeal.viewerUrl ? `
-                        <iframe src="${currentMeal.viewerUrl}" class="w-full h-full border-0" title="Thực đơn bán trú" allowfullscreen></iframe>
-                        ` : `
-                        <div class="h-full flex items-center justify-center text-slate-400 text-sm">
-                            Vui lòng nhấn nút tải PDF hoặc mở bài viết gốc trên trang web của trường.
-                        </div>`}
+                    <!-- PDF Viewer Box (Same-Origin & Native Fallback) -->
+                    <div class="rounded-2xl overflow-hidden border border-white/10 bg-slate-900 w-full flex flex-col shadow-xl">
+                        <div class="px-4 py-2.5 bg-slate-800/90 border-b border-white/5 flex items-center justify-between text-xs text-slate-300">
+                            <span class="flex items-center gap-1.5 font-bold text-amber-400">
+                                <span>📄</span> Bản Xem Trước PDF (Tuần ${currentMeal.weekNum})
+                            </span>
+                            <a href="${pdfFileUrl}" target="_blank" class="text-sky-400 hover:text-sky-300 transition-colors font-medium flex items-center gap-1">
+                                <span>Phóng to tab riêng</span>
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                            </a>
+                        </div>
+                        <div class="w-full aspect-[4/3] sm:aspect-[16/10] bg-black/90 relative">
+                            <object data="${pdfFileUrl}" type="application/pdf" class="w-full h-full border-0">
+                                <div class="h-full flex flex-col items-center justify-center p-6 text-center space-y-3">
+                                    <div class="text-4xl">📄</div>
+                                    <p class="text-sm font-semibold text-white">Tệp PDF Thực Đơn Bán Trú Đã Sẵn Sàng</p>
+                                    <p class="text-xs text-slate-400 max-w-sm">Trình duyệt trên điện thoại cần mở tab mới để phóng to đọc thực đơn rõ nét nhất.</p>
+                                    <a href="${pdfFileUrl}" target="_blank" rel="noopener noreferrer"
+                                       class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 text-white font-bold text-xs shadow-md shadow-red-500/25 flex items-center gap-1.5">
+                                        <span>🚀 Mở Xem PDF Toàn Màn Hình</span>
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                    </a>
+                                </div>
+                            </object>
+                        </div>
                     </div>
                 </div>`;
         },

@@ -1,8 +1,8 @@
 {
   "source": "https://thpttranvangiau.hcm.edu.vn",
   "schoolName": "Trường THPT Trần Văn Giàu",
-  "lastUpdated": "2026-11-14T06:38:04.905Z",
-  "lastUpdatedText": "lúc 13:38:04 Thứ Bảy, 14 tháng 11, 2026",
+  "lastUpdated": "2026-11-14T06:53:50.391Z",
+  "lastUpdatedText": "lúc 13:53:50 Thứ Bảy, 14 tháng 11, 2026",
   "scheduleWeeks": [
     {
       "weekNum": 10,
@@ -476,8 +476,9 @@
       "title": "Thực đơn bán trú tuần 10 (từ ngày 09/11/2026 đến ngày 13/11/2026)",
       "link": "https://thpttranvangiau.hcm.edu.vn/ban-tru/thuc-don-ban-tru-tuan-10-tu-ngay-09112026-den-ngay-13112026/ct/84621/583313",
       "isLatest": true,
-      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/k3K5G3VKgaEVRYRZj_dViU6h0-GalODZne6DwFNm1xjrc4noRB5IrpOrK1-wQ6bMvDDd_58sGn59z5hgHbiQS9jtnzVImxUB89Oq5l_kokN_onW1GpgzqQDLfBTRiDu-V-uVKSqDYwNkPjSBjWOAxl5_6Fdw1TwfTs5pozgdNxfyqXVk7JU8FKdjfe6hF-Xl2lY4VBH9/lA3lXOVsbGXNK2usRnUvxB7_8e432OPWKswHNTofOMnNTmMEWuNZ6x435zztu-ja6gS8/thuc-don-ban-tru-09-13-11-2026.pdf",
-      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/9b545d9d3ca6b185fa1a1f7576cf4f5e.pdf/thuc-don-ban-tru-09-13-11-2026-811202617.pdf&urlgoc=%2Ftai%2FP79f4_Q7d7QnCpky3eAkSowOZlWUM9NfVFnYdBCJ27W9ygC2a1AtfQeJ4EioeUnz4lanPVNg1p5VVDbo05ZvHP0QR3mkWvoopknhOgCfI9-rbsQK8RkYEy_Fg9QSi4OadNtgwXUki4PucPKf8WcHxsFnBNv9tS0HzpAK7sn5pa6qUDSFO6cZ4VDCoIgVRQGbzlNw5JpH%2Fq828OwcZbNRxrG57VWmw4r2DZodtoxg0d9QcYoC3HyHu9y7W02uHDq6-bXlMqjTM0_-5fZZd9Mi6OHxssQ%2Fthuc-don-ban-tru-09-13-11-2026-811202617.pdf",
+      "localPdfUrl": "data/pdf/thuc_don_tuan_10.pdf",
+      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/KEmpiNrGl4e6p5X9L3r8Kfm_Je5tChQ750_xWT8zbPuRI7lsKwloSKXfi2t1lQyeQPz-0gxxRUdIkeGTUauVYWvNPgHdUjWMJOZXLDUMT0pBIAh1XLqAZAevwoYcKgeSkB4gxRdyF9V6lXF7PR3m9pvOoGmH_I19hRHpZW09jN0Y0xW3y6Ug7Jnmzaug6DM2vwCvdjja/zGvPrRxW8s9b_Vtd39FWSSBVxpTwOSHoTRq7U6nw3EsMpQvjWBcuOqwsivKSSPEeu7u7/thuc-don-ban-tru-09-13-11-2026.pdf",
+      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/9b545d9d3ca6b185fa1a1f7576cf4f5e.pdf/thuc-don-ban-tru-09-13-11-2026-811202617.pdf&urlgoc=%2Ftai%2FOnD3y56_Piqd0IyE0Qv2_1Y8cY3bok6F990oMX4wJL2ilQQOV249IMGCLjai6dSqj_ENEwx8zIXU4l9XdILM35Djrop8QtcQ2MTTXs-S9PCMTlcJLMw4fL_2RezbMDxKE3fUTpaWrzWNoRg25pvAFLcZ0tM8e4hXybWEX8YYHEAUgtxBl7m1yujOYmHWnz9EkBoWzZJN%2FUeBqnHBqGj3uepxKSrvgIJv7RuQjpLDFYFb6YK8OUyVac_i52zDwGWnJNM6vPlTx6Dz8yDZxSajIeewLHQ%2Fthuc-don-ban-tru-09-13-11-2026-811202617.pdf",
       "summary": "Thực đơn bán trú tuần 10 (từ ngày 09/11/2026 đến ngày 13/11/2026)"
     },
     {
@@ -485,8 +486,9 @@
       "title": "Thực đơn bán trú tuần 9 (từ ngày 02/11/2026 đến ngày 06/11/2026)",
       "link": "https://thpttranvangiau.hcm.edu.vn/ban-tru/thuc-don-ban-tru-tuan-9-tu-ngay-02112026-den-ngay-06112026/ct/84621/582460",
       "isLatest": false,
-      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/PcLrDXprPz6sios2MQzOomIGFOARoH8mCWYaupff6nH_n-IpIL3KQVGgJiz2fjt0RTMaDwjh-CwBAHm5JQo-n81HCs4AXjjKdvclt6dNQ4pNRBQxEJxX8V_AcefUD1OBIcs_JFSE4K-DrkOGSQ2sCZzUw2IcXP4BfCBbH6O5ktnow5Va70H2oVuFywnWdiwfKURlui0T/eqCbDtInd5mhV5d65koRnwkjXVuj_VqAdKxmTHJ3doO1SRzF8Nhq/thuc-don-ban-tru-02-06-11-2026.pdf",
-      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/5958ae7de2c21e2201974249b44f7322.pdf/thuc-don-ban-tru-02-06-11-2026-21120269.pdf&urlgoc=%2Ftai%2FpiHyCuPVbBHrYQoaRv_bZlT462P-Vf0tG8Sl-spW9CRmuBw54FGVa2q1lzh8M3eISKGGAWf6Y716eyxnuLg2s-xMswiU-Z84oUlnL7JWGJJve88LlErprlttv_UGmuZc6V6JH0NjKTalzhuFVVldf7w2ctIBbnf6weWCKFM7o5L8Q2InMl4VFH15buIt9H99X8J65-8c%2FONsyvDpKDE67Fj_cHBPGue_0K161S6B2K3fZeVRimNowvP4FASOSURLHDE8j-aYi%2Fthuc-don-ban-tru-02-06-11-2026-21120269.pdf",
+      "localPdfUrl": "data/pdf/thuc_don_tuan_9.pdf",
+      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/aem1BjXGSr95Az2ormOytrnQoczJs4f95Xz1zfr8gH9fUGocM1Fl2uYzG4WRnLtIaLc6mFOTLzr_okGIK1fC4HSXKP-D3DtfDt56Anpf6_7mWzPwYVlcnPapUciPSPDTOj3nbwgR6-FG4W13AL8WwFimqA-GH0eYI--Dk53Zi9H2aabQXmbcj1DyuOBRFgjdejpGCTTK/j4H6Spq17QAgpY7UU-91J2ILvBR2XBOfMtrFH5XQ9DYhNk2WKWil/thuc-don-ban-tru-02-06-11-2026.pdf",
+      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/5958ae7de2c21e2201974249b44f7322.pdf/thuc-don-ban-tru-02-06-11-2026-21120269.pdf&urlgoc=%2Ftai%2FVpym7gTBFSma0xEyKup3z19fS_eecRnj4Pgmq4OPdGPg9P90xnC3yCxJy1STXmTRX9AXguNUvaG-WlFfB5ydfC19joNuLZX0noilnR4Jq-ijSQ8PRQN7eGdhOlFNPeijmrhG45cjY8BWGcopj7yKEM6InYoVFDIaOtsLovVi5UHEh2rjArhmD4wg4JRBODOA-1bssx-u%2FmWT6u9qXA7ARfxH9c1Cdm2Wn-nC9RpDiJ70dDBcGi0YXSzIif-ngafhAHB4SKQcn%2Fthuc-don-ban-tru-02-06-11-2026-21120269.pdf",
       "summary": "Thực đơn bán trú tuần 9 (từ ngày 02/11/2026 đến ngày 06/11/2026)"
     },
     {
@@ -494,8 +496,9 @@
       "title": "Thực đơn bán trú tuần 8 (từ ngày 26/10/2026 đến ngày 30/10/2026)",
       "link": "https://thpttranvangiau.hcm.edu.vn/ban-tru/thuc-don-ban-tru-tuan-8-tu-ngay-26102026-den-ngay-30102026/ct/84621/581620",
       "isLatest": false,
-      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/eNRJ2vpt-BKlWX7cpYA5wxcO3_cNMnmUdPM9qMHEZd4K8TL-gUu5vI9bLsKlbXCKC3Xw9elTMbha3I5F2TEl061KmAeFdcjbt-CmwBCdrC7sj7RgSyYs1ztQXwBW-5RvjCpmVg19QxrUOOHIzQj7IUVAMC08t-NgkMFBRnwRBU3C9rSWf6xu2lArjx6nFM-u_Eg1Nrjg/zsWNVjCC51zeI7MEieK0xVGOAJVO0I8npWBP6HK9ZMuxCbIkp6C8RGd7/thuc-don-ban-tru-26-30-10-2026.pdf",
-      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/f452c85295a7cc2fec52c7de40d2ef9e.pdf/thuc-don-ban-tru-26-30-10-2026-2610202610.pdf&urlgoc=%2Ftai%2Fi5M_OODCWnvFIjVXyNyGDshi-MfHIAYTddECe-zKKcubofJDIzrIlelGRYnXwd7S4-RjRiJhcrQcCfhnnBiXL2FGVoSQc0Kjrl4SYmNAztyravEEesOAkq4-Qj4ALnm9vyh0VVVatAkAUvuefAD4rDPb2Oy0j9K1cTCBtXkcKICYAQMibi0YGnWpzgKHG87EofsnJt3Y%2F0lz6xWd-GcIEDon1lCoSrrKTGugU9sg2Gq8bRsA7KEdb8nJrvUf8plZbooA13oZ7qQJFsnU%2Fthuc-don-ban-tru-26-30-10-2026-2610202610.pdf",
+      "localPdfUrl": "data/pdf/thuc_don_tuan_8.pdf",
+      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/gjZltbsQ6lYEHVPTbNoBqHWljkcAjseQMbmcsQsBnBLgOrY02RJ-5hdzslzAo_dRomj8c-N8iFZotpmAYALP7rw3hR7CKU9JNcSgNNNWre6KXPkqfzi5Y4v_eHNgLLUicXi-DMleIVtzXnvxqhp9ApuSeNLftIQ01UI7fDbpYBcdacBVIWZubvdYbWzokw1mbJvncxUm/Ti0tcNe4v1bSdOEVs_dP0q325pVvbOPhjL0h2fbHPDreM6Xv6csBoI_o/thuc-don-ban-tru-26-30-10-2026.pdf",
+      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/f452c85295a7cc2fec52c7de40d2ef9e.pdf/thuc-don-ban-tru-26-30-10-2026-2610202610.pdf&urlgoc=%2Ftai%2Fl5AkZc_T_AgQ-4sDWy-WjKHmH1cHsYcTMp62dKjT2-z6f5kgeD0UohgVjED9PgmpZlTgqoThUeycvkvQ4726kAqBfmbzglZK1Hja3TwdSNZycZzo7lyE22h-4XckQTYq-L4Fqj0H-IyP1bNS7JfhquU2bcuWFERZ0n9pKPHJ5NKrY6ythTSGgS14jHE0TXVjaRcEaPa-%2F1nbkg0TbJRUUlvX6MMigGFH51oEqYGbtCxJm8MeogSM0qfRj2nXBcqdeC0DXvcRoSLVCHHw%2Fthuc-don-ban-tru-26-30-10-2026-2610202610.pdf",
       "summary": "Thực đơn bán trú tuần 8 (từ ngày 26/10/2026 đến ngày 30/10/2026)"
     }
   ],
