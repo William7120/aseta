@@ -334,67 +334,52 @@ window.Class11A7JournalEngine = (function () {
     }
   }
 
-  // --- Web Audio Synthesizer (Lo-Fi School Ambience) ---
-  let audioCtx = null;
+  // --- Nhạc Nền: Ấn Nút Nhớ... Thả Giấc Mơ (Sơn Tùng M-TP) ---
+  const AUDIO_SRC = "assets/audio/an_nut_nho_tha_giac_mo.mp3";
+  let bgAudio = null;
   let musicEnabled = false;
-  let musicInterval = null;
+  let wasMusicPlayingBeforeVideo = false;
 
-  function getAudioContext() {
-    if (!audioCtx) {
-      const AudioClass = window.AudioContext || window.webkitAudioContext;
-      if (AudioClass) audioCtx = new AudioClass();
+  function getBgAudio() {
+    if (!bgAudio) {
+      bgAudio = new Audio(AUDIO_SRC);
+      bgAudio.loop = true;
+      bgAudio.volume = 0.65;
+      bgAudio.preload = "auto";
     }
-    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
-    return audioCtx;
-  }
-
-  function playSchoolChord(freqs, dur = 2.2) {
-    try {
-      const ctx = getAudioContext();
-      if (!ctx) return;
-      const now = ctx.currentTime;
-      freqs.forEach((f, i) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = i % 2 === 0 ? "sine" : "triangle";
-        osc.frequency.setValueAtTime(f, now);
-        gain.gain.setValueAtTime(0.001, now);
-        gain.gain.exponentialRampToValueAtTime(0.04, now + 0.3);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now);
-        osc.stop(now + dur);
-      });
-    } catch (e) {}
+    return bgAudio;
   }
 
   function toggleMusic(force) {
     musicEnabled = force !== undefined ? force : !musicEnabled;
     const btn = document.getElementById("galleryMusicBtn");
+    const audio = getBgAudio();
+
     if (btn) {
-      btn.classList.toggle("bg-pink-500", musicEnabled);
-      btn.classList.toggle("text-white", musicEnabled);
-      btn.title = musicEnabled ? "Tắt nhạc học trò" : "Bật nhạc học trò du dương";
+      if (musicEnabled) {
+        btn.className = "p-2 sm:px-3 sm:py-1.5 rounded-xl bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 text-white shadow-lg shadow-pink-500/30 border border-pink-400/40 flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer";
+        btn.title = "Đang phát: Ấn Nút Nhớ... Thả Giấc Mơ (Sơn Tùng M-TP) — Bấm để tắt";
+        btn.innerHTML = `
+          <span class="animate-bounce">🎵</span>
+          <span class="hidden md:inline">Ấn Nút Nhớ... Thả Giấc Mơ</span>
+          <span class="inline md:hidden">Bật</span>
+        `;
+      } else {
+        btn.className = "p-2 sm:px-3 sm:py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10 flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer";
+        btn.title = "Bật nhạc nền: Ấn Nút Nhớ... Thả Giấc Mơ (Sơn Tùng M-TP)";
+        btn.innerHTML = `
+          <span>🎵</span>
+          <span class="hidden md:inline">Nhạc Nền</span>
+        `;
+      }
     }
-    if (musicInterval) {
-      clearInterval(musicInterval);
-      musicInterval = null;
-    }
+
     if (musicEnabled) {
-      getAudioContext();
-      const chords = [
-        [261.63, 329.63, 392.0, 493.88], // Cmaj7
-        [196.0, 246.94, 293.66, 392.0], // G
-        [220.0, 261.63, 329.63, 440.0], // Am7
-        [174.61, 220.0, 261.63, 349.23], // F
-      ];
-      let step = 0;
-      playSchoolChord(chords[0]);
-      musicInterval = setInterval(() => {
-        step = (step + 1) % chords.length;
-        playSchoolChord(chords[step]);
-      }, 2600);
+      audio.play().catch((err) => {
+        console.warn("Audio autoplay blocked or interaction needed:", err);
+      });
+    } else {
+      audio.pause();
     }
   }
 
@@ -486,6 +471,14 @@ window.Class11A7JournalEngine = (function () {
     activeVideoIndex = videoIdx;
     const v = ALL_VIDEOS[videoIdx];
     if (!v) return;
+
+    // Tạm dừng nhạc nền nếu đang phát để người dùng nghe rõ âm thanh video
+    if (musicEnabled && bgAudio && !bgAudio.paused) {
+      wasMusicPlayingBeforeVideo = true;
+      bgAudio.pause();
+    } else {
+      wasMusicPlayingBeforeVideo = false;
+    }
 
     const modal = document.getElementById("galleryVideoModal");
     const content = document.getElementById("galleryVideoContent");
@@ -584,6 +577,12 @@ window.Class11A7JournalEngine = (function () {
     if (modal) {
       modal.classList.add("hidden");
       modal.classList.remove("flex");
+    }
+
+    // Tự động phát lại nhạc nền nếu trước đó đang bật
+    if (wasMusicPlayingBeforeVideo && musicEnabled && bgAudio) {
+      bgAudio.play().catch(() => {});
+      wasMusicPlayingBeforeVideo = false;
     }
   }
 
@@ -1056,7 +1055,7 @@ window.Class11A7JournalEngine = (function () {
             <button type="button" 
                     id="galleryMusicBtn" 
                     onclick="window.Class11A7JournalEngine.toggleMusic()" 
-                    title="Bật/Tắt nhạc nền học trò" 
+                    title="Bật nhạc nền: Ấn Nút Nhớ... Thả Giấc Mơ (Sơn Tùng M-TP)" 
                     class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10 flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer">
               <span>🎵</span>
               <span class="hidden md:inline">Nhạc Nền</span>
@@ -1401,6 +1400,7 @@ window.Class11A7JournalEngine = (function () {
       containerEl.style.setProperty("display", "none", "important");
       containerEl.classList.add("hidden");
       document.body.style.overflow = "";
+      wasMusicPlayingBeforeVideo = false;
       if (musicEnabled) toggleMusic(false);
       closeLightbox();
       closeVideoModal();
