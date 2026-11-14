@@ -11,7 +11,7 @@
 (function(window) {
     'use strict';
 
-    const CACHE_KEY = 'aseta_tvg_school_news_cache_v9';
+    const CACHE_KEY = 'aseta_tvg_school_news_cache_v10';
     const CACHE_TTL_MS = 5 * 60 * 1000; // 5 phút
 
     const SchoolNewsEngine = {
@@ -425,7 +425,7 @@
             }
 
             container.innerHTML = `
-                <div class="h-full flex flex-col justify-between gap-3">
+                <div class="h-auto lg:h-full flex flex-col justify-between gap-3">
                     
                     <!-- Top Sub-bar: Day Switcher -->
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 shrink-0 pb-1">
@@ -445,7 +445,7 @@
                         <div class="lg:col-span-7 flex flex-col justify-between gap-3.5 min-h-0">
                             
                             <!-- 1. HERO SPOTLIGHT CARD -->
-                            <div class="flex-1 min-h-0 p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-[#161824] via-[#10121a] to-[#0c0d12] border border-white/10 shadow-xl flex flex-col overflow-hidden">
+                            <div class="min-h-[260px] lg:min-h-0 lg:flex-1 p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-[#161824] via-[#10121a] to-[#0c0d12] border border-white/10 shadow-xl flex flex-col overflow-hidden">
                                 <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-white/5 shrink-0">
                                     <div class="flex items-center gap-2">
                                         <span class="text-xs sm:text-sm font-black text-white flex items-center gap-1.5">
@@ -460,7 +460,7 @@
                                     </button>
                                 </div>
 
-                                <div class="flex-1 min-h-0 overflow-y-auto py-2.5 pr-1.5 school-scrollbar">
+                                <div class="flex-1 min-h-0 overflow-y-auto py-2.5 pr-1.5 school-scrollbar max-h-[220px] lg:max-h-none">
                                     ${tasksListHtml}
                                 </div>
                             </div>
