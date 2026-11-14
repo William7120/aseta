@@ -1,10 +1,10 @@
 /**
  * =======================================================================
  * AZOTA OS - KỶ NIỆM A7 (THPT TRẦN VĂN GIÀU)
- * Bento Masonry Grid (Image 1 Style) + Infinite Auto-Scroll Carousel
- * Tách biệt: 📸 Hình Ảnh & 🎬 Thước Phim Video
- * Phân mục rõ ràng: 11A7 ở đầu • 10A7 ở sau
- * 100% Ảnh/Video thật từ toàn bộ kho dữ liệu • Thẻ ảnh thuần túy (Không đè chữ)
+ * Bố cục tách đôi: BÊN TRÁI LÀ HÌNH ẢNH • BÊN PHẢI LÀ VIDEO
+ * Video chạy liên tục không tiếng (Muted Loop) • Bấm vào coi lại từ đầu có nhạc
+ * Phân mục rõ ràng: 11A7 ở đầu • 10A7 ở sau khi lướt
+ * Thẻ ảnh thuần túy (Không đè chữ lên ảnh)
  * =======================================================================
  */
 
@@ -310,11 +310,8 @@ window.Class11A7JournalEngine = (function () {
     },
   ];
 
-  // Current View Mode: 'photos' or 'videos'
-  let currentViewMode = "photos";
-
   // --- LocalStorage Notes ---
-  const STORAGE_KEY = "aseta_class_a7_custom_notes_v5";
+  const STORAGE_KEY = "aseta_class_a7_custom_notes_v6";
 
   function loadCustomNotes() {
     try {
@@ -482,8 +479,11 @@ window.Class11A7JournalEngine = (function () {
     openLightboxByIndex(activeLightboxIndex - 1);
   }
 
-  // --- Video Cinema Player Modal ---
+  // --- Cinema Video Modal (Chơi lại từ đầu có nhạc/tiếng đầy đủ) ---
+  let activeVideoIndex = 0;
+
   function openVideoModal(videoIdx) {
+    activeVideoIndex = videoIdx;
     const v = ALL_VIDEOS[videoIdx];
     if (!v) return;
 
@@ -500,7 +500,7 @@ window.Class11A7JournalEngine = (function () {
           ✕
         </button>
 
-        <!-- Video Player Element -->
+        <!-- Video Player Element (Phát từ đầu có tiếng) -->
         <div class="relative max-h-[75vh] w-full max-w-4xl overflow-hidden rounded-2xl shadow-2xl border border-white/10 bg-black flex items-center justify-center">
           <video id="activeCinemaVideo" 
                  src="${v.src}" 
@@ -513,7 +513,7 @@ window.Class11A7JournalEngine = (function () {
           </video>
         </div>
 
-        <!-- Video Info & Meta -->
+        <!-- Video Info & Controls -->
         <div class="w-full max-w-4xl mt-4 px-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-white">
           <div>
             <div class="flex items-center gap-2">
@@ -526,10 +526,21 @@ window.Class11A7JournalEngine = (function () {
           </div>
 
           <div class="flex items-center gap-2 self-start sm:self-center shrink-0">
-            <a href="${v.src}" download target="_blank" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/10 text-xs font-bold text-white flex items-center gap-1.5 transition-all">
+            <!-- Xem lại từ đầu button -->
+            <button type="button" 
+                    onclick="window.Class11A7JournalEngine.replayActiveVideo()" 
+                    class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-slate-200 flex items-center gap-1.5 transition-all cursor-pointer">
+              <span>⏮️</span>
+              <span>Xem lại từ đầu</span>
+            </button>
+
+            <!-- Tải video -->
+            <a href="${v.src}" download target="_blank" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/10 text-xs font-bold text-white flex items-center gap-1.5 transition-all">
               📥 Tải Video
             </a>
-            <button type="button" class="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-xs font-bold text-white shadow-lg shadow-indigo-500/25 hover:opacity-90 transition-all cursor-pointer" onclick="this.innerHTML='❤️ Đã yêu thích!';">
+
+            <!-- Thả tim -->
+            <button type="button" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-xs font-bold text-white shadow-lg shadow-indigo-500/25 hover:opacity-90 transition-all cursor-pointer" onclick="this.innerHTML='❤️ Đã thích!';">
               ❤️ Thả tim
             </button>
           </div>
@@ -539,6 +550,26 @@ window.Class11A7JournalEngine = (function () {
 
     modal.classList.remove("hidden");
     modal.classList.add("flex");
+
+    // Start video from beginning unmuted with sound
+    setTimeout(() => {
+      const vid = document.getElementById("activeCinemaVideo");
+      if (vid) {
+        vid.currentTime = 0;
+        vid.muted = false;
+        vid.volume = 1.0;
+        vid.play().catch(() => {});
+      }
+    }, 150);
+  }
+
+  function replayActiveVideo() {
+    const vid = document.getElementById("activeCinemaVideo");
+    if (vid) {
+      vid.currentTime = 0;
+      vid.muted = false;
+      vid.play().catch(() => {});
+    }
   }
 
   function closeVideoModal() {
@@ -553,31 +584,6 @@ window.Class11A7JournalEngine = (function () {
     if (modal) {
       modal.classList.add("hidden");
       modal.classList.remove("flex");
-    }
-  }
-
-  // --- Switch View Mode (Photos vs Videos) ---
-  function setViewMode(mode) {
-    if (mode !== "photos" && mode !== "videos") return;
-    currentViewMode = mode;
-
-    const btnPhotos = document.getElementById("mediaTabPhotos");
-    const btnVideos = document.getElementById("mediaTabVideos");
-    const photosSection = document.getElementById("photosViewSection");
-    const videosSection = document.getElementById("videosViewSection");
-
-    if (btnPhotos && btnVideos) {
-      if (currentViewMode === "photos") {
-        btnPhotos.className = "px-4 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer bg-gradient-to-r from-pink-500 to-amber-500 text-white shadow-md shadow-pink-500/20 font-bold";
-        btnVideos.className = "px-4 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer text-slate-400 hover:text-white font-medium";
-        if (photosSection) photosSection.style.display = "block";
-        if (videosSection) videosSection.style.display = "none";
-      } else {
-        btnVideos.className = "px-4 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-indigo-500/20 font-bold";
-        btnPhotos.className = "px-4 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer text-slate-400 hover:text-white font-medium";
-        if (photosSection) photosSection.style.display = "none";
-        if (videosSection) videosSection.style.display = "block";
-      }
     }
   }
 
@@ -632,26 +638,21 @@ window.Class11A7JournalEngine = (function () {
     }
   }
 
-  // --- Render Photos Grid: 11A7 Ở ĐẦU, 10A7 Ở SAU ---
-  function renderPhotoGrids() {
-    // 1. 11A7 Grid (At Top / Beginning)
-    const c1_11 = document.getElementById("gallery11A7Col1");
-    const c2_11 = document.getElementById("gallery11A7Col2");
-    const c3_11 = document.getElementById("gallery11A7Col3");
+  // --- Render Photos Column (BÊN TRÁI: 11A7 Ở ĐẦU, 10A7 Ở SAU) ---
+  function renderPhotosSection() {
+    // 1. 11A7 Photos Grid (Ở Đầu)
+    const c1_11 = document.getElementById("photos11A7Col1");
+    const c2_11 = document.getElementById("photos11A7Col2");
 
-    if (c1_11 && c2_11 && c3_11) {
-      // 8 photos for 11A7:
-      // Col 1: 2498, 2494, 2501
-      // Col 2: 2500 (square), 2499
-      // Col 3: 2495, 2497, 2496
-      const c1Photos = [PHOTOS_11A7[1], PHOTOS_11A7[4], PHOTOS_11A7[6]];
-      const c2Photos = [PHOTOS_11A7[0], PHOTOS_11A7[3]];
-      const c3Photos = [PHOTOS_11A7[2], PHOTOS_11A7[5], PHOTOS_11A7[7]];
+    if (c1_11 && c2_11) {
+      // 8 photos for 11A7 distributed in 2 columns
+      const c1Photos = [PHOTOS_11A7[0], PHOTOS_11A7[1], PHOTOS_11A7[4], PHOTOS_11A7[6]];
+      const c2Photos = [PHOTOS_11A7[2], PHOTOS_11A7[3], PHOTOS_11A7[5], PHOTOS_11A7[7]];
 
       const renderCard = (p) => {
         const globalIdx = ALL_PHOTOS.findIndex((x) => x.id === p.id);
         return `
-          <div class="gallery-card group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#131520] border border-white/10 shadow-xl cursor-pointer select-none transition-all duration-300 hover:-translate-y-1.5 hover:border-white/30 hover:shadow-2xl ${p.aspect}"
+          <div class="gallery-card group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#131520] border border-white/10 shadow-xl cursor-pointer select-none transition-all duration-300 hover:-translate-y-1 hover:border-white/30 hover:shadow-2xl ${p.aspect}"
                onclick="window.Class11A7JournalEngine.openLightbox(${globalIdx})"
                title="${p.title}">
             <img src="${p.src}" alt="${p.title}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 group-hover:brightness-105"/>
@@ -661,50 +662,44 @@ window.Class11A7JournalEngine = (function () {
 
       c1_11.innerHTML = c1Photos.map(renderCard).join("");
       c2_11.innerHTML = c2Photos.map(renderCard).join("");
-      c3_11.innerHTML = c3Photos.map(renderCard).join("");
     }
 
-    // 2. 10A7 Grid (Below 11A7 / In Second Section)
-    const c1_10 = document.getElementById("gallery10A7Col1");
-    const c2_10 = document.getElementById("gallery10A7Col2");
-    const c3_10 = document.getElementById("gallery10A7Col3");
+    // 2. 10A7 Photos Grid (Ở Sau khi lướt)
+    const c1_10 = document.getElementById("photos10A7Col1");
+    const c2_10 = document.getElementById("photos10A7Col2");
 
-    if (c1_10 && c2_10 && c3_10) {
-      // 20 group photos for 10A7:
-      // Col 1 (7 photos): chalkboard, cheer, 2010_boys, 2010_full2, thethao_5178, thethao_5182, thethao_5185
+    if (c1_10 && c2_10) {
+      // 20 photos for 10A7 distributed in 2 columns
       const c1Photos_10 = [
-        PHOTOS_10A7[1],
-        PHOTOS_10A7[4],
-        PHOTOS_10A7[6],
-        PHOTOS_10A7[14],
-        PHOTOS_10A7[9],
-        PHOTOS_10A7[10],
-        PHOTOS_10A7[18],
+        PHOTOS_10A7[0], // full1 (square)
+        PHOTOS_10A7[1], // chalkboard
+        PHOTOS_10A7[4], // cheer
+        PHOTOS_10A7[6], // boys
+        PHOTOS_10A7[8], // thethao_5183
+        PHOTOS_10A7[9], // thethao_5178
+        PHOTOS_10A7[10], // thethao_5182
+        PHOTOS_10A7[12], // 1621
+        PHOTOS_10A7[14], // full2
+        PHOTOS_10A7[16], // selfie_girls
       ];
-      // Col 2 (6 photos with 2 square featured): 2010_full1 (square), 2010_selfie_fun, thethao_5183 (square), 2010_balloons, 2010_1621, 2010_flower_lineup
+
       const c2Photos_10 = [
-        PHOTOS_10A7[0],
-        PHOTOS_10A7[3],
-        PHOTOS_10A7[8],
-        PHOTOS_10A7[15],
-        PHOTOS_10A7[12],
-        PHOTOS_10A7[17],
-      ];
-      // Col 3 (7 photos): 2010_girls_flowers, jollibee, 2010_peace_pose, thethao_5179, 2010_1626, selfie_girls, thethao_5186
-      const c3Photos_10 = [
-        PHOTOS_10A7[2],
-        PHOTOS_10A7[5],
-        PHOTOS_10A7[7],
-        PHOTOS_10A7[11],
-        PHOTOS_10A7[13],
-        PHOTOS_10A7[16],
-        PHOTOS_10A7[19],
+        PHOTOS_10A7[2], // girls_flowers
+        PHOTOS_10A7[3], // selfie_fun
+        PHOTOS_10A7[5], // jollibee
+        PHOTOS_10A7[7], // peace_pose
+        PHOTOS_10A7[11], // thethao_5179
+        PHOTOS_10A7[13], // 1626
+        PHOTOS_10A7[15], // balloons
+        PHOTOS_10A7[17], // flower_lineup
+        PHOTOS_10A7[18], // thethao_5185
+        PHOTOS_10A7[19], // thethao_5186
       ];
 
       const renderCard10 = (p) => {
         const globalIdx = ALL_PHOTOS.findIndex((x) => x.id === p.id);
         return `
-          <div class="gallery-card group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#131520] border border-white/10 shadow-xl cursor-pointer select-none transition-all duration-300 hover:-translate-y-1.5 hover:border-white/30 hover:shadow-2xl ${p.aspect}"
+          <div class="gallery-card group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#131520] border border-white/10 shadow-xl cursor-pointer select-none transition-all duration-300 hover:-translate-y-1 hover:border-white/30 hover:shadow-2xl ${p.aspect}"
                onclick="window.Class11A7JournalEngine.openLightbox(${globalIdx})"
                title="${p.title}">
             <img src="${p.src}" alt="${p.title}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 group-hover:brightness-105"/>
@@ -714,74 +709,89 @@ window.Class11A7JournalEngine = (function () {
 
       c1_10.innerHTML = c1Photos_10.map(renderCard10).join("");
       c2_10.innerHTML = c2Photos_10.map(renderCard10).join("");
-      c3_10.innerHTML = c3Photos_10.map(renderCard10).join("");
     }
   }
 
-  // --- Render Videos Grid ---
-  function renderVideos() {
-    const grid = document.getElementById("videosGridContainer");
-    if (!grid) return;
+  // --- Render Videos Column (BÊN PHẢI: CHẠY LIÊN TỤC KHÔNG TIẾNG) ---
+  function renderVideosSection() {
+    const container = document.getElementById("liveVideosStreamContainer");
+    if (!container) return;
 
-    grid.innerHTML = ALL_VIDEOS.map((v, idx) => {
+    container.innerHTML = ALL_VIDEOS.map((v, idx) => {
       return `
-        <div class="video-card group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#12141f] border border-white/10 shadow-xl cursor-pointer select-none transition-all duration-300 hover:-translate-y-1.5 hover:border-blue-400/50 hover:shadow-2xl hover:shadow-blue-500/10 flex flex-col"
-             onclick="window.Class11A7JournalEngine.openVideo(${idx})">
+        <div class="live-video-card group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#10121d] border border-white/10 shadow-xl cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/50 hover:shadow-2xl hover:shadow-blue-500/10"
+             onclick="window.Class11A7JournalEngine.openVideo(${idx})"
+             title="${v.title} — Chạm để xem từ đầu có âm thanh">
           
-          <!-- Video Thumbnail with Play Button Overlay -->
+          <!-- Video Player chạy liên tục (Muted Loop) -->
           <div class="relative w-full aspect-video overflow-hidden bg-black">
-            <img src="${v.thumb}" alt="${v.title}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 group-hover:brightness-105"/>
-            
-            <!-- Dark gradient -->
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+            <video src="${v.src}" 
+                   poster="${v.thumb}"
+                   autoplay 
+                   muted 
+                   loop 
+                   playsinline 
+                   preload="metadata"
+                   class="w-full h-full object-cover pointer-events-none transition-transform duration-700 ease-out group-hover:scale-105">
+            </video>
 
-            <!-- Play button icon centered -->
-            <div class="absolute inset-0 flex items-center justify-center">
-              <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-blue-600/90 group-hover:bg-blue-500 text-white flex items-center justify-center text-xl sm:text-2xl shadow-xl shadow-blue-500/30 backdrop-blur-md transition-all duration-300 group-hover:scale-110">
+            <!-- Gradient overlay for controls -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none"></div>
+
+            <!-- Top live & tag badges -->
+            <div class="absolute top-3 left-3 flex items-center gap-1.5 z-10 pointer-events-none">
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-black/60 text-blue-300 border border-blue-400/30 backdrop-blur-md uppercase tracking-wider">
+                ${v.tag}
+              </span>
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/25 text-emerald-300 border border-emerald-400/30 backdrop-blur-md flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Đang phát
+              </span>
+            </div>
+
+            <!-- Center Hover Play Button -->
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+              <div class="w-12 h-12 rounded-full bg-blue-600/90 text-white flex items-center justify-center text-xl shadow-xl shadow-blue-500/30 backdrop-blur-md">
                 ▶
               </div>
             </div>
 
-            <!-- Top Badges -->
-            <div class="absolute top-3 left-3 flex items-center gap-1.5 z-10">
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-black/60 text-blue-300 border border-blue-400/30 backdrop-blur-md uppercase tracking-wider">
-                ${v.tag}
-              </span>
-              <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-pink-500/30 text-pink-300 border border-pink-400/30 backdrop-blur-md">
-                ${v.grade}
-              </span>
-            </div>
-
-            <!-- Bottom Duration Badge -->
-            <div class="absolute bottom-3 right-3 z-10">
-              <span class="px-2 py-0.5 rounded-lg text-[10px] font-mono font-bold bg-black/75 text-white backdrop-blur-md border border-white/10">
+            <!-- Bottom meta & sound prompt -->
+            <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between z-10 pointer-events-none">
+              <span class="px-2 py-0.5 rounded-lg text-[10px] font-mono font-bold bg-black/80 text-white backdrop-blur-md border border-white/10">
                 ⏱️ ${v.duration}
+              </span>
+              <span class="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-blue-600/90 text-white backdrop-blur-md shadow-md flex items-center gap-1 group-hover:bg-blue-500">
+                <span>🔊</span>
+                <span>Chạm để bật tiếng</span>
               </span>
             </div>
           </div>
 
           <!-- Video Text Info -->
-          <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between">
-            <div>
-              <h4 class="text-sm sm:text-base font-black text-white leading-snug tracking-tight group-hover:text-blue-300 transition-colors">
+          <div class="p-3.5 sm:p-4 bg-slate-900/80 border-t border-white/5 flex items-center justify-between gap-3">
+            <div class="min-w-0">
+              <h5 class="text-xs sm:text-sm font-bold text-white truncate group-hover:text-blue-300 transition-colors">
                 ${v.title}
-              </h4>
-              <p class="text-xs text-slate-400 mt-1.5 line-clamp-2 leading-relaxed">
-                ${v.desc}
-              </p>
+              </h5>
+              <p class="text-[11px] text-slate-400 truncate mt-0.5">${v.desc}</p>
             </div>
-            
-            <div class="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[11px] text-slate-400">
-              <span class="font-mono">${v.size}</span>
-              <span class="font-bold text-blue-400 group-hover:underline flex items-center gap-1">
-                Xem ngay ➔
-              </span>
+            <div class="shrink-0 text-slate-400 font-mono text-[10px]">
+              ${v.size}
             </div>
           </div>
 
         </div>
       `;
     }).join("");
+
+    // Ensure all background videos start autoplaying
+    setTimeout(() => {
+      const videos = container.querySelectorAll("video");
+      videos.forEach((vid) => {
+        vid.muted = true;
+        vid.play().catch(() => {});
+      });
+    }, 200);
   }
 
   // --- Render Notes Wall ---
@@ -816,7 +826,7 @@ window.Class11A7JournalEngine = (function () {
     }
   }
 
-  // --- Render Infinite Auto Slider ---
+  // --- Render Infinite Auto Slider (Full width at bottom) ---
   function renderAutoSlider() {
     const track = document.getElementById("galleryInfiniteTrack");
     if (!track) return;
@@ -838,7 +848,7 @@ window.Class11A7JournalEngine = (function () {
       .join("");
   }
 
-  // --- Build Modal HTML ---
+  // --- Main HTML Architecture ---
   function buildModalHtml() {
     return `
       <style>
@@ -876,7 +886,7 @@ window.Class11A7JournalEngine = (function () {
           );
         }
 
-        .gallery-card {
+        .gallery-card, .live-video-card {
           will-change: transform;
         }
 
@@ -908,11 +918,11 @@ window.Class11A7JournalEngine = (function () {
       <div class="relative w-full h-full flex flex-col bg-[#08090d] text-white overflow-hidden select-none">
         
         <!-- ========================================== -->
-        <!-- TOP APP HEADER WITH MEDIA VIEW TOGGLE      -->
+        <!-- TOP APP HEADER (Chỉ ghi A7)                -->
         <!-- ========================================== -->
         <header class="sticky top-0 z-30 min-h-16 px-3.5 sm:px-6 py-2.5 bg-[#0c0e15]/90 backdrop-blur-2xl border-b border-white/10 flex flex-wrap items-center justify-between gap-3 shrink-0">
           
-          <!-- Left: Title & Logo (Chỉ ghi A7) -->
+          <!-- Left: Title & Logo -->
           <div class="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
             <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 via-rose-500 to-amber-500 flex items-center justify-center text-xl shadow-lg shadow-pink-500/25 border border-pink-400/30 shrink-0">
               📸
@@ -930,25 +940,21 @@ window.Class11A7JournalEngine = (function () {
             </div>
           </div>
 
-          <!-- Center: Media View Toggle (Hình Ảnh vs Video) -->
+          <!-- Center: Jump Quick Filters (Hình ảnh & Video) -->
           <div class="order-3 sm:order-2 w-full sm:w-auto flex justify-center">
-            <div class="inline-flex items-center p-1 rounded-2xl bg-slate-900/90 border border-white/10 text-xs font-bold shadow-inner">
-              <button type="button" 
-                      id="mediaTabPhotos"
-                      onclick="window.Class11A7JournalEngine.setViewMode('photos')"
-                      class="px-3.5 sm:px-4 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer bg-gradient-to-r from-pink-500 to-amber-500 text-white shadow-md shadow-pink-500/20 font-bold">
+            <div class="inline-flex items-center p-1 rounded-2xl bg-slate-900/90 border border-white/10 text-xs font-bold shadow-inner gap-1">
+              <a href="#sectionLeftPhotos" 
+                 class="px-3 sm:px-4 py-1.5 rounded-xl transition-all flex items-center gap-1.5 bg-gradient-to-r from-pink-500 to-amber-500 text-white shadow-md shadow-pink-500/20 font-bold">
                 <span>📸</span>
-                <span>Hình Ảnh</span>
+                <span>Hình Ảnh (Trái)</span>
                 <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-black/30 text-white font-mono">28</span>
-              </button>
-              <button type="button" 
-                      id="mediaTabVideos"
-                      onclick="window.Class11A7JournalEngine.setViewMode('videos')"
-                      class="px-3.5 sm:px-4 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer text-slate-400 hover:text-white font-medium">
+              </a>
+              <a href="#sectionRightVideos" 
+                 class="px-3 sm:px-4 py-1.5 rounded-xl transition-all flex items-center gap-1.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-indigo-500/20 font-bold">
                 <span>🎬</span>
-                <span>Thước Phim Video</span>
-                <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-blue-500/20 text-blue-300 font-mono">8</span>
-              </button>
+                <span>Video Chạy Liên Tục (Phải)</span>
+                <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-black/30 text-white font-mono">8</span>
+              </a>
             </div>
           </div>
 
@@ -989,7 +995,7 @@ window.Class11A7JournalEngine = (function () {
         <main class="flex-1 overflow-y-auto gallery-scrollbar p-3.5 sm:p-6 lg:p-8 space-y-8 sm:space-y-10">
           
           <!-- HERO INTRO BANNER -->
-          <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2 border-b border-white/5">
+          <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-white/5">
             <div>
               <div class="flex items-center gap-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -1001,139 +1007,138 @@ window.Class11A7JournalEngine = (function () {
                 Thanh Xuân A7 Dưới Mái Trường TVG
               </h1>
               <p class="text-xs sm:text-sm text-slate-400 mt-1">
-                Trọn bộ khoảnh khắc học tập, 20/10, hội thao, dã ngoại và video kỷ niệm lớp A7
+                Bên trái: Bộ sưu tập hình ảnh (11A7 ở đầu • 10A7 ở sau) • Bên phải: Thước phim video chạy liên tục
               </p>
             </div>
 
-            <div class="flex items-center gap-2 text-xs text-slate-400 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10 shrink-0">
+            <div class="flex items-center gap-2 text-xs text-slate-400 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10 shrink-0 font-mono">
               <span>📸 <b>28</b> Ảnh</span>
               <span>•</span>
-              <span>🎬 <b>8</b> Video</span>
-              <span>•</span>
-              <span>👥 Đại Gia Đình A7</span>
+              <span>🎬 <b>8</b> Video Live</span>
             </div>
           </div>
 
           <!-- ======================================================== -->
-          <!-- 1. PHOTOS VIEW SECTION (11A7 Ở ĐẦU • 10A7 Ở SAU)         -->
+          <!-- DUAL SPLIT-SCREEN LAYOUT: BÊN TRÁI ẢNH • BÊN PHẢI VIDEO -->
           <!-- ======================================================== -->
-          <div id="photosViewSection" class="space-y-10">
+          <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
             
-            <!-- SECTION 11A7 (Ở ĐẦU) -->
-            <div class="max-w-6xl mx-auto space-y-4">
-              <!-- Section Header: 11A7 -->
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-pink-500/25">
-                <div class="flex items-center gap-3">
-                  <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-pink-500 to-amber-500 flex items-center justify-center text-sm font-black text-white shadow-lg shadow-pink-500/25 shrink-0">
-                    11
+            <!-- ===================================================== -->
+            <!-- BÊN TRÁI: HÌNH ẢNH (11A7 Ở ĐẦU, 10A7 Ở SAU)           -->
+            <!-- ===================================================== -->
+            <section id="sectionLeftPhotos" class="space-y-8 lg:pr-2">
+              
+              <!-- SECTION 11A7 (Ở ĐẦU) -->
+              <div class="space-y-4">
+                <div class="flex items-center justify-between pb-2.5 border-b border-pink-500/25">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-pink-500 to-amber-500 flex items-center justify-center text-xs font-black text-white shadow-md shadow-pink-500/25 shrink-0">
+                      11
+                    </div>
+                    <div>
+                      <div class="flex items-center gap-2">
+                        <h3 class="text-sm sm:text-base font-black text-white tracking-tight">Kỷ Niệm 11A7</h3>
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-pink-500/20 text-pink-300 border border-pink-500/30 uppercase tracking-wider">
+                          Hiện tại
+                        </span>
+                      </div>
+                      <p class="text-[11px] text-slate-400">Những khoảnh khắc rạng rỡ của năm học lớp 11</p>
+                    </div>
+                  </div>
+                  <span class="text-xs text-slate-400 font-mono bg-white/5 px-2 py-0.5 rounded-lg border border-white/10">8 Ảnh</span>
+                </div>
+
+                <!-- 11A7 Photos Grid (2 columns on left side) -->
+                <div class="grid grid-cols-2 gap-3 sm:gap-4 items-start">
+                  <div class="flex flex-col gap-3 sm:gap-4" id="photos11A7Col1"></div>
+                  <div class="flex flex-col gap-3 sm:gap-4" id="photos11A7Col2"></div>
+                </div>
+              </div>
+
+              <!-- SECTION 10A7 (Ở SAU KHI LƯỚT) -->
+              <div class="space-y-4 pt-4">
+                <div class="flex items-center justify-between pb-2.5 border-b border-blue-500/25">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-xs font-black text-white shadow-md shadow-blue-500/25 shrink-0">
+                      10
+                    </div>
+                    <div>
+                      <div class="flex items-center gap-2">
+                        <h3 class="text-sm sm:text-base font-black text-white tracking-tight">Kỷ Niệm 10A7</h3>
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 uppercase tracking-wider">
+                          Năm Ấy
+                        </span>
+                      </div>
+                      <p class="text-[11px] text-slate-400">Trọn bộ kỷ niệm 20/10, hội thao, dã ngoại và ngày đầu chung lớp</p>
+                    </div>
+                  </div>
+                  <span class="text-xs text-slate-400 font-mono bg-white/5 px-2 py-0.5 rounded-lg border border-white/10">20 Ảnh</span>
+                </div>
+
+                <!-- 10A7 Photos Grid (2 columns on left side) -->
+                <div class="grid grid-cols-2 gap-3 sm:gap-4 items-start">
+                  <div class="flex flex-col gap-3 sm:gap-4" id="photos10A7Col1"></div>
+                  <div class="flex flex-col gap-3 sm:gap-4" id="photos10A7Col2"></div>
+                </div>
+              </div>
+
+            </section>
+
+            <!-- ===================================================== -->
+            <!-- BÊN PHẢI: VIDEO (CHẠY LIÊN TỤC KHÔNG TIẾNG)            -->
+            <!-- ===================================================== -->
+            <section id="sectionRightVideos" class="space-y-4 lg:pl-2">
+              
+              <div class="flex items-center justify-between pb-2.5 border-b border-blue-500/25">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-base text-white shadow-md shadow-blue-500/25 shrink-0">
+                    🎬
                   </div>
                   <div>
                     <div class="flex items-center gap-2">
-                      <h3 class="text-base sm:text-lg font-black text-white tracking-tight">Kỷ Niệm 11A7</h3>
-                      <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-pink-500/20 text-pink-300 border border-pink-500/30 uppercase tracking-wider">
-                        Khóa 2025–2027 • Hiện tại
+                      <h3 class="text-sm sm:text-base font-black text-white tracking-tight">Thước Phim A7</h3>
+                      <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Chạy liên tục
                       </span>
                     </div>
-                    <p class="text-xs text-slate-400">Những khoảnh khắc rạng rỡ của năm học lớp 11</p>
+                    <p class="text-[11px] text-slate-400">Các video tự động phát không tiếng • Bấm vào để coi lại từ đầu có nhạc</p>
                   </div>
                 </div>
-                <div class="flex items-center gap-2 text-xs text-slate-400 self-start sm:self-center">
-                  <span class="bg-white/5 px-2.5 py-1 rounded-xl border border-white/10 font-mono">8 Khoảnh Khắc</span>
-                </div>
+                <span class="text-xs text-slate-400 font-mono bg-white/5 px-2 py-0.5 rounded-lg border border-white/10">8 Video</span>
               </div>
 
-              <!-- 11A7 3-Column Bento Grid (Image 1 Style - Pure Photos) -->
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4 lg:gap-5 items-start">
-                <div class="flex flex-col gap-3.5 sm:gap-4 lg:gap-5" id="gallery11A7Col1"></div>
-                <div class="flex flex-col gap-3.5 sm:gap-4 lg:gap-5" id="gallery11A7Col2"></div>
-                <div class="flex flex-col gap-3.5 sm:gap-4 lg:gap-5" id="gallery11A7Col3"></div>
-              </div>
-            </div>
-
-            <!-- SECTION 10A7 (Ở SAU) -->
-            <div class="max-w-6xl mx-auto space-y-4 pt-4">
-              <!-- Section Header: 10A7 -->
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-blue-500/25">
-                <div class="flex items-center gap-3">
-                  <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-sm font-black text-white shadow-lg shadow-blue-500/25 shrink-0">
-                    10
-                  </div>
-                  <div>
-                    <div class="flex items-center gap-2">
-                      <h3 class="text-base sm:text-lg font-black text-white tracking-tight">Kỷ Niệm 10A7</h3>
-                      <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 uppercase tracking-wider">
-                        Khóa 2024–2025 • Năm Ấy
-                      </span>
-                    </div>
-                    <p class="text-xs text-slate-400">Trọn vẹn kỷ niệm ngày 20/10, hội thao, dã ngoại và ngày đầu chung lớp</p>
-                  </div>
-                </div>
-                <div class="flex items-center gap-2 text-xs text-slate-400 self-start sm:self-center">
-                  <span class="bg-white/5 px-2.5 py-1 rounded-xl border border-white/10 font-mono">20 Ảnh Tập Thể</span>
-                </div>
+              <!-- Stream of live continuous looping videos -->
+              <div class="flex flex-col gap-4 sm:gap-5" id="liveVideosStreamContainer">
+                <!-- Rendered automatically -->
               </div>
 
-              <!-- 10A7 3-Column Bento Grid (Image 1 Style - Pure Photos) -->
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4 lg:gap-5 items-start">
-                <div class="flex flex-col gap-3.5 sm:gap-4 lg:gap-5" id="gallery10A7Col1"></div>
-                <div class="flex flex-col gap-3.5 sm:gap-4 lg:gap-5" id="gallery10A7Col2"></div>
-                <div class="flex flex-col gap-3.5 sm:gap-4 lg:gap-5" id="gallery10A7Col3"></div>
-              </div>
-            </div>
-
-            <!-- INFINITE AUTO-SLIDER AT BOTTOM -->
-            <section class="w-full relative overflow-hidden pt-8 pb-12 mt-6 border-t border-white/10">
-              <div class="absolute inset-0 bg-gradient-to-b from-transparent via-pink-950/10 to-transparent pointer-events-none"></div>
-
-              <div class="max-w-6xl mx-auto text-center mb-6 px-4">
-                <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-pink-500/20 text-pink-400 border border-pink-500/30 uppercase tracking-widest inline-block mb-2">
-                  Infinite Reel • Chạy Tự Động
-                </span>
-                <h3 class="text-base sm:text-xl font-black text-white">
-                  Cuộn Vô Tận Dòng Thời Gian A7
-                </h3>
-                <p class="text-xs text-slate-400 mt-1">Rê chuột hoặc chạm ngón tay để tạm dừng cuộn</p>
-              </div>
-
-              <div class="scroll-mask-11a7 w-full max-w-7xl mx-auto overflow-hidden">
-                <div class="infinite-scroll-11a7 flex gap-4 sm:gap-6 w-max py-2" id="galleryInfiniteTrack"></div>
-              </div>
             </section>
 
           </div>
 
-          <!-- ======================================================== -->
-          <!-- 2. VIDEOS VIEW SECTION (THƯỚC PHIM VIDEO)                -->
-          <!-- ======================================================== -->
-          <div id="videosViewSection" class="space-y-6 max-w-6xl mx-auto" style="display:none;">
-            
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-blue-500/20">
-              <div>
-                <div class="flex items-center gap-2">
-                  <span class="w-2.5 h-2.5 rounded-full bg-blue-400 animate-pulse"></span>
-                  <span class="text-xs font-bold text-blue-400 uppercase tracking-widest">Kho Thước Phim A7</span>
-                </div>
-                <h2 class="text-lg sm:text-2xl font-black text-white mt-1">
-                  Những Đoạn Phim Thanh Xuân Sống Động
-                </h2>
-                <p class="text-xs text-slate-400 mt-0.5">
-                  Bấm vào video bất kỳ để xem ở chế độ rạp chiếu phim với độ nét cao
-                </p>
-              </div>
-              <div class="text-xs text-slate-400 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10 shrink-0 font-mono">
-                🎬 <b>8</b> Video Kỷ Niệm
-              </div>
+          <!-- ========================================== -->
+          <!-- INFINITE AUTO-SLIDER AT BOTTOM             -->
+          <!-- ========================================== -->
+          <section class="w-full relative overflow-hidden pt-8 pb-12 mt-8 border-t border-white/10">
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-pink-950/10 to-transparent pointer-events-none"></div>
+
+            <div class="max-w-6xl mx-auto text-center mb-6 px-4">
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-pink-500/20 text-pink-400 border border-pink-500/30 uppercase tracking-widest inline-block mb-2">
+                Infinite Reel • Chạy Tự Động
+              </span>
+              <h3 class="text-base sm:text-xl font-black text-white">
+                Cuộn Vô Tận Dòng Thời Gian A7
+              </h3>
+              <p class="text-xs text-slate-400 mt-1">Rê chuột hoặc chạm ngón tay để tạm dừng cuộn</p>
             </div>
 
-            <!-- Videos Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" id="videosGridContainer">
-              <!-- Rendered automatically -->
+            <div class="scroll-mask-11a7 w-full max-w-7xl mx-auto overflow-hidden">
+              <div class="infinite-scroll-11a7 flex gap-4 sm:gap-6 w-max py-2" id="galleryInfiniteTrack"></div>
             </div>
-
-          </div>
+          </section>
 
           <!-- ========================================== -->
-          <!-- 3. USER LƯU BÚT NOTES WALL (IF PRESENT)    -->
+          <!-- USER LƯU BÚT NOTES WALL                    -->
           <!-- ========================================== -->
           <div id="galleryCustomNotesSection" class="max-w-6xl mx-auto space-y-3" style="display:none;">
             <div class="flex items-center justify-between">
@@ -1158,7 +1163,7 @@ window.Class11A7JournalEngine = (function () {
         </div>
 
         <!-- ========================================== -->
-        <!-- VIDEO CINEMA MODAL (VIDEO VIEW)            -->
+        <!-- VIDEO CINEMA MODAL (COI LẠI CÓ NHẠC/TIẾNG) -->
         <!-- ========================================== -->
         <div id="galleryVideoModal" 
              style="z-index: 100000;"
@@ -1231,8 +1236,8 @@ window.Class11A7JournalEngine = (function () {
     if (!containerEl) return;
 
     containerEl.innerHTML = buildModalHtml();
-    renderPhotoGrids();
-    renderVideos();
+    renderPhotosSection();
+    renderVideosSection();
     renderAutoSlider();
     renderNotes();
 
@@ -1263,17 +1268,20 @@ window.Class11A7JournalEngine = (function () {
     isInitialized = true;
   }
 
-  function openModal(defaultTab = "photos") {
+  function openModal() {
     init();
     if (containerEl) {
-      if (defaultTab === "videos") {
-        setViewMode("videos");
-      } else {
-        setViewMode("photos");
-      }
       containerEl.style.setProperty("display", "flex", "important");
       containerEl.classList.remove("hidden");
       document.body.style.overflow = "hidden";
+      // Ensure all continuous muted looping background videos start
+      setTimeout(() => {
+        const bgVideos = containerEl.querySelectorAll("#liveVideosStreamContainer video");
+        bgVideos.forEach((v) => {
+          v.muted = true;
+          v.play().catch(() => {});
+        });
+      }, 200);
     }
   }
 
@@ -1285,6 +1293,13 @@ window.Class11A7JournalEngine = (function () {
       if (musicEnabled) toggleMusic(false);
       closeLightbox();
       closeVideoModal();
+      // Pause background videos to save battery/resources when modal closed
+      const bgVideos = containerEl.querySelectorAll("#liveVideosStreamContainer video");
+      bgVideos.forEach((v) => {
+        try {
+          v.pause();
+        } catch (e) {}
+      });
     }
   }
 
@@ -1292,12 +1307,12 @@ window.Class11A7JournalEngine = (function () {
     init,
     openModal,
     closeModal,
-    setViewMode,
     openLightbox: openLightboxByIndex,
     closeLightbox,
     nextLightbox,
     prevLightbox,
     openVideo: openVideoModal,
+    replayActiveVideo,
     closeVideoModal,
     toggleMusic,
     openAddNoteModal,
