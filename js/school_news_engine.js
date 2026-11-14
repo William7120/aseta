@@ -11,7 +11,7 @@
 (function(window) {
     'use strict';
 
-    const CACHE_KEY = 'aseta_tvg_school_news_cache_v8';
+    const CACHE_KEY = 'aseta_tvg_school_news_cache_v9';
     const CACHE_TTL_MS = 5 * 60 * 1000; // 5 phút
 
     const SchoolNewsEngine = {
@@ -346,17 +346,17 @@
             });
             daySelectorHtml += '</div>';
 
-            // Tasks HTML inside Hero Card (Fitted height with smooth scroll if > 3 items)
+            // Tasks HTML inside Hero Card (Fills card height gracefully, smooth scrollbar)
             let tasksListHtml = '';
             if (targetRows.length === 0) {
                 tasksListHtml = `
-                    <div class="py-8 text-center text-slate-400 flex flex-col items-center justify-center">
-                        <span class="text-3xl">☕</span>
-                        <p class="mt-2 text-xs font-bold text-slate-200">Không có công tác hoặc là ngày nghỉ</p>
+                    <div class="h-full flex flex-col items-center justify-center py-8 text-center text-slate-400">
+                        <span class="text-4xl">☕</span>
+                        <p class="mt-2.5 text-xs sm:text-sm font-bold text-slate-200">Không có công tác hoặc là ngày nghỉ</p>
                         <p class="text-[11px] text-slate-400 mt-0.5">Bấm các thứ khác ở trên để xem trước công tác</p>
                     </div>`;
             } else {
-                tasksListHtml = '<div class="space-y-2 max-h-[190px] lg:max-h-[220px] overflow-y-auto pr-1 no-scrollbar">';
+                tasksListHtml = '<div class="space-y-2.5">';
                 targetRows.forEach((t, idx) => {
                     if (!t.content && !t.assignee) return;
                     const timeMatch = t.content ? t.content.match(/(\d{1,2}[gh:]\d{2})/i) : null;
@@ -364,17 +364,18 @@
                     const timeTag = timeMatch ? timeMatch[1] : `Mục ${idx + 1}`;
 
                     tasksListHtml += `
-                        <div class="p-2.5 sm:p-3 rounded-xl bg-[#0e1018]/90 border border-white/5 hover:border-white/15 transition-all flex items-start justify-between gap-2">
-                            <div class="flex items-start gap-2 min-w-0">
-                                <span class="px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-300 border border-amber-500/25 font-black text-[10px] shrink-0 mt-0.5">
+                        <div class="p-2.5 sm:p-3 rounded-2xl bg-[#0e1018]/90 border border-white/5 hover:border-white/15 transition-all flex flex-col gap-1.5">
+                            <div class="flex items-start gap-2.5">
+                                <span class="px-2 py-0.5 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-500/25 font-black text-[10px] shrink-0 mt-0.5">
                                     ⏰ ${timeTag}
                                 </span>
-                                <div class="text-xs text-slate-100 font-medium leading-relaxed truncate-2">
+                                <div class="text-xs sm:text-sm text-slate-100 font-medium leading-relaxed">
                                     ${cleanContent || t.content}
                                 </div>
                             </div>
-                            <div class="flex items-center gap-1 shrink-0">
-                                ${t.assignee ? `<span class="px-1.5 py-0.5 rounded-md bg-sky-500/15 text-sky-300 border border-sky-500/20 font-semibold text-[10px] truncate max-w-[110px]">👥 ${t.assignee}</span>` : ''}
+                            <div class="flex flex-wrap items-center gap-1.5 pl-8 text-[11px]">
+                                ${t.assignee ? `<span class="px-2 py-0.5 rounded-md bg-sky-500/15 text-sky-300 border border-sky-500/20 font-semibold text-[10px]">👥 ${t.assignee}</span>` : ''}
+                                ${t.location ? `<span class="px-2 py-0.5 rounded-md bg-purple-500/15 text-purple-300 border border-purple-500/20 font-semibold text-[10px]">📍 ${t.location}</span>` : ''}
                             </div>
                         </div>`;
                 });
@@ -427,37 +428,39 @@
                 <div class="h-full flex flex-col justify-between gap-3">
                     
                     <!-- Top Sub-bar: Day Switcher -->
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 shrink-0">
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                            <h4 class="text-xs sm:text-sm font-bold text-white tracking-tight">
-                                Tiêu điểm: <span class="text-amber-400">${targetDayTitle}</span>
-                            </h4>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 shrink-0 pb-1">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                Tiêu điểm: ${targetDayTitle}
+                            </span>
                         </div>
                         ${daySelectorHtml}
                     </div>
 
                     <!-- 1-SCREEN BENTO GRID -->
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 flex-1 min-h-0">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 flex-1 min-h-0">
                         
                         <!-- LEFT COLUMN (7 COLS): HERO TASKS & LUNCH -->
-                        <div class="lg:col-span-7 flex flex-col justify-between gap-3 min-h-0">
+                        <div class="lg:col-span-7 flex flex-col justify-between gap-3.5 min-h-0">
                             
                             <!-- 1. HERO SPOTLIGHT CARD -->
-                            <div class="flex-1 p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-[#161824] via-[#10121a] to-[#0c0d12] border border-white/10 shadow-xl flex flex-col justify-between relative overflow-hidden">
-                                <div class="flex items-center justify-between gap-2 pb-1.5 border-b border-white/5">
+                            <div class="flex-1 min-h-0 p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-[#161824] via-[#10121a] to-[#0c0d12] border border-white/10 shadow-xl flex flex-col overflow-hidden">
+                                <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-white/5 shrink-0">
                                     <div class="flex items-center gap-2">
-                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                                            ● Công Tác Hôm Nay
+                                        <span class="text-xs sm:text-sm font-black text-white flex items-center gap-1.5">
+                                            <span>📋</span> <span>Nhiệm Vụ & Mốc Giờ</span>
                                         </span>
-                                        <span class="text-xs text-slate-400 font-semibold">${targetRows.length} nhiệm vụ</span>
+                                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-white/5 text-amber-300 border border-white/10">
+                                            ${targetRows.length} việc
+                                        </span>
                                     </div>
-                                    <button type="button" onclick="SchoolNewsEngine.switchTab('schedule')" class="text-xs text-sky-400 hover:text-sky-300 font-bold flex items-center gap-1">
-                                        <span>Lịch tuần ➔</span>
+                                    <button type="button" onclick="SchoolNewsEngine.switchTab('schedule')" class="text-xs text-sky-400 hover:text-sky-300 font-bold flex items-center gap-1 transition-colors">
+                                        <span>Xem lịch tuần ➔</span>
                                     </button>
                                 </div>
 
-                                <div class="my-2 min-h-0 flex-1">
+                                <div class="flex-1 min-h-0 overflow-y-auto py-2.5 pr-1.5 school-scrollbar">
                                     ${tasksListHtml}
                                 </div>
                             </div>
@@ -466,7 +469,7 @@
                             <div class="p-3.5 sm:p-4 rounded-3xl bg-gradient-to-br from-[#181522] to-[#0c0d12] border border-amber-500/20 shadow-xl shrink-0">
                                 <div class="flex items-center justify-between gap-2">
                                     <div class="flex items-center gap-2">
-                                        <span class="text-lg">🍱</span>
+                                        <span class="text-base sm:text-lg">🍱</span>
                                         <h5 class="text-xs sm:text-sm font-bold text-white">Thực Đơn Cơm Trưa Bán Trú</h5>
                                     </div>
                                     <button type="button" onclick="SchoolNewsEngine.switchTab('meals')" class="text-[11px] text-sky-400 hover:text-sky-300 font-bold">
@@ -479,7 +482,7 @@
                         </div>
 
                         <!-- RIGHT COLUMN (5 COLS): STATS & DUTY & LATEST NOTICE -->
-                        <div class="lg:col-span-5 flex flex-col justify-between gap-3 min-h-0">
+                        <div class="lg:col-span-5 flex flex-col justify-between gap-3.5 min-h-0">
                             
                             <!-- 3. WORKLOAD STATS & DUTY CARD -->
                             <div class="flex-1 p-4 sm:p-5 rounded-3xl bg-[#11131c] border border-white/10 shadow-xl flex flex-col justify-between">
@@ -588,7 +591,7 @@
             });
 
             // Accordion rows
-            let accordionHtml = '<div class="space-y-2 flex-1 min-h-0 overflow-y-auto pr-1 no-scrollbar">';
+            let accordionHtml = '<div class="space-y-2 flex-1 min-h-0 overflow-y-auto pr-1 school-scrollbar">';
             let renderedDayCount = 0;
 
             groupedDays.forEach((tasks, dayKey) => {

@@ -99,6 +99,21 @@
 
     <!-- Critical AuthGate & Icon Alignment Styles (Immediate In-Memory Render) -->
     <style>
+        .school-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .school-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .school-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 9999px;
+        }
+        .school-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
         #authGateView {
             position: fixed !important;
             top: 0 !important;
@@ -2148,7 +2163,7 @@
     <script src="js/timetable_engine.js"></script>
     <script src="js/vocab_engine.js"></script>
     <script src="js/grade_calc_engine.js"></script>
-    <script src="js/school_news_engine.js?v=8"></script>
+    <script src="js/school_news_engine.js?v=9"></script>
     <script src="js/app-v4.js"></script>
 
     <!-- DIRECT INLINE RUNTIME FAIL-SAFE FOR file:/// BROWSER CACHE & 3D TILT EFFECT -->
