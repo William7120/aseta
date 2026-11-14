@@ -480,7 +480,49 @@
       "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/KEmpiNrGl4e6p5X9L3r8Kfm_Je5tChQ750_xWT8zbPuRI7lsKwloSKXfi2t1lQyeQPz-0gxxRUdIkeGTUauVYWvNPgHdUjWMJOZXLDUMT0pBIAh1XLqAZAevwoYcKgeSkB4gxRdyF9V6lXF7PR3m9pvOoGmH_I19hRHpZW09jN0Y0xW3y6Ug7Jnmzaug6DM2vwCvdjja/zGvPrRxW8s9b_Vtd39FWSSBVxpTwOSHoTRq7U6nw3EsMpQvjWBcuOqwsivKSSPEeu7u7/thuc-don-ban-tru-09-13-11-2026.pdf",
       "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/9b545d9d3ca6b185fa1a1f7576cf4f5e.pdf/thuc-don-ban-tru-09-13-11-2026-811202617.pdf&urlgoc=%2Ftai%2FOnD3y56_Piqd0IyE0Qv2_1Y8cY3bok6F990oMX4wJL2ilQQOV249IMGCLjai6dSqj_ENEwx8zIXU4l9XdILM35Djrop8QtcQ2MTTXs-S9PCMTlcJLMw4fL_2RezbMDxKE3fUTpaWrzWNoRg25pvAFLcZ0tM8e4hXybWEX8YYHEAUgtxBl7m1yujOYmHWnz9EkBoWzZJN%2FUeBqnHBqGj3uepxKSrvgIJv7RuQjpLDFYFb6YK8OUyVac_i52zDwGWnJNM6vPlTx6Dz8yDZxSajIeewLHQ%2Fthuc-don-ban-tru-09-13-11-2026-811202617.pdf",
       "summary": "Thực đơn bán trú tuần 10 (từ ngày 09/11/2026 đến ngày 13/11/2026)",
-      "imageUrl": "data/pdf/thuc_don_tuan_10.png"
+      "imageUrl": "data/pdf/thuc_don_tuan_10.png",
+      "dailyDishes": {
+        "Thứ Hai": {
+          "date": "09/11/2026",
+          "main": "Cá file chiên sốt cà",
+          "side": "Chả lụa kho tiêu",
+          "soup": "Canh cải thảo nấu thịt",
+          "veggie": "Giá hẹ xào",
+          "dessert": "Bánh kem xốp"
+        },
+        "Thứ Ba": {
+          "date": "10/11/2026",
+          "main": "Gà kho gừng",
+          "side": "Trứng ốp la",
+          "soup": "Canh rau má thịt bằm",
+          "veggie": "Rau muống xào tỏi",
+          "dessert": "Rau câu"
+        },
+        "Thứ Tư": {
+          "date": "11/11/2026",
+          "main": "Cốt lết ram mặn",
+          "side": "Đậu hũ chiên sốt cà chua",
+          "soup": "Canh cải ngọt nấu thịt",
+          "veggie": "Su su xào cà rốt",
+          "dessert": "Táo"
+        },
+        "Thứ Năm": {
+          "date": "12/11/2026",
+          "main": "Bún bò Huế",
+          "side": "Cơm chiên tỏi, trứng cắt sợi",
+          "soup": "—",
+          "veggie": "—",
+          "dessert": "Chuối"
+        },
+        "Thứ Sáu": {
+          "date": "13/11/2026",
+          "main": "Sườn – thịt heo xào chua ngọt",
+          "side": "Chả mực chiên",
+          "soup": "Canh bí đỏ nấu thịt",
+          "veggie": "Bắp cải xào cà rốt",
+          "dessert": "Bánh quy các vị"
+        }
+      }
     },
     {
       "weekNum": 9,
