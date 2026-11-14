@@ -638,9 +638,9 @@ window.Class11A7JournalEngine = (function () {
     }
   }
 
-  // --- Render Photos Column (BÊN TRÁI: 11A7 Ở ĐẦU, 10A7 Ở SAU) ---
+  // --- Render Photos Column (11A7 SONG SONG VỚI VIDEO • 10A7 TRÀN TOÀN CẢNH KHI HẾT VIDEO) ---
   function renderPhotosSection() {
-    // 1. 11A7 Photos Grid (Ở Đầu)
+    // 1. 11A7 Photos Grid (Ở Đầu song song cùng Thước Phim Video)
     const c1_11 = document.getElementById("photos11A7Col1");
     const c2_11 = document.getElementById("photos11A7Col2");
 
@@ -655,7 +655,7 @@ window.Class11A7JournalEngine = (function () {
           <div class="gallery-card group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#131520] border border-white/10 shadow-xl cursor-pointer select-none transition-all duration-300 hover:-translate-y-1 hover:border-white/30 hover:shadow-2xl ${p.aspect}"
                onclick="window.Class11A7JournalEngine.openLightbox(${globalIdx})"
                title="${p.title}">
-            <img src="${p.src}" alt="${p.title}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 group-hover:brightness-105"/>
+            <img src="${p.src}" alt="${p.title}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 group-hover:brightness-105"/>
           </div>
         `;
       };
@@ -664,51 +664,19 @@ window.Class11A7JournalEngine = (function () {
       c2_11.innerHTML = c2Photos.map(renderCard).join("");
     }
 
-    // 2. 10A7 Photos Grid (Ở Sau khi lướt)
-    const c1_10 = document.getElementById("photos10A7Col1");
-    const c2_10 = document.getElementById("photos10A7Col2");
-
-    if (c1_10 && c2_10) {
-      // 20 photos for 10A7 distributed in 2 columns
-      const c1Photos_10 = [
-        PHOTOS_10A7[0], // full1 (square)
-        PHOTOS_10A7[1], // chalkboard
-        PHOTOS_10A7[4], // cheer
-        PHOTOS_10A7[6], // boys
-        PHOTOS_10A7[8], // thethao_5183
-        PHOTOS_10A7[9], // thethao_5178
-        PHOTOS_10A7[10], // thethao_5182
-        PHOTOS_10A7[12], // 1621
-        PHOTOS_10A7[14], // full2
-        PHOTOS_10A7[16], // selfie_girls
-      ];
-
-      const c2Photos_10 = [
-        PHOTOS_10A7[2], // girls_flowers
-        PHOTOS_10A7[3], // selfie_fun
-        PHOTOS_10A7[5], // jollibee
-        PHOTOS_10A7[7], // peace_pose
-        PHOTOS_10A7[11], // thethao_5179
-        PHOTOS_10A7[13], // 1626
-        PHOTOS_10A7[15], // balloons
-        PHOTOS_10A7[17], // flower_lineup
-        PHOTOS_10A7[18], // thethao_5185
-        PHOTOS_10A7[19], // thethao_5186
-      ];
-
-      const renderCard10 = (p) => {
+    // 2. 10A7 Photos Grid (Tự động đưa ảnh tràn qua cả bên phải khi video hết hàng, 4 cột toàn cảnh tránh khoảng trống)
+    const fullGrid10 = document.getElementById("photos10A7FullGrid");
+    if (fullGrid10) {
+      fullGrid10.innerHTML = PHOTOS_10A7.map((p) => {
         const globalIdx = ALL_PHOTOS.findIndex((x) => x.id === p.id);
         return `
-          <div class="gallery-card group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#131520] border border-white/10 shadow-xl cursor-pointer select-none transition-all duration-300 hover:-translate-y-1 hover:border-white/30 hover:shadow-2xl ${p.aspect}"
+          <div class="gallery-card group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#131520] border border-white/10 shadow-xl cursor-pointer select-none transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/40 hover:shadow-2xl ${p.aspect}"
                onclick="window.Class11A7JournalEngine.openLightbox(${globalIdx})"
                title="${p.title}">
-            <img src="${p.src}" alt="${p.title}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 group-hover:brightness-105"/>
+            <img src="${p.src}" alt="${p.title}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 group-hover:brightness-105"/>
           </div>
         `;
-      };
-
-      c1_10.innerHTML = c1Photos_10.map(renderCard10).join("");
-      c2_10.innerHTML = c2Photos_10.map(renderCard10).join("");
+      }).join("");
     }
   }
 
@@ -979,17 +947,21 @@ window.Class11A7JournalEngine = (function () {
             <div class="inline-flex items-center p-1 rounded-2xl bg-slate-900/90 border border-white/10 text-xs font-bold shadow-inner gap-1">
               <button type="button" 
                       onclick="window.Class11A7JournalEngine.scrollToSection('sectionLeftPhotos')"
-                      class="px-3 sm:px-4 py-1.5 rounded-xl transition-all flex items-center gap-1.5 bg-gradient-to-r from-pink-500 to-amber-500 text-white shadow-md shadow-pink-500/20 font-bold cursor-pointer">
+                      class="px-2.5 sm:px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 bg-gradient-to-r from-pink-500 to-amber-500 text-white shadow-md shadow-pink-500/20 font-bold cursor-pointer">
                 <span>📸</span>
-                <span>Hình Ảnh (Trái)</span>
-                <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-black/30 text-white font-mono">28</span>
+                <span>11A7 (8 Ảnh)</span>
               </button>
               <button type="button" 
                       onclick="window.Class11A7JournalEngine.scrollToSection('sectionRightVideos')"
-                      class="px-3 sm:px-4 py-1.5 rounded-xl transition-all flex items-center gap-1.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-indigo-500/20 font-bold cursor-pointer">
+                      class="px-2.5 sm:px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-indigo-500/20 font-bold cursor-pointer">
                 <span>🎬</span>
-                <span>Nhiều Khung Hình Video (Phải)</span>
-                <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-black/30 text-white font-mono">8</span>
+                <span>Video (8 Live)</span>
+              </button>
+              <button type="button" 
+                      onclick="window.Class11A7JournalEngine.scrollToSection('section10A7Full')"
+                      class="px-2.5 sm:px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white font-bold cursor-pointer">
+                <span>📸</span>
+                <span>10A7 (20 Ảnh Toàn Cảnh)</span>
               </button>
             </div>
           </div>
@@ -1055,14 +1027,14 @@ window.Class11A7JournalEngine = (function () {
           </div>
 
           <!-- ======================================================== -->
-          <!-- DUAL SPLIT-SCREEN LAYOUT: BÊN TRÁI ẢNH • BÊN PHẢI VIDEO -->
+          <!-- PHẦN 1: SONG SONG (11A7 BÊN TRÁI • VIDEO BÊN PHẢI)       -->
           <!-- ======================================================== -->
           <div class="max-w-[1520px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
             
             <!-- ===================================================== -->
-            <!-- BÊN TRÁI: HÌNH ẢNH (11A7 Ở ĐẦU, 10A7 Ở SAU)           -->
+            <!-- BÊN TRÁI: HÌNH ẢNH 11A7 (8 ẢNH - 2 CỘT)                -->
             <!-- ===================================================== -->
-            <section id="sectionLeftPhotos" class="space-y-8 lg:pr-2">
+            <section id="sectionLeftPhotos" class="space-y-4 lg:pr-2">
               
               <!-- SECTION 11A7 (Ở ĐẦU) -->
               <div class="space-y-4">
@@ -1088,33 +1060,6 @@ window.Class11A7JournalEngine = (function () {
                 <div class="grid grid-cols-2 gap-3 sm:gap-4 items-start">
                   <div class="flex flex-col gap-3 sm:gap-4" id="photos11A7Col1"></div>
                   <div class="flex flex-col gap-3 sm:gap-4" id="photos11A7Col2"></div>
-                </div>
-              </div>
-
-              <!-- SECTION 10A7 (Ở SAU KHI LƯỚT) -->
-              <div class="space-y-4 pt-4">
-                <div class="flex items-center justify-between pb-2.5 border-b border-blue-500/25">
-                  <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-xs font-black text-white shadow-md shadow-blue-500/25 shrink-0">
-                      10
-                    </div>
-                    <div>
-                      <div class="flex items-center gap-2">
-                        <h3 class="text-sm sm:text-base font-black text-white tracking-tight">Kỷ Niệm 10A7</h3>
-                        <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 uppercase tracking-wider">
-                          Năm Ấy
-                        </span>
-                      </div>
-                      <p class="text-[11px] text-slate-400">Trọn bộ kỷ niệm 20/10, hội thao, dã ngoại và ngày đầu chung lớp</p>
-                    </div>
-                  </div>
-                  <span class="text-xs text-slate-400 font-mono bg-white/5 px-2 py-0.5 rounded-lg border border-white/10">20 Ảnh</span>
-                </div>
-
-                <!-- 10A7 Photos Grid (2 columns on left side) -->
-                <div class="grid grid-cols-2 gap-3 sm:gap-4 items-start">
-                  <div class="flex flex-col gap-3 sm:gap-4" id="photos10A7Col1"></div>
-                  <div class="flex flex-col gap-3 sm:gap-4" id="photos10A7Col2"></div>
                 </div>
               </div>
 
@@ -1171,6 +1116,36 @@ window.Class11A7JournalEngine = (function () {
             </section>
 
           </div>
+
+          <!-- ======================================================== -->
+          <!-- PHẦN 2: KỶ NIỆM 10A7 (TỰ ĐỘNG TRÀN TOÀN CẢNH 4 CỘT)      -->
+          <!-- Khi video hết hàng: tự động đưa ảnh qua phải, không trống-->
+          <!-- ======================================================== -->
+          <section id="section10A7Full" class="max-w-[1520px] mx-auto space-y-4 pt-6 sm:pt-8 border-t border-white/10">
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-blue-500/25">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-xs font-black text-white shadow-md shadow-blue-500/25 shrink-0">
+                  10
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h3 class="text-sm sm:text-base font-black text-white tracking-tight">Kỷ Niệm 10A7</h3>
+                    <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 uppercase tracking-wider">
+                      Năm Ấy
+                    </span>
+                    <span class="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-blue-300 border border-blue-400/30">
+                      <span>✨</span> Tự động tràn toàn cảnh (Không khoảng trống)
+                    </span>
+                  </div>
+                  <p class="text-[11px] text-slate-400">Trọn bộ 20 khoảnh khắc kỷ niệm 20/10, hội thao, dã ngoại và ngày đầu chung lớp</p>
+                </div>
+              </div>
+              <span class="text-xs text-slate-400 font-mono bg-white/5 px-2.5 py-1 rounded-lg border border-white/10 shrink-0">20 Ảnh</span>
+            </div>
+
+            <!-- 10A7 Photos Grid (Tràn đều 4 cột trên desktop không để lại khoảng trống) -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 items-start" id="photos10A7FullGrid"></div>
+          </section>
 
           <!-- ========================================== -->
           <!-- INFINITE AUTO-SLIDER AT BOTTOM             -->
