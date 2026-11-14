@@ -649,31 +649,31 @@ window.Class11A7JournalEngine = (function () {
       const c1Photos = [PHOTOS_11A7[0], PHOTOS_11A7[1], PHOTOS_11A7[4], PHOTOS_11A7[6]];
       const c2Photos = [PHOTOS_11A7[2], PHOTOS_11A7[3], PHOTOS_11A7[5], PHOTOS_11A7[7]];
 
-      const renderCard = (p) => {
+      const renderCard11 = (p) => {
         const globalIdx = ALL_PHOTOS.findIndex((x) => x.id === p.id);
         return `
-          <div class="gallery-card group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#131520] border border-white/10 shadow-xl cursor-pointer select-none transition-all duration-300 hover:-translate-y-1 hover:border-white/30 hover:shadow-2xl ${p.aspect}"
+          <div class="gallery-card group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#131520] border border-white/10 shadow-xl cursor-pointer select-none transition-all duration-300 hover:-translate-y-1 hover:border-pink-400/40 hover:shadow-2xl aspect-[4/3] w-full"
                onclick="window.Class11A7JournalEngine.openLightbox(${globalIdx})"
                title="${p.title}">
-            <img src="${p.src}" alt="${p.title}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 group-hover:brightness-105"/>
+            <img src="${p.src}" alt="${p.title}" decoding="async" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 group-hover:brightness-105"/>
           </div>
         `;
       };
 
-      c1_11.innerHTML = c1Photos.map(renderCard).join("");
-      c2_11.innerHTML = c2Photos.map(renderCard).join("");
+      c1_11.innerHTML = c1Photos.map(renderCard11).join("");
+      c2_11.innerHTML = c2Photos.map(renderCard11).join("");
     }
 
-    // 2. 10A7 Photos Grid (Tự động đưa ảnh tràn qua cả bên phải khi video hết hàng, 4 cột toàn cảnh tránh khoảng trống)
+    // 2. 10A7 Photos Grid (Tự động đưa ảnh tràn qua cả bên phải khi video hết hàng, 4 cột đều tăm tắp chuẩn 4:3)
     const fullGrid10 = document.getElementById("photos10A7FullGrid");
     if (fullGrid10) {
       fullGrid10.innerHTML = PHOTOS_10A7.map((p) => {
         const globalIdx = ALL_PHOTOS.findIndex((x) => x.id === p.id);
         return `
-          <div class="gallery-card group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#131520] border border-white/10 shadow-xl cursor-pointer select-none transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/40 hover:shadow-2xl ${p.aspect}"
+          <div class="gallery-card group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#131520] border border-white/10 shadow-xl cursor-pointer select-none transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/40 hover:shadow-2xl aspect-[4/3] w-full"
                onclick="window.Class11A7JournalEngine.openLightbox(${globalIdx})"
                title="${p.title}">
-            <img src="${p.src}" alt="${p.title}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 group-hover:brightness-105"/>
+            <img src="${p.src}" alt="${p.title}" decoding="async" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 group-hover:brightness-105"/>
           </div>
         `;
       }).join("");
@@ -704,6 +704,7 @@ window.Class11A7JournalEngine = (function () {
         b3.className = "px-2.5 py-0.5 rounded-md text-slate-400 hover:text-white font-bold transition-all cursor-pointer";
       }
     }
+    setTimeout(setupVideoObserver, 150);
   }
 
   function scrollToSection(id) {
@@ -711,6 +712,84 @@ window.Class11A7JournalEngine = (function () {
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
+  }
+
+  // --- Video Intersection Observer (Chỉ phát video đang thấy trên màn hình để loại bỏ 100% giật lag) ---
+  let videoObserver = null;
+
+  function setupVideoObserver() {
+    if (videoObserver) {
+      videoObserver.disconnect();
+      videoObserver = null;
+    }
+
+    const container = document.getElementById("liveVideosStreamContainer");
+    if (!container) return;
+
+    const modalMain = document.querySelector("#class11A7Modal main");
+
+    if ("IntersectionObserver" in window) {
+      videoObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const vid = entry.target.querySelector("video");
+            if (!vid) return;
+            if (entry.isIntersecting) {
+              vid.muted = true;
+              vid.play().catch(() => {});
+            } else {
+              vid.pause();
+            }
+          });
+        },
+        {
+          root: modalMain || null,
+          rootMargin: "100px 0px 100px 0px",
+          threshold: 0.1,
+        }
+      );
+
+      const cards = container.querySelectorAll(".live-video-card");
+      cards.forEach((card) => videoObserver.observe(card));
+    } else {
+      const videos = container.querySelectorAll("video");
+      videos.forEach((vid) => {
+        vid.muted = true;
+        vid.play().catch(() => {});
+      });
+    }
+  }
+
+  // --- Slider Intersection Observer (Tạm dừng hoạt ảnh khi không ở trên màn hình) ---
+  let sliderObserver = null;
+
+  function setupSliderObserver() {
+    if (sliderObserver) {
+      sliderObserver.disconnect();
+      sliderObserver = null;
+    }
+    const track = document.getElementById("galleryInfiniteTrack");
+    if (!track || !("IntersectionObserver" in window)) return;
+
+    const modalMain = document.querySelector("#class11A7Modal main");
+
+    sliderObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            track.style.animationPlayState = "running";
+          } else {
+            track.style.animationPlayState = "paused";
+          }
+        });
+      },
+      {
+        root: modalMain || null,
+        threshold: 0.05,
+      }
+    );
+
+    sliderObserver.observe(track);
   }
 
   function renderVideosSection() {
@@ -786,14 +865,7 @@ window.Class11A7JournalEngine = (function () {
       `;
     }).join("");
 
-    // Ensure all background videos start autoplaying
-    setTimeout(() => {
-      const videos = container.querySelectorAll("video");
-      videos.forEach((vid) => {
-        vid.muted = true;
-        vid.play().catch(() => {});
-      });
-    }, 200);
+    setTimeout(setupVideoObserver, 150);
   }
 
   // --- Render Notes Wall ---
@@ -865,10 +937,12 @@ window.Class11A7JournalEngine = (function () {
 
         .infinite-scroll-11a7 {
           animation: scroll-infinite-11a7 36s linear infinite;
+          animation-play-state: paused;
+          will-change: transform;
         }
 
         .infinite-scroll-11a7:hover {
-          animation-play-state: paused;
+          animation-play-state: paused !important;
         }
 
         .scroll-mask-11a7 {
@@ -888,8 +962,18 @@ window.Class11A7JournalEngine = (function () {
           );
         }
 
-        .gallery-card, .live-video-card {
+        .gallery-card {
           will-change: transform;
+          content-visibility: auto;
+          contain-intrinsic-size: 320px 240px;
+          contain: layout style paint;
+        }
+
+        .live-video-card {
+          will-change: transform;
+          content-visibility: auto;
+          contain-intrinsic-size: 320px 220px;
+          contain: layout style paint;
         }
 
         .image-item {
@@ -1305,14 +1389,10 @@ window.Class11A7JournalEngine = (function () {
       containerEl.style.setProperty("display", "flex", "important");
       containerEl.classList.remove("hidden");
       document.body.style.overflow = "hidden";
-      // Ensure all continuous muted looping background videos start
       setTimeout(() => {
-        const bgVideos = containerEl.querySelectorAll("#liveVideosStreamContainer video");
-        bgVideos.forEach((v) => {
-          v.muted = true;
-          v.play().catch(() => {});
-        });
-      }, 200);
+        setupVideoObserver();
+        setupSliderObserver();
+      }, 100);
     }
   }
 
@@ -1324,7 +1404,15 @@ window.Class11A7JournalEngine = (function () {
       if (musicEnabled) toggleMusic(false);
       closeLightbox();
       closeVideoModal();
-      // Pause background videos to save battery/resources when modal closed
+      if (videoObserver) {
+        videoObserver.disconnect();
+        videoObserver = null;
+      }
+      if (sliderObserver) {
+        sliderObserver.disconnect();
+        sliderObserver = null;
+      }
+      // Pause all background videos to save battery/resources when modal closed
       const bgVideos = containerEl.querySelectorAll("#liveVideosStreamContainer video");
       bgVideos.forEach((v) => {
         try {
