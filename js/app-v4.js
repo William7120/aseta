@@ -4675,6 +4675,7 @@ window.AzotaApp = (function() {
         openLeaderboard: openLeaderboard,
         openTimetable: openTimetable,
         openSchoolNews: (tab) => window.SchoolNewsEngine ? window.SchoolNewsEngine.openModal(tab) : null,
+        open11A7Journal: (idx) => window.Class11A7JournalEngine ? window.Class11A7JournalEngine.openModal(idx) : null,
         refreshLeaderboard: refreshLeaderboard,
         setLeaderboardScope: setLeaderboardScope,
         setLeaderboardSort: setLeaderboardSort,

@@ -649,6 +649,28 @@
                         </span>
                     </button>
 
+                    <!-- Kỷ Niệm 11A7 — 3D Memory Scrapbook Journal -->
+                    <button type="button" 
+                            id="sidebar-util-11a7-journal" 
+                            onclick="window.Class11A7JournalEngine ? window.Class11A7JournalEngine.openModal() : AzotaApp.open11A7Journal()" 
+                            style="--gradient-from: #ec4899; --gradient-to: #f59e0b;" 
+                            class="gradient-menu-btn nav-item-modern group relative" 
+                            title="Nhìn Lại Kỷ Niệm 11A7 — Sổ Lưu Bút 3D Thanh Xuân">
+                        <span class="gradient-menu-bg"></span>
+                        <span class="gradient-menu-glow"></span>
+                        <span class="gradient-menu-icon"><span class="text-xl">📸</span></span>
+                        <span class="gradient-menu-title">Kỷ Niệm 11A7</span>
+                        <span class="gradient-active-dot"></span>
+                        <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5 lg:h-3 lg:w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 lg:h-3 lg:w-3 bg-pink-500"></span>
+                        </span>
+                        <span class="mobile-drawer-label hidden">
+                            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Kỷ Niệm 11A7</span>
+                            <span class="liquid-tag-pill bg-pink-500/15 text-pink-400 border border-pink-500/25">Hot</span>
+                        </span>
+                    </button>
+
                 </div>
             </div>
 
@@ -764,6 +786,17 @@
 
                 <!-- Right: Status Indicators & Quick Actions -->
                 <div class="flex items-center gap-2 sm:gap-2.5 text-slate-600 dark:text-slate-300 shrink-0">
+                    <!-- Kỷ Niệm 11A7 (3D Scrapbook Header Button) -->
+                    <button type="button" 
+                            id="header11A7Btn"
+                            onclick="window.Class11A7JournalEngine ? window.Class11A7JournalEngine.openModal() : AzotaApp.open11A7Journal()" 
+                            title="Mở Sổ Kỷ Niệm Lớp 11A7" 
+                            class="px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 hover:opacity-90 shadow-md shadow-pink-500/25 flex items-center gap-1.5 cursor-pointer transition-all shrink-0 active:scale-95">
+                        <span class="text-sm">📸</span>
+                        <span class="hidden sm:inline">Kỷ Niệm 11A7</span>
+                        <span class="sm:hidden">11A7</span>
+                    </button>
+
                     <!-- Live Clock (Clean single-line pill, never wraps) -->
                     <div id="osLiveClock" class="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-white/5 font-mono text-xs font-semibold text-slate-600 dark:text-slate-300 whitespace-nowrap shrink-0 select-none">
                         <span>🕒</span>
@@ -2136,6 +2169,11 @@
         </div>
     </div>
 
+    <!-- ======================================================== -->
+    <!-- MODAL: KỶ NIỆM 11A7 (THPT TRẦN VĂN GIÀU) - 3D SCRAPBOOK  -->
+    <!-- ======================================================== -->
+    <div id="class11A7Modal" class="fixed inset-0 flex items-center justify-center bg-black/90 backdrop-blur-md hidden transition-opacity duration-200" style="display:none !important; z-index:999999 !important;"></div>
+
     <!-- Floating Security & Anti-Flood Toast -->
     <div id="securityToast" class="flex items-center gap-3 px-4.5 py-3 rounded-2xl bg-slate-900/95 border border-amber-500/50 text-white shadow-2xl backdrop-blur-xl">
         <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg">🛡️</div>
@@ -2164,6 +2202,7 @@
     <script src="js/vocab_engine.js"></script>
     <script src="js/grade_calc_engine.js"></script>
     <script src="js/school_news_engine.js?v=10"></script>
+    <script src="js/class11a7_journal_engine.js?v=1"></script>
     <script src="js/app-v4.js"></script>
 
     <!-- DIRECT INLINE RUNTIME FAIL-SAFE FOR file:/// BROWSER CACHE & 3D TILT EFFECT -->
