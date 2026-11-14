@@ -712,18 +712,50 @@ window.Class11A7JournalEngine = (function () {
     }
   }
 
-  // --- Render Videos Column (BÊN PHẢI: CHẠY LIÊN TỤC KHÔNG TIẾNG) ---
+  // --- Render Videos Column (BÊN PHẢI: CHIA NHIỀU KHUNG HÌNH CHẠY LIÊN TỤC) ---
+  let currentVideoCols = 2;
+
+  function setVideoGridCols(cols) {
+    currentVideoCols = cols;
+    const container = document.getElementById("liveVideosStreamContainer");
+    if (container) {
+      container.className = cols === 3 
+        ? "grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3" 
+        : cols === 1 
+          ? "grid grid-cols-1 gap-4" 
+          : "grid grid-cols-2 gap-2.5 sm:gap-4";
+    }
+    const b2 = document.getElementById("btnGridCols2");
+    const b3 = document.getElementById("btnGridCols3");
+    if (b2 && b3) {
+      if (cols === 3) {
+        b3.className = "px-2.5 py-0.5 rounded-md font-bold transition-all bg-blue-600 text-white cursor-pointer shadow-sm";
+        b2.className = "px-2.5 py-0.5 rounded-md text-slate-400 hover:text-white font-bold transition-all cursor-pointer";
+      } else {
+        b2.className = "px-2.5 py-0.5 rounded-md font-bold transition-all bg-blue-600 text-white cursor-pointer shadow-sm";
+        b3.className = "px-2.5 py-0.5 rounded-md text-slate-400 hover:text-white font-bold transition-all cursor-pointer";
+      }
+    }
+  }
+
+  function scrollToSection(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
   function renderVideosSection() {
     const container = document.getElementById("liveVideosStreamContainer");
     if (!container) return;
 
     container.innerHTML = ALL_VIDEOS.map((v, idx) => {
       return `
-        <div class="live-video-card group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#10121d] border border-white/10 shadow-xl cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/50 hover:shadow-2xl hover:shadow-blue-500/10"
+        <div class="live-video-card group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#10121d] border border-white/10 shadow-xl cursor-pointer select-none transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/60 hover:shadow-2xl hover:shadow-blue-500/20 flex flex-col"
              onclick="window.Class11A7JournalEngine.openVideo(${idx})"
              title="${v.title} — Chạm để xem từ đầu có âm thanh">
           
-          <!-- Video Player chạy liên tục (Muted Loop) -->
+          <!-- Khung Video Player chạy liên tục (Muted Loop) -->
           <div class="relative w-full aspect-video overflow-hidden bg-black">
             <video src="${v.src}" 
                    poster="${v.thumb}"
@@ -739,45 +771,47 @@ window.Class11A7JournalEngine = (function () {
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none"></div>
 
             <!-- Top live & tag badges -->
-            <div class="absolute top-3 left-3 flex items-center gap-1.5 z-10 pointer-events-none">
+            <div class="absolute top-2 left-2 right-2 flex items-center justify-between z-10 pointer-events-none">
               <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-black/60 text-blue-300 border border-blue-400/30 backdrop-blur-md uppercase tracking-wider">
                 ${v.tag}
               </span>
-              <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/25 text-emerald-300 border border-emerald-400/30 backdrop-blur-md flex items-center gap-1">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Đang phát
+              <span class="px-1.5 py-0.5 rounded-full text-[8px] font-bold bg-emerald-500/25 text-emerald-300 border border-emerald-400/30 backdrop-blur-md flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Live
               </span>
             </div>
 
             <!-- Center Hover Play Button -->
             <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-              <div class="w-12 h-12 rounded-full bg-blue-600/90 text-white flex items-center justify-center text-xl shadow-xl shadow-blue-500/30 backdrop-blur-md">
+              <div class="w-10 h-10 rounded-full bg-blue-600/90 text-white flex items-center justify-center text-base shadow-xl shadow-blue-500/30 backdrop-blur-md">
                 ▶
               </div>
             </div>
 
-            <!-- Bottom meta & sound prompt -->
-            <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between z-10 pointer-events-none">
-              <span class="px-2 py-0.5 rounded-lg text-[10px] font-mono font-bold bg-black/80 text-white backdrop-blur-md border border-white/10">
+            <!-- Bottom inside video: Duration & Prompt -->
+            <div class="absolute bottom-2 left-2 right-2 flex items-center justify-between z-10 pointer-events-none">
+              <span class="px-1.5 py-0.5 rounded-md text-[9px] font-mono font-bold bg-black/80 text-white backdrop-blur-md border border-white/10">
                 ⏱️ ${v.duration}
               </span>
-              <span class="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-blue-600/90 text-white backdrop-blur-md shadow-md flex items-center gap-1 group-hover:bg-blue-500">
+              <span class="px-2 py-0.5 rounded-lg text-[9px] font-bold bg-blue-600/90 text-white backdrop-blur-md shadow-md flex items-center gap-1 group-hover:bg-blue-500">
                 <span>🔊</span>
-                <span>Chạm để bật tiếng</span>
+                <span>Bật tiếng</span>
               </span>
             </div>
           </div>
 
           <!-- Video Text Info -->
-          <div class="p-3.5 sm:p-4 bg-slate-900/80 border-t border-white/5 flex items-center justify-between gap-3">
-            <div class="min-w-0">
-              <h5 class="text-xs sm:text-sm font-bold text-white truncate group-hover:text-blue-300 transition-colors">
+          <div class="p-2.5 sm:p-3 bg-slate-900/90 border-t border-white/5 flex flex-col justify-between flex-1">
+            <div class="flex items-center justify-between gap-1.5">
+              <h5 class="text-xs font-bold text-white truncate group-hover:text-blue-300 transition-colors" title="${v.title}">
                 ${v.title}
               </h5>
-              <p class="text-[11px] text-slate-400 truncate mt-0.5">${v.desc}</p>
+              <span class="shrink-0 text-slate-400 font-mono text-[9px]">
+                ${v.size}
+              </span>
             </div>
-            <div class="shrink-0 text-slate-400 font-mono text-[10px]">
-              ${v.size}
-            </div>
+            <p class="text-[10px] text-slate-400 line-clamp-1 mt-0.5 leading-snug">
+              ${v.desc}
+            </p>
           </div>
 
         </div>
@@ -940,21 +974,23 @@ window.Class11A7JournalEngine = (function () {
             </div>
           </div>
 
-          <!-- Center: Jump Quick Filters (Hình ảnh & Video) -->
+          <!-- Center: Jump Quick Filters (Hình ảnh & Nhiều Khung Hình Video) -->
           <div class="order-3 sm:order-2 w-full sm:w-auto flex justify-center">
             <div class="inline-flex items-center p-1 rounded-2xl bg-slate-900/90 border border-white/10 text-xs font-bold shadow-inner gap-1">
-              <a href="#sectionLeftPhotos" 
-                 class="px-3 sm:px-4 py-1.5 rounded-xl transition-all flex items-center gap-1.5 bg-gradient-to-r from-pink-500 to-amber-500 text-white shadow-md shadow-pink-500/20 font-bold">
+              <button type="button" 
+                      onclick="window.Class11A7JournalEngine.scrollToSection('sectionLeftPhotos')"
+                      class="px-3 sm:px-4 py-1.5 rounded-xl transition-all flex items-center gap-1.5 bg-gradient-to-r from-pink-500 to-amber-500 text-white shadow-md shadow-pink-500/20 font-bold cursor-pointer">
                 <span>📸</span>
                 <span>Hình Ảnh (Trái)</span>
                 <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-black/30 text-white font-mono">28</span>
-              </a>
-              <a href="#sectionRightVideos" 
-                 class="px-3 sm:px-4 py-1.5 rounded-xl transition-all flex items-center gap-1.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-indigo-500/20 font-bold">
+              </button>
+              <button type="button" 
+                      onclick="window.Class11A7JournalEngine.scrollToSection('sectionRightVideos')"
+                      class="px-3 sm:px-4 py-1.5 rounded-xl transition-all flex items-center gap-1.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-indigo-500/20 font-bold cursor-pointer">
                 <span>🎬</span>
-                <span>Video Chạy Liên Tục (Phải)</span>
+                <span>Nhiều Khung Hình Video (Phải)</span>
                 <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-black/30 text-white font-mono">8</span>
-              </a>
+              </button>
             </div>
           </div>
 
@@ -995,7 +1031,7 @@ window.Class11A7JournalEngine = (function () {
         <main class="flex-1 overflow-y-auto gallery-scrollbar p-3.5 sm:p-6 lg:p-8 space-y-8 sm:space-y-10">
           
           <!-- HERO INTRO BANNER -->
-          <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-white/5">
+          <div class="max-w-[1520px] mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-white/5">
             <div>
               <div class="flex items-center gap-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -1007,7 +1043,7 @@ window.Class11A7JournalEngine = (function () {
                 Thanh Xuân A7 Dưới Mái Trường TVG
               </h1>
               <p class="text-xs sm:text-sm text-slate-400 mt-1">
-                Bên trái: Bộ sưu tập hình ảnh (11A7 ở đầu • 10A7 ở sau) • Bên phải: Thước phim video chạy liên tục
+                Bên trái: Bộ sưu tập hình ảnh (11A7 ở đầu • 10A7 ở sau) • Bên phải: Nhiều khung hình video chạy song song
               </p>
             </div>
 
@@ -1021,7 +1057,7 @@ window.Class11A7JournalEngine = (function () {
           <!-- ======================================================== -->
           <!-- DUAL SPLIT-SCREEN LAYOUT: BÊN TRÁI ẢNH • BÊN PHẢI VIDEO -->
           <!-- ======================================================== -->
-          <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
+          <div class="max-w-[1520px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
             
             <!-- ===================================================== -->
             <!-- BÊN TRÁI: HÌNH ẢNH (11A7 Ở ĐẦU, 10A7 Ở SAU)           -->
@@ -1085,11 +1121,11 @@ window.Class11A7JournalEngine = (function () {
             </section>
 
             <!-- ===================================================== -->
-            <!-- BÊN PHẢI: VIDEO (CHẠY LIÊN TỤC KHÔNG TIẾNG)            -->
+            <!-- BÊN PHẢI: VIDEO (CHIA NHIỀU KHUNG HÌNH CHẠY LIÊN TỤC)  -->
             <!-- ===================================================== -->
             <section id="sectionRightVideos" class="space-y-4 lg:pl-2">
               
-              <div class="flex items-center justify-between pb-2.5 border-b border-blue-500/25">
+              <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-blue-500/25">
                 <div class="flex items-center gap-2.5">
                   <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-base text-white shadow-md shadow-blue-500/25 shrink-0">
                     🎬
@@ -1101,14 +1137,34 @@ window.Class11A7JournalEngine = (function () {
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Chạy liên tục
                       </span>
                     </div>
-                    <p class="text-[11px] text-slate-400">Các video tự động phát không tiếng • Bấm vào để coi lại từ đầu có nhạc</p>
+                    <p class="text-[11px] text-slate-400">Đa khung hình tự động phát không tiếng • Chạm để coi lại có nhạc</p>
                   </div>
                 </div>
-                <span class="text-xs text-slate-400 font-mono bg-white/5 px-2 py-0.5 rounded-lg border border-white/10">8 Video</span>
+
+                <!-- Multi-frame column toggle buttons & badge -->
+                <div class="flex items-center gap-2">
+                  <div class="inline-flex p-0.5 rounded-xl bg-slate-900 border border-white/10 text-[10px]">
+                    <button type="button" 
+                            id="btnGridCols2" 
+                            onclick="window.Class11A7JournalEngine.setVideoGridCols(2)" 
+                            class="px-2.5 py-0.5 rounded-lg font-bold transition-all bg-blue-600 text-white shadow-sm cursor-pointer"
+                            title="Chia 2 khung hình song song">
+                      2 Khung
+                    </button>
+                    <button type="button" 
+                            id="btnGridCols3" 
+                            onclick="window.Class11A7JournalEngine.setVideoGridCols(3)" 
+                            class="px-2.5 py-0.5 rounded-lg text-slate-400 hover:text-white font-bold transition-all cursor-pointer"
+                            title="Chia 3 khung hình đa nhiệm">
+                      3 Khung
+                    </button>
+                  </div>
+                  <span class="text-xs text-slate-400 font-mono bg-white/5 px-2 py-0.5 rounded-lg border border-white/10 shrink-0">8 Video</span>
+                </div>
               </div>
 
-              <!-- Stream of live continuous looping videos -->
-              <div class="flex flex-col gap-4 sm:gap-5" id="liveVideosStreamContainer">
+              <!-- Multi-Frame Grid of live continuous looping videos -->
+              <div class="grid grid-cols-2 gap-2.5 sm:gap-4" id="liveVideosStreamContainer">
                 <!-- Rendered automatically -->
               </div>
 
@@ -1318,5 +1374,7 @@ window.Class11A7JournalEngine = (function () {
     openAddNoteModal,
     closeAddNoteModal,
     submitAddNote,
+    setVideoGridCols,
+    scrollToSection,
   };
 })();
