@@ -2111,12 +2111,13 @@ window.AzotaApp = (function() {
             id: "th-11",
             subjectName: "Tin Học",
             title: "Tin Học 11",
-            meta: "0 đề • Tạm thời rỗng",
+            meta: "8 đề • Bài 12, 13 (Cơ sở dữ liệu) & Trắc nghiệm",
             category: "tracnghiem",
             art: "ember",
             sheets: [
-                { id: "th-11-coming", name: "Chưa có đề thi", meta: "Đã qua cuối kì", art: "ember", isEmpty: true },
-                { id: "th-11-coming-2", name: "Tạm thời rỗng", meta: "Chờ cập nhật", lines: true, isEmpty: true }
+                { id: "th-11-chude-4", name: "Chủ Đề 4: Hệ QTCSDL & CSDL Quan Hệ", meta: "56 câu • 45p", art: "ember" },
+                { id: "th-11-bai_12", name: "Bài 12: Hệ Quản Trị CSDL & Hệ CSDL", meta: "28 câu • 25p", art: "glacier" },
+                { id: "th-11-bai_13", name: "Bài 13: Cơ Sở Dữ Liệu Quan Hệ", meta: "28 câu • 25p", art: "aurora" }
             ]
         },
         {
