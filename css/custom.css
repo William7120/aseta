@@ -525,24 +525,31 @@ button:active:not(:disabled),
 /* Desktop Dashboard: Independent Left Sidebar & Main Content Scrolling */
 @media (min-width: 1024px) {
   html, body {
-    height: 100vh;
-    max-height: 100vh;
-    overflow: hidden !important;
+    height: auto;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   .app-layout {
-    height: 100vh;
-    max-height: 100vh;
-    overflow: hidden !important;
+    min-height: 100vh;
+    height: auto;
+    display: block;
+    overflow: visible;
   }
   .app-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
     width: 76px !important;
     min-width: 76px !important;
     height: 100vh !important;
     max-height: 100vh !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    scrollbar-width: none !important;
-    -ms-overflow-style: none !important;
+    overflow: visible !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    contain: none !important;
+    z-index: 50 !important;
   }
   .app-sidebar::-webkit-scrollbar {
     display: none !important;
@@ -556,8 +563,10 @@ button:active:not(:disabled),
   .app-sidebar .space-y-3\.5,
   #sidebarMainFoldersList,
   #sidebarSubjectsSubTree {
+    overflow: visible !important;
+    overflow-x: visible !important;
     overflow-y: visible !important;
-    overflow-x: hidden !important;
+    contain: none !important;
     width: 100% !important;
     display: flex !important;
     flex-direction: column !important;
@@ -585,20 +594,24 @@ button:active:not(:disabled),
   }
 
   .app-layout > div.flex-1 {
-    height: 100vh !important;
-    max-height: 100vh !important;
+    margin-left: 76px !important;
+    width: calc(100% - 76px) !important;
+    min-height: 100vh !important;
+    height: auto !important;
     display: flex !important;
     flex-direction: column !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     min-width: 0 !important;
   }
   #appNavbar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 30 !important;
     flex-shrink: 0 !important;
   }
   #appMainContent {
     flex: 1 !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
+    overflow: visible !important;
   }
 
   .app-sidebar:not(.sidebar-expanded) .sidebar-brand-header {
@@ -618,7 +631,7 @@ button:active:not(:disabled),
     height: 44px !important;
     border-radius: 14px !important;
     padding: 0 !important;
-    margin: 3.5px auto !important;
+    margin: 3px auto !important;
     transform-origin: left center;
     box-sizing: border-box !important;
     text-align: center !important;
@@ -627,7 +640,7 @@ button:active:not(:disabled),
   .gradient-menu-btn:hover {
     width: 185px !important;
     border-radius: 9999px !important;
-    z-index: 100 !important;
+    z-index: 9999 !important;
     box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.6) !important;
     border-color: rgba(255, 255, 255, 0.25) !important;
     transform: none !important;
@@ -662,6 +675,10 @@ button:active:not(:disabled),
   .app-sidebar.sidebar-expanded {
     width: 270px !important;
     overflow-y: auto !important;
+  }
+  .app-sidebar.sidebar-expanded + div.flex-1 {
+    margin-left: 270px !important;
+    width: calc(100% - 270px) !important;
   }
   .app-sidebar.sidebar-expanded > div,
   .app-sidebar.sidebar-expanded .space-y-1,
