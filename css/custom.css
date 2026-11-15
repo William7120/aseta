@@ -563,6 +563,25 @@ button:active:not(:disabled),
     flex-direction: column !important;
     align-items: center !important;
     justify-content: flex-start !important;
+    flex-shrink: 0 !important;
+  }
+
+  #sidebarMainFoldersList,
+  #sidebarSubjectsSubTree {
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  .sidebar-section-divider,
+  .sidebar-brand-header,
+  .app-sidebar .w-full {
+    flex-shrink: 0 !important;
+  }
+
+  .gradient-menu-btn {
+    flex-shrink: 0 !important;
+    min-height: 44px !important;
+    max-height: 44px !important;
   }
 
   .app-layout > div.flex-1 {

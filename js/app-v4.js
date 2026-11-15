@@ -3396,7 +3396,7 @@ window.AzotaApp = (function() {
                         <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-1.5 flex-wrap">
                                 ${isFull64 ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-600 text-white shrink-0">FULL 64 CÂU ĐỀ CƯƠNG</span>' : ''}
-                                ${isFull100 ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500 text-white shrink-0">FULL 100 CÂU</span>' : ''}
+                                ${isChude4 ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500 text-white shrink-0">CHỦ ĐỀ 4 (BÀI 12-13)</span>' : ''}
                                 <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-sky-500/15 text-sky-400 border border-sky-500/30 shrink-0">${exam.grade ? 'Lớp ' + exam.grade : 'Khảo sát'}</span>
                                 <span class="text-xs text-slate-400 font-mono shrink-0">.azota</span>
                             </div>
