@@ -2111,7 +2111,7 @@ window.AzotaApp = (function() {
             id: "th-11",
             subjectName: "Tin Học",
             title: "Tin Học 11",
-            meta: "8 đề • Bài 12, 13 (Cơ sở dữ liệu) & Trắc nghiệm",
+            meta: "3 đề • Bài 12, 13 (Cơ sở dữ liệu)",
             category: "tracnghiem",
             art: "ember",
             sheets: [
@@ -3372,17 +3372,17 @@ window.AzotaApp = (function() {
             ? "grid grid-cols-1 md:grid-cols-2 gap-4" 
             : "space-y-3";
 
-        // Sort so that Full 64 questions (Địa) and Full 100 (Tin) are first
+        // Sort so that Full 64 questions (Địa) and Chủ Đề 4 (Tin) are first
         const sortedExams = [...exams].sort((a, b) => {
-            if (a.id === "dia-11-full-64" || a.id === "th-11-full-100") return -1;
-            if (b.id === "dia-11-full-64" || b.id === "th-11-full-100") return 1;
+            if (a.id === "dia-11-full-64" || a.id === "th-11-chude-4") return -1;
+            if (b.id === "dia-11-full-64" || b.id === "th-11-chude-4") return 1;
             return 0;
         });
 
         sortedExams.forEach(exam => {
-            const isFull100 = (exam.id === "th-11-full-100");
+            const isChude4 = (exam.id === "th-11-chude-4");
             const isFull64 = (exam.id === "dia-11-full-64");
-            const isHighlight = isFull100 || isFull64;
+            const isHighlight = isChude4 || isFull64;
             const qCount = exam.questions ? exam.questions.length : 0;
             const card = document.createElement("div");
             card.className = `exam-file-card cursor-pointer group ${isHighlight ? (isFull64 ? 'ring-1 ring-teal-500/40' : 'ring-1 ring-rose-500/40') : ''}`;
@@ -3625,14 +3625,14 @@ window.AzotaApp = (function() {
             card.className = "neon-beam-card p-3.5 sm:p-4 rounded-2xl flex flex-col justify-between group cursor-pointer";
 
             const qCount = exam.questions ? exam.questions.length : 0;
-            const isFull100 = (exam.id === "th-11-full-100");
+            const isChude4 = (exam.id === "th-11-chude-4");
             const isFull64 = (exam.id === "dia-11-full-64");
 
             card.innerHTML = `
                 <div>
                     <div class="flex items-center justify-between gap-1.5 mb-2">
                         <div class="flex items-center gap-1.5 flex-wrap">
-                            ${isFull100 ? '<span class="px-2 py-0.2 rounded-md text-[10px] font-black bg-rose-500 text-white shadow-sm">FULL 100 CÂU</span>' : ''}
+                            ${isChude4 ? '<span class="px-2 py-0.2 rounded-md text-[10px] font-black bg-rose-500 text-white shadow-sm">TRỌN BỘ 56 CÂU</span>' : ''}
                             ${isFull64 ? '<span class="px-2 py-0.2 rounded-md text-[10px] font-black bg-teal-600 text-white shadow-sm">FULL 64 CÂU</span>' : ''}
                             <span class="px-2 py-0.2 rounded-md text-[10px] font-black ${getSubjectBadge(exam.subject)}">
                                 ${exam.subject}
@@ -3730,7 +3730,7 @@ window.AzotaApp = (function() {
             window.AzotaDock.bounceItem("tinhoc");
             window.AzotaDock.setActiveApp("tinhoc");
         }
-        startExam("th-11-full-100", mode);
+        startExam("th-11-chude-4", mode);
     }
 
     function startRandomMockQuiz(count = 20) {
