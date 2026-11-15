@@ -2309,6 +2309,10 @@ window.AzotaApp = (function() {
                 currentSidebarItem.classList.add("nav-item-active");
             }
         }
+        if (currentExplorerFolder === 'root') {
+            const allSubjectsBtn = document.getElementById("sidebar-folder-all-subjects");
+            if (allSubjectsBtn) allSubjectsBtn.classList.add("nav-item-active");
+        }
         updateMobileDockActive(currentExplorerFolder);
 
         const backBtn = document.getElementById("explorerBackBtn");
@@ -2431,7 +2435,7 @@ window.AzotaApp = (function() {
             list.style.pointerEvents = "none";
             if (arrow) arrow.style.transform = "rotate(-90deg)";
         } else {
-            list.style.maxHeight = "500px";
+            list.style.maxHeight = "1200px";
             list.style.opacity = "1";
             list.style.pointerEvents = "auto";
             if (arrow) arrow.style.transform = "rotate(0deg)";
