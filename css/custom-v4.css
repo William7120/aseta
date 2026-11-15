@@ -522,15 +522,32 @@ button:active:not(:disabled),
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.07);
 }
 
-/* Desktop Hover Expansion: Expands horizontally to 185px WITHOUT CLIPPING */
+/* Desktop Dashboard: Independent Left Sidebar & Main Content Scrolling */
 @media (min-width: 1024px) {
+  html, body {
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden !important;
+  }
+  .app-layout {
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden !important;
+  }
   .app-sidebar {
     width: 76px !important;
     min-width: 76px !important;
-    overflow: visible !important;
-    overflow-x: visible !important;
-    overflow-y: visible !important;
-    contain: none !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  .app-sidebar::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
   }
   
   .app-sidebar > div,
@@ -539,15 +556,30 @@ button:active:not(:disabled),
   .app-sidebar .space-y-3\.5,
   #sidebarMainFoldersList,
   #sidebarSubjectsSubTree {
-    overflow: visible !important;
-    overflow-x: visible !important;
     overflow-y: visible !important;
-    contain: none !important;
+    overflow-x: hidden !important;
     width: 100% !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    justify-content: center !important;
+    justify-content: flex-start !important;
+  }
+
+  .app-layout > div.flex-1 {
+    height: 100vh !important;
+    max-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    min-width: 0 !important;
+  }
+  #appNavbar {
+    flex-shrink: 0 !important;
+  }
+  #appMainContent {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
   }
 
   .app-sidebar:not(.sidebar-expanded) .sidebar-brand-header {

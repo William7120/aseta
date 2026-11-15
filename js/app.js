@@ -2309,10 +2309,6 @@ window.AzotaApp = (function() {
                 currentSidebarItem.classList.add("nav-item-active");
             }
         }
-        if (currentExplorerFolder === 'root') {
-            const allSubjectsBtn = document.getElementById("sidebar-folder-all-subjects");
-            if (allSubjectsBtn) allSubjectsBtn.classList.add("nav-item-active");
-        }
         updateMobileDockActive(currentExplorerFolder);
 
         const backBtn = document.getElementById("explorerBackBtn");
