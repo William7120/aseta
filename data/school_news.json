@@ -1,8 +1,8 @@
 {
   "source": "https://thpttranvangiau.hcm.edu.vn",
   "schoolName": "Trường THPT Trần Văn Giàu",
-  "lastUpdated": "2026-11-20T13:24:58.315Z",
-  "lastUpdatedText": "lúc 20:24:58 Thứ Sáu, 20 tháng 11, 2026",
+  "lastUpdated": "2026-11-20T15:10:43.368Z",
+  "lastUpdatedText": "lúc 22:10:43 Thứ Sáu, 20 tháng 11, 2026",
   "scheduleWeeks": [
     {
       "weekNum": 11,
@@ -527,9 +527,46 @@
       "isLatest": true,
       "localPdfUrl": "data/pdf/thuc_don_tuan_11.pdf",
       "imageUrl": "data/pdf/thuc_don_tuan_11.png",
-      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/_DkVEf5lT16fTBkNIoFYRznKjmp-m8HkFSZ5eNl5zumjw4uGiHbGuC_RTmM8RZiY8tZANhw76CcCm_M_yn4llKY2jIZhtmd2clqkgH8P2I2uKKnRt79nZh8JvHbGCEDGiKHpTSmvxtHsVBPAk5GNU1K0bGD5aR1ONLbJGaAP1_GHF-25sVSqdY4dapZbXKe-cmmiw8gK/hzhcRSAJB2dunmF3_i8CIKxbKZlOwNMcDsjnVHr_wd9ANSQDRJtGF_wnicKI_XsF2rdPc98/thuc-don-ban-tru-16-20-11-2026.pdf",
-      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/01bba91487b0737af9a327804e8d6baa.pdf/thuc-don-ban-tru-16-20-11-2026-1611202610.pdf&urlgoc=%2Ftai%2FtpeODtOWw0P3bc1Kl3AP7utWTC2q9OtvvBS09w5WtT2cqxwLsmbc43dPlt9BUpzpmg2tB3SWlbwrLNIdiAHCkUPbP967VW2Ap-RV-6JR7017mpSPc2MkeL5Y0SJTCCuM3xGvg5NmLh1ImcG9mf2T6c0gjkl0y0V67E6yO0UbD0SixoJQaEXA-wna1Tz9WaIQwYBsxKTv%2FEUDc_UJfHmrSBJKjeg_iL74V02a6hNh2buqOPkxUouW5gPW4lFxufI5p-qWjOvng4en7oecpo1r_w32sqpxvvw%2Fthuc-don-ban-tru-16-20-11-2026-1611202610.pdf",
-      "summary": "Thực đơn bán trú tuần 11 (từ ngày 16/11/2026 đến ngày 20/11/2026)"
+      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/ZxwiNjws4cIldJD8ZxMmaStEmZ9p7A3OGrG7QH-zzZj-1OJEoXyxOvMbvDYPMQlAGnOqacjHXeuC-cROk_W6f_1wl1TIzvNVQmGwJfHS_43u-O3mBAm8l1bdHABr-daaTua5psuIZPlS8jhV3vPyDE_rKrbfj4tZtFRS0GyoouvSVItVdmH5NeBsrzrAVtfN5JRbcWgL/hA9Cvb5jKXBitnRghJyakYnhAFLs80vMQ1T4HcLh4lq0OcyzAzf4tGZEMfuDZbsKAEY7kqo/thuc-don-ban-tru-16-20-11-2026.pdf",
+      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/01bba91487b0737af9a327804e8d6baa.pdf/thuc-don-ban-tru-16-20-11-2026-1611202610.pdf&urlgoc=%2Ftai%2FqJkP00-Y_XelAIcPZtItPeDF7RLsbyLesC6ernNzhBqP066MvQfn0KaDBDUA9luIDKb1yoUb_e0sxLS9ajqwIxAZlHYc5MNc7Xo8q5Fpm0oPki8BWgfHUKcmyz-7Q8GWC6j3Qx8ue2-E4KdU8L9GeiEMYoYV6ZvPYfxmGKVsd-Ai1Ckd8drmF4wkhyGfeX0yaDJvvg8b%2FX7g_EZS1Hh4cBVTQcaQyH-gfcXKXl2v-t2FGfdI9FMcat-NiBTrFtmSHflfkO1bLqXAj5sFpTRaS6GLWs-DpRw%2Fthuc-don-ban-tru-16-20-11-2026-1611202610.pdf",
+      "summary": "Thực đơn bán trú tuần 11 (từ ngày 16/11/2026 đến ngày 20/11/2026)",
+      "dailyDishes": {
+        "Thứ Hai": {
+          "main": "Gà kho sả ớt",
+          "side": "Chả lụa kho tiêu",
+          "soup": "Canh bầu nấu thịt",
+          "veggie": "Bắp cải xào cà rốt",
+          "dessert": "Bánh kem xốp"
+        },
+        "Thứ Ba": {
+          "main": "Tôm rim thịt",
+          "side": "Xíu mại sốt cà chua",
+          "soup": "Canh soup",
+          "veggie": "Su su xào cà rốt",
+          "dessert": "Chuối"
+        },
+        "Thứ Tư": {
+          "main": "Cá basa file chiên sốt cà",
+          "side": "Thịt xào lăn",
+          "soup": "Canh bí đỏ nấu thịt",
+          "veggie": "Rau muống xào tỏi",
+          "dessert": "Rau câu"
+        },
+        "Thứ Năm": {
+          "main": "Cơm tấm sườn-trứng",
+          "side": "Nui xào thịt bằm sốt cà",
+          "soup": "Canh chua rau muống",
+          "veggie": "Dưa leo",
+          "dessert": "Táo xanh"
+        },
+        "Thứ Sáu": {
+          "main": "Học sinh nghỉ lễ 20/11",
+          "side": "Kỷ niệm Ngày Nhà giáo VN",
+          "soup": "Nghỉ bán trú",
+          "veggie": "Nghỉ học",
+          "dessert": "🎉 20/11"
+        }
+      }
     },
     {
       "weekNum": 10,
@@ -538,9 +575,46 @@
       "isLatest": false,
       "localPdfUrl": "data/pdf/thuc_don_tuan_10.pdf",
       "imageUrl": "data/pdf/thuc_don_tuan_10.png",
-      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/hrwWz3y9PCQ0dz5XTLSasfvCMyP6dz4Jo7BiBVKDJrKEsE4SE5_rGuLXdnoOmUleLdm81Xuu6KIYO-0N58r_Dn9Pmv-KYV7KKK8IirJifI2f8B0lDr8ywirJmjoRC966WTzNtcHzygAuwMOu1iQvOLYOIEfFtcqi227T9hvj6Xbk5N5yIjvnI9A-XSyaPLUYm25qGXv6/XHJ1-TVrK77rjC7QPLE5XoDYYmfn97ccpqS84dDZPj_RXQt8LsODGh7kD8Qv45xgzsBs/thuc-don-ban-tru-09-13-11-2026.pdf",
-      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/9b545d9d3ca6b185fa1a1f7576cf4f5e.pdf/thuc-don-ban-tru-09-13-11-2026-811202617.pdf&urlgoc=%2Ftai%2F0BDwWwd878k-E9keFQ0ihtzKy7L7AzBri2ds-82qq5Ou2blUccKvWsxYUhRvFgKAylfiNznw3QlQ7p2qBWVWFtNVxTkbcg9x7XgA20anzoU0cdiHHnkuNW-tbq8Sm7pL3tJJ0a0zG-UAMyPsiWsAuFrvQZXRva6dzKACA8Q-Bsc_Gt5ll4MrE6s8IXPFT58c9HUcETJo%2FL2cWM5ND4Syz9eJJzGsHodx8lBEbgmFLnJ2g6717E8jWnjkg6yV3VYo1b_raeYe9tQcw67veFy9CKa0IYQ%2Fthuc-don-ban-tru-09-13-11-2026-811202617.pdf",
-      "summary": "Thực đơn bán trú tuần 10 (từ ngày 09/11/2026 đến ngày 13/11/2026)"
+      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/wYFtN_hCMGQf0osjEnQQTFSdofuPeRGSho5h4egMMr_62fZxOL7VVkLVw88xQt9e6I2k3g50moYKxoDFFLgPowCRKwH878fwz2-54zxt3NoVDr7VDW9fbuNI2H00O2vWeOqOT8RNhKmBajwIjME1fdvNP-Fd30BhFnDrNQJRpP9kDfiQImrUhMPoK5nNq4Zvz6H5agWC/e8rf8VJv8MGJcsTa0T241J3fWrg-mEqWgLccd-FhMPNz6Hi7XlmJcWgXKeOZrVxS68FP/thuc-don-ban-tru-09-13-11-2026.pdf",
+      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/9b545d9d3ca6b185fa1a1f7576cf4f5e.pdf/thuc-don-ban-tru-09-13-11-2026-811202617.pdf&urlgoc=%2Ftai%2FCU6ooghhGdEkfZYwbQYBz2wU2M_QE0HVmGZ6L62Ft6zrKgFHCXRpNNpKPHMDfHsD9Nm5dlmCsVfFQEVPjYeax5B18zsY2-AErf6NVpx-ecXnZ7Yrjt1xI4126YouJcKNA6ouBu5bCDGpI7iQR2R0QYAOZtPY17l2YH1Nh_mFWGG973H4LNybMyqhKUK32tWIDo0_JDo8%2FX7JG9nQ5Mph3fhA1RoGhv_julBMaQdI9FPlyZU5-Sv761TZkgnANE_domJPWBXiOF18FkzwYA1dBm1ruwg%2Fthuc-don-ban-tru-09-13-11-2026-811202617.pdf",
+      "summary": "Thực đơn bán trú tuần 10 (từ ngày 09/11/2026 đến ngày 13/11/2026)",
+      "dailyDishes": {
+        "Thứ Hai": {
+          "main": "Cá file chiên sốt cà",
+          "side": "Chả lụa kho tiêu",
+          "soup": "Canh cải thảo nấu thịt",
+          "veggie": "Giá hẹ xào",
+          "dessert": "Bánh kem xốp"
+        },
+        "Thứ Ba": {
+          "main": "Gà kho gừng",
+          "side": "Trứng ốp la",
+          "soup": "Canh rau má thịt bằm",
+          "veggie": "Rau muống xào tỏi",
+          "dessert": "Rau câu"
+        },
+        "Thứ Tư": {
+          "main": "Cốt lết ram mặn",
+          "side": "Đậu hũ chiên sốt cà chua",
+          "soup": "Canh cải ngọt nấu thịt",
+          "veggie": "Su su xào cà rốt",
+          "dessert": "Táo"
+        },
+        "Thứ Năm": {
+          "main": "Bún bò Huế",
+          "side": "Cơm chiên tỏi trứng sợi",
+          "soup": "Nước dùng bún bò",
+          "veggie": "Rau thơm giá bắp chuối",
+          "dessert": "Chuối"
+        },
+        "Thứ Sáu": {
+          "main": "Sườn - thịt xào chua ngọt",
+          "side": "Chả mực chiên",
+          "soup": "Canh bí đỏ nấu thịt",
+          "veggie": "Bắp cải xào cà rốt",
+          "dessert": "Bánh quy các vị"
+        }
+      }
     },
     {
       "weekNum": 9,
@@ -549,8 +623,8 @@
       "isLatest": false,
       "localPdfUrl": "data/pdf/thuc_don_tuan_9.pdf",
       "imageUrl": "data/pdf/thuc_don_tuan_9.png",
-      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/Y5fTpdqhAJ4otXQfQnu0ZK_ehCd5qIq-IR4TxyFFMhG47e4jiSvkhAFOWSfph7d9pnpsZVR7tLb4U-lSoo95vvyJLNXEQoInzD3HmSwg8lHMQKKMJ5gAYgMtZgAvc47K1GjDALjXzrUdaYc6dhNpkIPJbV_Zq78FIhsF-kC7CWsvw5E9Anz0g4z-tx45S2_x6WjXquAE/zFZ7PAngSt3YARgNB-J2DkZ7ipWxQaJN1SFKAnW4mrpDH4uDx5Ni/thuc-don-ban-tru-02-06-11-2026.pdf",
-      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/5958ae7de2c21e2201974249b44f7322.pdf/thuc-don-ban-tru-02-06-11-2026-21120269.pdf&urlgoc=%2Ftai%2Fq77r6SmOUmID-0TVfIB6srHwzgxb1WGeEygohuVbS5lUdKuMJPif5vUde12etzTgLaj2yEnU3EfYzLdnUxhB3nIU874whBfyjcLwYLjP-vQL8Cib4gdTG_WQaH9Czs_8bqLUG7Ki1NLyxE5oDfoTXrlJzDKh67eFMB7Lx_hm1qr0SKynq4xBS2sVnzvsNlAzwKbYY2Fm%2Fz1Hi7PP37mBwiM7hgfm8yRPamfzmZsaWyWn39ZYo19CoOFIJu81M6AZ5wdAr6Hhz%2Fthuc-don-ban-tru-02-06-11-2026-21120269.pdf",
+      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/U_E-wXLILfyEk5Cwmg9p0GU8ZEDB-v9V3zPjc8xJvw4gX3sxxgvYRaJM2zLI9GCWom5VAnC2YVqu_UzdljZgU8LLaI-Nnj8gS5ciyVE7ggaiQ0UJltrWyubnNtQ_LFim7G1MHS_AK8ri7FjseAPIpWr486ATTTRxbLkRyrNsIK_HH8iFqiYl3cA9baOjBlenZfXZZH0n/Z_eDC9aJ99TyKExRA-HjjDDwGFJIJO9xaapKBkkmo7pYemsDjMHA/thuc-don-ban-tru-02-06-11-2026.pdf",
+      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/5958ae7de2c21e2201974249b44f7322.pdf/thuc-don-ban-tru-02-06-11-2026-21120269.pdf&urlgoc=%2Ftai%2FuiX1-zUFFoKczkY-GJGwX6ldHLGjOZN1jmIHSlpKwqYvQLPg_vwNrVBkpi3bTMWqybRAGWQp0-fFJIRrHC9CjmJbXsqlluUyitmxwCCBrk6X536Ga5CxNsEQwGO1Up4C1F-A61qiW0Wcss30GO1FJBz307hqAH0bNCI3pAP53qG9iKjY5Uhl_3Vs8mz3JqfOiu3aPzek%2FNvQ_nivRvKdSZaV2gDcoNJpz3V4205WMLy8Cb1H7G9NRXD_DqbMO7XM7ipLG_I8q%2Fthuc-don-ban-tru-02-06-11-2026-21120269.pdf",
       "summary": "Thực đơn bán trú tuần 9 (từ ngày 02/11/2026 đến ngày 06/11/2026)"
     }
   ],

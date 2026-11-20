@@ -2,10 +2,10 @@ name: Tự Động Cập Nhật Thông Báo THPT Trần Văn Giàu
 
 on:
   schedule:
-    # 06:30, 11:30, 17:30, 20:30 (Giờ Việt Nam UTC+7 -> UTC: 23:30, 04:30, 10:30, 13:30)
-    - cron: '30 23,4,10,13 * * *'
-    # Chiều Thứ Bảy & Chủ Nhật (khi trường đăng lịch tuần mới): 15:30, 17:30, 19:30 (UTC: 8:30, 10:30, 12:30)
-    - cron: '30 8,10,12 * * 0,6'
+    # Chạy tự động mỗi 30 phút từ 6h00 sáng đến 22h30 tối (giờ Việt Nam UTC+7 -> UTC 23:00 - 15:30)
+    - cron: '*/30 23,0-15 * * *'
+    # Chiều Thứ Bảy & Chủ Nhật (khi trường thường đăng lịch tuần mới): mỗi 15 phút
+    - cron: '*/15 8-15 * * 0,6'
   workflow_dispatch: # Cho phép bấm nút "Run workflow" bằng tay bất cứ lúc nào
 
 permissions:
@@ -23,7 +23,12 @@ jobs:
         with:
           node-version: 20
 
-      - name: Quét thông báo từ website THPT Trần Văn Giàu
+      - name: Cài đặt Python & thư viện chuyển đổi PDF sang ảnh
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install pypdfium2 Pillow
+
+      - name: Quét thông báo từ website THPT Trần Văn Giàu & tạo ảnh thực đơn
         run: node scripts/scrape_school_news.js
 
       - name: Đẩy dữ liệu mới lên GitHub Pages (nếu có thay đổi)

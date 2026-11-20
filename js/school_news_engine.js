@@ -11,8 +11,8 @@
 (function(window) {
     'use strict';
 
-    const CACHE_KEY = 'aseta_tvg_school_news_cache_v10';
-    const CACHE_TTL_MS = 5 * 60 * 1000; // 5 phút
+    const CACHE_KEY = 'aseta_tvg_school_news_cache_v11';
+    const CACHE_TTL_MS = 60 * 1000; // 1 phút (Real-time polling)
 
     const SchoolNewsEngine = {
         data: null,
@@ -29,16 +29,21 @@
         init: function() {
             this.loadCachedData();
             this.bindGlobalKeys();
-            // Pre-fetch in background
+            // Pre-fetch immediately in background
             setTimeout(() => {
-                this.checkAndRefreshBackground();
-            }, 300);
+                this.checkAndRefreshBackground(true);
+            }, 100);
+            // Standing real-time auto-polling every 60 seconds
+            if (this._realtimeTimer) clearInterval(this._realtimeTimer);
+            this._realtimeTimer = setInterval(() => {
+                this.checkAndRefreshBackground(true);
+            }, 60 * 1000);
         },
 
         loadCachedData: function() {
             try {
                 // Clear any legacy caches
-                for (let i = 1; i <= 7; i++) {
+                for (let i = 1; i <= 9; i++) {
                     localStorage.removeItem(`aseta_tvg_school_news_cache_v${i}`);
                 }
                 localStorage.removeItem('aseta_tvg_school_news_cache');
@@ -68,23 +73,55 @@
             }
         },
 
-        checkAndRefreshBackground: async function() {
+        checkAndRefreshBackground: async function(silent = true) {
             const now = Date.now();
             const hasDishes = this.data && this.data.mealsWeeks && this.data.mealsWeeks[0] && this.data.mealsWeeks[0].dailyDishes;
-            if (!this.data || !hasDishes || !this.lastFetched || (now - this.lastFetched > CACHE_TTL_MS)) {
-                await this.fetchNews(false);
+            // Refresh if missing data, missing dishes, or stale > 60s
+            if (!this.data || !hasDishes || !this.lastFetched || (now - this.lastFetched > 60 * 1000)) {
+                await this.fetchNews(false, silent);
             }
         },
 
-        fetchNews: async function(force = false) {
+        fetchNews: async function(force = false, silent = false) {
             if (this.isLoading) return;
             this.isLoading = true;
             this.updateRefreshButtonState(true);
 
             try {
-                const res = await fetch(`data/school_news.json?t=${Date.now()}`);
-                if (!res.ok) throw new Error('Không thể tải file dữ liệu');
-                const json = await res.json();
+                const t = Date.now();
+                let json = null;
+
+                // 1. Fetch local data with no-store cache-busting
+                try {
+                    const res = await fetch(`data/school_news.json?_t=${t}`, {
+                        cache: 'no-store',
+                        headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
+                    });
+                    if (res.ok) {
+                        json = await res.json();
+                    }
+                } catch (e) {
+                    console.warn('[SchoolNewsEngine] Không tải được dữ liệu cục bộ:', e);
+                }
+
+                // 2. Fallback to raw GitHub if local is unavailable or if on GitHub Pages with newer commit
+                if (force || !json || window.location.hostname.includes('github.io')) {
+                    try {
+                        const ghRes = await fetch(`https://raw.githubusercontent.com/William7120/aseta/main/data/school_news.json?_t=${t}`, {
+                            cache: 'no-store'
+                        });
+                        if (ghRes.ok) {
+                            const ghJson = await ghRes.json();
+                            if (!json || (ghJson.lastUpdated && (!json.lastUpdated || new Date(ghJson.lastUpdated) > new Date(json.lastUpdated)))) {
+                                json = ghJson;
+                            }
+                        }
+                    } catch (e) {}
+                }
+
+                if (!json) throw new Error('Không thể tải file dữ liệu');
+
+                const wasUpdated = !this.data || this.data.lastUpdated !== json.lastUpdated;
                 this.data = json;
                 this.lastFetched = Date.now();
                 this.initDefaultExpandedDay();
@@ -96,6 +133,8 @@
 
                 if (force && window.SecurityGuard && window.SecurityGuard.showSecurityToast) {
                     window.SecurityGuard.showSecurityToast('🔄 Đã đồng bộ thông tin mới nhất từ THPT Trần Văn Giàu!');
+                } else if (!silent && wasUpdated && window.SecurityGuard && window.SecurityGuard.showSecurityToast) {
+                    window.SecurityGuard.showSecurityToast('📢 Đã cập nhật lịch tuần & thông báo mới nhất!');
                 }
 
                 if (this.isModalOpen()) {
@@ -145,6 +184,8 @@
                 await this.fetchNews(false);
             } else {
                 this.initDefaultExpandedDay();
+                // Check if background update is needed
+                this.checkAndRefreshBackground(true);
             }
 
             this.render();
@@ -237,8 +278,10 @@
             // Update Sync Time
             const headerSyncText = document.getElementById('schoolNewsSyncTime');
             if (headerSyncText) {
-                const timeText = this.data && this.data.lastUpdatedText ? this.data.lastUpdatedText : 'Vừa cập nhật';
-                headerSyncText.textContent = `Đồng bộ: ${timeText}`;
+                const fullText = this.data && this.data.lastUpdatedText ? this.data.lastUpdatedText : 'Vừa cập nhật';
+                const timeOnly = this.data && this.data.lastUpdated ? new Date(this.data.lastUpdated).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '';
+                headerSyncText.textContent = timeOnly ? `Trực tiếp • Lúc ${timeOnly}` : 'Trực tiếp • Vừa xong';
+                headerSyncText.title = `Thời gian đồng bộ: ${fullText}`;
             }
 
             // Update Vertical Left Sidebar Buttons
@@ -384,7 +427,21 @@
 
             // Lunch section HTML (Compact 1-line or 5-box row)
             let lunchHtml = '';
-            if (dayMeal) {
+            if (dayMeal && (dayMeal.main?.toLowerCase().includes('nghỉ lễ') || dayMeal.soup?.toLowerCase().includes('nghỉ'))) {
+                lunchHtml = `
+                    <div class="p-2.5 rounded-xl bg-gradient-to-r from-pink-500/15 via-rose-500/10 to-amber-500/15 border border-pink-500/30 flex items-center justify-between gap-2 mt-2">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-2xl animate-bounce">💐</span>
+                            <div>
+                                <p class="text-xs font-black text-pink-300">Nghỉ Lễ 20/11 — Ngày Nhà Giáo Việt Nam</p>
+                                <p class="text-[10px] text-slate-300">Toàn trường được nghỉ lễ, không tổ chức ăn bán trú hôm nay.</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="SchoolNewsEngine.switchTab('meals')" class="text-[11px] text-pink-400 font-bold hover:underline shrink-0">
+                            Xem ảnh tuần ↗
+                        </button>
+                    </div>`;
+            } else if (dayMeal) {
                 lunchHtml = `
                     <div class="grid grid-cols-2 sm:grid-cols-5 gap-1.5 mt-2">
                         <div class="p-2 rounded-xl bg-red-500/10 border border-red-500/20">
@@ -415,7 +472,7 @@
                             <span class="text-xl">🌟</span>
                             <div>
                                 <p class="text-xs font-bold text-white">Nghỉ bán trú (Cuối tuần)</p>
-                                <p class="text-[10px] text-slate-400">Thực đơn tiếp theo bắt đầu Thứ Hai: Cá file chiên sốt cà, Chả lụa...</p>
+                                <p class="text-[10px] text-slate-400">Thực đơn các ngày trong tuần có đầy đủ trong tab Thực Đơn.</p>
                             </div>
                         </div>
                         <button type="button" onclick="SchoolNewsEngine.switchTab('meals')" class="text-[11px] text-amber-400 font-bold hover:underline shrink-0">

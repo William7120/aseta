@@ -167,6 +167,19 @@ async function scrapeAll() {
     generalNotices: []
   };
 
+  const dataDir = path.join(__dirname, '..', 'data');
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
+  const outputPath = path.join(dataDir, 'school_news.json');
+
+  let existingData = null;
+  if (fs.existsSync(outputPath)) {
+    try {
+      existingData = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
+    } catch (_) {}
+  }
+
   // 1. Quét Lịch Công Tác Tuần
   try {
     console.log('📅 Đang quét Lịch công tác tuần...');
@@ -233,7 +246,8 @@ async function scrapeAll() {
       }
 
       const imgFilename = `thuc_don_tuan_${weekNum}.png`;
-      result.mealsWeeks.push({
+      const existingWeek = existingData?.mealsWeeks?.find(m => m.weekNum === weekNum);
+      const mealItem = {
         weekNum,
         title: art.title,
         link: BASE_URL + art.link,
@@ -243,7 +257,11 @@ async function scrapeAll() {
         downloadUrl: detail.downloadUrl,
         viewerUrl: detail.viewerUrl,
         summary: detail.audioText
-      });
+      };
+      if (existingWeek && existingWeek.dailyDishes) {
+        mealItem.dailyDishes = existingWeek.dailyDishes;
+      }
+      result.mealsWeeks.push(mealItem);
     }
   } catch (e) {
     console.error('Lỗi khi quét Bán trú:', e.message);
@@ -267,17 +285,33 @@ async function scrapeAll() {
   }
 
   // Ghi ra file data/school_news.json
-  const dataDir = path.join(__dirname, '..', 'data');
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-
-  const outputPath = path.join(dataDir, 'school_news.json');
   fs.writeFileSync(outputPath, JSON.stringify(result, null, 2), 'utf8');
   console.log(`\n✅ ĐÃ HOÀN TẤT! Dữ liệu đã lưu tại: ${outputPath}`);
   console.log(`- Lịch tuần: ${result.scheduleWeeks.length} tuần`);
   console.log(`- Thực đơn bán trú: ${result.mealsWeeks.length} tuần`);
   console.log(`- Thông báo chung: ${result.generalNotices.length} tin`);
+
+  // Tự động chuyển đổi các tệp PDF sang ảnh PNG
+  try {
+    const { execSync } = require('child_process');
+    const pyScript = path.join(__dirname, 'convert_pdf_to_png.py');
+    console.log('\n🖼️ Đang chuyển đổi tệp PDF sang ảnh PNG...');
+    
+    // Detect venv python if available, else standard python
+    let pyCmd = process.platform === 'win32' ? 'python' : 'python3';
+    const venvPyWin = path.join(__dirname, '..', '..', '.venv', 'Scripts', 'python.exe');
+    const venvPyNix = path.join(__dirname, '..', '..', '.venv', 'bin', 'python');
+    if (fs.existsSync(venvPyWin)) {
+      pyCmd = `"${venvPyWin}"`;
+    } else if (fs.existsSync(venvPyNix)) {
+      pyCmd = `"${venvPyNix}"`;
+    }
+
+    execSync(`${pyCmd} "${pyScript}"`, { stdio: 'inherit' });
+  } catch (err) {
+    console.warn('Cảnh báo chuyển đổi PDF -> PNG:', err.message);
+  }
+
   return result;
 }
 
