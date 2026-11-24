@@ -1,8 +1,8 @@
 {
   "source": "https://thpttranvangiau.hcm.edu.vn",
   "schoolName": "Trường THPT Trần Văn Giàu",
-  "lastUpdated": "2026-11-24T01:49:18.098Z",
-  "lastUpdatedText": "lúc 08:49:18 Thứ Ba, 24 tháng 11, 2026",
+  "lastUpdated": "2026-11-24T12:08:11.868Z",
+  "lastUpdatedText": "lúc 19:08:11 Thứ Ba, 24 tháng 11, 2026",
   "scheduleWeeks": [
     {
       "weekNum": 12,
@@ -47,16 +47,23 @@
         },
         {
           "day": "Thứ Tư 25/11/2026",
+          "content": "- 08g00: tham gia Hội nghị giao ban dư luận xã hội tháng 11/2026.",
+          "assignee": "Cô Hồng",
+          "location": "Trung tâm Hội nghị 272",
+          "onDuty": "Cô Hồng"
+        },
+        {
+          "day": "Thứ Tư 25/11/2026",
           "content": "- 17g00: Viên chức được xét thăng hạng CDNN có tên trong danh sách nộp các minh chứng về phòng học vụ cho thầy Bá Ngọc.",
           "assignee": "GV trong DS",
           "location": "",
-          "onDuty": "Cô Hồng"
+          "onDuty": ""
         },
         {
           "day": "Thứ Năm 26/11/2026",
           "content": "- 08g30: Tập huấn “Hội thi Hùng biện tiếng Trung dành cho học sinh phổ thông năm học 2026 – 2027”",
           "assignee": "Thầy Nghĩa Bảo Vy 12A13",
-          "location": "",
+          "location": "Trường THCS Hậu Giang",
           "onDuty": "Cô Hồng"
         },
         {
@@ -77,7 +84,7 @@
           "day": "Thứ Sáu 27/11/2026",
           "content": "- 17g30: Đại hội chi đoàn nhiệm kỳ 2026-2028 (phiên chính thức)",
           "assignee": "Thầy Huy Chi đoàn GV",
-          "location": "Phòng Họp",
+          "location": "Phòng họp",
           "onDuty": ""
         },
         {
@@ -89,9 +96,23 @@
         },
         {
           "day": "Thứ Bảy 28/11/2026",
-          "content": "- 9g00: Tọa đàm chia sẻ kinh nghiệm thực tập cho sinh viên Ngành ngôn ngữ Anh- trường Đại học Quốc Tế Hồng Bàng",
-          "assignee": "Thầy Đức Thịnh",
+          "content": "- 07g00: Phối hợp với Công an phường triển khai thực hiện “Chiến dịch đào tạo kỹ năng lái xe mô tô, xe gắn máy an toàn” trên địa bàn phường Bình Lợi Trung”",
+          "assignee": "Đoàn thanh niên QLHS",
           "location": "",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Bảy 28/11/2026",
+          "content": "- 07g30-17g00: Tổ chức kiểm điểm, đánh giá, xếp loại chất lượng đối với tổ chức đảng, đảng viên và tập thể, cá nhân cán bộ lãnh đạo, quản lý Năm 2026",
+          "assignee": "Toàn bộ Đảng viên",
+          "location": "Phòng họp",
+          "onDuty": ""
+        },
+        {
+          "day": "Thứ Bảy 28/11/2026",
+          "content": "- 9g00: Tọa đàm chia sẻ kinh nghiệm thực tập cho sinh viên Ngành ngôn ngữ Anh - trường Đại học Quốc Tế Hồng Bàng",
+          "assignee": "Thầy Đức Thịnh",
+          "location": "Trường ĐH Hồng Bàng",
           "onDuty": ""
         },
         {
@@ -562,8 +583,8 @@
       "isLatest": true,
       "localPdfUrl": "data/pdf/thuc_don_tuan_12.pdf",
       "imageUrl": "data/pdf/thuc_don_tuan_12.png",
-      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/g0BsZcUEs_baF1Cr7k-UKbBH6tu6kyL-b-D8xv79lFPKjsTWsRYOK3-IPg992tgTPUFfHBQ0F-d8vnVxk-aa2rv1gTfeWZQ2e90FmmzTgjXO2uUG-TlCayjEy7EBRYd_p1VkoHNm2v2lGzCHL5nc0L0cl9ou4xJyURHO6Lz07AqbeSX1xTPD1MpSynKhn_g4dYT0Xi82/l7mtKTsN_zoJIMlhi_djzLrr6yr-VfBDozos66gZLwa5YdrJqco1ebpVQ6XsFivnNzGuag/thuc-don-ban-tru-23-27-11-2026.pdf",
-      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/aebac8ace53f140637a611c38b6c5bf2.pdf/thuc-don-ban-tru-23-27-11-2026-231120269.pdf&urlgoc=%2Ftai%2FE5ga27BB1Fjb84UTs1ZE0fKMLGnFQgi1EdBr1XbYNIgnsSneZTY_m7XNy0eUry2Uak2TAJxr02fcReqd6Ypo4wlRQ0zhZJ1XyEZJcTMDULVoKj4r4DRfqyiLA5knYrsw0cG3ub1B9VLeYGNtbz0YRvfBkSZZWejymG_-fFk3Tto_qIJuwJAd39vjgiQnY-vDeVcxrwt9%2FsvplXu95dAQIGkUY_RSu8-V-G9jPDJUMeMdvi_PPaF0lOcbEibiVkEcIO4a3uevzyj1Cv0rOvrTgaHJzSmQ%2Fthuc-don-ban-tru-23-27-11-2026-231120269.pdf",
+      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/gWQfLj2ct_5yKTuYadIiNgQyLmNpZpxjJRxqJhKviRtlGOR8uumUElnsj_hZ5Tl1Ry-fnoWmp7RyAMI_3oYqtWM9kz_ys2s9L0uzwIbLtc1DQ-RJg85Hw2kzDMpst2j9Wk9WKRQtZ5gq4F820uDGp2rEO2YuDDC_ofMHkZ8waNKyZfoxDWhxb7gOEQrt0FPWq8-7a06y/REx8P5qGzOqX58u8i3CftPFw1ivWsVCdxYSP5StAfH4AsdSt1q8UGAEFjZHEDTU_pG2FPg/thuc-don-ban-tru-23-27-11-2026.pdf",
+      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/aebac8ace53f140637a611c38b6c5bf2.pdf/thuc-don-ban-tru-23-27-11-2026-231120269.pdf&urlgoc=%2Ftai%2FXfCraZlSFEQxuci7SE3IVEe_TTidPCtOPAtFstT_j93lZPRQf1wi2KB81dQzX_v_BGCCTU_YBZjeptX87NMm917Gu-XBJUqLNch1bC_FXyPSvu2zgUEZrIRbfB5QrILbx5UdqIrXb8yhrVbZRWNWlX-L_mqA3xBS4LD0jJQ2eZM_q1REGxjkgl0MnULotCt1G4lEbcZp%2FhPjVOp4Yggf4R9034IPgGkZuJ-_7IMKvhUbu72oXq5W1A9GKzcf2YsJONKgV7QKiiQJXB8yn0Zs8HcGBzuw%2Fthuc-don-ban-tru-23-27-11-2026-231120269.pdf",
       "summary": "Thực đơn bán trú tuần 12 (từ ngày 23/11/2026 đến ngày 27/11/2026)"
     },
     {
@@ -573,8 +594,8 @@
       "isLatest": false,
       "localPdfUrl": "data/pdf/thuc_don_tuan_11.pdf",
       "imageUrl": "data/pdf/thuc_don_tuan_11.png",
-      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/9d6r7h--6BhAU1qad-3XqfHWJrrEGMb32htoT1h95E03Rl_EnSII1wGaza-FUe8ngrsI7BEoPPAUDQA3mwi5XtPqQYO9DSj2T5hWoF-cDHmRtTTzfGtZ8FFqALYYrUe7LwDgbGSsVHIIGYaUsyxWfK6AWyTK1L5a_D392Sy2l0n_6e9Mxu3Sgu3WeWt0w8LZ7ZqMr3oL/ltjz-t8wejU1r8I0Vu1W4wMRi29rsKd_iMv8wwTp8uc7Ow45jUh4PVH_sGegSI4emxeJP9s/thuc-don-ban-tru-16-20-11-2026.pdf",
-      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/01bba91487b0737af9a327804e8d6baa.pdf/thuc-don-ban-tru-16-20-11-2026-1611202610.pdf&urlgoc=%2Ftai%2FUy_uDRgGOfY7pNZvodleg5ZVM7cArttsUMdFQpePRfXNHtFiMnvoyt4qixDqNaJycTAShGz4LLfitBzyvnBh1MYclekeA6FBVvhm5p0XCKFv61fhdNCXzfEFEllG57eFKLGy-FLCRQoaT8ju_A7w8D5z0SVad4v-hjFGcsmEioOo9__rjE9OdaqBKxAS_Ah-33kfVD6I%2F6BAy_VMordkO6L8kluNoHJ3TE6BTB2PSpkqpkGVgqlWFP-wCC_dkFyPPDV6RmUUE7Jat5T3JkiZyUhoiUbSWnQ%2Fthuc-don-ban-tru-16-20-11-2026-1611202610.pdf",
+      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/n_yb3488eNCGTGP0LvRpYbtXZSB03PzC-EbfluahLXm0Y9ohUdrjLb4nR1aWqgIzK-8Qo10TeE8p5Wm_TPJL30iwCPFdhzmsjTXy0Xzcm1Ul68QDJVcB0AW_UNZzqg93SX_H39GzJpcydyDsuGLGkGdcwUQGxKRY3bfS6wKQVbuGKJLDvuGVtXY-nw6xOd_nclx3iXru/6eNOQ4qv5XcNemoPcFnukLZOuE48cVDm9AsMdJEi6k2N1kz2U-qgdB0OX4lspgh_l9kdLyI/thuc-don-ban-tru-16-20-11-2026.pdf",
+      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/01bba91487b0737af9a327804e8d6baa.pdf/thuc-don-ban-tru-16-20-11-2026-1611202610.pdf&urlgoc=%2Ftai%2FYleQ4PD_5EtFBKHcxAL53h_Qcl-d18Mj05RjXJzKo5o-NJKL8409DF_MC5aeYO9zcGXiKou0r5MGslFwM8cZQxPW-qGKsrzXRPTgIfSB2h9Jt23kINQqlPWNSIOgyQ9KPijYSnRmN6WjBQOa_11QYclEyLESBhpi7YN4vx8GJTAsIIHnyK4w7oNmSY67XFKzTMLmJMaU%2FqwEAt1jf5044vvtzFyON7jqi7MXEKWUAySSWplrzYZR1MXgNncY-oAX-D3PQFFDpoJ3vMWsbb7npmze3Npunzw%2Fthuc-don-ban-tru-16-20-11-2026-1611202610.pdf",
       "summary": "Thực đơn bán trú tuần 11 (từ ngày 16/11/2026 đến ngày 20/11/2026)",
       "dailyDishes": {
         "Thứ Hai": {
@@ -621,8 +642,8 @@
       "isLatest": false,
       "localPdfUrl": "data/pdf/thuc_don_tuan_10.pdf",
       "imageUrl": "data/pdf/thuc_don_tuan_10.png",
-      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/l2WVzP_gXqUZoAvbgScbCFh4MwTF5T70Pk_27mIREmM2HmRQ0cIzPy1ThrBhjf5zDqjEUqA_fjHvBmuj1QmuDS156qfuuwIvuAsWBATxbn2G-fLUVyEPwYVS0ZNbIg2pEcwDSnSthWW_nUiUPcqSM2NqbIQkM7rnpe2O4lso7t1_0k6G9mTyDNSHr-4doC6dsA214UhF/UA4ia9OTM00L06_GZ5e6sNq2V5D4rIgjRckszq_kIN_K8F1-u-4vdkF-KkTd1UnBVCNr/thuc-don-ban-tru-09-13-11-2026.pdf",
-      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/9b545d9d3ca6b185fa1a1f7576cf4f5e.pdf/thuc-don-ban-tru-09-13-11-2026-811202617.pdf&urlgoc=%2Ftai%2F4scFn5AJgH8ceHgiXvq-jUOg29ZSNGF46jTWZgv9xAu4H1V_SSkiS9x5yn046L7vczIvUPEcBl3kanTt8lmZIsyOS58eg72D_rN7wC2j0gFRDXYitm6poTIZUxIZZ8roImBXfHydLVNwcVB2Fit_pzZjlikWCKMYSQBU53ixzUQlu4ceWEyy3kTG6vwlOyNnH7jWLQ23%2FGvRjsG2BUYb4wuwLa59tfmj2D46_wWXDx_hxETfS71lGUJZjJ3YPNKjnp0o09UnTe-E_2h7P6DI8AIEbeg%2Fthuc-don-ban-tru-09-13-11-2026-811202617.pdf",
+      "downloadUrl": "https://thpttranvangiau.hcm.edu.vn/tai/gIjUXOI7ts5pzEcllXFLp1PqGcY7r2VEhYKZkOo61wlc6bp8IiIwQor6dZvCJi96NDPtrRg9dUjxJiTB2uWVl8gKIVKH8Z0EWC3D50SZZrQUb-UDm4oVzRulIvdfkR4Ql4SS30ftIz-Nx7h36bhbWkrxvTr_yymYGt2wclZnO51kD-6p5R4sAzSfa9iQyi_wC2Z3Swdj/P7oqDFsvmtsf4wtzYzuRMDcqnHVRRMFu282XhF7iuBak4tpEt7H7pna3W0j4dD1xeRJK/thuc-don-ban-tru-09-13-11-2026.pdf",
+      "viewerUrl": "https://thpttranvangiau.hcm.edu.vn/ViewFilePdf?urlpdf=upload/tai-tep/9b545d9d3ca6b185fa1a1f7576cf4f5e.pdf/thuc-don-ban-tru-09-13-11-2026-811202617.pdf&urlgoc=%2Ftai%2F49iMWKhdkv-3trzQLTWFgSnowHw4mDdSdSMSBqEZTcmwCvj8vniWBUe9s92tM4jEuT4OrvGQwYexsQBMK_VKbb-UMhhPBQ9gIvPRiq_mZMZo4vxrDgSA7KrT3bruA4iYuJkF9Y1ssD_cjRXwSsHf4HMOqasakDq750br1FrH3TEKereIGsMZZ_4uRsNh9G2pg6s3uUl3%2FG0GT_vmTH490lMx3h0kJ4x_oj6rx7f1VO3Fs5-hBTtpjjk3amie75LVpf2fcAuEzZ3I_hetgTViBXO1F5A%2Fthuc-don-ban-tru-09-13-11-2026-811202617.pdf",
       "summary": "Thực đơn bán trú tuần 10 (từ ngày 09/11/2026 đến ngày 13/11/2026)",
       "dailyDishes": {
         "Thứ Hai": {
