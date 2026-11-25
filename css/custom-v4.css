@@ -3129,3 +3129,20 @@ mark {
   border-left-color: rgba(56, 189, 248, 0.4);
   border-right-color: rgba(56, 189, 248, 0.4);
 }
+
+/* StatsBento Dashboard Signature Hatched Radial Mask */
+.bento-hatch-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(128, 128, 128, 0.45) 0px,
+    rgba(128, 128, 128, 0.45) 1px,
+    transparent 1px,
+    transparent 10px
+  );
+  opacity: 0.35;
+  -webkit-mask-image: radial-gradient(ellipse 80% 55% at 100% 0%, #000 70%, transparent 110%);
+  mask-image: radial-gradient(ellipse 80% 55% at 100% 0%, #000 70%, transparent 110%);
+  pointer-events: none;
+}
