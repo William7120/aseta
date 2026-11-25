@@ -881,11 +881,13 @@ button:active:not(:disabled),
 @media (max-width: 1023px) {
   .gradient-menu-btn {
     width: 100% !important;
-    height: 48px;
+    min-height: 54px;
+    height: auto;
     justify-content: flex-start;
-    padding: 0 12px;
-    border-radius: 14px;
+    padding: 9px 12px;
+    border-radius: 16px;
     gap: 12px;
+    text-align: left;
   }
 
   .gradient-menu-btn .gradient-menu-icon {
@@ -999,7 +1001,9 @@ button:active:not(:disabled),
   #notebookView,
   #historyView,
   #bankView,
-  #creatorView {
+  #creatorView,
+  #dashboardView,
+  #examScheduleView {
     padding-bottom: 84px !important;
   }
 }

@@ -35,5 +35,5 @@ jobs:
         run: |
           git config --global user.name "Aseta School Bot"
           git config --global user.email "bot@aseta.edu.vn"
-          git add data/school_news.json data/pdf/
+          git add data/school_news.json data/exam_hk1_schedule.json data/pdf/
           git diff --quiet && git diff --staged --quiet || (git commit -m "chore(bot): cap nhat lich tuan va ban tru TVG tu dong" && git push)

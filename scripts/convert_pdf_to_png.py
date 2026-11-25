@@ -38,7 +38,7 @@ def convert_all_menu_pdfs():
         print("Warning: No PDF to image converter available (install pypdfium2, pdf2image, or poppler-utils)")
         return
 
-    pdf_files = glob.glob(os.path.join(pdf_dir, 'thuc_don_tuan_*.pdf'))
+    pdf_files = glob.glob(os.path.join(pdf_dir, 'thuc_don_tuan_*.pdf')) + glob.glob(os.path.join(pdf_dir, 'lich_thi_*.pdf'))
     for pdf_path in pdf_files:
         base_name = os.path.splitext(os.path.basename(pdf_path))[0]
         png_path = os.path.join(pdf_dir, f"{base_name}.png")

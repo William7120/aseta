@@ -1817,8 +1817,8 @@ window.AzotaApp = (function() {
         if (targetBtn) {
             targetBtn.classList.add("active");
         } else {
-            const menuBtn = document.getElementById("mobile-dock-menu");
-            if (menuBtn) menuBtn.classList.add("active");
+            const dashBtn = document.getElementById("mobile-dock-dashboard") || document.getElementById("mobile-dock-root");
+            if (dashBtn) dashBtn.classList.add("active");
         }
     }
 
@@ -1826,33 +1826,35 @@ window.AzotaApp = (function() {
         document.querySelectorAll(".nav-item-modern").forEach(item => {
             item.classList.remove("nav-item-active", "liquid-active", "liquid-active-amber");
         });
-        const el = document.getElementById(targetKey);
-        if (el) {
-            if (targetKey === "sidebar-folder-leaderboard") {
-                el.classList.add("liquid-active-amber");
+        let el = document.getElementById(targetKey);
+        if (!el) {
+            // Map sub-views and subject folders to their compact parent hub (Home or Dashboard)
+            if (targetKey && targetKey.startsWith("sidebar-folder-") && targetKey !== "sidebar-folder-leaderboard" && targetKey !== "sidebar-folder-Hoc_Tu_Luan") {
+                el = document.getElementById("sidebar-folder-root");
             } else {
-                el.classList.add("nav-item-active");
+                el = document.getElementById("sidebar-nav-dashboard") || document.getElementById("sidebar-folder-root");
             }
         }
+        if (el) {
+            el.classList.add("nav-item-active");
+        }
 
-        // Synchronize Mobile Bottom Dock
-        if (targetKey === "sidebar-folder-root") {
+        // Synchronize Mobile Bottom Dock (Compact 4-item hub)
+        if (targetKey === "sidebar-folder-root" || (el && el.id === "sidebar-folder-root")) {
             updateMobileDockActive("root");
-        } else if (targetKey === "sidebar-folder-leaderboard") {
-            updateMobileDockActive("leaderboard");
-        } else if (targetKey === "sidebar-folder-Hoc_Tu_Luan") {
-            updateMobileDockActive("Hoc_Tu_Luan");
-        } else if (targetKey === "sidebar-util-notebook") {
-            updateMobileDockActive("notebook");
+        } else if (targetKey === "sidebar-nav-exam-schedule") {
+            updateMobileDockActive("examSchedule");
+        } else if (targetKey === "sidebar-util-school-news") {
+            updateMobileDockActive("news");
         } else {
-            updateMobileDockActive("menu");
+            updateMobileDockActive("dashboard");
         }
     }
 
     function showView(viewId) {
         if (!SecurityGuard.checkRateLimit("chuyển trang")) return;
 
-        const views = ["explorerView", "homeView", "examView", "essayView", "resultView", "notebookView", "creatorView", "bankView", "historyView", "leaderboardView", "solutionsView", "gradeCalcView"];
+        const views = ["explorerView", "homeView", "dashboardView", "examScheduleView", "examView", "essayView", "resultView", "notebookView", "creatorView", "bankView", "historyView", "leaderboardView", "solutionsView", "gradeCalcView"];
         views.forEach(v => {
             const el = document.getElementById(v);
             if (el) {
@@ -1882,12 +1884,24 @@ window.AzotaApp = (function() {
             updateSidebarActive("sidebar-folder-root");
             renderFileExplorer();
             checkInProgressExam();
+        } else if (viewId === "dashboard") {
+            updateActiveAppName("Dashboard — Trung Tâm Tiện Ích");
+            updateSidebarActive("sidebar-nav-dashboard");
+            if (window.DashboardHubEngine && typeof window.DashboardHubEngine.render === "function") {
+                window.DashboardHubEngine.render("dashboardHubContainer");
+            }
+        } else if (viewId === "examSchedule") {
+            updateActiveAppName("Lịch Thi & Đề Cương Cuối HK1");
+            updateSidebarActive("sidebar-nav-exam-schedule");
+            if (window.ExamScheduleEngine && typeof window.ExamScheduleEngine.render === "function") {
+                window.ExamScheduleEngine.render("examScheduleContainer");
+            }
         } else if (viewId === "home") {
             openFileExplorer('root');
             return;
         } else if (viewId === "solutions") {
             updateActiveAppName("Kho Lời Giải & Bài Mẫu Chi Tiết");
-            updateSidebarActive("sidebar-util-solutions");
+            updateSidebarActive("sidebar-nav-dashboard");
             if (window.SolutionEngine) {
                 if (typeof window.SolutionEngine.syncFromCloud === "function") {
                     window.SolutionEngine.syncFromCloud(true);
@@ -1897,32 +1911,32 @@ window.AzotaApp = (function() {
             }
         } else if (viewId === "gradeCalc") {
             updateActiveAppName("Tính Điểm & Xếp Loại THPT (TT 22)");
-            updateSidebarActive("sidebar-util-grade-calc");
+            updateSidebarActive("sidebar-nav-dashboard");
             if (window.GradeCalcEngine && typeof window.GradeCalcEngine.render === "function") {
                 window.GradeCalcEngine.render("gradeCalcContainer");
             }
         } else if (viewId === "essay") {
             updateActiveAppName("Học Tự Luận Siêu Tốc — Môn Địa");
-            updateSidebarActive("sidebar-folder-Hoc_Tu_Luan");
+            updateSidebarActive("sidebar-nav-dashboard");
             if (window.EssayEngine) window.EssayEngine.render();
         } else if (viewId === "notebook") {
             updateActiveAppName("Câu Cần Ghi Nhớ");
-            updateSidebarActive("sidebar-util-notebook");
+            updateSidebarActive("sidebar-nav-dashboard");
             renderMistakeNotebook();
         } else if (viewId === "bank") {
             updateActiveAppName("Tra Cứu Ngân Hàng Câu Hỏi");
-            updateSidebarActive("sidebar-util-bank");
+            updateSidebarActive("sidebar-nav-dashboard");
             renderQuestionBank();
         } else if (viewId === "creator") {
             updateActiveAppName("Trình Tạo Đề Nhanh AI");
-            updateSidebarActive("sidebar-util-creator");
+            updateSidebarActive("sidebar-nav-dashboard");
         } else if (viewId === "history") {
             updateActiveAppName("Lịch Sử Khảo Thí");
-            updateSidebarActive("sidebar-util-stats");
+            updateSidebarActive("sidebar-nav-dashboard");
             renderExamHistory();
         } else if (viewId === "leaderboard") {
             updateActiveAppName("Bảng Xếp Hạng & Vinh Danh");
-            updateSidebarActive("sidebar-folder-leaderboard");
+            updateSidebarActive("sidebar-nav-dashboard");
             refreshLeaderboard();
         } else if (viewId === "exam") {
             updateActiveAppName("Phòng Khảo Thí Trực Tuyến");
@@ -4658,6 +4672,8 @@ window.AzotaApp = (function() {
     return {
         init: init,
         showView: showView,
+        openDashboard: () => showView("dashboard"),
+        openExamSchedule: () => showView("examSchedule"),
         openGradeCalculator: () => showView("gradeCalc"),
         openFileExplorer: openFileExplorer,
         openEssayStudy: openEssayStudy,

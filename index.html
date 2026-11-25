@@ -433,364 +433,115 @@
                     </button>
                 </div>
 
-                <!-- CATEGORY 1: TỔNG QUAN & KHẢO THÍ -->
-                <div class="w-full space-y-1">
-                    <div class="nav-group-title">
-                        <span>TỔNG QUAN &amp; KHẢO THÍ</span>
-                        <span class="text-[9px] px-1.5 py-0.2 rounded-md bg-blue-500/10 text-blue-500 font-bold">CHÍNH</span>
-                    </div>
-                    
-                    <!-- Kho Đề & Môn Học -->
-                    <button type="button" 
-                            id="sidebar-folder-root" 
-                            onclick="AzotaApp.openFileExplorer('root')" 
-                            style="--gradient-from: #3b82f6; --gradient-to: #06b6d4;" 
-                            class="gradient-menu-btn nav-item-modern nav-item-active group" 
-                            title="Kho Đề & Môn Học">
-                        <span class="gradient-menu-bg"></span>
-                        <span class="gradient-menu-glow"></span>
-                        <span class="gradient-menu-icon"><span class="text-xl">📁</span></span>
-                        <span class="gradient-menu-title">Kho Đề</span>
-                        <span class="gradient-active-dot"></span>
-                        <span class="mobile-drawer-label hidden">
-                            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Kho Đề & Môn Học</span>
-                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 font-bold">6</span>
-                        </span>
-                    </button>
-
-                    <!-- Bảng Xếp Hạng & Đua Top (Coming Soon) -->
-                    <button type="button" 
-                            id="sidebar-folder-leaderboard" 
-                            onclick="AzotaApp.openLeaderboard()" 
-                            style="--gradient-from: #f59e0b; --gradient-to: #ef4444;" 
-                            class="gradient-menu-btn nav-item-modern group" 
-                            title="Bảng Xếp Hạng & Đua Top (Coming Soon)">
-                        <span class="gradient-menu-bg"></span>
-                        <span class="gradient-menu-glow"></span>
-                        <span class="gradient-menu-icon"><span class="text-xl">🏆</span></span>
-                        <span class="gradient-menu-title">Đua Top</span>
-                        <span class="gradient-active-dot"></span>
-                        <span class="mobile-drawer-label hidden">
-                            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Đua Top Xếp Hạng</span>
-                            <span class="liquid-tag-pill bg-amber-500/20 text-amber-400 border border-amber-500/30">SOON</span>
-                        </span>
-                    </button>
-                </div>
-
-                <!-- Section Divider 1 -> 2 -->
-                <div class="sidebar-section-divider"></div>
-
-                <!-- CATEGORY 2: MÔN HỌC -->
-                <div class="w-full space-y-1">
-                    <div class="w-full flex items-center justify-between nav-group-title cursor-pointer select-none py-1 group" onclick="AzotaApp.toggleSidebarMainFolders()">
-                        <span class="flex items-center gap-1.5">
-                            <span class="sidebar-chevron-btn w-4 h-4 rounded flex items-center justify-center bg-slate-200/50 dark:bg-white/5">
-                                <svg id="sidebarFolderArrow" class="sidebar-chevron-svg w-3 h-3 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="m6 9 6 6 6-6"/>
-                                </svg>
-                            </span>
-                            <span>MÔN HỌC</span>
-                        </span>
-                        <span class="text-[9px] px-1.5 py-0.2 rounded-md bg-blue-500/10 text-blue-400 font-bold">MÔN HỌC</span>
-                    </div>
-
-                    <div id="sidebarMainFoldersList" class="space-y-1 transition-all duration-300">
-                        <div id="sidebarSubjectsSubTree" class="space-y-1.5 transition-all duration-300">
-                            <!-- Tin Học 11: Bài 12 & 13 CSDL -->
-                            <button type="button" 
-                                    id="sidebar-folder-Tin Học" 
-                                    onclick="AzotaApp.openFileExplorer('Tin Học')" 
-                                    style="--gradient-from: #0284c7; --gradient-to: #06b6d4;" 
-                                    class="gradient-menu-btn nav-item-modern group" 
-                                    title="Tin Học 11 - Bài 12 & 13 (CSDL)">
-                                <span class="gradient-menu-bg"></span>
-                                <span class="gradient-menu-glow"></span>
-                                <span class="gradient-menu-icon flex items-center justify-center text-xl">
-                                    💻
-                                </span>
-                                <span class="gradient-menu-title">Tin Học 11</span>
-                                <span class="gradient-active-dot"></span>
-                                <span class="mobile-drawer-label hidden">
-                                    <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Tin Học 11</span>
-                                    <span class="liquid-tag-pill bg-sky-500/15 text-sky-400 border border-sky-500/25">Bài 12-13</span>
-                                </span>
-                            </button>
-
-                            <!-- Địa Lí 11: 64 Câu Giữa Kì -->
-                            <button type="button" 
-                                    id="sidebar-folder-Địa Lí" 
-                                    onclick="AzotaApp.openFileExplorer('Địa Lí')" 
-                                    style="--gradient-from: #10b981; --gradient-to: #059669;" 
-                                    class="gradient-menu-btn nav-item-modern group" 
-                                    title="Địa Lí 11 - 64 Câu Ôn Tập">
-                                <span class="gradient-menu-bg"></span>
-                                <span class="gradient-menu-glow"></span>
-                                <span class="gradient-menu-icon flex items-center justify-center text-xl">
-                                    🌍
-                                </span>
-                                <span class="gradient-menu-title">Địa Lí 11</span>
-                                <span class="gradient-active-dot"></span>
-                                <span class="mobile-drawer-label hidden">
-                                    <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Địa Lí 11</span>
-                                    <span class="liquid-tag-pill bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">64 CÂU</span>
-                                </span>
-                            </button>
-
-                            <!-- Tiếng Anh 11: Unit 4 ASEAN and Vietnam -->
-                            <button type="button" 
-                                    id="sidebar-folder-Tiếng Anh" 
-                                    onclick="AzotaApp.openFileExplorer('Tiếng Anh')" 
-                                    style="--gradient-from: #3b82f6; --gradient-to: #4f46e5;" 
-                                    class="gradient-menu-btn nav-item-modern group" 
-                                    title="Tiếng Anh 11 - Unit 4: ASEAN and Vietnam">
-                                <span class="gradient-menu-bg"></span>
-                                <span class="gradient-menu-glow"></span>
-                                <span class="gradient-menu-icon flex items-center justify-center">
-                                    <svg class="w-[29px] h-[29px] rounded-full shrink-0 block" viewBox="0 0 36 36" style="display: block; margin: auto; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.55));" aria-label="Tiếng Anh 11">
-                                        <defs>
-                                            <clipPath id="uk-flag-sidebar">
-                                                <circle cx="18" cy="18" r="18"/>
-                                            </clipPath>
-                                            <linearGradient id="ukGloss" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.45"/>
-                                                <stop offset="50%" stop-color="#ffffff" stop-opacity="0.05"/>
-                                                <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-                                            </linearGradient>
-                                        </defs>
-                                        <circle cx="18" cy="18" r="18" fill="#0052B4"/>
-                                        <g clip-path="url(#uk-flag-sidebar)">
-                                            <!-- Diagonal White Stripes -->
-                                            <path d="M-2,-2 L38,38 M38,-2 L-2,38" stroke="#FFFFFF" stroke-width="6.5"/>
-                                            <!-- Diagonal Red Stripes -->
-                                            <path d="M-2,-2 L38,38 M38,-2 L-2,38" stroke="#D80027" stroke-width="3.8"/>
-                                            <!-- St. George Cross White Base -->
-                                            <path d="M18,-2 V38 M-2,18 H38" stroke="#FFFFFF" stroke-width="10"/>
-                                            <!-- St. George Cross Red -->
-                                            <path d="M18,-2 V38 M-2,18 H38" stroke="#D80027" stroke-width="6"/>
-                                            <!-- 3D Convex Gloss Highlight -->
-                                            <ellipse cx="18" cy="11" rx="15" ry="8" fill="url(#ukGloss)"/>
-                                            <!-- Outer glossy enamel metallic rim -->
-                                            <circle cx="18" cy="18" r="17.2" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.2"/>
-                                        </g>
-                                    </svg>
-                                </span>
-                                <span class="gradient-menu-title">Tiếng Anh 11</span>
-                                <span class="gradient-active-dot"></span>
-                                <span class="mobile-drawer-label hidden">
-                                    <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Tiếng Anh 11 (Unit 4)</span>
-                                    <span class="liquid-tag-pill bg-blue-500/15 text-blue-400 border border-blue-500/25">67 TỪ</span>
-                                </span>
-                            </button>
-
-                            <!-- Lịch Sử 11 -->
-                            <button type="button" 
-                                    id="sidebar-folder-Lịch Sử" 
-                                    onclick="AzotaApp.openFileExplorer('Lịch Sử')" 
-                                    style="--gradient-from: #f59e0b; --gradient-to: #d97706;" 
-                                    class="gradient-menu-btn nav-item-modern group" 
-                                    title="Lịch Sử 11">
-                                <span class="gradient-menu-bg"></span>
-                                <span class="gradient-menu-glow"></span>
-                                <span class="gradient-menu-icon flex items-center justify-center text-xl">
-                                    🏛️
-                                </span>
-                                <span class="gradient-menu-title">Lịch Sử 11</span>
-                                <span class="gradient-active-dot"></span>
-                                <span class="mobile-drawer-label hidden">
-                                    <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Lịch Sử 11</span>
-                                    <span class="liquid-tag-pill bg-amber-500/15 text-amber-400 border border-amber-500/25">Sử 11</span>
-                                </span>
-                            </button>
-
-                            <!-- GDKT & PL 11 -->
-                            <button type="button" 
-                                    id="sidebar-folder-GDKT&PL" 
-                                    onclick="AzotaApp.openFileExplorer('GDKT&PL')" 
-                                    style="--gradient-from: #8b5cf6; --gradient-to: #7c3aed;" 
-                                    class="gradient-menu-btn nav-item-modern group" 
-                                    title="Giáo Dục Kinh Tế & Pháp Luật 11">
-                                <span class="gradient-menu-bg"></span>
-                                <span class="gradient-menu-glow"></span>
-                                <span class="gradient-menu-icon flex items-center justify-center text-xl">
-                                    ⚖️
-                                </span>
-                                <span class="gradient-menu-title">GDKT & PL 11</span>
-                                <span class="gradient-active-dot"></span>
-                                <span class="mobile-drawer-label hidden">
-                                    <span class="font-bold text-sm text-slate-800 dark:text-slate-100">GDKT & PL 11</span>
-                                    <span class="liquid-tag-pill bg-purple-500/15 text-purple-400 border border-purple-500/25">GDKT</span>
-                                </span>
-                            </button>
-
-                            <!-- Ngữ Văn 11 -->
-                            <button type="button" 
-                                    id="sidebar-folder-Ngữ Văn" 
-                                    onclick="AzotaApp.openFileExplorer('Ngữ Văn')" 
-                                    style="--gradient-from: #f43f5e; --gradient-to: #e11d48;" 
-                                    class="gradient-menu-btn nav-item-modern group" 
-                                    title="Ngữ Văn 11">
-                                <span class="gradient-menu-bg"></span>
-                                <span class="gradient-menu-glow"></span>
-                                <span class="gradient-menu-icon flex items-center justify-center text-xl">
-                                    📖
-                                </span>
-                                <span class="gradient-menu-title">Ngữ Văn 11</span>
-                                <span class="gradient-active-dot"></span>
-                                <span class="mobile-drawer-label hidden">
-                                    <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Ngữ Văn 11</span>
-                                    <span class="liquid-tag-pill bg-rose-500/15 text-rose-400 border border-rose-500/25">Văn 11</span>
-                                </span>
-                            </button>
-
-                            <!-- Tự Luận -->
-                            <button type="button" 
-                                    id="sidebar-folder-Hoc_Tu_Luan" 
-                                    onclick="AzotaApp.openFileExplorer('Hoc_Tu_Luan')" 
-                                    style="--gradient-from: #06b6d4; --gradient-to: #3b82f6;" 
-                                    class="gradient-menu-btn nav-item-modern group" 
-                                    title="Học Tự Luận Siêu Tốc">
-                                <span class="gradient-menu-bg"></span>
-                                <span class="gradient-menu-glow"></span>
-                                <span class="gradient-menu-icon flex items-center justify-center text-xl">
-                                    📝
-                                </span>
-                                <span class="gradient-menu-title">Tự Luận</span>
-                                <span class="gradient-active-dot"></span>
-                                <span class="mobile-drawer-label hidden">
-                                    <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Học Tự Luận</span>
-                                    <span class="liquid-tag-pill bg-cyan-500/15 text-cyan-400 border border-cyan-500/25">Tự Luận</span>
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Section Divider 2 -> 3 -->
-                <div class="sidebar-section-divider"></div>
-
-                <!-- CATEGORY 3: CÔNG CỤ & TIỆN ÍCH -->
+                <!-- PRIMARY NAVIGATION (COMPACT 4-ITEM HUB FOR PC & MOBILE) -->
                 <div class="w-full space-y-1.5">
                     <div class="nav-group-title">
-                        <span>CÔNG CỤ &amp; TIỆN ÍCH</span>
-                        <span class="text-[9px] px-1.5 py-0.2 rounded-md bg-purple-500/10 text-purple-500 font-bold">TIỆN ÍCH</span>
+                        <span>ĐIỀU HƯỚNG CHÍNH</span>
+                        <span class="text-[9px] px-1.5 py-0.2 rounded-md bg-blue-500/10 text-blue-500 font-bold">GỌN</span>
                     </div>
 
-                    <!-- Thời Khóa Biểu 11A7 & Balo -->
+                    <!-- 1. Home: Kho Đề & Môn Học -->
                     <button type="button"
-                            id="sidebar-util-timetable"
-                            onclick="AzotaApp.openTimetable()"
-                            style="--gradient-from: #3b82f6; --gradient-to: #6366f1;"
+                            id="sidebar-folder-root"
+                            onclick="AzotaApp.openFileExplorer('root')"
+                            style="--gradient-from: #3b82f6; --gradient-to: #06b6d4;"
+                            class="gradient-menu-btn nav-item-modern nav-item-active group"
+                            title="Trang Chủ — Kho Đề & Môn Học">
+                        <span class="gradient-menu-bg"></span>
+                        <span class="gradient-menu-glow"></span>
+                        <span class="gradient-menu-icon"><span class="text-xl">🏠</span></span>
+                        <span class="gradient-menu-title">Trang Chủ</span>
+                        <span class="gradient-active-dot"></span>
+                        <span class="mobile-drawer-label hidden gap-2">
+                            <span class="flex flex-col min-w-0 text-left">
+                                <span class="font-bold text-sm text-slate-800 dark:text-slate-100 leading-tight truncate">Trang Chủ</span>
+                                <span class="text-[10px] text-slate-400 truncate">Kho đề & môn học</span>
+                            </span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 font-bold shrink-0">Home</span>
+                        </span>
+                    </button>
+
+                    <!-- 2. Dashboard: Trung Tâm Tiện Ích (Expandable Hub) -->
+                    <button type="button"
+                            id="sidebar-nav-dashboard"
+                            onclick="AzotaApp.showView('dashboard')"
+                            style="--gradient-from: #8b5cf6; --gradient-to: #6366f1;"
                             class="gradient-menu-btn nav-item-modern group"
-                            title="Thời Khóa Biểu & Balo Đi Học Lớp 11A7">
+                            title="Dashboard — Trung Tâm Tiện Ích & Mở Rộng">
                         <span class="gradient-menu-bg"></span>
                         <span class="gradient-menu-glow"></span>
-                        <span class="gradient-menu-icon"><span class="text-xl">📅</span></span>
-                        <span class="gradient-menu-title">Thời Khóa Biểu</span>
+                        <span class="gradient-menu-icon"><span class="text-xl">🎛️</span></span>
+                        <span class="gradient-menu-title">Dashboard</span>
                         <span class="gradient-active-dot"></span>
-                        <span class="mobile-drawer-label hidden">
-                            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Thời Khóa Biểu 11A7</span>
-                            <span class="liquid-tag-pill bg-sky-500/15 text-sky-400 border border-sky-500/25">Hôm Nay</span>
+                        <span class="mobile-drawer-label hidden gap-2">
+                            <span class="flex flex-col min-w-0 text-left">
+                                <span class="font-bold text-sm text-slate-800 dark:text-slate-100 leading-tight truncate">Dashboard</span>
+                                <span class="text-[10px] text-slate-400 truncate">TKB, Điểm, Lời giải...</span>
+                            </span>
+                            <span class="liquid-tag-pill bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 shrink-0">Hub</span>
+                        </span>
+                    </button>
+                </div>
+
+                <!-- Section Divider -->
+                <div class="sidebar-section-divider"></div>
+
+                <!-- QUICK SCHOOL & EXAM SHORTCUTS -->
+                <div class="w-full space-y-1.5">
+                    <div class="nav-group-title">
+                        <span>THPT TRẦN VĂN GIÀU</span>
+                        <span class="text-[9px] px-1.5 py-0.2 rounded-md bg-rose-500/10 text-rose-400 font-bold">MỚI</span>
+                    </div>
+
+                    <!-- 3. Lịch Thi Cuối HK1 (Chức năng mới từ Web Trường) -->
+                    <button type="button"
+                            id="sidebar-nav-exam-schedule"
+                            onclick="AzotaApp.showView('examSchedule')"
+                            style="--gradient-from: #f43f5e; --gradient-to: #f59e0b;"
+                            class="gradient-menu-btn nav-item-modern group relative"
+                            title="Lịch Thi & Đề Cương Cuối HK1 — THPT Trần Văn Giàu">
+                        <span class="gradient-menu-bg"></span>
+                        <span class="gradient-menu-glow"></span>
+                        <span class="gradient-menu-icon"><span class="text-xl">🗓️</span></span>
+                        <span class="gradient-menu-title">Lịch Thi HK1</span>
+                        <span class="gradient-active-dot"></span>
+                        <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5 lg:h-3 lg:w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 lg:h-3 lg:w-3 bg-amber-500"></span>
+                        </span>
+                        <span class="mobile-drawer-label hidden gap-2">
+                            <span class="flex flex-col min-w-0 text-left">
+                                <span class="font-bold text-sm text-slate-800 dark:text-slate-100 leading-tight truncate">Lịch Thi HK1</span>
+                                <span class="text-[10px] text-slate-400 truncate">14/12 – 22/12 • 14 môn</span>
+                            </span>
+                            <span class="liquid-tag-pill bg-amber-500/20 text-amber-400 border border-amber-500/30 shrink-0">Mới</span>
                         </span>
                     </button>
 
-                    <!-- Kho Lời Giải (Hình Ảnh) -->
-                    <button type="button" 
-                            id="sidebar-util-solutions" 
-                            onclick="AzotaApp.showView('solutions')" 
-                            style="--gradient-from: #10b981; --gradient-to: #059669;" 
-                            class="gradient-menu-btn nav-item-modern group" 
-                            title="Kho Lời Giải &amp; Bài Mẫu (Hình Ảnh)">
-                        <span class="gradient-menu-bg"></span>
-                        <span class="gradient-menu-glow"></span>
-                        <span class="gradient-menu-icon"><span class="text-xl">📸</span></span>
-                        <span class="gradient-menu-title">Lời Giải</span>
-                        <span class="gradient-active-dot"></span>
-                        <span class="mobile-drawer-label hidden">
-                            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Kho Lời Giải (Ảnh)</span>
-                            <span class="liquid-tag-pill bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">GIẢI</span>
-                        </span>
-                    </button>
-
-                    <!-- Thống Kê Tiến Độ -->
-                    <button type="button" 
-                            id="sidebar-util-stats" 
-                            onclick="AzotaApp.showView('history')" 
-                            style="--gradient-from: #06b6d4; --gradient-to: #3b82f6;" 
-                            class="gradient-menu-btn nav-item-modern group" 
-                            title="Thống Kê Tiến Độ">
-                        <span class="gradient-menu-bg"></span>
-                        <span class="gradient-menu-glow"></span>
-                        <span class="gradient-menu-icon"><span class="text-xl">📊</span></span>
-                        <span class="gradient-menu-title">Tiến Độ</span>
-                        <span class="gradient-active-dot"></span>
-                        <span class="mobile-drawer-label hidden">
-                            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Thống Kê Tiến Độ</span>
-                            <span class="liquid-tag-pill bg-sky-500/15 text-sky-400 border border-sky-500/25">TK</span>
-                        </span>
-                    </button>
-
-                    <!-- Tính Điểm & Xếp Loại THPT (Thông Tư 22) -->
-                    <button type="button" 
-                            id="sidebar-util-grade-calc" 
-                            onclick="AzotaApp.showView('gradeCalc')" 
-                            style="--gradient-from: #f59e0b; --gradient-to: #d97706;" 
-                            class="gradient-menu-btn nav-item-modern group" 
-                            title="Tính Điểm Trung Bình & Dự Báo Xếp Loại THPT (TT 22)">
-                        <span class="gradient-menu-bg"></span>
-                        <span class="gradient-menu-glow"></span>
-                        <span class="gradient-menu-icon"><span class="text-xl">🧮</span></span>
-                        <span class="gradient-menu-title">Tính Điểm</span>
-                        <span class="gradient-active-dot"></span>
-                        <span class="mobile-drawer-label hidden">
-                            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Tính Điểm & Xếp Loại</span>
-                            <span class="liquid-tag-pill bg-amber-500/15 text-amber-400 border border-amber-500/25">TT 22</span>
-                        </span>
-                    </button>
-
-                    <!-- Thông Báo & Lịch Trường THPT Trần Văn Giàu -->
-                    <button type="button" 
-                            id="sidebar-util-school-news" 
-                            onclick="window.SchoolNewsEngine ? window.SchoolNewsEngine.openModal() : AzotaApp.openSchoolNews()" 
-                            style="--gradient-from: #dc2626; --gradient-to: #ea580c;" 
-                            class="gradient-menu-btn nav-item-modern group relative" 
-                            title="Thông Báo, Lịch Tuần & Bán Trú — THPT Trần Văn Giàu">
+                    <!-- 4. Cổng Thông Báo & Thực Đơn Bán Trú THPT TVG -->
+                    <button type="button"
+                            id="sidebar-util-school-news"
+                            onclick="window.SchoolNewsEngine ? window.SchoolNewsEngine.openModal() : AzotaApp.openSchoolNews()"
+                            style="--gradient-from: #dc2626; --gradient-to: #ea580c;"
+                            class="gradient-menu-btn nav-item-modern group relative"
+                            title="Cổng Thông Báo, Lịch Tuần & Bán Trú — THPT Trần Văn Giàu">
                         <span class="gradient-menu-bg"></span>
                         <span class="gradient-menu-glow"></span>
                         <span class="gradient-menu-icon"><span class="text-xl">📢</span></span>
-                        <span class="gradient-menu-title">Báo TVG</span>
+                        <span class="gradient-menu-title">Thông Báo TVG</span>
                         <span class="gradient-active-dot"></span>
                         <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5 lg:h-3 lg:w-3">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 lg:h-3 lg:w-3 bg-red-500"></span>
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 lg:h-3 lg:w-3 bg-emerald-500"></span>
                         </span>
-                        <span class="mobile-drawer-label hidden">
-                            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Thông Báo TVG</span>
-                            <span class="liquid-tag-pill bg-red-500/15 text-red-400 border border-red-500/25">Mới</span>
-                        </span>
-                    </button>
-
-                    <!-- Kỷ Niệm A7 — Bento Gallery & Auto Slider -->
-                    <button type="button" 
-                            id="sidebar-util-11a7-journal" 
-                            onclick="window.Class11A7JournalEngine ? window.Class11A7JournalEngine.openModal() : AzotaApp.open11A7Journal()" 
-                            style="--gradient-from: #ec4899; --gradient-to: #f59e0b;" 
-                            class="gradient-menu-btn nav-item-modern group relative" 
-                            title="Kỷ Niệm A7 — Sổ Lưu Bút Thanh Xuân">
-                        <span class="gradient-menu-bg"></span>
-                        <span class="gradient-menu-glow"></span>
-                        <span class="gradient-menu-icon"><span class="text-xl">📸</span></span>
-                        <span class="gradient-menu-title">A7</span>
-                        <span class="gradient-active-dot"></span>
-                        <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5 lg:h-3 lg:w-3">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 lg:h-3 lg:w-3 bg-pink-500"></span>
-                        </span>
-                        <span class="mobile-drawer-label hidden">
-                            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">Kỷ Niệm A7</span>
-                            <span class="liquid-tag-pill bg-pink-500/15 text-pink-400 border border-pink-500/25">Hot</span>
+                        <span class="mobile-drawer-label hidden gap-2">
+                            <span class="flex flex-col min-w-0 text-left">
+                                <span class="font-bold text-sm text-slate-800 dark:text-slate-100 leading-tight truncate">Thông Báo TVG</span>
+                                <span class="text-[10px] text-slate-400 truncate">Lịch tuần & Bán trú</span>
+                            </span>
+                            <span class="liquid-tag-pill bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shrink-0">Live</span>
                         </span>
                     </button>
-
                 </div>
             </div>
 
@@ -1662,6 +1413,20 @@
                     </div>
                 </section>
 
+                <!-- VIEW 10: UNIFIED EXPANDABLE DASHBOARD HUB -->
+                <section id="dashboardView" class="hidden space-y-6">
+                    <div id="dashboardHubContainer" class="w-full">
+                        <!-- Populated dynamically by DashboardHubEngine.render() -->
+                    </div>
+                </section>
+
+                <!-- VIEW 11: LỊCH THI & ĐỀ CƯƠNG CUỐI HK1 (THPT TRẦN VĂN GIÀU) -->
+                <section id="examScheduleView" class="hidden space-y-6">
+                    <div id="examScheduleContainer" class="w-full">
+                        <!-- Populated dynamically by ExamScheduleEngine.render() -->
+                    </div>
+                </section>
+
             </main>
         </div>
     </div>
@@ -1885,66 +1650,54 @@
         </div>
     </div>
 
-    <!-- FLOATING MOBILE BOTTOM DOCK (IOS DYNAMIC DOCK STYLE) -->
+    <!-- FLOATING MOBILE BOTTOM DOCK (COMPACT 4-ITEM HUB) -->
     <nav id="mobileBottomDock" class="lg:hidden fixed bottom-3 inset-x-3 sm:inset-x-8 z-40 h-16 rounded-2xl bg-slate-900/90 dark:bg-slate-950/90 backdrop-blur-2xl border border-white/10 shadow-2xl flex items-center justify-around px-2 select-none">
-        <!-- Item 1: Kho Đề -->
-        <button type="button" 
-                onclick="AzotaApp.openFileExplorer('root')" 
+        <!-- Item 1: Home -->
+        <button type="button"
+                onclick="AzotaApp.openFileExplorer('root')"
                 id="mobile-dock-root"
                 style="--gradient-from: #3b82f6; --gradient-to: #06b6d4;"
                 class="mobile-dock-btn active group">
             <span class="mobile-dock-bg"></span>
             <span class="mobile-dock-glow"></span>
-            <span class="mobile-dock-icon">📁</span>
-            <span class="mobile-dock-text">Kho Đề</span>
+            <span class="mobile-dock-icon">🏠</span>
+            <span class="mobile-dock-text">Home</span>
         </button>
 
-        <!-- Item 2: Đua Top -->
-        <button type="button" 
-                onclick="AzotaApp.openLeaderboard()" 
-                id="mobile-dock-leaderboard"
-                style="--gradient-from: #f59e0b; --gradient-to: #ef4444;"
-                class="mobile-dock-btn group">
-            <span class="mobile-dock-bg"></span>
-            <span class="mobile-dock-glow"></span>
-            <span class="mobile-dock-icon">🏆</span>
-            <span class="mobile-dock-text">Đua Top</span>
-        </button>
-
-        <!-- Item 3: Tự Luận -->
-        <button type="button" 
-                onclick="AzotaApp.openFileExplorer('Hoc_Tu_Luan')" 
-                id="mobile-dock-Hoc_Tu_Luan"
-                style="--gradient-from: #10b981; --gradient-to: #06b6d4;"
-                class="mobile-dock-btn group">
-            <span class="mobile-dock-bg"></span>
-            <span class="mobile-dock-glow"></span>
-            <span class="mobile-dock-icon">📝</span>
-            <span class="mobile-dock-text">Tự Luận</span>
-        </button>
-
-        <!-- Item 4: Ghi Nhớ -->
-        <button type="button" 
-                onclick="AzotaApp.showView('notebook')" 
-                id="mobile-dock-notebook"
-                style="--gradient-from: #f43f5e; --gradient-to: #ec4899;"
-                class="mobile-dock-btn group">
-            <span class="mobile-dock-bg"></span>
-            <span class="mobile-dock-glow"></span>
-            <span class="mobile-dock-icon">📖</span>
-            <span class="mobile-dock-text">Ghi Nhớ</span>
-        </button>
-
-        <!-- Item 5: Môn Học (Mở Full Drawer) -->
-        <button type="button" 
-                onclick="AzotaApp.toggleSidebar(true)" 
-                id="mobile-dock-menu"
+        <!-- Item 2: Dashboard Hub -->
+        <button type="button"
+                onclick="AzotaApp.showView('dashboard')"
+                id="mobile-dock-dashboard"
                 style="--gradient-from: #8b5cf6; --gradient-to: #6366f1;"
                 class="mobile-dock-btn group">
             <span class="mobile-dock-bg"></span>
             <span class="mobile-dock-glow"></span>
-            <span class="mobile-dock-icon">☰</span>
-            <span class="mobile-dock-text">Môn Học</span>
+            <span class="mobile-dock-icon">🎛️</span>
+            <span class="mobile-dock-text">Dashboard</span>
+        </button>
+
+        <!-- Item 3: Lịch Thi HK1 -->
+        <button type="button"
+                onclick="AzotaApp.showView('examSchedule')"
+                id="mobile-dock-examSchedule"
+                style="--gradient-from: #f43f5e; --gradient-to: #f59e0b;"
+                class="mobile-dock-btn group">
+            <span class="mobile-dock-bg"></span>
+            <span class="mobile-dock-glow"></span>
+            <span class="mobile-dock-icon">🗓️</span>
+            <span class="mobile-dock-text">Lịch Thi</span>
+        </button>
+
+        <!-- Item 4: Cổng Thông Báo TVG -->
+        <button type="button"
+                onclick="window.SchoolNewsEngine ? window.SchoolNewsEngine.openModal() : AzotaApp.openSchoolNews()"
+                id="mobile-dock-news"
+                style="--gradient-from: #dc2626; --gradient-to: #ea580c;"
+                class="mobile-dock-btn group">
+            <span class="mobile-dock-bg"></span>
+            <span class="mobile-dock-glow"></span>
+            <span class="mobile-dock-icon">📢</span>
+            <span class="mobile-dock-text">Báo TVG</span>
         </button>
     </nav>
 
@@ -2321,8 +2074,10 @@
     <script src="js/vocab_engine.js"></script>
     <script src="js/grade_calc_engine.js"></script>
     <script src="js/school_news_engine.js?v=11"></script>
+    <script src="js/exam_schedule_engine.js?v=1"></script>
+    <script src="js/dashboard_hub_engine.js?v=1"></script>
     <script src="js/class11a7_journal_engine.js?v=10"></script>
-    <script src="js/app-v4.js"></script>
+    <script src="js/app-v4.js?v=20261125"></script>
 
     <!-- DIRECT INLINE RUNTIME FAIL-SAFE FOR file:/// BROWSER CACHE & 3D TILT EFFECT -->
     <script>

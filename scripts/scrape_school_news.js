@@ -267,7 +267,7 @@ async function scrapeAll() {
     console.error('Lỗi khi quét Bán trú:', e.message);
   }
 
-  // 3. Quét Thông Báo & Kế Hoạch Chung
+  // 3. Quét Thông Báo & Kế Hoạch Chung + Theo dõi tự động Lịch Thi Cuối HK1
   try {
     console.log('\n📢 Đang quét Thông báo & Kế hoạch...');
     const listHtml = await fetchPage('/thong-bao/c/42154');
@@ -280,6 +280,48 @@ async function scrapeAll() {
       link: BASE_URL + art.link,
       isNew: (idx < 3)
     }));
+
+    // 4. Tự động kiểm tra bài viết mới về Kế hoạch / Lịch kiểm tra Cuối Học Kỳ I (2026-2027)
+    const hk1Path = path.join(dataDir, 'exam_hk1_schedule.json');
+    if (fs.existsSync(hk1Path)) {
+      try {
+        const hk1Data = JSON.parse(fs.readFileSync(hk1Path, 'utf8'));
+        hk1Data.lastUpdated = result.lastUpdated;
+        hk1Data.lastUpdatedText = result.lastUpdatedText;
+
+        const scheduleArt = articles.find(a => {
+          const t = a.title.toLowerCase();
+          return (t.includes('lịch kiểm tra') || t.includes('lịch thi') || t.includes('kế hoạch kiểm tra')) &&
+                 (t.includes('cuối') || t.includes('học kỳ i') || t.includes('hki') || t.includes('hk1')) &&
+                 !t.includes('giữa');
+        });
+
+        if (scheduleArt) {
+          console.log(`🗓️ Phát hiện văn bản Lịch Thi Cuối HK1 mới: ${scheduleArt.title}`);
+          hk1Data.officialScheduleArticle = {
+            title: scheduleArt.title,
+            link: BASE_URL + scheduleArt.link
+          };
+          hk1Data.examWindow.status = 'published';
+          const detHtml = await fetchPage(scheduleArt.link);
+          const det = parseBanTruDetail(detHtml);
+          if (det.downloadUrl) {
+            const pdfDir = path.join(dataDir, 'pdf');
+            if (!fs.existsSync(pdfDir)) fs.mkdirSync(pdfDir, { recursive: true });
+            const pdfDest = path.join(pdfDir, 'lich_thi_cuoi_hk1.pdf');
+            const ok = await downloadFile(det.downloadUrl, pdfDest);
+            if (ok) {
+              hk1Data.officialSchedulePdf = 'data/pdf/lich_thi_cuoi_hk1.pdf';
+              hk1Data.officialScheduleImage = 'data/pdf/lich_thi_cuoi_hk1.png';
+            }
+          }
+        }
+        fs.writeFileSync(hk1Path, JSON.stringify(hk1Data, null, 2), 'utf8');
+        console.log('-> Đã đồng bộ trạng thái exam_hk1_schedule.json');
+      } catch (hkErr) {
+        console.warn('Cảnh báo đồng bộ HK1:', hkErr.message);
+      }
+    }
   } catch (e) {
     console.error('Lỗi khi quét Thông báo chung:', e.message);
   }
