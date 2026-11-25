@@ -2016,7 +2016,7 @@
                             </div>
                             <div class="text-xs text-slate-300 italic bg-slate-950/60 p-3 rounded-xl border border-white/5 space-y-1">
                                 <div>"${oralCurrentItem.example}"</div>
-                                <div class="text-[11px] text-slate-400 not-italic">🇻🇳 ${oralCurrentItem.exampleVi}</div>
+                                <div class="text-[11px] text-slate-400 not-italic flex items-center gap-1.5"><svg class="inline-block w-3.5 h-3.5 rounded-full overflow-hidden shrink-0" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" fill="#DA251D"/><polygon points="32,14 36.8,27.5 51,27.8 39.6,36.2 43.8,49.8 32,41.6 20.2,49.8 24.4,36.2 13,27.8 27.2,27.5" fill="#FFCD00"/></svg><span>${oralCurrentItem.exampleVi}</span></div>
                             </div>
                             ${oralCurrentItem.note ? `
                                 <div class="text-xs text-amber-300 font-bold flex items-center gap-1.5 pt-1">

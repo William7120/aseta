@@ -1272,7 +1272,7 @@ window.AzotaApp = (function() {
             title: "Tiếng Anh 11",
             abbr: "EN",
             grade: "11",
-            icon: "🇬🇧",
+            icon: '<svg class="inline-block w-[1.2em] h-[1.2em] rounded-full overflow-hidden shrink-0 align-[-0.18em] ring-1 ring-white/15" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" fill="#012169"/><path d="M0 0L64 64M64 0L0 64" stroke="#FFF" stroke-width="11"/><path d="M0 0L64 64M64 0L0 64" stroke="#C8102E" stroke-width="6"/><path d="M32 0V64M0 32H64" stroke="#FFF" stroke-width="18"/><path d="M32 0V64M0 32H64" stroke="#C8102E" stroke-width="10"/></svg>',
             category: "tracnghiem",
             isLop11: true,
             folderBoxBg: "bg-blue-950/70 border border-blue-500/40 text-blue-400",
@@ -2525,8 +2525,8 @@ window.AzotaApp = (function() {
         unit4Hero.className = "mb-6 p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-blue-900/40 via-indigo-950/60 to-purple-900/40 border border-blue-500/30 shadow-xl backdrop-blur-md relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-5";
         unit4Hero.innerHTML = `
             <div class="flex items-start gap-4">
-                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-3xl shadow-lg shadow-blue-500/30 shrink-0 select-none">
-                    🇬🇧
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30 shrink-0 select-none">
+                    <svg class="w-9 h-9 rounded-full overflow-hidden shadow-md ring-2 ring-white/30" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" fill="#012169"/><path d="M0 0L64 64M64 0L0 64" stroke="#FFF" stroke-width="11"/><path d="M0 0L64 64M64 0L0 64" stroke="#C8102E" stroke-width="6"/><path d="M32 0V64M0 32H64" stroke="#FFF" stroke-width="18"/><path d="M32 0V64M0 32H64" stroke="#C8102E" stroke-width="10"/></svg>
                 </div>
                 <div>
                     <div class="flex items-center gap-2 flex-wrap mb-1">
@@ -3098,7 +3098,7 @@ window.AzotaApp = (function() {
             tip.className = "mb-4 p-4 rounded-2xl bg-gradient-to-r from-blue-500/15 via-indigo-500/15 to-purple-500/10 border border-blue-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm";
             tip.innerHTML = `
                 <div class="flex items-center gap-3 text-xs text-blue-900 dark:text-blue-100">
-                    <span class="text-2xl">🇬🇧</span>
+                    <svg class="w-8 h-8 rounded-full overflow-hidden shadow-sm ring-1 ring-white/20 shrink-0" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" fill="#012169"/><path d="M0 0L64 64M64 0L0 64" stroke="#FFF" stroke-width="11"/><path d="M0 0L64 64M64 0L0 64" stroke="#C8102E" stroke-width="6"/><path d="M32 0V64M0 32H64" stroke="#FFF" stroke-width="18"/><path d="M32 0V64M0 32H64" stroke="#C8102E" stroke-width="10"/></svg>
                     <div>
                         <div class="font-extrabold text-sm text-blue-900 dark:text-blue-100 flex items-center gap-2">
                             <span>Bài Học Trọn Bộ 67 Từ Vựng Unit 4: ASEAN and Vietnam</span>
@@ -4363,8 +4363,8 @@ window.AzotaApp = (function() {
                 <!-- Header -->
                 <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-white/10 bg-gradient-to-r from-blue-600/15 via-indigo-600/10 to-purple-600/15 flex items-center justify-between gap-3 shrink-0">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-2xl bg-blue-500/20 text-blue-500 flex items-center justify-center text-xl font-bold border border-blue-500/30">
-                            🇬🇧
+                        <div class="w-10 h-10 rounded-2xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30 shrink-0">
+                            <svg class="w-6 h-6 rounded-full overflow-hidden ring-1 ring-white/25" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" fill="#012169"/><path d="M0 0L64 64M64 0L0 64" stroke="#FFF" stroke-width="11"/><path d="M0 0L64 64M64 0L0 64" stroke="#C8102E" stroke-width="6"/><path d="M32 0V64M0 32H64" stroke="#FFF" stroke-width="18"/><path d="M32 0V64M0 32H64" stroke="#C8102E" stroke-width="10"/></svg>
                         </div>
                         <div>
                             <div class="flex items-center gap-2">

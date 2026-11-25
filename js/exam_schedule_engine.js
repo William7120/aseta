@@ -163,6 +163,13 @@
             if (modal) modal.classList.add('hidden');
         },
 
+        renderSubjectIcon: function(icon, sizeClass = 'w-5 h-5') {
+            if (!icon || icon === '🇬🇧' || icon === 'uk-flag') {
+                return `<svg class="inline-block ${sizeClass} rounded-full overflow-hidden shrink-0 ring-1 ring-white/20" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" fill="#012169"/><path d="M0 0L64 64M64 0L0 64" stroke="#FFF" stroke-width="11"/><path d="M0 0L64 64M64 0L0 64" stroke="#C8102E" stroke-width="6"/><path d="M32 0V64M0 32H64" stroke="#FFF" stroke-width="18"/><path d="M32 0V64M0 32H64" stroke="#C8102E" stroke-width="10"/></svg>`;
+            }
+            return icon;
+        },
+
         getSubjectLinkForGrade: function(subj, grade) {
             const links = subj.links || {};
             if (links[grade]) return links[grade];
@@ -194,7 +201,7 @@
                     <div class="flex items-start justify-between gap-3">
                         <div class="flex items-center gap-3.5 min-w-0">
                             <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/[0.06] border border-slate-200/80 dark:border-white/10 flex items-center justify-center text-2xl shrink-0">
-                                ${subj.icon}
+                                ${this.renderSubjectIcon(subj.icon, 'w-7 h-7')}
                             </div>
                             <div class="min-w-0">
                                 <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight truncate">
@@ -325,7 +332,7 @@
                                     : 'bg-white dark:bg-[#0e1017] hover:bg-slate-50 dark:hover:bg-[#151824] text-slate-800 dark:text-slate-100 border-slate-200/80 dark:border-white/[0.08] hover:border-sky-500/40'
                             }">
                         <span class="flex items-center gap-2.5 min-w-0">
-                            <span class="text-base leading-none shrink-0">${s.icon}</span>
+                            <span class="text-base leading-none shrink-0 flex items-center justify-center">${this.renderSubjectIcon(s.icon, 'w-4 h-4')}</span>
                             <span class="text-xs sm:text-[13px] font-extrabold tracking-tight truncate">${s.name}</span>
                         </span>
                         <span class="hk1-chip-arrow text-xs font-black transition-transform shrink-0 ${isAct ? 'opacity-90 translate-x-0.5' : 'opacity-30 group-hover:opacity-80 group-hover:translate-x-0.5'}">→</span>

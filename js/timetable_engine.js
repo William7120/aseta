@@ -42,7 +42,7 @@ window.TimetableEngine = (function() {
         subjectsMeta: {
             "Ngoại ngữ": {
                 fullName: "Ngoại Ngữ (Tiếng Anh)",
-                icon: "🇬🇧",
+                icon: '<svg class="inline-block w-[1.15em] h-[1.15em] rounded-full overflow-hidden shrink-0 align-[-0.18em] ring-1 ring-white/15" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" fill="#012169"/><path d="M0 0L64 64M64 0L0 64" stroke="#FFF" stroke-width="11"/><path d="M0 0L64 64M64 0L0 64" stroke="#C8102E" stroke-width="6"/><path d="M32 0V64M0 32H64" stroke="#FFF" stroke-width="18"/><path d="M32 0V64M0 32H64" stroke="#C8102E" stroke-width="10"/></svg>',
                 color: "blue",
                 badgeClass: "bg-blue-500/15 text-blue-400 border-blue-500/30",
                 examFolderId: "anh-11",
