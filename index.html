@@ -461,24 +461,45 @@
                         </span>
                     </button>
 
-                    <!-- 2. Dashboard: Trung Tâm Tiện Ích (Expandable Hub) -->
+                    <!-- 2. Dashboard: Tài Khoản, EXP Học & Bảng Xếp Hạng -->
                     <button type="button"
                             id="sidebar-nav-dashboard"
                             onclick="AzotaApp.showView('dashboard')"
-                            style="--gradient-from: #8b5cf6; --gradient-to: #6366f1;"
+                            style="--gradient-from: #f59e0b; --gradient-to: #ef4444;"
                             class="gradient-menu-btn nav-item-modern group"
-                            title="Dashboard — Trung Tâm Tiện Ích & Mở Rộng">
+                            title="Dashboard — Tài Khoản, EXP Học & Bảng Xếp Hạng">
                         <span class="gradient-menu-bg"></span>
                         <span class="gradient-menu-glow"></span>
-                        <span class="gradient-menu-icon"><span class="text-xl">🎛️</span></span>
+                        <span class="gradient-menu-icon"><span class="text-xl">📊</span></span>
                         <span class="gradient-menu-title">Dashboard</span>
                         <span class="gradient-active-dot"></span>
                         <span class="mobile-drawer-label hidden gap-2">
                             <span class="flex flex-col min-w-0 text-left">
                                 <span class="font-bold text-sm text-slate-800 dark:text-slate-100 leading-tight truncate">Dashboard</span>
-                                <span class="text-[10px] text-slate-400 truncate">TKB, Điểm, Lời giải...</span>
+                                <span class="text-[10px] text-slate-400 truncate">Tài khoản, EXP & BXH</span>
                             </span>
-                            <span class="liquid-tag-pill bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 shrink-0">Hub</span>
+                            <span class="liquid-tag-pill bg-amber-500/20 text-amber-400 border border-amber-500/30 shrink-0">EXP</span>
+                        </span>
+                    </button>
+
+                    <!-- 3. Chức Năng: Kho Tiện Ích & Công Cụ -->
+                    <button type="button"
+                            id="sidebar-nav-utilities"
+                            onclick="AzotaApp.showView('utilities')"
+                            style="--gradient-from: #8b5cf6; --gradient-to: #6366f1;"
+                            class="gradient-menu-btn nav-item-modern group"
+                            title="Chức Năng — TKB, Tính Điểm, Lời Giải, Lịch Sử...">
+                        <span class="gradient-menu-bg"></span>
+                        <span class="gradient-menu-glow"></span>
+                        <span class="gradient-menu-icon"><span class="text-xl">🧩</span></span>
+                        <span class="gradient-menu-title">Chức Năng</span>
+                        <span class="gradient-active-dot"></span>
+                        <span class="mobile-drawer-label hidden gap-2">
+                            <span class="flex flex-col min-w-0 text-left">
+                                <span class="font-bold text-sm text-slate-800 dark:text-slate-100 leading-tight truncate">Chức Năng</span>
+                                <span class="text-[10px] text-slate-400 truncate">TKB, Điểm, Lời giải, A7...</span>
+                            </span>
+                            <span class="liquid-tag-pill bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 shrink-0">9 mục</span>
                         </span>
                     </button>
                 </div>
@@ -1072,7 +1093,10 @@
                 <!-- ======================================================== -->
                 <section id="bankView" class="hidden space-y-6">
                     <div class="p-6 rounded-3xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div>
+                        <div class="space-y-1.5">
+                            <button type="button" onclick="AzotaApp.goBack()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-200/70 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-300/60 dark:border-white/10 transition-all cursor-pointer">
+                                <span>←</span> <span>Quay Lại</span>
+                            </button>
                             <div class="flex items-center gap-2.5">
                                 <span class="text-3xl">🔍</span>
                                 <h2 class="font-black text-slate-900 dark:text-white text-xl sm:text-2xl">Tra Cứu Toàn Bộ Ngân Hàng Câu Hỏi</h2>
@@ -1186,7 +1210,10 @@
                 <!-- ======================================================== -->
                 <section id="notebookView" class="hidden space-y-6">
                     <div class="p-6 sm:p-7 rounded-3xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div>
+                        <div class="space-y-1.5">
+                            <button type="button" onclick="AzotaApp.goBack()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-200/70 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-300/60 dark:border-white/10 transition-all cursor-pointer">
+                                <span>←</span> <span>Quay Lại</span>
+                            </button>
                             <div class="flex items-center gap-2.5">
                                 <span class="text-3xl">📖</span>
                                 <h2 class="font-black text-slate-900 dark:text-white text-xl sm:text-2xl">Câu Cần Ghi Nhớ (Tự Chọn Ôn Tập)</h2>
@@ -1211,6 +1238,11 @@
                 <!-- ======================================================== -->
                 <section id="creatorView" class="hidden space-y-6">
                     <div class="p-6 sm:p-7 rounded-3xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10">
+                        <div class="mb-3">
+                            <button type="button" onclick="AzotaApp.goBack()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-200/70 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-300/60 dark:border-white/10 transition-all cursor-pointer">
+                                <span>←</span> <span>Quay Lại</span>
+                            </button>
+                        </div>
                         <div class="flex items-center gap-3.5 mb-2">
                             <span class="text-4xl">⚡</span>
                             <div>
@@ -1309,7 +1341,10 @@
                 <!-- ======================================================== -->
                 <section id="historyView" class="hidden space-y-6">
                     <div class="p-6 sm:p-7 rounded-3xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div>
+                        <div class="space-y-1.5">
+                            <button type="button" onclick="AzotaApp.goBack()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-200/70 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-300/60 dark:border-white/10 transition-all cursor-pointer">
+                                <span>←</span> <span>Quay Lại</span>
+                            </button>
                             <div class="flex items-center gap-2.5">
                                 <span class="text-3xl">📜</span>
                                 <h2 class="font-black text-slate-900 dark:text-white text-xl sm:text-2xl">Lịch Sử Các Lần Làm Bài</h2>
@@ -1334,7 +1369,10 @@
                 <section id="solutionsView" class="hidden space-y-6">
                     <!-- Solutions Header -->
                     <div class="p-6 sm:p-7 rounded-3xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4 backdrop-blur-xl shadow-lg">
-                        <div class="space-y-1">
+                        <div class="space-y-1.5">
+                            <button type="button" onclick="AzotaApp.goBack()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-200/70 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-300/60 dark:border-white/10 transition-all cursor-pointer">
+                                <span>←</span> <span>Quay Lại</span>
+                            </button>
                             <div class="flex items-center gap-2.5">
                                 <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center text-xl font-bold shadow-md shadow-emerald-500/20">
                                     📸
@@ -1413,14 +1451,21 @@
                     </div>
                 </section>
 
-                <!-- VIEW 10: UNIFIED EXPANDABLE DASHBOARD HUB -->
+                <!-- VIEW 10: PERSONAL DASHBOARD (TÊN TÀI KHOẢN + EXP HỌC + BẢNG XẾP HẠNG) -->
                 <section id="dashboardView" class="hidden space-y-6">
                     <div id="dashboardHubContainer" class="w-full">
-                        <!-- Populated dynamically by DashboardHubEngine.render() -->
+                        <!-- Populated dynamically by DashboardHubEngine.renderDashboard() -->
                     </div>
                 </section>
 
-                <!-- VIEW 11: LỊCH THI & ĐỀ CƯƠNG CUỐI HK1 (THPT TRẦN VĂN GIÀU) -->
+                <!-- VIEW 11: KHO CHỨC NĂNG & TIỆN ÍCH (TÁCH RIÊNG KHỎI DASHBOARD) -->
+                <section id="utilitiesView" class="hidden space-y-6">
+                    <div id="utilitiesHubContainer" class="w-full">
+                        <!-- Populated dynamically by DashboardHubEngine.renderUtilities() -->
+                    </div>
+                </section>
+
+                <!-- VIEW 12: LỊCH THI & ĐỀ CƯƠNG CUỐI HK1 (THPT TRẦN VĂN GIÀU) -->
                 <section id="examScheduleView" class="hidden space-y-6">
                     <div id="examScheduleContainer" class="w-full">
                         <!-- Populated dynamically by ExamScheduleEngine.render() -->
@@ -1664,19 +1709,31 @@
             <span class="mobile-dock-text">Home</span>
         </button>
 
-        <!-- Item 2: Dashboard Hub -->
+        <!-- Item 2: Dashboard (EXP & BXH) -->
         <button type="button"
                 onclick="AzotaApp.showView('dashboard')"
                 id="mobile-dock-dashboard"
+                style="--gradient-from: #f59e0b; --gradient-to: #ef4444;"
+                class="mobile-dock-btn group">
+            <span class="mobile-dock-bg"></span>
+            <span class="mobile-dock-glow"></span>
+            <span class="mobile-dock-icon">📊</span>
+            <span class="mobile-dock-text">Dashboard</span>
+        </button>
+
+        <!-- Item 3: Chức Năng / Tiện Ích -->
+        <button type="button"
+                onclick="AzotaApp.showView('utilities')"
+                id="mobile-dock-utilities"
                 style="--gradient-from: #8b5cf6; --gradient-to: #6366f1;"
                 class="mobile-dock-btn group">
             <span class="mobile-dock-bg"></span>
             <span class="mobile-dock-glow"></span>
-            <span class="mobile-dock-icon">🎛️</span>
-            <span class="mobile-dock-text">Dashboard</span>
+            <span class="mobile-dock-icon">🧩</span>
+            <span class="mobile-dock-text">Chức Năng</span>
         </button>
 
-        <!-- Item 3: Lịch Thi HK1 -->
+        <!-- Item 4: Lịch Thi HK1 -->
         <button type="button"
                 onclick="AzotaApp.showView('examSchedule')"
                 id="mobile-dock-examSchedule"
@@ -1686,18 +1743,6 @@
             <span class="mobile-dock-glow"></span>
             <span class="mobile-dock-icon">🗓️</span>
             <span class="mobile-dock-text">Lịch Thi</span>
-        </button>
-
-        <!-- Item 4: Cổng Thông Báo TVG -->
-        <button type="button"
-                onclick="window.SchoolNewsEngine ? window.SchoolNewsEngine.openModal() : AzotaApp.openSchoolNews()"
-                id="mobile-dock-news"
-                style="--gradient-from: #dc2626; --gradient-to: #ea580c;"
-                class="mobile-dock-btn group">
-            <span class="mobile-dock-bg"></span>
-            <span class="mobile-dock-glow"></span>
-            <span class="mobile-dock-icon">📢</span>
-            <span class="mobile-dock-text">Báo TVG</span>
         </button>
     </nav>
 
@@ -2072,12 +2117,12 @@
     <script src="js/solution_engine.js"></script>
     <script src="js/timetable_engine.js"></script>
     <script src="js/vocab_engine.js"></script>
-    <script src="js/grade_calc_engine.js"></script>
+    <script src="js/grade_calc_engine.js?v=2"></script>
     <script src="js/school_news_engine.js?v=11"></script>
-    <script src="js/exam_schedule_engine.js?v=1"></script>
-    <script src="js/dashboard_hub_engine.js?v=1"></script>
+    <script src="js/exam_schedule_engine.js?v=2"></script>
+    <script src="js/dashboard_hub_engine.js?v=2"></script>
     <script src="js/class11a7_journal_engine.js?v=10"></script>
-    <script src="js/app-v4.js?v=20261125"></script>
+    <script src="js/app-v4.js?v=20261125_2"></script>
 
     <!-- DIRECT INLINE RUNTIME FAIL-SAFE FOR file:/// BROWSER CACHE & 3D TILT EFFECT -->
     <script>

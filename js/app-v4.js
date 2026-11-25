@@ -1811,14 +1811,67 @@ window.AzotaApp = (function() {
         }
     }
 
+    let currentActiveViewId = "explorer";
+    const viewHistoryStack = [];
+
+    function goBack() {
+        if (window.AudioHelper && window.AudioHelper.playTap) {
+            window.AudioHelper.playTap();
+        }
+        while (viewHistoryStack.length > 0) {
+            const prev = viewHistoryStack.pop();
+            if (prev && prev !== currentActiveViewId) {
+                showView(prev, true);
+                return;
+            }
+        }
+        // Smart default: if inside a utility sub-view, return to Utilities hub; else Home
+        const utilitySubs = ["solutions", "gradeCalc", "history", "notebook", "bank", "creator", "essay", "examSchedule"];
+        if (utilitySubs.includes(currentActiveViewId)) {
+            showView("utilities", true);
+        } else {
+            openFileExplorer("root");
+        }
+    }
+
+    function getDashboardData() {
+        const user = UserProfile.get();
+        let leaderboard = [];
+        try {
+            const raw = getCompiledLeaderboardData();
+            leaderboard = [...raw].sort((a, b) => (b.points || 0) - (a.points || 0)).map((st, idx) => ({
+                ...st,
+                rank: idx + 1
+            }));
+        } catch (e) {
+            leaderboard = [];
+        }
+        const me = leaderboard.find(s => s.isCurrentUser) || {
+            points: 2240,
+            doneCount: 0,
+            gpa: 9.35,
+            accuracy: 92,
+            rank: 1
+        };
+        return {
+            user: user,
+            exp: me.points || 2240,
+            doneCount: me.doneCount || 0,
+            gpa: me.gpa || 0,
+            accuracy: me.accuracy || 0,
+            rank: me.rank || 1,
+            leaderboard: leaderboard
+        };
+    }
+
     function updateMobileDockActive(dockKey) {
         document.querySelectorAll(".mobile-dock-btn").forEach(btn => btn.classList.remove("active"));
         const targetBtn = document.getElementById(`mobile-dock-${dockKey}`);
         if (targetBtn) {
             targetBtn.classList.add("active");
         } else {
-            const dashBtn = document.getElementById("mobile-dock-dashboard") || document.getElementById("mobile-dock-root");
-            if (dashBtn) dashBtn.classList.add("active");
+            const utilBtn = document.getElementById("mobile-dock-utilities") || document.getElementById("mobile-dock-root");
+            if (utilBtn) utilBtn.classList.add("active");
         }
     }
 
@@ -1828,11 +1881,10 @@ window.AzotaApp = (function() {
         });
         let el = document.getElementById(targetKey);
         if (!el) {
-            // Map sub-views and subject folders to their compact parent hub (Home or Dashboard)
             if (targetKey && targetKey.startsWith("sidebar-folder-") && targetKey !== "sidebar-folder-leaderboard" && targetKey !== "sidebar-folder-Hoc_Tu_Luan") {
                 el = document.getElementById("sidebar-folder-root");
             } else {
-                el = document.getElementById("sidebar-nav-dashboard") || document.getElementById("sidebar-folder-root");
+                el = document.getElementById("sidebar-nav-utilities") || document.getElementById("sidebar-folder-root");
             }
         }
         if (el) {
@@ -1842,19 +1894,27 @@ window.AzotaApp = (function() {
         // Synchronize Mobile Bottom Dock (Compact 4-item hub)
         if (targetKey === "sidebar-folder-root" || (el && el.id === "sidebar-folder-root")) {
             updateMobileDockActive("root");
+        } else if (targetKey === "sidebar-nav-dashboard") {
+            updateMobileDockActive("dashboard");
         } else if (targetKey === "sidebar-nav-exam-schedule") {
             updateMobileDockActive("examSchedule");
-        } else if (targetKey === "sidebar-util-school-news") {
-            updateMobileDockActive("news");
         } else {
-            updateMobileDockActive("dashboard");
+            updateMobileDockActive("utilities");
         }
     }
 
-    function showView(viewId) {
+    function showView(viewId, isBackNav = false) {
         if (!SecurityGuard.checkRateLimit("chuyển trang")) return;
 
-        const views = ["explorerView", "homeView", "dashboardView", "examScheduleView", "examView", "essayView", "resultView", "notebookView", "creatorView", "bankView", "historyView", "leaderboardView", "solutionsView", "gradeCalcView"];
+        if (!isBackNav && currentActiveViewId && currentActiveViewId !== viewId && viewId !== "home") {
+            viewHistoryStack.push(currentActiveViewId);
+            if (viewHistoryStack.length > 20) viewHistoryStack.shift();
+        }
+        if (viewId !== "home") {
+            currentActiveViewId = viewId;
+        }
+
+        const views = ["explorerView", "homeView", "dashboardView", "utilitiesView", "examScheduleView", "examView", "essayView", "resultView", "notebookView", "creatorView", "bankView", "historyView", "leaderboardView", "solutionsView", "gradeCalcView"];
         views.forEach(v => {
             const el = document.getElementById(v);
             if (el) {
@@ -1885,10 +1945,16 @@ window.AzotaApp = (function() {
             renderFileExplorer();
             checkInProgressExam();
         } else if (viewId === "dashboard") {
-            updateActiveAppName("Dashboard — Trung Tâm Tiện Ích");
+            updateActiveAppName("Dashboard — Tài Khoản & EXP");
             updateSidebarActive("sidebar-nav-dashboard");
-            if (window.DashboardHubEngine && typeof window.DashboardHubEngine.render === "function") {
-                window.DashboardHubEngine.render("dashboardHubContainer");
+            if (window.DashboardHubEngine && typeof window.DashboardHubEngine.renderDashboard === "function") {
+                window.DashboardHubEngine.renderDashboard("dashboardHubContainer");
+            }
+        } else if (viewId === "utilities") {
+            updateActiveAppName("Chức Năng & Tiện Ích");
+            updateSidebarActive("sidebar-nav-utilities");
+            if (window.DashboardHubEngine && typeof window.DashboardHubEngine.renderUtilities === "function") {
+                window.DashboardHubEngine.renderUtilities("utilitiesHubContainer");
             }
         } else if (viewId === "examSchedule") {
             updateActiveAppName("Lịch Thi & Đề Cương Cuối HK1");
@@ -1901,7 +1967,7 @@ window.AzotaApp = (function() {
             return;
         } else if (viewId === "solutions") {
             updateActiveAppName("Kho Lời Giải & Bài Mẫu Chi Tiết");
-            updateSidebarActive("sidebar-nav-dashboard");
+            updateSidebarActive("sidebar-nav-utilities");
             if (window.SolutionEngine) {
                 if (typeof window.SolutionEngine.syncFromCloud === "function") {
                     window.SolutionEngine.syncFromCloud(true);
@@ -1911,33 +1977,32 @@ window.AzotaApp = (function() {
             }
         } else if (viewId === "gradeCalc") {
             updateActiveAppName("Tính Điểm & Xếp Loại THPT (TT 22)");
-            updateSidebarActive("sidebar-nav-dashboard");
+            updateSidebarActive("sidebar-nav-utilities");
             if (window.GradeCalcEngine && typeof window.GradeCalcEngine.render === "function") {
                 window.GradeCalcEngine.render("gradeCalcContainer");
             }
         } else if (viewId === "essay") {
             updateActiveAppName("Học Tự Luận Siêu Tốc — Môn Địa");
-            updateSidebarActive("sidebar-nav-dashboard");
+            updateSidebarActive("sidebar-nav-utilities");
             if (window.EssayEngine) window.EssayEngine.render();
         } else if (viewId === "notebook") {
             updateActiveAppName("Câu Cần Ghi Nhớ");
-            updateSidebarActive("sidebar-nav-dashboard");
+            updateSidebarActive("sidebar-nav-utilities");
             renderMistakeNotebook();
         } else if (viewId === "bank") {
             updateActiveAppName("Tra Cứu Ngân Hàng Câu Hỏi");
-            updateSidebarActive("sidebar-nav-dashboard");
+            updateSidebarActive("sidebar-nav-utilities");
             renderQuestionBank();
         } else if (viewId === "creator") {
             updateActiveAppName("Trình Tạo Đề Nhanh AI");
-            updateSidebarActive("sidebar-nav-dashboard");
+            updateSidebarActive("sidebar-nav-utilities");
         } else if (viewId === "history") {
             updateActiveAppName("Lịch Sử Khảo Thí");
-            updateSidebarActive("sidebar-nav-dashboard");
+            updateSidebarActive("sidebar-nav-utilities");
             renderExamHistory();
         } else if (viewId === "leaderboard") {
-            updateActiveAppName("Bảng Xếp Hạng & Vinh Danh");
-            updateSidebarActive("sidebar-nav-dashboard");
-            refreshLeaderboard();
+            showView("dashboard", true);
+            return;
         } else if (viewId === "exam") {
             updateActiveAppName("Phòng Khảo Thí Trực Tuyến");
         } else if (viewId === "result") {
@@ -2410,22 +2475,7 @@ window.AzotaApp = (function() {
     }
 
     function openLeaderboard() {
-        currentExplorerFolder = 'leaderboard';
-        explorerKeyword = '';
-        const searchInput = document.getElementById("explorerSearchInput");
-        if (searchInput) searchInput.value = '';
-
-        if (window.AzotaDock) {
-            window.AzotaDock.bounceItem("explorer");
-            window.AzotaDock.setActiveApp("explorer");
-        }
-        if (window.AudioHelper && window.AudioHelper.playPlip) {
-            window.AudioHelper.playPlip();
-        } else if (window.AudioHelper) {
-            window.AudioHelper.playClick();
-        }
-        showView("explorer");
-        renderFileExplorer();
+        showView("dashboard");
     }
 
     function refreshLeaderboard() {
@@ -4672,7 +4722,10 @@ window.AzotaApp = (function() {
     return {
         init: init,
         showView: showView,
+        goBack: goBack,
+        getDashboardData: getDashboardData,
         openDashboard: () => showView("dashboard"),
+        openUtilities: () => showView("utilities"),
         openExamSchedule: () => showView("examSchedule"),
         openGradeCalculator: () => showView("gradeCalc"),
         openFileExplorer: openFileExplorer,

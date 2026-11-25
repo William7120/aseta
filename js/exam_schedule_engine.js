@@ -339,8 +339,8 @@
                         <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                             <div class="space-y-2.5 max-w-2xl">
                                 <div class="flex flex-wrap items-center gap-2">
-                                    <button type="button" onclick="AzotaApp.showView('dashboard')" class="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 text-xs font-bold transition-all cursor-pointer">
-                                        ← Dashboard
+                                    <button type="button" onclick="AzotaApp.goBack()" class="px-3 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-slate-100 text-xs font-extrabold border border-white/15 transition-all cursor-pointer">
+                                        ← Quay Lại
                                     </button>
                                     <span class="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px] font-black uppercase tracking-wider">
                                         🏫 ${d.schoolName}

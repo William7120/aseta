@@ -612,7 +612,11 @@
                 
                 <!-- 1. THANH CHUYỂN TAB 3 HỌC KÌ: HK1 • HK2 • CẢ NĂM (GỘP) -->
                 <div class="flex items-center justify-between flex-wrap gap-3 px-1">
-                    <div>
+                    <div class="space-y-1.5">
+                        <button type="button" onclick="AzotaApp.goBack()"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-slate-200 text-xs font-bold border border-white/10 transition-all cursor-pointer">
+                            <span>←</span> <span>Quay Lại</span>
+                        </button>
                         <h2 class="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
                             <span>Sổ Điểm Điện Tử THPT</span>
                             <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-teal-500/20 text-teal-300 border border-teal-500/30">
