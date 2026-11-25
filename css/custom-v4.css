@@ -3130,10 +3130,10 @@ mark {
   border-right-color: rgba(56, 189, 248, 0.4);
 }
 
-/* StatsBento Dashboard Signature Hatched Radial Mask */
+/* StatsBento Dashboard Signature Hatched Radial Mask + Dynamic Motion */
 .bento-hatch-overlay {
   position: absolute;
-  inset: 0;
+  inset: -40px;
   background-image: repeating-linear-gradient(
     45deg,
     rgba(128, 128, 128, 0.45) 0px,
@@ -3145,4 +3145,132 @@ mark {
   -webkit-mask-image: radial-gradient(ellipse 80% 55% at 100% 0%, #000 70%, transparent 110%);
   mask-image: radial-gradient(ellipse 80% 55% at 100% 0%, #000 70%, transparent 110%);
   pointer-events: none;
+  animation: bentoHatchDrift 18s linear infinite;
+}
+
+@keyframes bentoHatchDrift {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(14px, 14px, 0); }
+}
+
+@keyframes bentoCardReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.975);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.bento-card-enter {
+  opacity: 0;
+  animation: bentoCardReveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.bento-interactive {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.28s ease, box-shadow 0.28s ease;
+}
+
+.bento-interactive::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    280px circle at var(--mx, -200px) var(--my, -200px),
+    rgba(56, 189, 248, 0.14),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.bento-interactive:hover {
+  transform: translateY(-3px);
+}
+
+.bento-interactive:hover::after {
+  opacity: 1;
+}
+
+.bento-interactive-light::after {
+  background: radial-gradient(
+    320px circle at var(--mx, -200px) var(--my, -200px),
+    rgba(99, 102, 241, 0.14),
+    transparent 65%
+  );
+}
+
+@keyframes flameFlicker {
+  0%, 100% {
+    transform: scale(1) rotate(-3deg);
+    filter: drop-shadow(0 0 12px rgba(251, 146, 60, 0.75));
+  }
+  50% {
+    transform: scale(1.14) rotate(4deg) translateY(-2px);
+    filter: drop-shadow(0 0 22px rgba(249, 115, 22, 0.95));
+  }
+}
+
+.bento-flame-live {
+  display: inline-block;
+  animation: flameFlicker 1.9s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+@keyframes bentoBarRise {
+  0% {
+    transform: scaleY(0.12);
+    opacity: 0.25;
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+.bento-spark-bar {
+  transform-origin: bottom center;
+  animation: bentoBarRise 0.65s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bento-spark-bar:hover {
+  transform: scaleY(1.12) scaleX(1.25);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.7);
+}
+
+@keyframes bentoShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(220%); }
+}
+
+.bento-shimmer-track {
+  position: relative;
+  overflow: hidden;
+}
+
+.bento-shimmer-track::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 45%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  animation: bentoShimmer 2.6s ease-in-out infinite;
+}
+
+@keyframes starFloatSpin {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.12) rotate(14deg); }
+}
+
+.bento-star-live {
+  display: inline-block;
+  animation: starFloatSpin 3.4s ease-in-out infinite;
 }

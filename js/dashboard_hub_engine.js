@@ -1,11 +1,11 @@
 /**
- * Aseta — StatsBento Dashboard & Dedicated Utilities Hub Engine
- * 1. Dashboard (StatsBento 6-col Editorial Grid):
- *    - Primary Stat (col-span-3 row-span-2): Tên tài khoản + Tổng EXP học tập + Level + Hatched Mask
- *    - Secondary Stat A (col-span-3): Phân tích học tập & biểu đồ cột mini sparkline
- *    - Tertiary Stat B (col-span-1): Day Streak thực tế (chuỗi ngày học liên tiếp)
- *    - Tertiary Stat C (col-span-2): Thứ hạng & Điểm TB (★ pill card)
- *    - Bottom Bento Row: Bảng Xếp Hạng EXP (col-span-4) + Thông Báo TVG & Lịch Thi HK1 (col-span-2)
+ * Aseta — Animated StatsBento Dashboard & Dedicated Utilities Hub Engine
+ * 1. Dashboard (Dynamic 6-col Bento Grid with Live Motion):
+ *    - Primary Card (col-span-3 row-span-2): Tên tài khoản + Tổng EXP count-up + Shimmer LV bar + Drifting Hatched Mask
+ *    - BIG Day Streak Card (col-span-3): Nổi bật chuỗi ngày học (🔥 animated flame), lịch 7 ngày T2–CN tương tác, kỷ lục cá nhân
+ *    - Analytics Card (col-span-2): Phân tích độ chính xác + 11 cột sparkline nảy lên & hover hiển thị số liệu động
+ *    - Rank Card (col-span-1): Ngôi sao ★ xoay nhẹ + Hạng hiện tại & Điểm TB
+ *    - Bottom Bento Row: Bảng Xếp Hạng EXP có thanh tiến độ nền (col-span-4) + Đồng hồ đếm ngược HK1 chạy từng giây & Tin TVG (col-span-2)
  * 2. Chức Năng (Utilities Hub): Quy tụ gọn gàng tất cả các công cụ & tính năng mở rộng.
  */
 (function(window) {
@@ -15,7 +15,9 @@
 
     const DashboardHubEngine = {
         lbSearch: '',
+        lbFilter: 'all', // 'all' | 'top5' | 'aroundMe'
         cachedNotices: null,
+        _hk1TickTimer: null,
 
         getTodayKey: function() {
             const d = new Date();
@@ -27,7 +29,7 @@
 
         getAndUpdateStreak: function() {
             const today = this.getTodayKey();
-            let state = { count: 1, lastDate: today, history: [today] };
+            let state = { count: 1, best: 1, lastDate: today, history: [today] };
             try {
                 const raw = localStorage.getItem(STREAK_KEY);
                 if (raw) {
@@ -37,20 +39,45 @@
                         const curr = new Date(today + 'T00:00:00');
                         const diffDays = Math.round((curr - last) / (1000 * 60 * 60 * 24));
                         const hist = Array.isArray(parsed.history) ? parsed.history : [parsed.lastDate];
+                        const prevBest = parsed.best || parsed.count || 1;
 
                         if (diffDays === 0) {
-                            state = { count: Math.max(1, parsed.count || 1), lastDate: today, history: hist };
+                            const c = Math.max(1, parsed.count || 1);
+                            state = { count: c, best: Math.max(prevBest, c), lastDate: today, history: hist };
                         } else if (diffDays === 1) {
+                            const c = (parsed.count || 1) + 1;
                             const nextHist = [...new Set([...hist, today])].slice(-14);
-                            state = { count: (parsed.count || 1) + 1, lastDate: today, history: nextHist };
+                            state = { count: c, best: Math.max(prevBest, c), lastDate: today, history: nextHist };
                         } else if (diffDays > 1) {
-                            state = { count: 1, lastDate: today, history: [today] };
+                            state = { count: 1, best: Math.max(prevBest, 1), lastDate: today, history: [today] };
                         }
                     }
                 }
                 localStorage.setItem(STREAK_KEY, JSON.stringify(state));
             } catch (_) {}
             return state;
+        },
+
+        getWeekDaysStrip: function(streakState) {
+            const labels = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+            const now = new Date();
+            const jsDay = now.getDay(); // 0=Sun, 1=Mon...
+            const todayIdx = jsDay === 0 ? 6 : jsDay - 1;
+            const histSet = new Set(streakState.history || []);
+
+            // Compute Monday of current week
+            const monday = new Date(now);
+            monday.setDate(now.getDate() - todayIdx);
+
+            return labels.map((lbl, idx) => {
+                const d = new Date(monday);
+                d.setDate(monday.getDate() + idx);
+                const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                const isToday = idx === todayIdx;
+                const isActive = isToday || histSet.has(key);
+                const isPast = idx < todayIdx;
+                return { label: lbl, key, isToday, isActive, isPast, dateNum: d.getDate() };
+            });
         },
 
         getAnalyticsBars: function() {
@@ -61,21 +88,20 @@
                 examHistory = [];
             }
 
-            // Build 11 sleek vertical bars (like StatsBento sparkline) from real exam scores or clean baseline curve
             if (examHistory.length >= 3) {
                 const recent = examHistory.slice(-11);
                 const bars = recent.map(h => {
                     const s = Number(h.score);
                     const pct = isNaN(s) ? 65 : Math.max(18, Math.min(100, Math.round(s * 10)));
-                    return { h: pct, label: `${h.examTitle || 'Đề thi'}: ${s || 0}đ` };
+                    return { h: pct, label: `${(h.examTitle || 'Đề thi').slice(0, 22)}: ${s || 0}đ` };
                 });
                 while (bars.length < 11) {
-                    bars.unshift({ h: 20 + (bars.length * 4), label: 'Chưa có dữ liệu' });
+                    bars.unshift({ h: 20 + (bars.length * 4), label: 'Phiên ôn trước đó' });
                 }
                 return bars;
             }
-            const baseline = [22, 34, 48, 40, 62, 54, 76, 68, 86, 94, 100];
-            return baseline.map((h, i) => ({ h, label: `Phiên ôn #${i + 1}: ${h}%` }));
+            const baseline = [24, 38, 52, 42, 64, 56, 78, 70, 88, 94, 100];
+            return baseline.map((h, i) => ({ h, label: `Phiên #${i + 1} • ${h}% chính xác` }));
         },
 
         getLevelInfo: function(exp) {
@@ -96,8 +122,75 @@
             return { level, currentInLevel, xpPerLevel, pct, title };
         },
 
+        animateCountUp: function(el, targetValue, duration = 850, formatFn = (v) => v.toLocaleString('vi-VN')) {
+            if (!el) return;
+            const target = Number(targetValue) || 0;
+            const start = performance.now();
+            const step = (now) => {
+                const p = Math.min(1, (now - start) / duration);
+                // EaseOutExpo
+                const eased = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
+                const val = Math.round(target * eased);
+                el.textContent = formatFn(val);
+                if (p < 1) requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+        },
+
+        attachBentoSpotlight: function(rootEl) {
+            if (!rootEl) return;
+            rootEl.querySelectorAll('.bento-interactive').forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    card.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+                    card.style.setProperty('--my', `${e.clientY - rect.top}px`);
+                });
+            });
+        },
+
+        startDashboardHk1Ticker: function() {
+            if (this._hk1TickTimer) clearInterval(this._hk1TickTimer);
+            const tick = () => {
+                const slot = document.getElementById('dashHk1LiveClock');
+                if (!slot) return;
+                const c = window.ExamScheduleEngine
+                    ? window.ExamScheduleEngine.getDaysRemaining()
+                    : { days: 18, hours: 0, mins: 0, secs: 0, started: false };
+                if (c.started) {
+                    slot.textContent = 'ĐANG TRONG ĐỢT THI HK1';
+                } else {
+                    slot.textContent = `${String(c.days).padStart(2, '0')}d : ${String(c.hours).padStart(2, '0')}h : ${String(c.mins).padStart(2, '0')}m : ${String(c.secs).padStart(2, '0')}s`;
+                }
+            };
+            tick();
+            this._hk1TickTimer = setInterval(tick, 1000);
+        },
+
+        hoverSparkBar: function(label) {
+            const readEl = document.getElementById('dashSparkReadout');
+            if (readEl) readEl.textContent = label;
+        },
+
+        resetSparkBar: function(defaultLabel) {
+            const readEl = document.getElementById('dashSparkReadout');
+            if (readEl) readEl.textContent = defaultLabel;
+        },
+
         setLeaderboardSearch: function(val) {
             this.lbSearch = (val || '').trim();
+            this.renderLeaderboardRowsOnly();
+        },
+
+        setLeaderboardFilter: function(mode) {
+            this.lbFilter = mode || 'all';
+            document.querySelectorAll('.dash-lb-filter-btn').forEach(b => {
+                const isAct = b.getAttribute('data-mode') === this.lbFilter;
+                b.className = `dash-lb-filter-btn px-2.5 py-1 rounded-lg text-[10px] font-black transition-all cursor-pointer ${
+                    isAct
+                        ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-xs'
+                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`;
+            });
             this.renderLeaderboardRowsOnly();
         },
 
@@ -144,7 +237,7 @@
             }
             slot.innerHTML = list.map((n, idx) => `
                 <a href="${n.link}" target="_blank" rel="noopener noreferrer"
-                   class="group flex items-start gap-2.5 p-2.5 rounded-2xl bg-black/5 dark:bg-white/[0.03] hover:bg-black/10 dark:hover:bg-white/[0.07] border border-slate-200/70 dark:border-white/5 transition-all">
+                   class="group flex items-start gap-2.5 p-2.5 rounded-2xl bg-black/5 dark:bg-white/[0.03] hover:bg-black/10 dark:hover:bg-white/[0.08] border border-slate-200/70 dark:border-white/5 hover:translate-x-1 transition-all duration-200">
                     <span class="w-5 h-5 rounded-lg ${idx === 0 ? 'bg-rose-500/20 text-rose-400' : 'bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-slate-300'} flex items-center justify-center text-[10px] font-black shrink-0 mt-0.5">
                         ${idx + 1}
                     </span>
@@ -152,7 +245,7 @@
                         <p class="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-sky-500 dark:group-hover:text-sky-400 line-clamp-2 leading-snug transition-colors">
                             ${n.title}
                         </p>
-                        ${idx === 0 ? '<span class="inline-block mt-1 text-[9px] font-black uppercase tracking-wider text-rose-500 dark:text-rose-400">● Mới nhất</span>' : ''}
+                        ${idx === 0 ? '<span class="inline-flex items-center gap-1 mt-1 text-[9px] font-black uppercase tracking-wider text-rose-500 dark:text-rose-400"><span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span> Mới nhất</span>' : ''}
                     </div>
                 </a>
             `).join('');
@@ -163,13 +256,25 @@
             if (!listEl) return;
 
             const payload = this.getLiveDashboardPayload();
+            const allRows = payload.leaderboard || [];
+            const maxExp = allRows.length > 0 ? Math.max(1, allRows[0].points || 1) : 1;
             const q = this.lbSearch.toLowerCase();
-            const rows = (payload.leaderboard || []).filter(s =>
+
+            let rows = allRows.filter(s =>
                 !q ||
                 (s.name || '').toLowerCase().includes(q) ||
                 (s.nickname || '').toLowerCase().includes(q) ||
                 (s.grade || '').toLowerCase().includes(q)
             );
+
+            if (!q && this.lbFilter === 'top5') {
+                rows = rows.slice(0, 5);
+            } else if (!q && this.lbFilter === 'aroundMe') {
+                const myIdx = rows.findIndex(s => s.isCurrentUser);
+                if (myIdx !== -1) {
+                    rows = rows.slice(Math.max(0, myIdx - 2), Math.min(rows.length, myIdx + 3));
+                }
+            }
 
             if (rows.length === 0) {
                 listEl.innerHTML = `<div class="py-8 text-center text-slate-400 text-xs">Không tìm thấy "${this.lbSearch}" trên bảng xếp hạng.</div>`;
@@ -179,19 +284,27 @@
             listEl.innerHTML = rows.map((st, idx) => {
                 const rank = st.rank || (idx + 1);
                 const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
+                const relPct = Math.max(12, Math.min(100, Math.round(((st.points || 0) / maxExp) * 100)));
                 const rowCls = st.isCurrentUser
-                    ? 'bg-slate-950 text-white dark:bg-white dark:text-slate-950 border-transparent shadow-md'
-                    : 'bg-white/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] border-slate-200/80 dark:border-white/5 text-slate-900 dark:text-white';
+                    ? 'bg-slate-950 text-white dark:bg-white dark:text-slate-950 border-transparent shadow-lg'
+                    : 'bg-white/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.07] border-slate-200/80 dark:border-white/5 text-slate-900 dark:text-white';
                 const subTextCls = st.isCurrentUser
                     ? 'text-slate-300 dark:text-slate-600'
                     : 'text-slate-500 dark:text-slate-400';
                 const expTextCls = st.isCurrentUser
                     ? 'text-amber-300 dark:text-slate-950'
                     : 'text-slate-900 dark:text-white';
+                const barFillCls = st.isCurrentUser
+                    ? 'bg-white/10 dark:bg-slate-950/10'
+                    : 'bg-sky-500/[0.06] dark:bg-white/[0.03]';
 
                 return `
-                    <div class="flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-2xl border transition-all ${rowCls}">
-                        <div class="flex items-center gap-3 min-w-0">
+                    <div style="animation-delay: ${Math.min(idx * 22, 180)}ms"
+                         class="bento-card-enter relative overflow-hidden flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-2xl border hover:translate-x-1 transition-all duration-200 ${rowCls}">
+                        <!-- Proportional subtle EXP progress fill -->
+                        <div class="absolute inset-y-0 left-0 pointer-events-none transition-all duration-700 ${barFillCls}" style="width: ${relPct}%"></div>
+
+                        <div class="relative z-10 flex items-center gap-3 min-w-0">
                             <span class="w-7 text-center font-black text-xs shrink-0">${medal}</span>
                             <div class="w-9 h-9 rounded-full bg-slate-200 dark:bg-white/10 flex items-center justify-center text-base shrink-0">
                                 ${st.avatar || '🎓'}
@@ -206,7 +319,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="text-right shrink-0">
+                        <div class="relative z-10 text-right shrink-0">
                             <div class="text-xs sm:text-sm font-black font-mono ${expTextCls}">
                                 ${(st.points || 0).toLocaleString('vi-VN')} EXP
                             </div>
@@ -220,7 +333,7 @@
         },
 
         // =========================================================================
-        // VIEW 1: STATSBENTO PERSONAL DASHBOARD (EXP + PHÂN TÍCH + STREAK + BXH + THÔNG BÁO)
+        // VIEW 1: ANIMATED STATSBENTO DASHBOARD (BIG DAY STREAK + LIVE MOTION)
         // =========================================================================
         renderDashboard: function(containerId = 'dashboardHubContainer') {
             const container = document.getElementById(containerId);
@@ -230,33 +343,43 @@
             const u = payload.user;
             const lv = this.getLevelInfo(payload.exp);
             const streak = this.getAndUpdateStreak();
+            const weekDays = this.getWeekDaysStrip(streak);
             const bars = this.getAnalyticsBars();
-            const daysInfo = window.ExamScheduleEngine
-                ? window.ExamScheduleEngine.getDaysRemaining()
-                : { days: 18, started: false };
+            const defaultSparkText = `Phong độ 11 phiên gần nhất • ${payload.doneCount} đề`;
 
-            // Build 7-day mini streak dots
-            const streakDotsHtml = Array.from({ length: 7 }, (_, i) => {
-                const active = i < Math.min(7, streak.count);
-                return `<span class="w-2 h-2 rounded-full ${active ? 'bg-amber-400 shadow-xs shadow-amber-400/60' : 'bg-slate-300 dark:bg-white/15'}"></span>`;
+            const weekStripHtml = weekDays.map(d => {
+                const pillCls = d.isToday
+                    ? 'bg-gradient-to-b from-amber-400 to-orange-500 text-slate-950 font-black shadow-lg shadow-orange-500/35 ring-2 ring-amber-300/80 scale-105'
+                    : d.isActive
+                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 font-extrabold'
+                        : 'bg-slate-100 dark:bg-white/[0.04] text-slate-400 border border-slate-200/70 dark:border-white/5 font-bold';
+                return `
+                    <div class="flex flex-col items-center gap-1 flex-1 min-w-0" title="${d.label} (${d.dateNum}) ${d.isActive ? '• Đã học 🔥' : '• Chưa điểm danh'}">
+                        <div class="w-full py-1.5 rounded-xl text-[10px] text-center transition-all ${pillCls}">
+                            <div>${d.label}</div>
+                            <div class="text-[11px] mt-0.5 leading-none">${d.isActive ? '🔥' : '·'}</div>
+                        </div>
+                    </div>
+                `;
             }).join('');
 
             container.innerHTML = `
                 <div class="max-w-7xl mx-auto space-y-4">
-                    <!-- TOP STATSBENTO 6-COLUMN GRID -->
+                    <!-- TOP STATSBENTO 6-COLUMN ANIMATED GRID -->
                     <div class="grid grid-cols-1 md:grid-cols-6 md:grid-rows-2 gap-4">
 
-                        <!-- PRIMARY STAT (col-span-3 row-span-2): High-Contrast Editorial EXP + Account Card -->
-                        <div class="md:col-span-3 md:row-span-2 bg-slate-950 text-white dark:bg-[#f4f5f7] dark:text-slate-950 rounded-3xl p-7 sm:p-9 flex flex-col justify-between overflow-hidden relative shadow-xl border border-slate-800 dark:border-white/40 min-h-[270px]">
+                        <!-- 1. PRIMARY STAT (col-span-3 row-span-2): High-Contrast Editorial EXP + Account -->
+                        <div style="animation-delay: 0ms"
+                             class="bento-card-enter bento-interactive bento-interactive-light md:col-span-3 md:row-span-2 bg-slate-950 text-white dark:bg-[#f4f5f7] dark:text-slate-950 rounded-3xl p-7 sm:p-9 flex flex-col justify-between relative shadow-xl border border-slate-800 dark:border-white/40 min-h-[290px]">
                             <div class="bento-hatch-overlay"></div>
 
                             <div class="relative z-10 flex items-center justify-between gap-3 flex-wrap">
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 dark:bg-slate-950/10 rounded-full text-[10px] font-black uppercase tracking-widest text-white/80 dark:text-slate-950/70">
-                                    <span>⚡</span>
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 dark:bg-slate-950/10 rounded-full text-[10px] font-black uppercase tracking-widest text-white/85 dark:text-slate-950/75">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                                     <span>Tổng EXP Học Tập • LV.${lv.level}</span>
                                 </span>
                                 <button type="button" onclick="AzotaApp.handleProfileClick()"
-                                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 dark:bg-slate-950/10 dark:hover:bg-slate-950/15 transition-colors cursor-pointer">
+                                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 dark:bg-slate-950/10 dark:hover:bg-slate-950/15 transition-all hover:scale-105 cursor-pointer">
                                     <span class="text-sm leading-none">${u.avatar || '👦'}</span>
                                     <span class="text-xs font-extrabold truncate max-w-[140px]">${u.name || 'Học Sinh Aseta'}</span>
                                     <span class="text-[10px] opacity-60">✏️</span>
@@ -265,16 +388,16 @@
 
                             <div class="relative z-10 my-5">
                                 <div class="flex items-baseline gap-2.5 flex-wrap">
-                                    <h3 class="text-5xl sm:text-6xl font-black tracking-tighter font-mono leading-none">
+                                    <h3 id="dashAnimatedExp" class="text-5xl sm:text-6xl font-black tracking-tighter font-mono leading-none">
                                         ${(payload.exp || 0).toLocaleString('vi-VN')}
                                     </h3>
                                     <span class="text-sm sm:text-base font-black uppercase tracking-widest opacity-55">EXP</span>
                                 </div>
                                 <div class="mt-4 max-w-sm space-y-1.5">
-                                    <div class="w-full h-2 rounded-full bg-white/15 dark:bg-slate-950/10 overflow-hidden">
-                                        <div class="h-full rounded-full bg-white dark:bg-slate-950 transition-all duration-500" style="width: ${lv.pct}%"></div>
+                                    <div class="bento-shimmer-track w-full h-2.5 rounded-full bg-white/15 dark:bg-slate-950/10 overflow-hidden">
+                                        <div id="dashExpBarFill" class="h-full rounded-full bg-white dark:bg-slate-950 transition-all duration-1000 ease-out" style="width: 0%"></div>
                                     </div>
-                                    <div class="flex items-center justify-between text-[11px] font-bold opacity-65">
+                                    <div class="flex items-center justify-between text-[11px] font-bold opacity-70">
                                         <span>${lv.title}</span>
                                         <span>${lv.currentInLevel} / ${lv.xpPerLevel} EXP → LV.${lv.level + 1}</span>
                                     </div>
@@ -282,72 +405,104 @@
                             </div>
 
                             <p class="relative z-10 text-xs sm:text-sm opacity-65 max-w-md leading-relaxed">
-                                Tài khoản <strong class="opacity-100">@${u.nickname || 'hocsinh11'}</strong> (${u.grade || 'Lớp 11'}) đang hoàn thành <strong>${payload.doneCount} đề</strong> với tỷ lệ đạt chuẩn <strong>${payload.accuracy}%</strong>.
+                                Tài khoản <strong class="opacity-100">@${u.nickname || 'hocsinh11'}</strong> (${u.grade || 'Lớp 11'}) đang đứng <strong>Hạng #${payload.rank}</strong> toàn lớp với điểm trung bình <strong>${payload.gpa}đ</strong>.
                             </p>
                         </div>
 
-                        <!-- SECONDARY STAT A (col-span-3): Learning Analytics + Vertical Pill Sparkline -->
-                        <div class="md:col-span-3 bg-white dark:bg-[#14161f] rounded-3xl p-7 sm:p-8 border border-slate-200/80 dark:border-white/10 flex items-center justify-between gap-4 shadow-sm">
-                            <div>
-                                <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">
-                                    Phân Tích Học Tập
-                                </p>
-                                <div class="flex items-baseline gap-2">
-                                    <p class="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 dark:text-white font-mono">
-                                        ${payload.accuracy}%
-                                    </p>
-                                    <span class="text-xs font-extrabold text-emerald-500">
-                                        +${payload.gpa}đ TB
-                                    </span>
+                        <!-- 2. BIG PROMINENT DAY STREAK CARD (md:col-span-3 — To, Rõ, Động!) -->
+                        <div style="animation-delay: 80ms"
+                             class="bento-card-enter bento-interactive md:col-span-3 bg-gradient-to-br from-orange-500/10 via-white to-amber-500/5 dark:from-[#1b1411] dark:via-[#14151d] dark:to-[#181316] rounded-3xl p-6 sm:p-7 border border-orange-500/25 dark:border-amber-500/25 flex flex-col justify-between gap-4 shadow-md relative">
+                            <div class="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-orange-500/20 blur-3xl pointer-events-none"></div>
+
+                            <div class="relative z-10 flex items-center justify-between gap-4">
+                                <div class="flex items-center gap-3.5">
+                                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 via-orange-500 to-rose-600 flex items-center justify-center text-3xl shadow-lg shadow-orange-500/30 shrink-0">
+                                        <span class="bento-flame-live">🔥</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-black uppercase tracking-widest text-orange-500 dark:text-amber-400">
+                                            Chuỗi Ngày Học • Day Streak
+                                        </p>
+                                        <div class="flex items-baseline gap-2 mt-0.5">
+                                            <span id="dashAnimatedStreak" class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white font-mono tracking-tight">
+                                                ${streak.count}
+                                            </span>
+                                            <span class="text-xs sm:text-sm font-extrabold text-slate-500 dark:text-slate-300">
+                                                ngày liên tiếp
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1.5">
-                                    Phong độ 11 phiên ôn gần nhất • ${payload.doneCount} bài đã lưu
-                                </p>
+
+                                <div class="text-right shrink-0">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-500/30 text-[10px] font-black">
+                                        <span>🏆</span> <span>Kỷ lục: ${streak.best || streak.count} ngày</span>
+                                    </span>
+                                    <p class="hidden sm:block text-[10px] text-slate-400 mt-1 font-semibold">Đã điểm danh hôm nay ✓</p>
+                                </div>
                             </div>
-                            <div class="flex gap-1.5 items-end h-14 shrink-0" title="Biểu đồ phong độ học tập">
+
+                            <!-- 7-Day Interactive Calendar Streak Strip -->
+                            <div class="relative z-10 flex items-center gap-1.5 sm:gap-2">
+                                ${weekStripHtml}
+                            </div>
+                        </div>
+
+                        <!-- 3. ANALYTICS & INTERACTIVE SPARKLINE (md:col-span-2) -->
+                        <div style="animation-delay: 160ms"
+                             class="bento-card-enter bento-interactive md:col-span-2 bg-white dark:bg-[#14161f] rounded-3xl p-5 border border-slate-200/80 dark:border-white/10 flex flex-col justify-between gap-2 shadow-sm">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                                        Phân Tích
+                                    </p>
+                                    <div class="flex items-baseline gap-1.5 mt-0.5">
+                                        <p id="dashAnimatedAcc" class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white font-mono">
+                                            ${payload.accuracy}%
+                                        </p>
+                                        <span class="text-[11px] font-extrabold text-emerald-500">+${payload.gpa}đ</span>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-lg bg-sky-500/15 text-sky-500 dark:text-sky-300 text-[9px] font-black uppercase">
+                                    Live
+                                </span>
+                            </div>
+
+                            <div class="flex gap-1 items-end h-9 w-full" onmouseleave="DashboardHubEngine.resetSparkBar('${defaultSparkText}')">
                                 ${bars.map((b, i) => `
-                                    <div class="w-1.5 sm:w-2 rounded-full transition-all duration-300 ${i >= bars.length - 2 ? 'bg-sky-500 dark:bg-white' : 'bg-slate-800/80 dark:bg-white/75'}"
-                                         style="height: ${b.h}%"
+                                    <div class="bento-spark-bar flex-1 rounded-full cursor-pointer ${i >= bars.length - 2 ? 'bg-sky-500 dark:bg-sky-400' : 'bg-slate-800/75 dark:bg-white/75 hover:bg-sky-400'}"
+                                         style="height: ${b.h}%; animation-delay: ${180 + i * 42}ms"
+                                         onmouseenter="DashboardHubEngine.hoverSparkBar('${b.label.replace(/'/g, '')}')"
                                          title="${b.label}"></div>
                                 `).join('')}
                             </div>
-                        </div>
 
-                        <!-- TERTIARY STAT B (col-span-1): Day Streak -->
-                        <div class="md:col-span-1 bg-white dark:bg-[#0e1017] rounded-3xl p-5 sm:p-6 border border-slate-200/80 dark:border-white/10 flex flex-col items-center justify-center text-center gap-1.5 shadow-sm">
-                            <div class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white flex items-center justify-center gap-1">
-                                <span>🔥</span>
-                                <span class="font-mono">${streak.count}</span>
-                            </div>
-                            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                                Day Streak
+                            <p id="dashSparkReadout" class="text-[10px] font-semibold text-slate-500 dark:text-slate-400 truncate">
+                                ${defaultSparkText}
                             </p>
-                            <div class="flex items-center justify-center gap-1 mt-1" title="Chuỗi hoạt động 7 ngày">
-                                ${streakDotsHtml}
-                            </div>
                         </div>
 
-                        <!-- TERTIARY STAT C (col-span-2): Current Rank & Rating Star Card -->
-                        <div class="md:col-span-2 bg-white dark:bg-[#14161f] rounded-3xl p-5 sm:p-6 border border-slate-200/80 dark:border-white/10 flex items-center gap-4 shadow-sm">
-                            <div class="w-11 h-11 text-xl rounded-full bg-slate-950 text-white dark:bg-[#090a0f] dark:text-amber-400 border border-white/10 flex items-center justify-center shrink-0 shadow-sm font-semibold">
-                                ★
+                        <!-- 4. RANK & RATING STAR TILE (md:col-span-1) -->
+                        <div style="animation-delay: 240ms"
+                             class="bento-card-enter bento-interactive md:col-span-1 bg-white dark:bg-[#0e1017] rounded-3xl p-5 border border-slate-200/80 dark:border-white/10 flex flex-col items-center justify-center text-center gap-1.5 shadow-sm">
+                            <div class="w-10 h-10 text-lg rounded-full bg-slate-950 text-amber-400 dark:bg-white/10 border border-white/10 flex items-center justify-center shadow-sm">
+                                <span class="bento-star-live">★</span>
                             </div>
-                            <div class="min-w-0">
-                                <p class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-tight font-mono">
-                                    Hạng #${payload.rank} <span class="text-xs font-bold text-slate-400">• ${payload.gpa}/10</span>
-                                </p>
-                                <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1 truncate">
-                                    Xếp hạng toàn lớp • ${u.grade || 'Lớp 11'}
-                                </p>
-                            </div>
+                            <p class="text-2xl font-black text-slate-900 dark:text-white font-mono leading-none mt-1">
+                                #${payload.rank}
+                            </p>
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                                Hạng Lớp
+                            </p>
                         </div>
                     </div>
 
-                    <!-- BOTTOM BENTO ROW: LEADERBOARD (col-span-4) + NOTICES & HK1 COUNTDOWN (col-span-2) -->
+                    <!-- BOTTOM BENTO ROW: LEADERBOARD (col-span-4) + LIVE HK1 COUNTDOWN & NOTICES (col-span-2) -->
                     <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
 
                         <!-- BẢNG XẾP HẠNG (col-span-4) -->
-                        <div class="md:col-span-4 bg-white dark:bg-[#0e1017] rounded-3xl p-5 sm:p-6 border border-slate-200/80 dark:border-white/10 shadow-sm space-y-4">
+                        <div style="animation-delay: 300ms"
+                             class="bento-card-enter bento-interactive md:col-span-4 bg-white dark:bg-[#0e1017] rounded-3xl p-5 sm:p-6 border border-slate-200/80 dark:border-white/10 shadow-sm space-y-4">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                 <div>
                                     <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
@@ -357,43 +512,51 @@
                                         <span>🏆</span> <span>Bảng Xếp Hạng Học Tập</span>
                                     </h3>
                                 </div>
-                                <div class="relative w-full sm:w-56">
-                                    <input type="text"
-                                           value="${this.lbSearch}"
-                                           oninput="DashboardHubEngine.setLeaderboardSearch(this.value)"
-                                           placeholder="Tìm bạn trên BXH..."
-                                           class="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 focus:border-sky-500/50 text-xs text-slate-900 dark:text-white placeholder-slate-400 outline-none">
-                                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400">🔍</span>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <div class="inline-flex p-0.5 rounded-xl bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10">
+                                        <button type="button" data-mode="all" onclick="DashboardHubEngine.setLeaderboardFilter('all')" class="dash-lb-filter-btn px-2.5 py-1 rounded-lg text-[10px] font-black transition-all cursor-pointer bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-xs">Tất cả</button>
+                                        <button type="button" data-mode="top5" onclick="DashboardHubEngine.setLeaderboardFilter('top5')" class="dash-lb-filter-btn px-2.5 py-1 rounded-lg text-[10px] font-black transition-all cursor-pointer text-slate-500 dark:text-slate-400">Top 5</button>
+                                        <button type="button" data-mode="aroundMe" onclick="DashboardHubEngine.setLeaderboardFilter('aroundMe')" class="dash-lb-filter-btn px-2.5 py-1 rounded-lg text-[10px] font-black transition-all cursor-pointer text-slate-500 dark:text-slate-400">Gần tôi</button>
+                                    </div>
+                                    <div class="relative w-full sm:w-44">
+                                        <input type="text"
+                                               value="${this.lbSearch}"
+                                               oninput="DashboardHubEngine.setLeaderboardSearch(this.value)"
+                                               placeholder="Tìm bạn..."
+                                               class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 focus:border-sky-500/50 text-xs text-slate-900 dark:text-white placeholder-slate-400 outline-none">
+                                        <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400">🔍</span>
+                                    </div>
                                 </div>
                             </div>
 
                             <div id="dashboardLeaderboardList" class="space-y-2 max-h-[380px] overflow-y-auto pr-1"></div>
                         </div>
 
-                        <!-- THÔNG BÁO & LỊCH THI NHANH (col-span-2) -->
+                        <!-- THÔNG BÁO & ĐỒNG HỒ ĐẾM NGƯỢC HK1 ĐỘNG (col-span-2) -->
                         <div class="md:col-span-2 flex flex-col gap-4">
-                            <!-- Mini Exam Countdown Tile -->
+                            <!-- Live Ticking Exam Countdown Tile -->
                             <button type="button" onclick="AzotaApp.showView('examSchedule')"
-                                    class="group text-left bg-white dark:bg-[#14161f] hover:border-amber-500/40 rounded-3xl p-5 border border-slate-200/80 dark:border-white/10 shadow-sm transition-all cursor-pointer flex items-center justify-between gap-3">
-                                <div class="min-w-0">
-                                    <p class="text-[10px] font-bold uppercase tracking-widest text-amber-500">
-                                        🗓️ Cuối Học Kỳ I
+                                    style="animation-delay: 360ms"
+                                    class="bento-card-enter bento-interactive group text-left bg-white dark:bg-[#14161f] hover:border-amber-500/50 rounded-3xl p-5 border border-slate-200/80 dark:border-white/10 shadow-sm cursor-pointer space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-amber-500 flex items-center gap-1.5">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>
+                                        <span>🗓️ Cuối Học Kỳ I</span>
                                     </p>
-                                    <p class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5 font-mono">
-                                        ${daysInfo.started ? 'Đang thi' : `Còn ${daysInfo.days} ngày`}
-                                    </p>
-                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 truncate">
-                                        14/12 – 22/12 • 14 đề cương TVG
-                                    </p>
+                                    <span class="text-xs font-black text-amber-400 group-hover:translate-x-1 transition-transform">➔</span>
                                 </div>
-                                <span class="w-9 h-9 rounded-2xl bg-amber-500/15 text-amber-400 flex items-center justify-center font-black group-hover:translate-x-0.5 transition-transform shrink-0">
-                                    ➔
-                                </span>
+                                <p id="dashHk1LiveClock" class="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight font-mono">
+                                    18d : 09h : 00m : 00s
+                                </p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                                    14/12 – 22/12 • 14 đề cương TVG
+                                </p>
                             </button>
 
                             <!-- Live School Notices Feed Tile -->
-                            <div class="flex-1 bg-white dark:bg-[#0e1017] rounded-3xl p-5 border border-slate-200/80 dark:border-white/10 shadow-sm flex flex-col justify-between gap-3">
-                                <div class="space-y-3">
+                            <div style="animation-delay: 420ms"
+                                 class="bento-card-enter bento-interactive flex-1 bg-white dark:bg-[#0e1017] rounded-3xl p-5 border border-slate-200/80 dark:border-white/10 shadow-sm flex flex-col justify-between gap-3">
+                                <div class="relative z-10 space-y-3">
                                     <div class="flex items-center justify-between gap-2">
                                         <div>
                                             <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-500 flex items-center gap-1.5">
@@ -411,7 +574,7 @@
                                 </div>
 
                                 <button type="button" onclick="AzotaApp.showView('utilities')"
-                                        class="w-full py-2.5 px-3 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.05] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-200 text-xs font-extrabold transition-colors cursor-pointer flex items-center justify-between">
+                                        class="relative z-10 w-full py-2.5 px-3 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.05] dark:hover:bg-white/[0.1] text-slate-800 dark:text-slate-200 text-xs font-extrabold transition-colors cursor-pointer flex items-center justify-between">
                                     <span>🧩 Mở Kho Chức Năng</span>
                                     <span>➔</span>
                                 </button>
@@ -425,6 +588,19 @@
             this.renderLeaderboardRowsOnly();
             this.renderNoticesSlotOnly();
             this.ensureNoticesLoaded();
+            this.attachBentoSpotlight(container);
+            this.startDashboardHk1Ticker();
+
+            // Trigger smooth live animations after paint
+            requestAnimationFrame(() => {
+                this.animateCountUp(document.getElementById('dashAnimatedExp'), payload.exp || 0, 900);
+                this.animateCountUp(document.getElementById('dashAnimatedAcc'), payload.accuracy || 0, 800, (v) => `${v}%`);
+                this.animateCountUp(document.getElementById('dashAnimatedStreak'), streak.count || 1, 650, (v) => String(v));
+                const barFill = document.getElementById('dashExpBarFill');
+                if (barFill) {
+                    setTimeout(() => { barFill.style.width = `${lv.pct}%`; }, 80);
+                }
+            });
         },
 
         // =========================================================================
@@ -542,7 +718,7 @@
                 }
             ];
 
-            const sectionsHtml = sections.map(sec => `
+            const sectionsHtml = sections.map((sec, sIdx) => `
                 <div class="space-y-3.5">
                     <div class="flex items-center justify-between">
                         <h3 class="text-sm sm:text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
@@ -553,10 +729,11 @@
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        ${sec.cards.map(c => `
+                        ${sec.cards.map((c, cIdx) => `
                             <button type="button" onclick="${c.action}"
-                                    class="group text-left p-5 rounded-3xl bg-white/80 dark:bg-[#0f111a]/90 hover:bg-white dark:hover:bg-[#151827] border border-slate-200/80 dark:border-white/10 hover:border-sky-500/40 shadow-sm hover:shadow-xl hover:shadow-sky-500/10 transition-all duration-200 flex flex-col justify-between gap-4 cursor-pointer active:scale-[0.985]">
-                                <div class="flex items-start justify-between gap-3 w-full">
+                                    style="animation-delay: ${(sIdx * 120) + (cIdx * 55)}ms"
+                                    class="bento-card-enter bento-interactive group text-left p-5 rounded-3xl bg-white/80 dark:bg-[#0f111a]/90 hover:bg-white dark:hover:bg-[#151827] border border-slate-200/80 dark:border-white/10 hover:border-sky-500/40 shadow-sm hover:shadow-xl hover:shadow-sky-500/10 flex flex-col justify-between gap-4 cursor-pointer active:scale-[0.985]">
+                                <div class="relative z-10 flex items-start justify-between gap-3 w-full">
                                     <div class="w-12 h-12 rounded-2xl bg-gradient-to-br ${c.gradient} flex items-center justify-center text-2xl shadow-lg group-hover:scale-110 transition-transform shrink-0 border border-white/15">
                                         ${c.icon}
                                     </div>
@@ -564,7 +741,7 @@
                                         ${c.badge}
                                     </span>
                                 </div>
-                                <div>
+                                <div class="relative z-10">
                                     <h4 class="text-sm sm:text-base font-black text-slate-900 dark:text-white group-hover:text-sky-500 dark:group-hover:text-sky-400 transition-colors">
                                         ${c.title}
                                     </h4>
@@ -572,7 +749,7 @@
                                         ${c.desc}
                                     </p>
                                 </div>
-                                <div class="flex items-center justify-between pt-2.5 border-t border-slate-200/60 dark:border-white/5 w-full text-[11px] font-bold text-sky-600 dark:text-sky-400">
+                                <div class="relative z-10 flex items-center justify-between pt-2.5 border-t border-slate-200/60 dark:border-white/5 w-full text-[11px] font-bold text-sky-600 dark:text-sky-400">
                                     <span>Mở chức năng</span>
                                     <span class="group-hover:translate-x-1 transition-transform">➔</span>
                                 </div>
@@ -584,8 +761,8 @@
 
             container.innerHTML = `
                 <div class="space-y-7">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-5 rounded-3xl bg-gradient-to-r from-[#0f172a] via-[#131b35] to-[#1e1035] border border-white/10 text-white shadow-xl">
-                        <div class="space-y-1">
+                    <div class="bento-card-enter bento-interactive flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-5 rounded-3xl bg-gradient-to-r from-[#0f172a] via-[#131b35] to-[#1e1035] border border-white/10 text-white shadow-xl">
+                        <div class="relative z-10 space-y-1">
                             <span class="px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-black uppercase tracking-wider">
                                 🧩 Kho Chức Năng & Tiện Ích
                             </span>
@@ -593,7 +770,7 @@
                             <p class="text-xs text-slate-300">Tập trung toàn bộ tiện ích học tập & trường học tại đây, giữ thanh menu bên trái luôn tối giản.</p>
                         </div>
                         <button type="button" onclick="AzotaApp.openFileExplorer('root')"
-                                class="shrink-0 px-4 py-2 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/15 text-xs font-extrabold text-white transition-all cursor-pointer flex items-center gap-1.5">
+                                class="relative z-10 shrink-0 px-4 py-2 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/15 text-xs font-extrabold text-white transition-all cursor-pointer flex items-center gap-1.5">
                             <span>←</span> <span>Về Trang Chủ</span>
                         </button>
                     </div>
@@ -601,6 +778,7 @@
                     ${sectionsHtml}
                 </div>
             `;
+            this.attachBentoSpotlight(container);
         },
 
         render: function(containerId = 'dashboardHubContainer') {
