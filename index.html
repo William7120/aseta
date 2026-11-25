@@ -333,7 +333,7 @@
                                 <span>Ghi nhớ đăng nhập</span>
                             </label>
                             <button type="button" onclick="AuthGate.showPinHelp()" class="text-xs text-white/60 hover:text-white transition-colors cursor-pointer font-medium">
-                                Xem mã mẫu?
+                                Danh sách tài khoản?
                             </button>
                         </div>
 
@@ -346,29 +346,12 @@
                             <span class="text-sm font-bold">→</span>
                         </button>
 
-                        <!-- Divider -->
-                        <div class="relative my-4 flex items-center">
-                            <div class="flex-grow border-t border-white/10"></div>
-                            <span class="mx-3 text-[10.5px] text-white/40 uppercase tracking-widest font-semibold">Tài khoản cấp quyền</span>
-                            <div class="flex-grow border-t border-white/10"></div>
-                        </div>
-
                         <!-- Quick Demo Accounts (Hidden on card face, preserved for JS API) -->
-                        <div id="loginQuickAccountsList" class="hidden">
-                            <!-- Populated dynamically by AuthGate.renderQuickAccounts() -->
-                        </div>
-
-                        <!-- Fast Guest Access Button -->
-                        <button type="button" 
-                                onclick="AuthGate.loginAsGuest()" 
-                                class="w-full h-12 rounded-2xl bg-purple-950/40 hover:bg-purple-900/40 border border-purple-500/30 hover:border-purple-500/50 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.99] cursor-pointer shadow-inner">
-                            <span class="text-amber-300">✦</span>
-                            <span>Vào Nhanh Dưới Dạng Khách (Trải Nghiệm)</span>
-                        </button>
+                        <div id="loginQuickAccountsList" class="hidden"></div>
 
                         <!-- Footer note: Only accounts provided by admin -->
-                        <p class="text-center text-[10.5px] text-white/40 pt-1">
-                            Hệ thống nội bộ chỉ dành cho học sinh có tài khoản được cấp.
+                        <p class="text-center text-[10.5px] text-white/40 pt-2">
+                            Hệ thống nội bộ chỉ dành cho 4 tài khoản được cấp quyền.
                         </p>
                     </form>
                 </div>
@@ -403,7 +386,7 @@
                 
                 <!-- Sidebar Brand Header & Logo (Aseta Official Number 7 Logo) -->
                 <div class="sidebar-brand-header flex items-center justify-between lg:justify-center w-full pb-3 border-b border-slate-200/80 dark:border-white/5 shrink-0">
-                    <div class="flex items-center gap-3 cursor-pointer group" onclick="AzotaApp.openFileExplorer('root')" title="Aseta 2.5 — Kho Đề & Khảo Thí">
+                    <div class="flex items-center gap-3 cursor-pointer group" onclick="AzotaApp.showView('dashboard')" title="Aseta 2.5 — Dashboard & Kho Đề">
                         <div class="w-11 h-11 rounded-2xl bg-slate-900/90 dark:bg-black/90 border border-amber-500/30 dark:border-white/15 flex items-center justify-center p-1.5 shadow-lg shadow-amber-500/10 group-hover:scale-105 group-hover:border-amber-500/60 transition-all shrink-0 overflow-hidden">
                             <img src="assets/logo-aseta-7.png" alt="Aseta Logo" class="w-full h-full object-contain filter drop-shadow(0 2px 4px rgba(0,0,0,0.5))">
                         </div>
@@ -440,34 +423,13 @@
                         <span class="text-[9px] px-1.5 py-0.2 rounded-md bg-blue-500/10 text-blue-500 font-bold">GỌN</span>
                     </div>
 
-                    <!-- 1. Home: Kho Đề & Môn Học -->
-                    <button type="button"
-                            id="sidebar-folder-root"
-                            onclick="AzotaApp.openFileExplorer('root')"
-                            style="--gradient-from: #3b82f6; --gradient-to: #06b6d4;"
-                            class="gradient-menu-btn nav-item-modern nav-item-active group"
-                            title="Trang Chủ — Kho Đề & Môn Học">
-                        <span class="gradient-menu-bg"></span>
-                        <span class="gradient-menu-glow"></span>
-                        <span class="gradient-menu-icon"><span class="text-xl">🏠</span></span>
-                        <span class="gradient-menu-title">Trang Chủ</span>
-                        <span class="gradient-active-dot"></span>
-                        <span class="mobile-drawer-label hidden gap-2">
-                            <span class="flex flex-col min-w-0 text-left">
-                                <span class="font-bold text-sm text-slate-800 dark:text-slate-100 leading-tight truncate">Trang Chủ</span>
-                                <span class="text-[10px] text-slate-400 truncate">Kho đề & môn học</span>
-                            </span>
-                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 font-bold shrink-0">Home</span>
-                        </span>
-                    </button>
-
-                    <!-- 2. Dashboard: Tài Khoản, EXP Học & Bảng Xếp Hạng -->
+                    <!-- 1. Dashboard: Trang đầu tiên (Tài Khoản, EXP, Day Streak & BXH) -->
                     <button type="button"
                             id="sidebar-nav-dashboard"
                             onclick="AzotaApp.showView('dashboard')"
                             style="--gradient-from: #f59e0b; --gradient-to: #ef4444;"
-                            class="gradient-menu-btn nav-item-modern group"
-                            title="Dashboard — Tài Khoản, EXP Học & Bảng Xếp Hạng">
+                            class="gradient-menu-btn nav-item-modern nav-item-active group"
+                            title="Dashboard — Tổng Quan, EXP Học & Bảng Xếp Hạng">
                         <span class="gradient-menu-bg"></span>
                         <span class="gradient-menu-glow"></span>
                         <span class="gradient-menu-icon"><span class="text-xl">📊</span></span>
@@ -476,9 +438,30 @@
                         <span class="mobile-drawer-label hidden gap-2">
                             <span class="flex flex-col min-w-0 text-left">
                                 <span class="font-bold text-sm text-slate-800 dark:text-slate-100 leading-tight truncate">Dashboard</span>
-                                <span class="text-[10px] text-slate-400 truncate">Tài khoản, EXP & BXH</span>
+                                <span class="text-[10px] text-slate-400 truncate">Tổng quan, EXP & BXH</span>
                             </span>
-                            <span class="liquid-tag-pill bg-amber-500/20 text-amber-400 border border-amber-500/30 shrink-0">EXP</span>
+                            <span class="liquid-tag-pill bg-amber-500/20 text-amber-400 border border-amber-500/30 shrink-0">Chính</span>
+                        </span>
+                    </button>
+
+                    <!-- 2. Kho Đề: Thư mục đề thi & môn học -->
+                    <button type="button"
+                            id="sidebar-folder-root"
+                            onclick="AzotaApp.openFileExplorer('root')"
+                            style="--gradient-from: #3b82f6; --gradient-to: #06b6d4;"
+                            class="gradient-menu-btn nav-item-modern group"
+                            title="Kho Đề — Thư Mục Đề Thi & Môn Học">
+                        <span class="gradient-menu-bg"></span>
+                        <span class="gradient-menu-glow"></span>
+                        <span class="gradient-menu-icon"><span class="text-xl">📚</span></span>
+                        <span class="gradient-menu-title">Kho Đề</span>
+                        <span class="gradient-active-dot"></span>
+                        <span class="mobile-drawer-label hidden gap-2">
+                            <span class="flex flex-col min-w-0 text-left">
+                                <span class="font-bold text-sm text-slate-800 dark:text-slate-100 leading-tight truncate">Kho Đề</span>
+                                <span class="text-[10px] text-slate-400 truncate">Đề thi & môn học 3D</span>
+                            </span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 font-bold shrink-0">Đề thi</span>
                         </span>
                     </button>
 
@@ -625,13 +608,13 @@
                     <div class="flex items-center gap-2 min-w-0">
                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
                         <h1 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight truncate" id="appNavbarTitle">
-                            Kho Đề & Môn Học
+                            Dashboard — Tổng Quan & BXH
                         </h1>
                         <span class="hidden sm:inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shrink-0" id="appNavbarBadge">
                             v2.5 Pro
                         </span>
                         <!-- Hidden elements for JS compatibility -->
-                        <span id="osActiveAppName" class="hidden">Kho Đề & Môn Học</span>
+                        <span id="osActiveAppName" class="hidden">Dashboard — Tổng Quan & BXH</span>
                         <span id="osWindowTitle" class="hidden">Aseta</span>
                         <div id="explorerAddressBar" class="hidden">
                             <span id="explorerCurrentCrumb">Thư Mục Môn Học</span>
@@ -748,9 +731,9 @@
                 </div>
 
                 <!-- ======================================================== -->
-                <!-- TRANG CHỦ DUY NHẤT: KHẢO THÍ & THƯ MỤC MÔN HỌC 3D       -->
+                <!-- KHO ĐỀ: KHẢO THÍ & THƯ MỤC MÔN HỌC 3D                   -->
                 <!-- ======================================================== -->
-                <section id="explorerView" class="space-y-6">
+                <section id="explorerView" class="hidden space-y-6">
 
                     <!-- QUICK STATS STRIP (TẠM ẨN THEO YÊU CẦU ĐỂ TỐI ƯU KHÔNG GIAN) -->
                     <div id="explorerStatsStrip" class="hidden" style="display: none !important;" aria-hidden="true">
@@ -1452,7 +1435,7 @@
                 </section>
 
                 <!-- VIEW 10: PERSONAL DASHBOARD (TÊN TÀI KHOẢN + EXP HỌC + BẢNG XẾP HẠNG) -->
-                <section id="dashboardView" class="hidden space-y-6">
+                <section id="dashboardView" class="space-y-6">
                     <div id="dashboardHubContainer" class="w-full">
                         <!-- Populated dynamically by DashboardHubEngine.renderDashboard() -->
                     </div>
@@ -1695,30 +1678,30 @@
         </div>
     </div>
 
-    <!-- FLOATING MOBILE BOTTOM DOCK (COMPACT 4-ITEM HUB) -->
+    <!-- FLOATING MOBILE BOTTOM DOCK (COMPACT 4-ITEM HUB — DASHBOARD FIRST) -->
     <nav id="mobileBottomDock" class="lg:hidden fixed bottom-3 inset-x-3 sm:inset-x-8 z-40 h-16 rounded-2xl bg-slate-900/90 dark:bg-slate-950/90 backdrop-blur-2xl border border-white/10 shadow-2xl flex items-center justify-around px-2 select-none">
-        <!-- Item 1: Home -->
-        <button type="button"
-                onclick="AzotaApp.openFileExplorer('root')"
-                id="mobile-dock-root"
-                style="--gradient-from: #3b82f6; --gradient-to: #06b6d4;"
-                class="mobile-dock-btn active group">
-            <span class="mobile-dock-bg"></span>
-            <span class="mobile-dock-glow"></span>
-            <span class="mobile-dock-icon">🏠</span>
-            <span class="mobile-dock-text">Home</span>
-        </button>
-
-        <!-- Item 2: Dashboard (EXP & BXH) -->
+        <!-- Item 1: Dashboard (Đưa lên đầu) -->
         <button type="button"
                 onclick="AzotaApp.showView('dashboard')"
                 id="mobile-dock-dashboard"
                 style="--gradient-from: #f59e0b; --gradient-to: #ef4444;"
-                class="mobile-dock-btn group">
+                class="mobile-dock-btn active group">
             <span class="mobile-dock-bg"></span>
             <span class="mobile-dock-glow"></span>
             <span class="mobile-dock-icon">📊</span>
             <span class="mobile-dock-text">Dashboard</span>
+        </button>
+
+        <!-- Item 2: Kho Đề -->
+        <button type="button"
+                onclick="AzotaApp.openFileExplorer('root')"
+                id="mobile-dock-root"
+                style="--gradient-from: #3b82f6; --gradient-to: #06b6d4;"
+                class="mobile-dock-btn group">
+            <span class="mobile-dock-bg"></span>
+            <span class="mobile-dock-glow"></span>
+            <span class="mobile-dock-icon">📚</span>
+            <span class="mobile-dock-text">Kho Đề</span>
         </button>
 
         <!-- Item 3: Chức Năng / Tiện Ích -->
@@ -2111,7 +2094,7 @@
     <script src="data/exam_database.js?v=20261115_clean"></script>
     <script src="js/audio_helper.js"></script>
     <script src="js/smart_parser.js"></script>
-    <script src="js/exam_engine.js"></script>
+    <script src="js/exam_engine.js?v=20261125_3"></script>
     <script src="js/essay_engine.js"></script>
     <script src="js/dock.js"></script>
     <script src="js/solution_engine.js"></script>
@@ -2120,9 +2103,9 @@
     <script src="js/grade_calc_engine.js?v=2"></script>
     <script src="js/school_news_engine.js?v=11"></script>
     <script src="js/exam_schedule_engine.js?v=2"></script>
-    <script src="js/dashboard_hub_engine.js?v=4"></script>
+    <script src="js/dashboard_hub_engine.js?v=5"></script>
     <script src="js/class11a7_journal_engine.js?v=10"></script>
-    <script src="js/app-v4.js?v=20261125_2"></script>
+    <script src="js/app-v4.js?v=20261125_3"></script>
 
     <!-- DIRECT INLINE RUNTIME FAIL-SAFE FOR file:/// BROWSER CACHE & 3D TILT EFFECT -->
     <script>

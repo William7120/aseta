@@ -11,13 +11,22 @@
 (function(window) {
     'use strict';
 
-    const STREAK_KEY = 'aseta_daily_streak_v1';
+    const STREAK_KEY_PREFIX = 'aseta_daily_streak_v2_';
 
     const DashboardHubEngine = {
         lbSearch: '',
-        lbFilter: 'all', // 'all' | 'top5' | 'aroundMe'
+        lbFilter: 'all', // 'all' | 'active' | 'aroundMe'
         cachedNotices: null,
         _hk1TickTimer: null,
+
+        getCurrentAccountIdSafe: function() {
+            try {
+                if (window.AccountManager && typeof window.AccountManager.getCurrentAccountId === 'function') {
+                    return window.AccountManager.getCurrentAccountId();
+                }
+            } catch (_) {}
+            return 'acc_ngocbinh';
+        },
 
         getTodayKey: function() {
             const d = new Date();
@@ -28,10 +37,12 @@
         },
 
         getAndUpdateStreak: function() {
+            const accId = this.getCurrentAccountIdSafe();
+            const storageKey = STREAK_KEY_PREFIX + accId;
             const today = this.getTodayKey();
             let state = { count: 1, best: 1, lastDate: today, history: [today] };
             try {
-                const raw = localStorage.getItem(STREAK_KEY);
+                const raw = localStorage.getItem(storageKey);
                 if (raw) {
                     const parsed = JSON.parse(raw);
                     if (parsed && parsed.lastDate) {
@@ -53,7 +64,7 @@
                         }
                     }
                 }
-                localStorage.setItem(STREAK_KEY, JSON.stringify(state));
+                localStorage.setItem(storageKey, JSON.stringify(state));
             } catch (_) {}
             return state;
         },
@@ -84,24 +95,39 @@
             let examHistory = [];
             try {
                 examHistory = JSON.parse(localStorage.getItem('azota_exam_history') || '[]');
+                if (!Array.isArray(examHistory)) examHistory = [];
             } catch (_) {
                 examHistory = [];
             }
 
-            if (examHistory.length >= 3) {
-                const recent = examHistory.slice(-11);
-                const bars = recent.map(h => {
-                    const s = Number(h.score);
-                    const pct = isNaN(s) ? 65 : Math.max(18, Math.min(100, Math.round(s * 10)));
-                    return { h: pct, label: `${(h.examTitle || 'Đề thi').slice(0, 22)}: ${s || 0}đ` };
-                });
-                while (bars.length < 11) {
-                    bars.unshift({ h: 20 + (bars.length * 4), label: 'Phiên ôn trước đó' });
-                }
-                return bars;
+            const currAccId = this.getCurrentAccountIdSafe();
+            let currNick = '';
+            try {
+                const currAcc = window.AccountManager && window.AccountManager.getCurrentAccount ? window.AccountManager.getCurrentAccount() : null;
+                currNick = currAcc && currAcc.nickname ? currAcc.nickname.toLowerCase() : '';
+            } catch (_) {}
+
+            // Strictly analyze ONLY real exam attempts belonging to this account (no mock/synthetic data)
+            const myExams = examHistory.filter(h => {
+                if (!h) return false;
+                if (h.accountId) return h.accountId === currAccId;
+                if (h.nickname && currNick) return h.nickname.toLowerCase() === currNick;
+                return true; // legacy untagged local attempt
+            });
+
+            if (myExams.length === 0) {
+                return [];
             }
-            const baseline = [24, 38, 52, 42, 64, 56, 78, 70, 88, 94, 100];
-            return baseline.map((h, i) => ({ h, label: `Phiên #${i + 1} • ${h}% chính xác` }));
+
+            // Oldest -> newest for left-to-right chart progression (up to 11 recent real attempts)
+            const recent = myExams.slice(0, 11).reverse();
+            return recent.map((h, i) => {
+                const s = Number(h.score);
+                const safeScore = isNaN(s) ? 0 : s;
+                const pct = Math.max(14, Math.min(100, Math.round(safeScore * 10)));
+                const title = (h.examTitle || `Đề #${i + 1}`).slice(0, 22);
+                return { h: pct, score: safeScore, label: `${title}: ${safeScore}đ` };
+            });
         },
 
         getLevelInfo: function(exp) {
@@ -199,11 +225,11 @@
                 return window.AzotaApp.getDashboardData();
             }
             return {
-                user: { name: 'Học Sinh Aseta', nickname: 'hocsinh11', avatar: '👦', grade: 'Lớp 11', role: '🎓 Học Sinh' },
-                exp: 2240,
+                user: { id: 'acc_ngocbinh', name: 'Ngọc Bình', nickname: 'NgocBinh', avatar: '🌟', grade: 'Lớp 11', role: '🎓 Học Sinh' },
+                exp: 0,
                 doneCount: 0,
-                gpa: 9.35,
-                accuracy: 92,
+                gpa: 0,
+                accuracy: 0,
                 rank: 1,
                 leaderboard: []
             };
@@ -267,8 +293,8 @@
                 (s.grade || '').toLowerCase().includes(q)
             );
 
-            if (!q && this.lbFilter === 'top5') {
-                rows = rows.slice(0, 5);
+            if (!q && this.lbFilter === 'active') {
+                rows = rows.filter(s => (s.doneCount || 0) > 0 || (s.points || 0) > 0);
             } else if (!q && this.lbFilter === 'aroundMe') {
                 const myIdx = rows.findIndex(s => s.isCurrentUser);
                 if (myIdx !== -1) {
@@ -277,14 +303,19 @@
             }
 
             if (rows.length === 0) {
-                listEl.innerHTML = `<div class="py-8 text-center text-slate-400 text-xs">Không tìm thấy "${this.lbSearch}" trên bảng xếp hạng.</div>`;
+                const emptyMsg = this.lbFilter === 'active'
+                    ? 'Chưa có tài khoản nào hoàn thành đề thi. Vào Kho Đề để ghi điểm đầu tiên!'
+                    : `Không tìm thấy "${this.lbSearch}" trên bảng xếp hạng.`;
+                listEl.innerHTML = `<div class="py-8 text-center text-slate-400 text-xs">${emptyMsg}</div>`;
                 return;
             }
 
             listEl.innerHTML = rows.map((st, idx) => {
                 const rank = st.rank || (idx + 1);
                 const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
-                const relPct = Math.max(12, Math.min(100, Math.round(((st.points || 0) / maxExp) * 100)));
+                const relPct = (st.points || 0) > 0
+                    ? Math.max(10, Math.min(100, Math.round(((st.points || 0) / maxExp) * 100)))
+                    : 0;
                 const rowCls = st.isCurrentUser
                     ? 'bg-slate-950 text-white dark:bg-white dark:text-slate-950 border-transparent shadow-lg'
                     : 'bg-white/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.07] border-slate-200/80 dark:border-white/5 text-slate-900 dark:text-white';
@@ -297,6 +328,12 @@
                 const barFillCls = st.isCurrentUser
                     ? 'bg-white/10 dark:bg-slate-950/10'
                     : 'bg-sky-500/[0.06] dark:bg-white/[0.03]';
+                const adminPill = st.isAdmin
+                    ? '<span class="px-1.5 py-0.2 rounded-full text-[9px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-400/30">Admin</span>'
+                    : '';
+                const statSummary = (st.doneCount || 0) > 0
+                    ? `TB ${st.gpa}đ • ${st.accuracy}%`
+                    : 'Chưa làm đề';
 
                 return `
                     <div style="animation-delay: ${Math.min(idx * 22, 180)}ms"
@@ -310,8 +347,9 @@
                                 ${st.avatar || '🎓'}
                             </div>
                             <div class="min-w-0">
-                                <div class="flex items-center gap-1.5">
+                                <div class="flex items-center gap-1.5 flex-wrap">
                                     <span class="text-xs sm:text-sm font-black truncate">${st.name}</span>
+                                    ${adminPill}
                                     ${st.isCurrentUser ? '<span class="px-1.5 py-0.2 rounded-full text-[9px] font-black uppercase tracking-wider bg-sky-500 text-white">Bạn</span>' : ''}
                                 </div>
                                 <div class="text-[11px] truncate ${subTextCls}">
@@ -324,7 +362,7 @@
                                 ${(st.points || 0).toLocaleString('vi-VN')} EXP
                             </div>
                             <div class="text-[10px] font-semibold ${subTextCls}">
-                                TB ${st.gpa ?? '—'} • ${st.accuracy ?? 0}%
+                                ${statSummary}
                             </div>
                         </div>
                     </div>
@@ -345,7 +383,29 @@
             const streak = this.getAndUpdateStreak();
             const weekDays = this.getWeekDaysStrip(streak);
             const bars = this.getAnalyticsBars();
-            const defaultSparkText = `Phong độ 11 phiên gần nhất • ${payload.doneCount} đề`;
+            const hasRealExams = bars.length > 0;
+            const defaultSparkText = hasRealExams
+                ? `Dữ liệu thật từ ${bars.length} bài thi gần nhất`
+                : 'Chưa có bài làm • Vào Kho Đề để bắt đầu';
+            const primaryDescHtml = (payload.doneCount || 0) > 0
+                ? `Tài khoản <strong class="opacity-100">@${u.nickname || 'NgocBinh'}</strong> (${u.grade || 'Lớp 11'}) đang đứng <strong>Hạng #${payload.rank}</strong> với <strong>${payload.doneCount} đề</strong> đã làm và điểm TB <strong>${payload.gpa}đ</strong>.`
+                : `Tài khoản <strong class="opacity-100">@${u.nickname || 'NgocBinh'}</strong> (${u.grade || 'Lớp 11'}) đang ở <strong>Hạng #${payload.rank}</strong>. Hoàn thành bài tập trong <strong>Kho Đề</strong> để tích lũy EXP thật!`;
+            const analyticsBarsHtml = hasRealExams
+                ? bars.map((b, i) => `
+                    <div class="bento-spark-bar flex-1 max-w-[26px] rounded-full cursor-pointer ${i === bars.length - 1 ? 'bg-sky-500 dark:bg-sky-400' : 'bg-slate-800/75 dark:bg-white/75 hover:bg-sky-400'}"
+                         style="height: ${b.h}%; animation-delay: ${180 + i * 42}ms"
+                         onmouseenter="DashboardHubEngine.hoverSparkBar('${b.label.replace(/'/g, '')}')"
+                         title="${b.label}"></div>
+                  `).join('')
+                : `
+                    <div class="w-full h-full rounded-2xl border border-dashed border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-white/[0.02] flex items-center justify-between px-3 gap-2">
+                        <span class="text-[11px] font-semibold text-slate-400 truncate">Chưa có dữ liệu điểm</span>
+                        <button type="button" onclick="AzotaApp.openFileExplorer('root')"
+                                class="px-2.5 py-1 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 text-sky-500 dark:text-sky-300 text-[10px] font-black transition-colors cursor-pointer shrink-0">
+                            Kho Đề ➔
+                        </button>
+                    </div>
+                  `;
 
             const weekStripHtml = weekDays.map(d => {
                 const pillCls = d.isToday
@@ -405,7 +465,7 @@
                             </div>
 
                             <p class="relative z-10 text-xs sm:text-sm opacity-65 max-w-md leading-relaxed">
-                                Tài khoản <strong class="opacity-100">@${u.nickname || 'hocsinh11'}</strong> (${u.grade || 'Lớp 11'}) đang đứng <strong>Hạng #${payload.rank}</strong> toàn lớp với điểm trung bình <strong>${payload.gpa}đ</strong>.
+                                ${primaryDescHtml}
                             </p>
                         </div>
 
@@ -458,23 +518,20 @@
                                     </p>
                                     <div class="flex items-baseline gap-1.5 mt-0.5">
                                         <p id="dashAnimatedAcc" class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white font-mono">
-                                            ${payload.accuracy}%
+                                            ${hasRealExams ? `${payload.accuracy}%` : '—'}
                                         </p>
-                                        <span class="text-[11px] font-extrabold text-emerald-500">+${payload.gpa}đ</span>
+                                        <span class="text-[11px] font-extrabold ${hasRealExams ? 'text-emerald-500' : 'text-slate-400'}">
+                                            ${hasRealExams ? `TB ${payload.gpa}đ` : '0 đề'}
+                                        </span>
                                     </div>
                                 </div>
-                                <span class="px-2 py-0.5 rounded-lg bg-sky-500/15 text-sky-500 dark:text-sky-300 text-[9px] font-black uppercase">
-                                    Live
+                                <span class="px-2 py-0.5 rounded-lg ${hasRealExams ? 'bg-sky-500/15 text-sky-500 dark:text-sky-300' : 'bg-slate-200/80 dark:bg-white/10 text-slate-500 dark:text-slate-400'} text-[9px] font-black uppercase">
+                                    ${hasRealExams ? `${bars.length} bài` : 'Thực tế'}
                                 </span>
                             </div>
 
-                            <div class="flex gap-1 items-end h-9 w-full" onmouseleave="DashboardHubEngine.resetSparkBar('${defaultSparkText}')">
-                                ${bars.map((b, i) => `
-                                    <div class="bento-spark-bar flex-1 rounded-full cursor-pointer ${i >= bars.length - 2 ? 'bg-sky-500 dark:bg-sky-400' : 'bg-slate-800/75 dark:bg-white/75 hover:bg-sky-400'}"
-                                         style="height: ${b.h}%; animation-delay: ${180 + i * 42}ms"
-                                         onmouseenter="DashboardHubEngine.hoverSparkBar('${b.label.replace(/'/g, '')}')"
-                                         title="${b.label}"></div>
-                                `).join('')}
+                            <div class="flex gap-1.5 items-end h-9 w-full" onmouseleave="DashboardHubEngine.resetSparkBar('${defaultSparkText}')">
+                                ${analyticsBarsHtml}
                             </div>
 
                             <p id="dashSparkReadout" class="text-[10px] font-semibold text-slate-500 dark:text-slate-400 truncate">
@@ -514,8 +571,8 @@
                                 </div>
                                 <div class="flex items-center gap-2 flex-wrap">
                                     <div class="inline-flex p-0.5 rounded-xl bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10">
-                                        <button type="button" data-mode="all" onclick="DashboardHubEngine.setLeaderboardFilter('all')" class="dash-lb-filter-btn px-2.5 py-1 rounded-lg text-[10px] font-black transition-all cursor-pointer bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-xs">Tất cả</button>
-                                        <button type="button" data-mode="top5" onclick="DashboardHubEngine.setLeaderboardFilter('top5')" class="dash-lb-filter-btn px-2.5 py-1 rounded-lg text-[10px] font-black transition-all cursor-pointer text-slate-500 dark:text-slate-400">Top 5</button>
+                                        <button type="button" data-mode="all" onclick="DashboardHubEngine.setLeaderboardFilter('all')" class="dash-lb-filter-btn px-2.5 py-1 rounded-lg text-[10px] font-black transition-all cursor-pointer bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-xs">Tất cả (${(payload.leaderboard || []).length})</button>
+                                        <button type="button" data-mode="active" onclick="DashboardHubEngine.setLeaderboardFilter('active')" class="dash-lb-filter-btn px-2.5 py-1 rounded-lg text-[10px] font-black transition-all cursor-pointer text-slate-500 dark:text-slate-400">Đã làm đề</button>
                                         <button type="button" data-mode="aroundMe" onclick="DashboardHubEngine.setLeaderboardFilter('aroundMe')" class="dash-lb-filter-btn px-2.5 py-1 rounded-lg text-[10px] font-black transition-all cursor-pointer text-slate-500 dark:text-slate-400">Gần tôi</button>
                                     </div>
                                     <div class="relative w-full sm:w-44">
@@ -594,7 +651,9 @@
             // Trigger smooth live animations after paint
             requestAnimationFrame(() => {
                 this.animateCountUp(document.getElementById('dashAnimatedExp'), payload.exp || 0, 900);
-                this.animateCountUp(document.getElementById('dashAnimatedAcc'), payload.accuracy || 0, 800, (v) => `${v}%`);
+                if (hasRealExams) {
+                    this.animateCountUp(document.getElementById('dashAnimatedAcc'), payload.accuracy || 0, 800, (v) => `${v}%`);
+                }
                 this.animateCountUp(document.getElementById('dashAnimatedStreak'), streak.count || 1, 650, (v) => String(v));
                 const barFill = document.getElementById('dashExpBarFill');
                 if (barFill) {

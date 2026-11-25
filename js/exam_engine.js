@@ -537,7 +537,24 @@ window.ExamEngine = (function() {
         } catch (e) {
             history = [];
         }
-        history.unshift(result);
+        let accountId = null;
+        let nickname = null;
+        try {
+            if (window.AccountManager && typeof window.AccountManager.getCurrentAccountId === "function") {
+                accountId = window.AccountManager.getCurrentAccountId();
+                const currAcc = window.AccountManager.getCurrentAccount ? window.AccountManager.getCurrentAccount() : null;
+                nickname = currAcc ? currAcc.nickname : null;
+            }
+            if (!nickname) {
+                const prof = JSON.parse(localStorage.getItem("azota_user_profile") || "null");
+                if (prof && prof.nickname) nickname = prof.nickname;
+            }
+        } catch (_) {}
+        history.unshift({
+            ...result,
+            accountId: accountId || result.accountId || null,
+            nickname: nickname || result.nickname || null
+        });
         localStorage.setItem("azota_exam_history", JSON.stringify(history));
     }
 

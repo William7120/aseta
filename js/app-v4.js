@@ -256,11 +256,13 @@ window.AzotaApp = (function() {
     window.AzotaModal = AzotaModal;
 
     // ========================================================
-    // ACCOUNT MANAGER & MULTI-USER SYSTEM FOR FRIENDS
+    // ACCOUNT MANAGER & MULTI-USER SYSTEM (STRICT 4 ACCOUNTS)
     // ========================================================
     const AccountManager = {
         STORAGE_KEY: "azota_user_accounts",
         CURRENT_KEY: "azota_current_account_id",
+        SCHEMA_KEY: "azota_accounts_schema_v",
+        SCHEMA_VERSION: "v3_strict_4_accounts",
 
         getDefaultAccounts: function() {
             return [
@@ -270,7 +272,7 @@ window.AzotaApp = (function() {
                     nickname: "VanThua",
                     grade: "Quản Trị Hệ Thống",
                     role: "👑 Quản Trị Viên (Admin)",
-                    pin: "712010",
+                    pin: "VT712010",
                     avatar: "👑",
                     goal: "Toàn quyền quản trị hệ thống Aseta",
                     isAdmin: true,
@@ -278,49 +280,17 @@ window.AzotaApp = (function() {
                     createdAt: "2026-01-01T00:00:00.000Z"
                 },
                 {
-                    id: "acc_admin",
-                    name: "Học Sinh Aseta (VIP)",
-                    nickname: "hocsinh11",
+                    id: "acc_ngocbinh",
+                    name: "Ngọc Bình",
+                    nickname: "NgocBinh",
                     grade: "Lớp 11",
-                    role: "👑 Quản Trị Viên",
-                    pin: "1111",
-                    avatar: "👑",
-                    goal: "9.0+ Học Kỳ 1",
-                    createdAt: new Date().toISOString()
-                },
-                {
-                    id: "acc_ban_a",
-                    name: "Bạn Học Hoàng",
-                    nickname: "hoang11a",
-                    grade: "Lớp 11A",
-                    role: "🚀 Bạn Thân",
-                    pin: "1234",
-                    avatar: "🧑‍💻",
-                    goal: "Ôn thi Địa Lý & Tin Học",
-                    createdAt: new Date().toISOString()
-                },
-                {
-                    id: "acc_ban_b",
-                    name: "Bạn Học Lan",
-                    nickname: "lan11b",
-                    grade: "Lớp 11B",
                     role: "🎓 Học Sinh",
-                    pin: "5678",
-                    avatar: "👧",
-                    goal: "Thủ khoa khối D",
-                    createdAt: new Date().toISOString()
-                },
-                {
-                    id: "acc_guest",
-                    name: "Khách Ôn Tập",
-                    nickname: "guest",
-                    grade: "Lớp 11",
-                    role: "🌟 Khách Tự Do",
-                    pin: "0000",
-                    avatar: "🦊",
+                    pin: "NB8429",
+                    avatar: "🌟",
+                    goal: "Chinh phục điểm cao Học Kỳ 1",
                     isAdmin: false,
-                    goal: "Trải nghiệm Aseta",
-                    createdAt: new Date().toISOString()
+                    isDefault: true,
+                    createdAt: "2026-01-01T00:00:00.000Z"
                 },
                 {
                     id: "acc_minhtri",
@@ -328,9 +298,10 @@ window.AzotaApp = (function() {
                     nickname: "MinhTri",
                     grade: "Lớp 11",
                     role: "🎓 Học Sinh",
-                    pin: "123",
+                    pin: "MT5173",
                     avatar: "👦",
                     goal: "9.0+ Học Kỳ 1",
+                    isAdmin: false,
                     isDefault: true,
                     createdAt: "2026-01-01T00:00:00.000Z"
                 },
@@ -340,9 +311,10 @@ window.AzotaApp = (function() {
                     nickname: "TuanMinh",
                     grade: "Lớp 11",
                     role: "🎓 Học Sinh",
-                    pin: "321",
+                    pin: "TM6948",
                     avatar: "🧑‍🎓",
                     goal: "Thủ khoa khối A / D",
+                    isAdmin: false,
                     isDefault: true,
                     createdAt: "2026-01-01T00:00:00.000Z"
                 }
@@ -350,95 +322,79 @@ window.AzotaApp = (function() {
         },
 
         getAllAccounts: function() {
+            const coreAccounts = this.getDefaultAccounts();
+            const legacyIds = new Set(["acc_admin", "acc_ban_a", "acc_ban_b", "acc_guest"]);
+            const legacyNicks = new Set(["hocsinh11", "hoang11a", "lan11b", "guest"]);
             let list = null;
+            let schemaMatch = false;
+
             try {
-                const raw = localStorage.getItem(this.STORAGE_KEY);
-                if (raw) {
-                    list = JSON.parse(raw);
+                schemaMatch = localStorage.getItem(this.SCHEMA_KEY) === this.SCHEMA_VERSION;
+                if (schemaMatch) {
+                    const raw = localStorage.getItem(this.STORAGE_KEY);
+                    if (raw) list = JSON.parse(raw);
                 }
             } catch (e) {}
 
-            if (!Array.isArray(list) || list.length === 0) {
-                list = this.getDefaultAccounts();
+            // One-time clean wipe of all old accounts when migrating to v3_strict_4_accounts
+            if (!schemaMatch || !Array.isArray(list) || list.length === 0) {
+                list = coreAccounts.map(a => ({ ...a }));
+                this.saveAccounts(list);
+                try {
+                    localStorage.setItem(this.SCHEMA_KEY, this.SCHEMA_VERSION);
+                    const prevCurr = localStorage.getItem(this.CURRENT_KEY);
+                    if (!list.some(a => a.id === prevCurr)) {
+                        localStorage.setItem(this.CURRENT_KEY, "acc_ngocbinh");
+                        localStorage.removeItem("azota_session_active_3d");
+                        localStorage.removeItem("azota_auth_logged_in");
+                        localStorage.removeItem("azota_user_profile");
+                    }
+                } catch (e) {}
+                return list;
             }
 
-            // Always guarantee VanThua Admin Account is present and has PIN 712010
-            const vanThuaAcc = {
-                id: "acc_vanthua",
-                name: "Văn Thừa (Admin)",
-                nickname: "VanThua",
-                grade: "Quản Trị Hệ Thống",
-                role: "👑 Quản Trị Viên (Admin)",
-                pin: "712010",
-                avatar: "👑",
-                goal: "Toàn quyền quản trị hệ thống Aseta",
-                isAdmin: true,
-                isDefault: true,
-                createdAt: "2026-01-01T00:00:00.000Z"
-            };
+            // Always prune any legacy accounts and enforce exact PIN/roles for the 4 core accounts
+            let changed = false;
+            const cleaned = list.filter(a => {
+                if (!a || !a.id) { changed = true; return false; }
+                const nickLow = (a.nickname || "").toLowerCase();
+                if (legacyIds.has(a.id) || legacyNicks.has(nickLow)) {
+                    changed = true;
+                    return false;
+                }
+                return true;
+            });
 
-            const idx = list.findIndex(a => a.nickname && a.nickname.toLowerCase() === "vanthua");
-            if (idx === -1) {
-                list.unshift(vanThuaAcc);
-                this.saveAccounts(list);
-            } else {
-                list[idx].pin = "712010";
-                list[idx].role = "👑 Quản Trị Viên (Admin)";
-                list[idx].avatar = "👑";
-                list[idx].isAdmin = true;
-                list[idx].name = "Văn Thừa (Admin)";
-                this.saveAccounts(list);
+            coreAccounts.forEach(core => {
+                const idx = cleaned.findIndex(a => a.id === core.id || (a.nickname && a.nickname.toLowerCase() === core.nickname.toLowerCase()));
+                if (idx === -1) {
+                    cleaned.push({ ...core });
+                    changed = true;
+                } else {
+                    const cur = cleaned[idx];
+                    if (cur.pin !== core.pin || cur.nickname !== core.nickname || cur.isAdmin !== core.isAdmin || cur.id !== core.id) {
+                        cleaned[idx] = {
+                            ...cur,
+                            id: core.id,
+                            nickname: core.nickname,
+                            pin: core.pin,
+                            role: core.role,
+                            isAdmin: core.isAdmin,
+                            isDefault: true
+                        };
+                        if (core.isAdmin) {
+                            cleaned[idx].name = core.name;
+                            cleaned[idx].avatar = core.avatar;
+                        }
+                        changed = true;
+                    }
+                }
+            });
+
+            if (changed) {
+                this.saveAccounts(cleaned);
             }
-
-            // Always guarantee MinhTri student account is present with PIN 123
-            const mtIdx = list.findIndex(a => a.nickname && a.nickname.toLowerCase() === "minhtri");
-            const minhtriAcc = {
-                id: "acc_minhtri",
-                name: "Minh Trí",
-                nickname: "MinhTri",
-                grade: "Lớp 11",
-                role: "🎓 Học Sinh",
-                pin: "123",
-                avatar: "👦",
-                goal: "9.0+ Học Kỳ 1",
-                isDefault: true,
-                createdAt: "2026-01-01T00:00:00.000Z"
-            };
-            if (mtIdx === -1) {
-                list.push(minhtriAcc);
-                this.saveAccounts(list);
-            } else {
-                list[mtIdx].pin = "123";
-                list[mtIdx].nickname = "MinhTri";
-                list[mtIdx].role = "🎓 Học Sinh";
-                this.saveAccounts(list);
-            }
-
-            // Always guarantee TuanMinh student account is present with PIN 321
-            const tmIdx = list.findIndex(a => a.nickname && a.nickname.toLowerCase() === "tuanminh");
-            const tuanminhAcc = {
-                id: "acc_tuanminh",
-                name: "Tuấn Minh",
-                nickname: "TuanMinh",
-                grade: "Lớp 11",
-                role: "🎓 Học Sinh",
-                pin: "321",
-                avatar: "🧑‍🎓",
-                goal: "Thủ khoa khối A / D",
-                isDefault: true,
-                createdAt: "2026-01-01T00:00:00.000Z"
-            };
-            if (tmIdx === -1) {
-                list.push(tuanminhAcc);
-                this.saveAccounts(list);
-            } else {
-                list[tmIdx].pin = "321";
-                list[tmIdx].nickname = "TuanMinh";
-                list[tmIdx].role = "🎓 Học Sinh";
-                this.saveAccounts(list);
-            }
-
-            return list;
+            return cleaned;
         },
 
         saveAccounts: function(list) {
@@ -449,15 +405,15 @@ window.AzotaApp = (function() {
 
         getCurrentAccountId: function() {
             try {
-                const id = localStorage.getItem(this.CURRENT_KEY) || "acc_minhtri";
-                // Extra protection: if id is admin but session is not valid in sessionStorage, force acc_minhtri
+                const id = localStorage.getItem(this.CURRENT_KEY) || "acc_ngocbinh";
+                // Extra protection: if id is admin but session is not valid in sessionStorage, force acc_ngocbinh
                 if (id === "acc_vanthua" || id === "acc_admin") {
                     const isSessionValid = typeof sessionStorage !== "undefined" && sessionStorage.getItem("azota_session_active_3d") === "true";
-                    if (!isSessionValid) return "acc_minhtri";
+                    if (!isSessionValid) return "acc_ngocbinh";
                 }
                 return id;
             } catch(e) {
-                return "acc_minhtri";
+                return "acc_ngocbinh";
             }
         },
 
@@ -472,42 +428,22 @@ window.AzotaApp = (function() {
                     acc = null;
                 }
             }
-            return acc || list.find(a => a.id === "acc_minhtri") || list.find(a => !a.isAdmin) || {
-                id: "acc_minhtri",
-                name: "Minh Trí",
-                nickname: "MinhTri",
-                grade: "Lớp 11",
-                role: "🎓 Học Sinh",
-                avatar: "👦",
-                isAdmin: false
-            };
+            return acc || list.find(a => a.id === "acc_ngocbinh") || list.find(a => !a.isAdmin) || list[0];
         },
 
         switchAccount: function(accountId) {
             if (!SecurityGuard.checkRateLimit("chuyển tài khoản")) return;
             const list = this.getAllAccounts();
-            let target = list.find(a => a.id === accountId);
-            if (!target && accountId === "acc_guest") {
-                target = {
-                    id: "acc_guest",
-                    name: "Khách Trải Nghiệm",
-                    nickname: "guest",
-                    grade: "Lớp 11",
-                    role: "🌟 Khách Tự Do",
-                    pin: "0000",
-                    avatar: "🦊",
-                    isAdmin: false
-                };
-            }
+            const target = list.find(a => a.id === accountId);
             if (!target) return;
 
             // Security gate: Switching to Admin REQUIRES PIN verification
             if (target.isAdmin === true || target.id === "acc_vanthua") {
                 const isSessionValid = typeof sessionStorage !== "undefined" && sessionStorage.getItem("azota_session_active_3d") === "true";
                 if (!isCurrentUserAdmin() && !isSessionValid) {
-                    const enteredPin = prompt("Vui lòng nhập Mã PIN Quản Trị Viên (Admin) để xác thực chuyển tài khoản:");
-                    if (!enteredPin || enteredPin.trim() !== (target.pin || "712010")) {
-                        SecurityGuard.showSecurityToast("❌ Mã PIN Admin không đúng! Quyền truy cập bị từ chối.");
+                    const enteredPin = prompt("Vui lòng nhập Mật khẩu Quản Trị Viên (Admin) để xác thực chuyển tài khoản:");
+                    if (!enteredPin || enteredPin.trim() !== (target.pin || "VT712010")) {
+                        SecurityGuard.showSecurityToast("❌ Mật khẩu Admin không đúng! Quyền truy cập bị từ chối.");
                         if (window.AudioHelper) window.AudioHelper.playIncorrect();
                         return;
                     }
@@ -520,17 +456,21 @@ window.AzotaApp = (function() {
             localStorage.setItem(this.CURRENT_KEY, target.id);
             // Sync with UserProfile
             UserProfile.save({
+                id: target.id,
                 name: target.name,
                 nickname: target.nickname,
                 grade: target.grade,
                 goal: target.goal || "9.0+ Học Kỳ 1",
-                avatar: target.avatar || "👦",
+                avatar: target.avatar || "🌟",
                 isAdmin: !!target.isAdmin,
                 role: target.role
             });
 
             this.renderAccountsList();
             UserProfile.updateUI();
+            if (currentActiveViewId === "dashboard" && window.DashboardHubEngine && typeof window.DashboardHubEngine.renderDashboard === "function") {
+                window.DashboardHubEngine.renderDashboard("dashboardHubContainer");
+            }
             SecurityGuard.showSecurityToast(`✅ Đã chuyển sang tài khoản: ${target.name} (@${target.nickname})`);
             if (window.AudioHelper) window.AudioHelper.playSuccess();
         },
@@ -747,7 +687,7 @@ window.AzotaApp = (function() {
                     if (loggedIn !== "true" && ls) {
                         ls.removeItem(this.SESSION_KEY);
                         ls.removeItem("azota_auth_logged_in");
-                        ls.setItem("azota_current_account_id", "acc_minhtri");
+                        ls.setItem("azota_current_account_id", "acc_ngocbinh");
                     }
                 } else {
                     loggedIn = (ls && ls.getItem(this.SESSION_KEY)) || (ss && ss.getItem(this.SESSION_KEY));
@@ -911,12 +851,12 @@ window.AzotaApp = (function() {
             );
 
             if (!matchedAcc) {
-                this.handleFailedAttempt(`Không tìm thấy tài khoản "@${username}". Vui lòng kiểm tra lại hoặc bấm chọn từ danh sách bên dưới!`);
+                this.handleFailedAttempt(`Không tìm thấy tài khoản "@${username}". Vui lòng kiểm tra lại tên đăng nhập!`);
                 return;
             }
 
             if (matchedAcc.pin && matchedAcc.pin !== pin) {
-                this.handleFailedAttempt(`Mã PIN không chính xác cho tài khoản @${matchedAcc.nickname}! Nhấp "Xem mã mẫu" hoặc chọn lại.`);
+                this.handleFailedAttempt(`Mật khẩu không chính xác cho tài khoản @${matchedAcc.nickname}!`);
                 return;
             }
 
@@ -995,6 +935,9 @@ window.AzotaApp = (function() {
                 this.hideAlert();
                 this.hideLoginGate();
 
+                // Always land on Dashboard first after login
+                showView("dashboard", true);
+
                 // Audio & confetti
                 if (window.AudioHelper) {
                     if (window.AudioHelper.playSuccess) window.AudioHelper.playSuccess();
@@ -1014,19 +957,7 @@ window.AzotaApp = (function() {
         },
 
         loginAsGuest: function() {
-            // Strictly isolated Guest Account (Zero admin access guaranteed, never fallback to accounts[0])
-            const guestAcc = {
-                id: "acc_guest",
-                name: "Khách Trải Nghiệm",
-                nickname: "guest",
-                grade: "Lớp 11",
-                role: "🎓 Khách Trải Nghiệm",
-                pin: "",
-                avatar: "🦊",
-                isAdmin: false,
-                isDefault: false
-            };
-            this.loginSuccess(guestAcc, false);
+            this.showAlert("Chế độ khách đã tắt. Vui lòng đăng nhập bằng tài khoản được cấp!", "warning");
         },
 
         logout: function() {
@@ -1078,18 +1009,8 @@ window.AzotaApp = (function() {
         renderQuickAccounts: function() {
             const container = document.getElementById("loginQuickAccountsList");
             if (!container) return;
-            // CRITICAL: NEVER display or suggest Admin account in quick fill list
-            const accounts = AccountManager.getAllAccounts().filter(a => !a.isAdmin && a.nickname.toLowerCase() !== "vanthua");
-
-            container.innerHTML = accounts.map(a => `
-                <button type="button" 
-                        onclick="AuthGate.fillAccount('${a.nickname}', '${a.pin || '1234'}')" 
-                        class="px-2.5 py-1.5 rounded-lg text-[11px] font-medium bg-white/5 hover:bg-white/10 text-white/80 hover:text-white border border-white/10 hover:border-white/20 transition-all cursor-pointer flex items-center gap-1.5 shrink-0 group">
-                    <span>${a.avatar || '👤'}</span>
-                    <span class="font-bold text-white">@${a.nickname}</span>
-                    <span class="text-[9.5px] text-white/40 font-mono">PIN: ${a.pin || '1234'}</span>
-                </button>
-            `).join('');
+            // Never leak PINs/passwords on the login card
+            container.innerHTML = "";
         },
 
         showAlert: function(msg, type = "error") {
@@ -1137,11 +1058,9 @@ window.AzotaApp = (function() {
         },
 
         showPinHelp: function() {
-            const accounts = AccountManager.getAllAccounts();
-            // CRITICAL SECURITY: Never leak Admin account (@VanThua) or Admin PIN in help modal!
-            const safeAccounts = accounts.filter(a => !a.isAdmin && a.nickname.toLowerCase() !== "vanthua");
-            const info = safeAccounts.map(a => `@${a.nickname} (PIN: ${a.pin || '123'}) - ${a.role || 'Học Sinh'}`).join('\n• ');
-            AzotaModal.alert(`Danh sách tài khoản học sinh trải nghiệm:\n• ${info}\n\nNhập Tên đăng nhập và Mã PIN ở trên để đăng nhập!`, "Tài Khoản Học Sinh", "🔑");
+            const accounts = AccountManager.getAllAccounts().filter(a => !a.isAdmin && a.nickname.toLowerCase() !== "vanthua");
+            const names = accounts.map(a => `@${a.nickname} (${a.name})`).join('\n• ');
+            AzotaModal.alert(`Danh sách tài khoản học sinh hợp lệ:\n• ${names}\n\nVui lòng nhập mật khẩu riêng đã được Admin (@VanThua) cấp!`, "Hướng Dẫn Đăng Nhập", "🔑");
         }
     };
 
@@ -1182,12 +1101,13 @@ window.AzotaApp = (function() {
                 if (raw) return JSON.parse(raw);
             } catch (e) {}
             return {
-                name: "Minh Trí",
-                nickname: "MinhTri",
+                id: "acc_ngocbinh",
+                name: "Ngọc Bình",
+                nickname: "NgocBinh",
                 grade: "Lớp 11",
                 role: "🎓 Học Sinh",
-                goal: "9.0+ Học Kỳ 1",
-                avatar: "👦",
+                goal: "Chinh phục điểm cao Học Kỳ 1",
+                avatar: "🌟",
                 isAdmin: false
             };
         },
@@ -1572,8 +1492,8 @@ window.AzotaApp = (function() {
             syncEl.textContent = `Đã đồng bộ lúc ${timeStr}`;
         }
         
-        // Start in File Explorer view by default
-        openFileExplorer('root');
+        // Start in Dashboard view by default (Dashboard is primary landing page)
+        showView('dashboard', true);
 
         // Restore saved sidebar mode if set to expanded
         try {
@@ -1591,7 +1511,7 @@ window.AzotaApp = (function() {
                 window.SolutionEngine.syncFromCloud(false);
             }
         } catch(e) {}
-            window.AzotaDock.setActiveApp("explorer");
+            window.AzotaDock.setActiveApp("dashboard");
         }
     }
 
@@ -1825,21 +1745,36 @@ window.AzotaApp = (function() {
                 return;
             }
         }
-        // Smart default: if inside a utility sub-view, return to Utilities hub; else Home
+        // Smart default: if inside a utility sub-view, return to Utilities hub; else Dashboard
         const utilitySubs = ["solutions", "gradeCalc", "history", "notebook", "bank", "creator", "essay", "examSchedule"];
         if (utilitySubs.includes(currentActiveViewId)) {
             showView("utilities", true);
         } else {
-            openFileExplorer("root");
+            showView("dashboard", true);
         }
     }
 
     function getDashboardData() {
-        const user = UserProfile.get();
+        const currAcc = AccountManager.getCurrentAccount();
+        const user = {
+            ...UserProfile.get(),
+            id: currAcc ? currAcc.id : "acc_ngocbinh",
+            name: (currAcc && currAcc.name) || UserProfile.get().name,
+            nickname: (currAcc && currAcc.nickname) || UserProfile.get().nickname,
+            grade: (currAcc && currAcc.grade) || UserProfile.get().grade,
+            avatar: (currAcc && currAcc.avatar) || UserProfile.get().avatar,
+            role: (currAcc && currAcc.role) || UserProfile.get().role,
+            isAdmin: !!(currAcc && currAcc.isAdmin)
+        };
         let leaderboard = [];
         try {
             const raw = getCompiledLeaderboardData();
-            leaderboard = [...raw].sort((a, b) => (b.points || 0) - (a.points || 0)).map((st, idx) => ({
+            leaderboard = [...raw].sort((a, b) => {
+                if ((b.points || 0) !== (a.points || 0)) return (b.points || 0) - (a.points || 0);
+                if ((b.gpa || 0) !== (a.gpa || 0)) return (b.gpa || 0) - (a.gpa || 0);
+                if ((b.doneCount || 0) !== (a.doneCount || 0)) return (b.doneCount || 0) - (a.doneCount || 0);
+                return (a.name || "").localeCompare(b.name || "", "vi");
+            }).map((st, idx) => ({
                 ...st,
                 rank: idx + 1
             }));
@@ -1847,15 +1782,15 @@ window.AzotaApp = (function() {
             leaderboard = [];
         }
         const me = leaderboard.find(s => s.isCurrentUser) || {
-            points: 2240,
+            points: 0,
             doneCount: 0,
-            gpa: 9.35,
-            accuracy: 92,
+            gpa: 0,
+            accuracy: 0,
             rank: 1
         };
         return {
             user: user,
-            exp: me.points || 2240,
+            exp: me.points || 0,
             doneCount: me.doneCount || 0,
             gpa: me.gpa || 0,
             accuracy: me.accuracy || 0,
@@ -1945,7 +1880,7 @@ window.AzotaApp = (function() {
             renderFileExplorer();
             checkInProgressExam();
         } else if (viewId === "dashboard") {
-            updateActiveAppName("Dashboard — Tài Khoản & EXP");
+            updateActiveAppName("Dashboard — Tổng Quan & BXH");
             updateSidebarActive("sidebar-nav-dashboard");
             if (window.DashboardHubEngine && typeof window.DashboardHubEngine.renderDashboard === "function") {
                 window.DashboardHubEngine.renderDashboard("dashboardHubContainer");
@@ -2724,293 +2659,104 @@ window.AzotaApp = (function() {
         { id: 'gd-11', name: '⚖️ GDKT & PL 11', shortName: 'GDKT&PL 11', icon: '⚖️', badge: 'bg-purple-500/20 text-purple-400 border border-purple-500/30' }
     ];
 
-    const CLASSMATE_LEADERBOARD_ROSTER = [
-        {
-            name: "Lê Minh Tuấn",
-            nickname: "tuanpro11",
-            avatar: "🧑‍💻",
-            grade: "11A2",
-            streak: 6,
-            scores: {
-                all: { gpa: 9.85, points: 2950, doneCount: 34, accuracy: 98, role: "Đại Kiện Tướng" },
-                "dia-11": { gpa: 9.75, points: 880, doneCount: 9, accuracy: 97, role: "Bản Đồ Học" },
-                "th-11": { gpa: 10.0, points: 600, doneCount: 6, accuracy: 100, role: "Hacker Mũ Trắng" },
-                "tu-luan": { gpa: 9.60, points: 480, doneCount: 5, accuracy: 95, role: "Ngòi Bút Vàng" },
-                "en-11": { gpa: 9.80, points: 490, doneCount: 5, accuracy: 98, role: "IELTS Master" },
-                "ls-11": { gpa: 9.70, points: 485, doneCount: 5, accuracy: 97, role: "Sử Gia Trẻ" },
-                "gd-11": { gpa: 9.80, points: 390, doneCount: 4, accuracy: 98, role: "Luật Sư 11A" }
-            }
-        },
-        {
-            name: "Trần Mai Anh",
-            nickname: "maianh_11",
-            avatar: "👧",
-            grade: "11A1",
-            streak: 5,
-            scores: {
-                all: { gpa: 9.72, points: 2780, doneCount: 31, accuracy: 96, role: "Chiến Thần Tốc Độ" },
-                "dia-11": { gpa: 9.60, points: 770, doneCount: 8, accuracy: 95, role: "Địa Lí Chuyên Sâu" },
-                "th-11": { gpa: 9.80, points: 590, doneCount: 6, accuracy: 98, role: "Coder Nữ Thần" },
-                "tu-luan": { gpa: 9.85, points: 595, doneCount: 6, accuracy: 99, role: "Văn Hay Chữ Tốt" },
-                "en-11": { gpa: 10.0, points: 600, doneCount: 6, accuracy: 100, role: "Thủ Khoa Ngoại Ngữ" },
-                "ls-11": { gpa: 9.50, points: 475, doneCount: 5, accuracy: 94, role: "Yêu Lịch Sử" },
-                "gd-11": { gpa: 9.60, points: 380, doneCount: 4, accuracy: 96, role: "Pháp Luật Học" }
-            }
-        },
-        {
-            name: "Hoàng Kim Long",
-            nickname: "long_geo11",
-            avatar: "🦁",
-            grade: "11A4",
-            streak: 4,
-            scores: {
-                all: { gpa: 9.58, points: 2520, doneCount: 28, accuracy: 94, role: "Bậc Thầy Địa Lí" },
-                "dia-11": { gpa: 9.95, points: 895, doneCount: 9, accuracy: 99, role: "Khai Thác Atlat" },
-                "th-11": { gpa: 9.20, points: 460, doneCount: 5, accuracy: 92, role: "Thực Hành Máy Tính" },
-                "tu-luan": { gpa: 9.40, points: 470, doneCount: 5, accuracy: 93, role: "Lập Luận Sắc Bén" },
-                "en-11": { gpa: 9.30, points: 465, doneCount: 5, accuracy: 91, role: "Tiếng Anh Giao Tiếp" },
-                "ls-11": { gpa: 9.80, points: 490, doneCount: 5, accuracy: 98, role: "Chiến Hào Lịch Sử" },
-                "gd-11": { gpa: 9.50, points: 375, doneCount: 4, accuracy: 95, role: "Công Dân Gương Mẫu" }
-            }
-        },
-        {
-            name: "Phạm Bảo Châu",
-            nickname: "chau_chau11",
-            avatar: "🦊",
-            grade: "11A3",
-            streak: 3,
-            scores: {
-                all: { gpa: 9.45, points: 2120, doneCount: 23, accuracy: 91, role: "Ong Vàng Chăm Chỉ" },
-                "dia-11": { gpa: 9.40, points: 660, doneCount: 7, accuracy: 93, role: "Khám Phá Địa Cầu" },
-                "th-11": { gpa: 9.50, points: 475, doneCount: 5, accuracy: 94, role: "Tin Học Văn Phòng" },
-                "tu-luan": { gpa: 9.70, points: 485, doneCount: 5, accuracy: 97, role: "Sơ Đồ Tư Duy" },
-                "en-11": { gpa: 9.40, points: 470, doneCount: 5, accuracy: 93, role: "Từ Vựng Phong Phú" },
-                "ls-11": { gpa: 9.20, points: 460, doneCount: 5, accuracy: 91, role: "Dòng Thời Gian" },
-                "gd-11": { gpa: 9.60, points: 380, doneCount: 4, accuracy: 96, role: "Triết Học & Đời Sống" }
-            }
-        },
-        {
-            name: "Đặng Quốc Huy",
-            nickname: "huyquoc11",
-            avatar: "🐯",
-            grade: "11A1",
-            streak: 5,
-            scores: {
-                all: { gpa: 9.38, points: 1980, doneCount: 21, accuracy: 89, role: "Tự Luận Siêu Tốc" },
-                "dia-11": { gpa: 9.20, points: 550, doneCount: 6, accuracy: 90, role: "Phân Tích Bảng Số" },
-                "th-11": { gpa: 9.70, points: 485, doneCount: 5, accuracy: 97, role: "Thuật Toán Nhạy Bén" },
-                "tu-luan": { gpa: 9.90, points: 495, doneCount: 5, accuracy: 99, role: "Thủ Khoa Tự Luận" },
-                "en-11": { gpa: 9.10, points: 455, doneCount: 5, accuracy: 89, role: "Ngữ Pháp Chắc" },
-                "ls-11": { gpa: 9.30, points: 465, doneCount: 5, accuracy: 92, role: "Ghi Nhớ Sự Kiện" },
-                "gd-11": { gpa: 9.40, points: 370, doneCount: 4, accuracy: 93, role: "Kiến Thức Pháp Lí" }
-            }
-        },
-        {
-            name: "Vũ Đức Thắng",
-            nickname: "thang_lead",
-            avatar: "🎯",
-            grade: "11A5",
-            streak: 2,
-            scores: {
-                all: { gpa: 9.25, points: 1850, doneCount: 19, accuracy: 88, role: "Chiến Binh Bứt Phá" },
-                "dia-11": { gpa: 9.10, points: 540, doneCount: 6, accuracy: 89, role: "Địa Lí Kinh Tế" },
-                "th-11": { gpa: 9.30, points: 465, doneCount: 5, accuracy: 92, role: "Phần Cứng & Mạng" },
-                "tu-luan": { gpa: 9.20, points: 460, doneCount: 5, accuracy: 91, role: "Phản Biện Sắc Bén" },
-                "en-11": { gpa: 9.30, points: 465, doneCount: 5, accuracy: 91, role: "Nghe Nói Tự Tin" },
-                "ls-11": { gpa: 9.50, points: 475, doneCount: 5, accuracy: 95, role: "Tư Duy Khách Quan" },
-                "gd-11": { gpa: 9.40, points: 370, doneCount: 4, accuracy: 93, role: "Ý Thức Pháp Luật" }
-            }
-        },
-        {
-            name: "Bùi Thảo Nguyên",
-            nickname: "nguyen_bt",
-            avatar: "🎓",
-            grade: "11A2",
-            streak: 4,
-            scores: {
-                all: { gpa: 9.18, points: 1720, doneCount: 17, accuracy: 86, role: "Cây Bút Chuyên Cần" },
-                "dia-11": { gpa: 9.00, points: 450, doneCount: 5, accuracy: 88, role: "Địa Lí Tự Nhiên" },
-                "th-11": { gpa: 9.10, points: 455, doneCount: 5, accuracy: 90, role: "Ứng Dụng Đồ Họa" },
-                "tu-luan": { gpa: 9.50, points: 475, doneCount: 5, accuracy: 95, role: "Trình Bày Đẹp" },
-                "en-11": { gpa: 9.50, points: 475, doneCount: 5, accuracy: 95, role: "Đọc Hiểu Siêu Tốc" },
-                "ls-11": { gpa: 9.10, points: 455, doneCount: 5, accuracy: 90, role: "Nhân Vật Lịch Sử" },
-                "gd-11": { gpa: 9.30, points: 365, doneCount: 4, accuracy: 92, role: "Quy Chuẩn Đạo Đức" }
-            }
-        },
-        {
-            name: "Ngô Minh Khang",
-            nickname: "khang_ngo",
-            avatar: "⚡",
-            grade: "11A1",
-            streak: 3,
-            scores: {
-                all: { gpa: 9.05, points: 1640, doneCount: 16, accuracy: 85, role: "Tia Chớp Phản Xạ" },
-                "dia-11": { gpa: 8.90, points: 440, doneCount: 5, accuracy: 87, role: "Trắc Nghiệm Nhanh" },
-                "th-11": { gpa: 9.60, points: 480, doneCount: 5, accuracy: 96, role: "Phím Tắt Thần Sầu" },
-                "tu-luan": { gpa: 8.80, points: 440, doneCount: 5, accuracy: 86, role: "Gạch Đầu Dòng" },
-                "en-11": { gpa: 9.20, points: 460, doneCount: 5, accuracy: 91, role: "Phát Âm Chuẩn" },
-                "ls-11": { gpa: 9.00, points: 450, doneCount: 5, accuracy: 88, role: "Khai Sáng Sử Ký" },
-                "gd-11": { gpa: 9.10, points: 360, doneCount: 4, accuracy: 90, role: "Trách Nhiệm Xã Hội" }
-            }
-        },
-        {
-            name: "Dương Ánh Tuyết",
-            nickname: "tuyet_duong",
-            avatar: "🌸",
-            grade: "11A3",
-            streak: 2,
-            scores: {
-                all: { gpa: 8.95, points: 1510, doneCount: 15, accuracy: 84, role: "Tinh Thần Quyết Tâm" },
-                "dia-11": { gpa: 8.80, points: 435, doneCount: 5, accuracy: 85, role: "Ghi Nhớ Bản Đồ" },
-                "th-11": { gpa: 9.00, points: 450, doneCount: 5, accuracy: 89, role: "Soạn Thảo Tinh Tế" },
-                "tu-luan": { gpa: 9.30, points: 465, doneCount: 5, accuracy: 93, role: "Hành Văn Mượt Mà" },
-                "en-11": { gpa: 9.10, points: 455, doneCount: 5, accuracy: 90, role: "Giao Tiếp Anh Ngữ" },
-                "ls-11": { gpa: 8.90, points: 445, doneCount: 5, accuracy: 87, role: "Dữ Liệu Lịch Sử" },
-                "gd-11": { gpa: 9.20, points: 365, doneCount: 4, accuracy: 91, role: "Ý Thức Pháp Luật" }
-            }
-        },
-        {
-            name: "Lê Quỳnh Nga",
-            nickname: "nga_le11",
-            avatar: "🌺",
-            grade: "11A2",
-            streak: 3,
-            scores: {
-                all: { gpa: 8.85, points: 1420, doneCount: 14, accuracy: 83, role: "Kiên Trì Bền Bỉ" },
-                "dia-11": { gpa: 8.70, points: 430, doneCount: 5, accuracy: 84, role: "Ôn Tập Đều Đặn" },
-                "th-11": { gpa: 8.90, points: 445, doneCount: 5, accuracy: 87, role: "Thực Hành Tốt" },
-                "tu-luan": { gpa: 9.10, points: 455, doneCount: 5, accuracy: 91, role: "Văn Phong Rõ Ràng" },
-                "en-11": { gpa: 9.00, points: 450, doneCount: 5, accuracy: 89, role: "Học Kép Ngữ Pháp" },
-                "ls-11": { gpa: 8.80, points: 440, doneCount: 5, accuracy: 86, role: "Sử Liệu Chân Thực" },
-                "gd-11": { gpa: 9.00, points: 355, doneCount: 4, accuracy: 89, role: "Kinh Tế Thị Trường" }
-            }
-        },
-        {
-            name: "Trịnh Quốc Bảo",
-            nickname: "bao_trinh11",
-            avatar: "🛡️",
-            grade: "11A4",
-            streak: 1,
-            scores: {
-                all: { gpa: 8.75, points: 1350, doneCount: 13, accuracy: 82, role: "Vững Vàng Kiến Thức" },
-                "dia-11": { gpa: 8.60, points: 425, doneCount: 5, accuracy: 83, role: "Nắm Vững Khái Niệm" },
-                "th-11": { gpa: 8.80, points: 440, doneCount: 5, accuracy: 86, role: "Cơ Bản Vững Chắc" },
-                "tu-luan": { gpa: 8.90, points: 445, doneCount: 5, accuracy: 88, role: "Ý Tứ Chặt Chẽ" },
-                "en-11": { gpa: 8.90, points: 445, doneCount: 5, accuracy: 87, role: "Từ Vựng Mở Rộng" },
-                "ls-11": { gpa: 8.70, points: 435, doneCount: 5, accuracy: 85, role: "Cương Lĩnh Lịch Sử" },
-                "gd-11": { gpa: 8.90, points: 350, doneCount: 4, accuracy: 88, role: "Pháp Quy Cơ Bản" }
-            }
-        },
-        {
-            name: "Võ Hoàng Yến",
-            nickname: "yen_vo11",
-            avatar: "🦅",
-            grade: "11A5",
-            streak: 2,
-            scores: {
-                all: { gpa: 8.65, points: 1280, doneCount: 12, accuracy: 81, role: "Khát Khao Tiến Bộ" },
-                "dia-11": { gpa: 8.50, points: 420, doneCount: 5, accuracy: 82, role: "Rèn Luyện Mỗi Ngày" },
-                "th-11": { gpa: 8.70, points: 435, doneCount: 5, accuracy: 85, role: "Kỹ Năng Tin Học" },
-                "tu-luan": { gpa: 8.80, points: 440, doneCount: 5, accuracy: 87, role: "Bố Cục Rành Mạch" },
-                "en-11": { gpa: 8.80, points: 440, doneCount: 5, accuracy: 86, role: "Ngữ Âm Cơ Bản" },
-                "ls-11": { gpa: 8.60, points: 430, doneCount: 5, accuracy: 84, role: "Cột Mốc Lịch Sử" },
-                "gd-11": { gpa: 8.80, points: 345, doneCount: 4, accuracy: 86, role: "Đạo Đức Công Dân" }
-            }
-        }
-    ];
+    // REAL-DATA LEADERBOARD ONLY — ZERO FAKE/MOCK CLASSMATES
+    const CLASSMATE_LEADERBOARD_ROSTER = [];
 
     function getCompiledLeaderboardData() {
-        const user = UserProfile.get();
+        const currAcc = AccountManager.getCurrentAccount();
+        const currAccId = currAcc ? currAcc.id : AccountManager.getCurrentAccountId();
         let examHistory = [];
         try {
             examHistory = JSON.parse(localStorage.getItem("azota_exam_history") || "[]");
+            if (!Array.isArray(examHistory)) examHistory = [];
         } catch (e) {
             examHistory = [];
         }
 
-        const userDoneTotal = examHistory.length;
-        const userEarnedScore = examHistory.reduce((sum, h) => sum + Math.round((h.score || 8) * 15), 0);
-        const userTotalScore = (userDoneTotal > 0) ? (2240 + userEarnedScore) : 2240;
-        const userAvgOverall = (userDoneTotal > 0)
-            ? Number((examHistory.reduce((sum, h) => sum + (h.score || 8), 0) / userDoneTotal).toFixed(2))
-            : 9.35;
-        const userAccuracyOverall = (userDoneTotal > 0)
-            ? Math.round((examHistory.filter(h => (h.score || 0) >= 5).length / userDoneTotal) * 100)
-            : 92;
-
-        function computeUserSubjectStats(subjectKey, subjectMatcher) {
-            const subjectExams = examHistory.filter(h => {
-                const title = (h.examTitle || "").toLowerCase();
-                const subj = (h.subject || "").toLowerCase();
-                return title.includes(subjectMatcher) || subj.includes(subjectMatcher);
+        function getExamsForAccount(acc) {
+            const nickLow = (acc.nickname || "").toLowerCase();
+            return examHistory.filter(h => {
+                if (!h) return false;
+                if (h.accountId) return h.accountId === acc.id;
+                if (h.nickname) return h.nickname.toLowerCase() === nickLow;
+                // Legacy attempts without accountId belong only to the active account
+                return acc.id === currAccId;
             });
-            const sCount = subjectExams.length;
-            if (sCount > 0) {
-                const sGPA = Number((subjectExams.reduce((sum, h) => sum + (h.score || 8), 0) / sCount).toFixed(2));
-                const sPoints = Math.round(subjectExams.reduce((sum, h) => sum + (h.score || 8) * 20, 0));
-                const sAcc = Math.round((subjectExams.filter(h => (h.score || 0) >= 5).length / sCount) * 100);
-                return { gpa: sGPA, points: sPoints, doneCount: sCount, accuracy: sAcc, role: "Ngôi Sao Thực Tế ⭐" };
-            }
-            return { gpa: 9.20, points: 460, doneCount: 2, accuracy: 90, role: "Học Viên Sẵn Sàng" };
         }
 
-        const userScores = {
-            all: { gpa: userAvgOverall, points: userTotalScore, doneCount: (userDoneTotal > 0 ? userDoneTotal : 2), accuracy: userAccuracyOverall, role: "Ngôi Sao Đang Lên ⭐" },
-            "dia-11": computeUserSubjectStats("dia-11", "địa"),
-            "th-11": computeUserSubjectStats("th-11", "tin"),
-            "tu-luan": computeUserSubjectStats("tu-luan", "tự luận"),
-            "en-11": computeUserSubjectStats("en-11", "tiếng anh"),
-            "ls-11": computeUserSubjectStats("ls-11", "sử"),
-            "gd-11": computeUserSubjectStats("gd-11", "kt")
-        };
-
-        const activeUserEntry = {
-            id: "user_active",
-            name: user.name || "Học Sinh Aseta",
-            nickname: user.nickname || "hocsinh11",
-            avatar: user.avatar || "👦",
-            grade: user.grade || "11A1",
-            streak: 3,
-            isCurrentUser: true,
-            scores: userScores
-        };
-
-        const additionalAccounts = [];
-        try {
-            const allAccs = AccountManager.getAllAccounts();
-            const currAccId = AccountManager.getCurrentAccountId();
-            allAccs.forEach(acc => {
-                if (acc.id !== currAccId && acc.id !== "acc_admin" && acc.id !== "acc_guest") {
-                    additionalAccounts.push({
-                        name: acc.name,
-                        nickname: acc.nickname,
-                        avatar: acc.avatar || "🧑‍💻",
-                        grade: acc.grade || "11A",
-                        streak: 2,
-                        scores: {
-                            all: { gpa: 9.15, points: 1680, doneCount: 16, accuracy: 86, role: acc.role || "Bạn Cùng Lớp" },
-                            "dia-11": { gpa: 9.10, points: 455, doneCount: 5, accuracy: 90, role: "Bạn Cùng Lớp" },
-                            "th-11": { gpa: 9.20, points: 460, doneCount: 5, accuracy: 91, role: "Bạn Cùng Lớp" },
-                            "tu-luan": { gpa: 9.00, points: 450, doneCount: 5, accuracy: 88, role: "Bạn Cùng Lớp" },
-                            "en-11": { gpa: 9.20, points: 460, doneCount: 5, accuracy: 91, role: "Bạn Cùng Lớp" },
-                            "ls-11": { gpa: 9.00, points: 450, doneCount: 5, accuracy: 88, role: "Bạn Cùng Lớp" },
-                            "gd-11": { gpa: 9.10, points: 360, doneCount: 4, accuracy: 90, role: "Bạn Cùng Lớp" }
-                        }
-                    });
+        function computeStatsFromExams(exams, roleFallback) {
+            const count = exams.length;
+            if (count === 0) {
+                return { gpa: 0, points: 0, doneCount: 0, accuracy: 0, role: roleFallback || "Chưa làm đề" };
+            }
+            const totalScore = exams.reduce((sum, h) => sum + (Number(h.score) || 0), 0);
+            const gpa = Number((totalScore / count).toFixed(2));
+            const points = exams.reduce((sum, h) => sum + Math.round((Number(h.score) || 0) * 20), 0);
+            const accSum = exams.reduce((sum, h) => {
+                if (h.totalQuestions > 0 && typeof h.correctCount === "number") {
+                    return sum + (h.correctCount / h.totalQuestions) * 100;
                 }
-            });
-        } catch (e) {}
+                return sum + Math.min(100, Math.max(0, (Number(h.score) || 0) * 10));
+            }, 0);
+            const accuracy = Math.round(accSum / count);
+            return { gpa, points, doneCount: count, accuracy, role: roleFallback || "🎓 Học Sinh" };
+        }
 
-        const combined = [...CLASSMATE_LEADERBOARD_ROSTER, activeUserEntry, ...additionalAccounts];
+        function computeSubjectStats(exams, matcher, roleFallback) {
+            const subExams = exams.filter(h => {
+                const title = (h.examTitle || "").toLowerCase();
+                const subj = (h.subject || "").toLowerCase();
+                return title.includes(matcher) || subj.includes(matcher);
+            });
+            return computeStatsFromExams(subExams, roleFallback);
+        }
+
+        function readAccountStreak(accId) {
+            try {
+                const raw = localStorage.getItem("aseta_daily_streak_v2_" + accId);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && typeof parsed.count === "number") return parsed.count;
+                }
+            } catch (_) {}
+            return 0;
+        }
+
+        const allAccounts = AccountManager.getAllAccounts();
+        const combined = allAccounts.map(acc => {
+            const accExams = getExamsForAccount(acc);
+            const scores = {
+                all: computeStatsFromExams(accExams, acc.role || "🎓 Học Sinh"),
+                "dia-11": computeSubjectStats(accExams, "địa", acc.role),
+                "th-11": computeSubjectStats(accExams, "tin", acc.role),
+                "tu-luan": computeSubjectStats(accExams, "tự luận", acc.role),
+                "en-11": computeSubjectStats(accExams, "tiếng anh", acc.role),
+                "ls-11": computeSubjectStats(accExams, "sử", acc.role),
+                "gd-11": computeSubjectStats(accExams, "kt", acc.role)
+            };
+            return {
+                id: acc.id,
+                name: acc.name,
+                nickname: acc.nickname,
+                avatar: acc.avatar || (acc.isAdmin ? "👑" : "🎓"),
+                grade: acc.grade || "Lớp 11",
+                isAdmin: !!acc.isAdmin,
+                streak: readAccountStreak(acc.id),
+                isCurrentUser: acc.id === currAccId,
+                scores: scores
+            };
+        });
 
         const mapped = combined.map(student => {
             const subScore = student.scores[currentLeaderboardSubject] || student.scores.all;
             return {
+                id: student.id,
                 name: student.name,
                 nickname: student.nickname,
                 avatar: student.avatar,
                 grade: student.grade,
-                streak: student.streak || 1,
+                isAdmin: student.isAdmin,
+                streak: student.streak || 0,
                 isCurrentUser: !!student.isCurrentUser,
                 gpa: subScore.gpa,
                 points: subScore.points,
@@ -3031,17 +2777,17 @@ window.AzotaApp = (function() {
         }
 
         filtered.sort((a, b) => {
-            if (currentLeaderboardSort === 'gpa') {
-                if (b.gpa !== a.gpa) return b.gpa - a.gpa;
-                return b.points - a.points;
-            } else if (currentLeaderboardSort === 'points') {
+            if (currentLeaderboardSort === 'points') {
                 if (b.points !== a.points) return b.points - a.points;
-                return b.gpa - a.gpa;
+                if (b.gpa !== a.gpa) return b.gpa - a.gpa;
             } else if (currentLeaderboardSort === 'done') {
                 if (b.doneCount !== a.doneCount) return b.doneCount - a.doneCount;
-                return b.gpa - a.gpa;
+                if (b.points !== a.points) return b.points - a.points;
+            } else {
+                if (b.points !== a.points) return b.points - a.points;
+                if (b.gpa !== a.gpa) return b.gpa - a.gpa;
             }
-            return b.gpa - a.gpa;
+            return (a.name || "").localeCompare(b.name || "", "vi");
         });
 
         return filtered.map((item, idx) => ({ ...item, rank: idx + 1 }));
