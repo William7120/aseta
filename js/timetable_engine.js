@@ -1,1372 +1,836 @@
 /**
- * Aseta Timetable Engine (Thời Khóa Biểu & Balo Học Tập Lớp 11A7)
- * Trường THPT Trần Văn Giàu - Học Kỳ 1 (Áp dụng từ 09/11/2026)
- * GVCN: Nguyễn Việt Kiều Anh
- * Bố cục 1 hàng chung (3 cột song song):
- * [ Cột 1: Ảnh gốc to ] | [ Cột 2: Lịch tiết học Sáng & Chiều ] | [ Cột 3: Balo đi học checklist ]
- * Balo không bị chìm xuống dưới, mọi chức năng đều hiển thị trọn vẹn trên 1 hàng!
+ * Aseta Timetable Engine — Thời Khóa Biểu & Balo Đi Học Lớp 11A7
+ * Trường THPT Trần Văn Giàu • Học Kỳ 1 (Áp dụng từ 09/11/2026) • GVCN: Nguyễn Việt Kiều Anh
+ * Thiết kế Editorial Bento 2 khung gọn gàng:
+ *   - Trái (7 cột): Lịch tiết học Sáng & Chiều tinh gọn (ẩn tiết trống, hiện giờ học trực quan)
+ *   - Phải (5 cột): Balo Đi Học tương tác (tiến độ soạn cặp, lưu riêng từng tài khoản, chạm 1 lần để tick)
+ *   - Ảnh gốc TKB đóng gói trong nút "🖼️ Ảnh gốc" mở Lightbox phóng to khi cần, không chiếm chỗ màn hình.
  */
-
 window.TimetableEngine = (function() {
     'use strict';
 
-    // 1. DỮ LIỆU THỜI KHÓA BIỂU & ĐỒ DÙNG CẦN MANG
+    const UK_FLAG_SVG = '<svg class="inline-block w-[1.15em] h-[1.15em] rounded-full overflow-hidden shrink-0 align-[-0.18em] ring-1 ring-white/15" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" fill="#012169"/><path d="M0 0L64 64M64 0L0 64" stroke="#FFF" stroke-width="11"/><path d="M0 0L64 64M64 0L0 64" stroke="#C8102E" stroke-width="6"/><path d="M32 0V64M0 32H64" stroke="#FFF" stroke-width="18"/><path d="M32 0V64M0 32H64" stroke="#C8102E" stroke-width="10"/></svg>';
+
     const TIMETABLE_CONFIG = {
         schoolName: "Trường THPT Trần Văn Giàu",
         className: "11A7",
-        semester: "Học Kỳ 1 (Áp dụng từ 09/11/2026)",
+        semester: "HK1 (từ 09/11/2026)",
         homeroomTeacher: "Nguyễn Việt Kiều Anh",
         imageUrl: "assets/thoi_khoa_bieu_11a7.jpg",
-        
-        // Khung giờ các tiết học chuẩn THPT Trần Văn Giàu (Áp dụng từ 09/11/2026)
-        // Buổi Sáng: Tiết 1 bắt đầu 7:00, Tiết 4 kết thúc 10:35
-        // Buổi Chiều: Tiết 1 bắt đầu 13:30 (1g30), Tiết 4 kết thúc 16:15 (4g15), Tiết 5 kết thúc 17:05 (5g05)
+
         timeSlots: {
             morning: [
-                { id: "S1", label: "Tiết 1", time: "07:00 - 07:45" },
-                { id: "S2", label: "Tiết 2", time: "07:50 - 08:35" },
-                { id: "S3", label: "Tiết 3", time: "09:00 - 09:45" },
-                { id: "S4", label: "Tiết 4", time: "09:50 - 10:35" },
-                { id: "S5", label: "Tiết 5", time: "10:40 - 11:25" }
+                { id: "S1", label: "Tiết 1", time: "07:00 – 07:45" },
+                { id: "S2", label: "Tiết 2", time: "07:50 – 08:35" },
+                { id: "S3", label: "Tiết 3", time: "09:00 – 09:45" },
+                { id: "S4", label: "Tiết 4", time: "09:50 – 10:35" },
+                { id: "S5", label: "Tiết 5", time: "10:40 – 11:25" }
             ],
             afternoon: [
-                { id: "C1", label: "Tiết 1", time: "13:30 - 14:10" },
-                { id: "C2", label: "Tiết 2", time: "14:15 - 14:55" },
-                { id: "C3", label: "Tiết 3", time: "15:05 - 15:40" },
-                { id: "C4", label: "Tiết 4", time: "15:40 - 16:15" },
-                { id: "C5", label: "Tiết 5", time: "16:20 - 17:05" }
+                { id: "C1", label: "Tiết 1", time: "13:30 – 14:10" },
+                { id: "C2", label: "Tiết 2", time: "14:15 – 14:55" },
+                { id: "C3", label: "Tiết 3", time: "15:05 – 15:40" },
+                { id: "C4", label: "Tiết 4", time: "15:40 – 16:15" },
+                { id: "C5", label: "Tiết 5", time: "16:20 – 17:05" }
             ]
         },
 
-        // Danh sách đồ dùng đi học theo từng môn (Trích từ Danh_sach_do_dung_di_hoc.txt)
         subjectsMeta: {
             "Ngoại ngữ": {
-                fullName: "Ngoại Ngữ (Tiếng Anh)",
-                icon: '<svg class="inline-block w-[1.15em] h-[1.15em] rounded-full overflow-hidden shrink-0 align-[-0.18em] ring-1 ring-white/15" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" fill="#012169"/><path d="M0 0L64 64M64 0L0 64" stroke="#FFF" stroke-width="11"/><path d="M0 0L64 64M64 0L0 64" stroke="#C8102E" stroke-width="6"/><path d="M32 0V64M0 32H64" stroke="#FFF" stroke-width="18"/><path d="M32 0V64M0 32H64" stroke="#C8102E" stroke-width="10"/></svg>',
-                color: "blue",
-                badgeClass: "bg-blue-500/15 text-blue-400 border-blue-500/30",
-                examFolderId: "anh-11",
+                fullName: "Tiếng Anh",
+                icon: UK_FLAG_SVG,
+                examFolderId: "Tiếng Anh",
                 supplies: [
-                    { id: "nn_decuong", name: "Đề cương tiếng Anh", type: "decuong" },
-                    { id: "nn_sach", name: "Sách tiếng Anh", type: "sach" }
+                    { id: "nn_decuong", name: "Đề cương Tiếng Anh" },
+                    { id: "nn_sach", name: "Sách Tiếng Anh" }
                 ]
             },
             "Ngữ văn": {
                 fullName: "Ngữ Văn",
                 icon: "📖",
-                color: "rose",
-                badgeClass: "bg-rose-500/15 text-rose-400 border-rose-500/30",
-                examFolderId: "van-11",
+                examFolderId: "Ngữ Văn",
                 supplies: [
-                    { id: "van_decuong", name: "Đề cương Văn", type: "decuong" },
-                    { id: "van_sach", name: "Sách Văn", type: "sach" },
-                    { id: "van_vo", name: "Vở Văn", type: "vo" },
-                    { id: "van_chuyende", name: "Chuyên đề Văn (nếu cô yêu cầu mang)", type: "chuyende", optional: true }
+                    { id: "van_decuong", name: "Đề cương Văn" },
+                    { id: "van_sach", name: "Sách Văn" },
+                    { id: "van_vo", name: "Vở ghi Văn" },
+                    { id: "van_chuyende", name: "Chuyên đề Văn (khi cô dặn)", optional: true }
                 ]
             },
             "Tin học": {
                 fullName: "Tin Học",
                 icon: "💻",
-                color: "cyan",
-                badgeClass: "bg-cyan-500/15 text-cyan-400 border-cyan-500/30",
-                examFolderId: "th-11",
+                examFolderId: "Tin Học",
                 supplies: [
-                    { id: "tin_decuong", name: "Đề cương Tin", type: "decuong" },
-                    { id: "tin_sach", name: "Sách Tin", type: "sach" }
+                    { id: "tin_decuong", name: "Đề cương Tin học" },
+                    { id: "tin_sach", name: "Sách Tin học" }
                 ]
             },
             "TH MOS": {
-                fullName: "Thực Hành Tin Học MOS",
+                fullName: "Thực Hành MOS",
                 icon: "🖥️",
-                color: "indigo",
-                badgeClass: "bg-indigo-500/15 text-indigo-400 border-indigo-500/30",
                 supplies: [
-                    { id: "mos_decuong", name: "Đề cương MOS", type: "decuong" }
+                    { id: "mos_decuong", name: "Đề cương MOS" }
                 ]
             },
             "Lịch Sử": {
                 fullName: "Lịch Sử",
                 icon: "🏛️",
-                color: "amber",
-                badgeClass: "bg-amber-500/15 text-amber-400 border-amber-500/30",
-                examFolderId: "su-11",
+                examFolderId: "Lịch Sử",
                 supplies: [
-                    { id: "su_decuong", name: "Đề cương Sử", type: "decuong" },
-                    { id: "su_sach", name: "Sách Sử", type: "sach" }
+                    { id: "su_decuong", name: "Đề cương Lịch Sử" },
+                    { id: "su_sach", name: "Sách Lịch Sử" }
                 ]
             },
             "Toán": {
                 fullName: "Toán Học",
                 icon: "📐",
-                color: "emerald",
-                badgeClass: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
-                examFolderId: "tuluan",
+                examFolderId: "Toán",
                 supplies: [
-                    { id: "toan_sach", name: "Sách Toán", type: "sach" },
-                    { id: "toan_voso", name: "Vở Toán Số", type: "vo" },
-                    { id: "toan_vohinh", name: "Vở Toán Hình", type: "vo" },
-                    { id: "toan_decuong", name: "Đề cương Toán", type: "decuong" },
-                    { id: "toan_casio", name: "Máy tính Casio FX & thước kẻ", type: "dungcu" }
+                    { id: "toan_sach", name: "Sách Toán" },
+                    { id: "toan_voso", name: "Vở Toán Số" },
+                    { id: "toan_vohinh", name: "Vở Toán Hình" },
+                    { id: "toan_decuong", name: "Đề cương Toán" },
+                    { id: "toan_casio", name: "Máy tính Casio & thước kẻ" }
                 ]
             },
             "Vật lý": {
                 fullName: "Vật Lý",
                 icon: "⚡",
-                color: "violet",
-                badgeClass: "bg-violet-500/15 text-violet-400 border-violet-500/30",
-                examFolderId: "ly-11",
                 supplies: [
-                    { id: "ly_sach", name: "Sách Lý", type: "sach" },
-                    { id: "ly_decuong", name: "Đề cương Lý", type: "decuong" },
-                    { id: "ly_chuyende", name: "Chuyên đề Lý (nếu thầy yêu cầu mang)", type: "chuyende", optional: true }
+                    { id: "ly_sach", name: "Sách Vật Lý" },
+                    { id: "ly_decuong", name: "Đề cương Vật Lý" },
+                    { id: "ly_chuyende", name: "Chuyên đề Lý (khi thầy dặn)", optional: true }
                 ]
             },
             "GD QP-AN": {
-                fullName: "Giáo Dục Quốc Phòng - An Ninh",
+                fullName: "GD QP-AN",
                 icon: "🎖️",
-                color: "lime",
-                badgeClass: "bg-lime-500/15 text-lime-400 border-lime-500/30",
-                examFolderId: "qp-11",
+                examFolderId: "GDQP&AN",
                 supplies: [
-                    { id: "qpan_sach", name: "Sách GD QP-AN", type: "sach" }
+                    { id: "qpan_sach", name: "Sách GD QP-AN" }
                 ]
             },
             "GDKTPL": {
-                fullName: "Giáo Dục Kinh Tế & Pháp Luật",
+                fullName: "GDKT & Pháp Luật",
                 icon: "⚖️",
-                color: "purple",
-                badgeClass: "bg-purple-500/15 text-purple-400 border-purple-500/30",
-                examFolderId: "gdktpl-11",
+                examFolderId: "GDKT&PL",
                 supplies: [
-                    { id: "ktpl_sach", name: "Sách GDKTPL", type: "sach" },
-                    { id: "ktpl_decuong", name: "Đề cương GDKTPL", type: "decuong" }
+                    { id: "ktpl_sach", name: "Sách GDKTPL" },
+                    { id: "ktpl_decuong", name: "Đề cương GDKTPL" }
                 ]
             },
             "GDTC": {
                 fullName: "Giáo Dục Thể Chất",
                 icon: "🏸",
-                color: "orange",
-                badgeClass: "bg-orange-500/15 text-orange-400 border-orange-500/30",
                 supplies: [
-                    { id: "gdtc_caulong", name: "2 quả cầu lông & 1 cây vợt (nếu học cầu lông)", type: "dungcu", highlight: true },
-                    { id: "gdtc_trangphuc", name: "Đồng phục thể dục & giày thể thao", type: "trangphuc" }
+                    { id: "gdtc_caulong", name: "2 quả cầu lông & 1 cây vợt", highlight: true },
+                    { id: "gdtc_trangphuc", name: "Đồng phục thể dục & giày thể thao" }
                 ]
             },
             "Địa Lý": {
                 fullName: "Địa Lí",
                 icon: "🌍",
-                color: "teal",
-                badgeClass: "bg-teal-500/15 text-teal-400 border-teal-500/30",
-                examFolderId: "dia-11",
+                examFolderId: "Địa Lí",
                 supplies: [
-                    { id: "dia_sach", name: "Sách Địa", type: "sach" },
-                    { id: "dia_decuong", name: "Đề cương Địa", type: "decuong" }
+                    { id: "dia_sach", name: "Sách Địa Lí" },
+                    { id: "dia_decuong", name: "Đề cương Địa Lí" }
                 ]
             },
             "GD ĐP": {
-                fullName: "Giáo Dục Địa Phương",
+                fullName: "GD Địa Phương",
                 icon: "🏙️",
-                color: "amber",
-                badgeClass: "bg-amber-500/15 text-amber-400 border-amber-500/30",
                 supplies: [
-                    { id: "gddp_tailieu", name: "Tài liệu / Vở ghi GD Địa Phương", type: "vo" }
+                    { id: "gddp_tailieu", name: "Tài liệu / Vở GD Địa Phương" }
                 ]
             },
             "HĐTN1": {
                 fullName: "Hoạt Động Trải Nghiệm 1",
                 icon: "🌱",
-                color: "green",
-                badgeClass: "bg-green-500/15 text-green-400 border-green-500/30",
                 supplies: [
-                    { id: "hdtn1_so", name: "Sổ tay hoạt động trải nghiệm / vở ghi chép", type: "vo" }
+                    { id: "hdtn1_so", name: "Sổ tay / Vở ghi HĐTN" }
                 ]
             },
             "HĐTN2": {
                 fullName: "Hoạt Động Trải Nghiệm 2",
                 icon: "🌱",
-                color: "green",
-                badgeClass: "bg-green-500/15 text-green-400 border-green-500/30",
                 supplies: [
-                    { id: "hdtn2_so", name: "Sổ tay hoạt động trải nghiệm / vở ghi chép", type: "vo" }
+                    { id: "hdtn2_so", name: "Sổ tay / Vở ghi HĐTN" }
                 ]
             },
             "SHC": {
-                fullName: "Sinh Hoạt Dưới Cờ (Chào Cờ)",
+                fullName: "Chào Cờ (SHC)",
                 icon: "🚩",
-                color: "red",
-                badgeClass: "bg-red-500/15 text-red-400 border-red-500/30",
                 supplies: [
-                    { id: "shc_dongphuc", name: "Lễ phục chào cờ nghiêm trang, sổ tay ghi chép sinh hoạt", type: "trangphuc" }
+                    { id: "shc_dongphuc", name: "Lễ phục chào cờ & sổ tay" }
                 ]
             }
         },
 
-        // Lịch học chi tiết từng ngày trong tuần
         days: {
             "T2": {
                 code: "T2",
+                short: "T2",
                 name: "Thứ Hai",
                 dayIndex: 1,
                 morning: ["SHC", "HĐTN1", "Ngoại ngữ", "Ngoại ngữ", ""],
                 afternoon: ["Ngữ văn", "Ngữ văn", "Tin học", "", ""],
-                specialNote: "🚩 Chào cờ đầu tuần: Mặc đồng phục lễ phục chỉnh tề và ghi chép hoạt động sinh hoạt lớp."
+                specialNote: "Chào cờ đầu tuần: mặc lễ phục chỉnh tề."
             },
             "T3": {
                 code: "T3",
+                short: "T3",
                 name: "Thứ Ba",
                 dayIndex: 2,
                 morning: ["GD ĐP", "Ngoại ngữ", "TH MOS", "Lịch Sử", ""],
                 afternoon: ["Toán", "Vật lý", "Vật lý", "", ""],
-                specialNote: "⚡ Chiều có 2 tiết Vật lý: Nhớ mang sách, vở bài tập và đề cương Lý (chỉ mang chuyên đề khi thầy dặn)."
+                specialNote: "Chiều có 2 tiết Vật lý — mang đủ sách & đề cương Lý."
             },
             "T4": {
                 code: "T4",
+                short: "T4",
                 name: "Thứ Tư",
                 dayIndex: 3,
                 morning: ["Ngoại ngữ", "Ngoại ngữ", "HĐTN2", "HĐTN2", ""],
                 afternoon: ["", "", "", "", ""],
-                specialNote: "🎉 Buổi chiều nghỉ học chính khóa! Tranh thủ tự học hoặc luyện giải đề trên Aseta."
+                specialNote: "Buổi chiều nghỉ chính khóa — tranh thủ luyện đề trên Aseta."
             },
             "T5": {
                 code: "T5",
+                short: "T5",
                 name: "Thứ Năm",
                 dayIndex: 4,
                 morning: ["Ngữ văn", "GD QP-AN", "Tin học", "GDKTPL", ""],
                 afternoon: ["Toán", "Toán", "GDTC", "GDTC", ""],
-                specialNote: "🏸 Lưu ý GDTC: Chiều có 2 tiết Thể dục, nếu học cầu lông nhớ mang 2 quả cầu và 1 cây vợt!"
+                specialNote: "Chiều có 2 tiết GDTC — nhớ mang đồng phục thể dục & vợt/cầu."
             },
             "T6": {
                 code: "T6",
+                short: "T6",
                 name: "Thứ Sáu",
                 dayIndex: 5,
                 morning: ["Ngữ văn", "Vật lý", "Toán", "Địa Lý", ""],
                 afternoon: ["TH MOS", "GDKTPL", "Địa Lý", "", ""],
-                specialNote: "📖 Ngày học cuối tuần: Có cả Văn, Lý, Toán, Địa, MOS và KTPL. Kiểm tra kỹ balo trước khi đến lớp!"
+                specialNote: "Nhiều môn cuối tuần — kiểm tra đủ 6 môn trước khi đi học."
             },
             "T7": {
                 code: "T7",
+                short: "T7",
                 name: "Thứ Bảy",
                 dayIndex: 6,
                 morning: ["", "", "", "", ""],
                 afternoon: ["", "", "", "", ""],
                 isOff: true,
-                specialNote: "🌴 Thứ Bảy nghỉ học chính khóa. Tự ôn tập kiến thức và làm đề thi online."
+                specialNote: "Thứ Bảy nghỉ chính khóa."
             },
             "CN": {
                 code: "CN",
+                short: "CN",
                 name: "Chủ Nhật",
                 dayIndex: 0,
                 morning: ["", "", "", "", ""],
                 afternoon: ["", "", "", "", ""],
                 isOff: true,
-                specialNote: "☀️ Chủ Nhật nghỉ ngơi nạp năng lượng! Đừng quên soạn sách vở cho Thứ Hai đầu tuần nhé."
+                specialNote: "Chủ Nhật nghỉ ngơi — chuẩn bị balo cho Thứ Hai nhé."
             }
         }
     };
 
-    // State
-    let activeDayCode = null; // T2, T3, T4, T5, T6
-    let currentViewMode = 'day'; // 'day' or 'fullweek'
+    let activeDayCode = null;
+    let currentViewMode = 'day'; // 'day' | 'fullweek'
     let imageModalZoom = 1;
 
-    // 2. HÀM TỰ ĐỘNG NHẬN DIỆN THỜI GIAN & THỨ HÔM NAY
+    function getAccountIdSafe() {
+        try {
+            if (window.AccountManager && typeof window.AccountManager.getCurrentAccountId === 'function') {
+                return window.AccountManager.getCurrentAccountId() || 'default';
+            }
+        } catch (_) {}
+        return 'default';
+    }
+
     function getTodayInfo() {
         const now = new Date();
-        const day = now.getDay(); // 0: CN, 1: T2, 2: T3, 3: T4, 4: T5, 5: T6, 6: T7
+        const day = now.getDay();
         const hour = now.getHours();
         const minute = now.getMinutes();
 
         const map = { 1: "T2", 2: "T3", 3: "T4", 4: "T5", 5: "T6", 6: "T7", 0: "CN" };
         const dayNameMap = {
-            "T2": "Thứ Hai",
-            "T3": "Thứ Ba",
-            "T4": "Thứ Tư",
-            "T5": "Thứ Năm",
-            "T6": "Thứ Sáu",
-            "T7": "Thứ Bảy",
-            "CN": "Chủ Nhật"
+            "T2": "Thứ Hai", "T3": "Thứ Ba", "T4": "Thứ Tư",
+            "T5": "Thứ Năm", "T6": "Thứ Sáu", "T7": "Thứ Bảy", "CN": "Chủ Nhật"
         };
 
         const todayCode = map[day] || "T2";
         const isWeekend = (day === 0 || day === 6);
-        // Thời gian soạn cặp: Kích hoạt sau khi kết thúc buổi chiều (từ sau 16h15 trở đi), buổi tối hoặc sáng sớm trước 7g
         const isPackingTime = (hour === 16 && minute >= 15) || (hour >= 17) || (hour < 7);
-        const isEvening = isPackingTime;
+        const tomorrowCode = map[(day + 1) % 7] || "T2";
 
-        // Tính ngày mai
-        const nextDayIdx = (day + 1) % 7;
-        const tomorrowCode = map[nextDayIdx] || "T2";
-
-        const pad = (n) => n.toString().padStart(2, '0');
-        const formattedDate = `${dayNameMap[todayCode]}, ngày ${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()}`;
-        const timeString = `${pad(hour)}:${pad(minute)}`;
-
+        const pad = (n) => String(n).padStart(2, '0');
         return {
-            now,
-            day,
-            hour,
-            minute,
+            now, day, hour, minute,
             todayCode,
             todayName: dayNameMap[todayCode],
             isWeekend,
             isPackingTime,
-            isEvening,
+            isEvening: isPackingTime,
             tomorrowCode,
             tomorrowName: dayNameMap[tomorrowCode],
-            formattedDate,
-            timeString
+            formattedDate: `${dayNameMap[todayCode]}, ${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()}`,
+            timeString: `${pad(hour)}:${pad(minute)}`
         };
     }
 
-    // Xác định tiết học đang diễn ra trong ngày hiện tại
-    // Buổi Sáng: Tiết 1 bắt đầu 7:00, Tiết 4 kết thúc 10:35
-    // Buổi Chiều: Tiết 1 bắt đầu 13:30 (1g30), Tiết 4 kết thúc 16:15 (4g15), Tiết 5 kết thúc 17:05 (5g05)
     function getCurrentPeriodId() {
         const info = getTodayInfo();
         if (info.isWeekend) return null;
-
-        const currentMinutes = info.hour * 60 + info.minute;
-
-        // Morning periods
-        // S1: 07:00 - 07:45
-        if (currentMinutes >= 7 * 60 && currentMinutes < 7 * 60 + 45) return "S1";
-        // S2: 07:50 - 08:35
-        if (currentMinutes >= 7 * 60 + 50 && currentMinutes < 8 * 60 + 35) return "S2";
-        // S3: 09:00 - 09:45 (Sau giờ ra chơi 25 phút)
-        if (currentMinutes >= 9 * 60 && currentMinutes < 9 * 60 + 45) return "S3";
-        // S4: 09:50 - 10:35 (Kết thúc đúng 10g35)
-        if (currentMinutes >= 9 * 60 + 50 && currentMinutes < 10 * 60 + 35) return "S4";
-        // S5: 10:40 - 11:25
-        if (currentMinutes >= 10 * 60 + 40 && currentMinutes < 11 * 60 + 25) return "S5";
-
-        // Afternoon periods
-        // C1: 13:30 - 14:10 (Bắt đầu đúng 1g30)
-        if (currentMinutes >= 13 * 60 + 30 && currentMinutes < 14 * 60 + 10) return "C1";
-        // C2: 14:15 - 14:55
-        if (currentMinutes >= 14 * 60 + 15 && currentMinutes < 14 * 60 + 55) return "C2";
-        // C3: 15:05 - 15:40 (Sau giờ ra chơi 10 phút)
-        if (currentMinutes >= 15 * 60 + 5 && currentMinutes < 15 * 60 + 40) return "C3";
-        // C4: 15:40 - 16:15 (Kết thúc đúng 4g15 / 16g15)
-        if (currentMinutes >= 15 * 60 + 40 && currentMinutes < 16 * 60 + 15) return "C4";
-        // C5: 16:20 - 17:05 (Kết thúc đúng 5g05 / 17g05)
-        if (currentMinutes >= 16 * 60 + 20 && currentMinutes < 17 * 60 + 5) return "C5";
-
+        const m = info.hour * 60 + info.minute;
+        if (m >= 420 && m < 465) return "S1";
+        if (m >= 470 && m < 515) return "S2";
+        if (m >= 540 && m < 585) return "S3";
+        if (m >= 590 && m < 635) return "S4";
+        if (m >= 640 && m < 685) return "S5";
+        if (m >= 810 && m < 850) return "C1";
+        if (m >= 855 && m < 895) return "C2";
+        if (m >= 905 && m < 940) return "C3";
+        if (m >= 940 && m < 975) return "C4";
+        if (m >= 980 && m < 1025) return "C5";
         return null;
     }
 
-    // 3. QUẢN LÝ CHECKLIST BALO HỌC SINH
     function getBackpackStorageKey(dayCode) {
-        const todayStr = new Date().toISOString().slice(0, 10);
-        return `aseta_backpack_checked_${dayCode}_${todayStr}`;
+        const d = new Date();
+        const dateKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        return `aseta_backpack_v2_${getAccountIdSafe()}_${dayCode}_${dateKey}`;
     }
 
     function getCheckedSupplies(dayCode) {
         try {
             const raw = localStorage.getItem(getBackpackStorageKey(dayCode));
             return raw ? JSON.parse(raw) : {};
-        } catch (e) {
+        } catch (_) {
             return {};
         }
     }
 
-    function setSupplyChecked(dayCode, supplyId, isChecked) {
+    function saveCheckedSupplies(dayCode, mapObj) {
         try {
-            const checkedMap = getCheckedSupplies(dayCode);
-            if (isChecked) {
-                checkedMap[supplyId] = true;
-            } else {
-                delete checkedMap[supplyId];
+            localStorage.setItem(getBackpackStorageKey(dayCode), JSON.stringify(mapObj));
+        } catch (_) {}
+    }
+
+    function setSupplyChecked(dayCode, supplyId, isChecked) {
+        const checkedMap = getCheckedSupplies(dayCode);
+        if (isChecked) checkedMap[supplyId] = true;
+        else delete checkedMap[supplyId];
+        saveCheckedSupplies(dayCode, checkedMap);
+    }
+
+    function getSuppliesForDay(dayCode) {
+        const dayData = TIMETABLE_CONFIG.days[dayCode];
+        if (!dayData || dayData.isOff) return [];
+        const allSubjects = [...dayData.morning, ...dayData.afternoon].filter(s => s && s.trim());
+        const uniqueSubjects = [...new Set(allSubjects)];
+        const out = [];
+        uniqueSubjects.forEach(subKey => {
+            const meta = TIMETABLE_CONFIG.subjectsMeta[subKey];
+            if (meta && meta.supplies) {
+                out.push({ subjectKey: subKey, subjectMeta: meta, supplies: meta.supplies });
             }
-            localStorage.setItem(getBackpackStorageKey(dayCode), JSON.stringify(checkedMap));
-        } catch (e) {
-            console.error("Lỗi lưu checklist:", e);
-        }
+        });
+        return out;
     }
 
     function resetBackpackChecklist(dayCode) {
         try {
             localStorage.removeItem(getBackpackStorageKey(dayCode));
-            if (window.AudioHelper && window.AudioHelper.playPlip) {
-                window.AudioHelper.playPlip();
-            }
-            const listEl = document.getElementById("backpackSuppliesList");
-            const prevScroll = listEl ? listEl.scrollTop : 0;
+            if (window.AudioHelper && window.AudioHelper.playPlip) window.AudioHelper.playPlip();
             renderDayView(dayCode);
-            const newListEl = document.getElementById("backpackSuppliesList");
-            if (newListEl && prevScroll) {
-                newListEl.scrollTop = prevScroll;
-            }
-        } catch (e) {
-            console.error("Lỗi đặt lại checklist:", e);
+        } catch (_) {}
+    }
+
+    function checkAllBackpack(dayCode) {
+        const groups = getSuppliesForDay(dayCode);
+        const map = {};
+        groups.forEach(g => g.supplies.forEach(s => { map[s.id] = true; }));
+        saveCheckedSupplies(dayCode, map);
+        if (window.AudioHelper && window.AudioHelper.playSuccess) window.AudioHelper.playSuccess();
+        if (window.confetti) {
+            window.confetti({ particleCount: 45, spread: 55, origin: { y: 0.65 } });
         }
+        renderDayView(dayCode);
     }
 
-    // Tổng hợp tất cả đồ dùng cần mang của một ngày
-    function getSuppliesForDay(dayCode) {
-        const dayData = TIMETABLE_CONFIG.days[dayCode];
-        if (!dayData || dayData.isOff) return [];
-
-        const allPeriodSubjects = [...dayData.morning, ...dayData.afternoon].filter(s => s && s.trim());
-        const uniqueSubjects = [...new Set(allPeriodSubjects)];
-
-        const aggregated = [];
-        uniqueSubjects.forEach(subKey => {
-            const meta = TIMETABLE_CONFIG.subjectsMeta[subKey];
-            if (meta && meta.supplies) {
-                aggregated.push({
-                    subjectKey: subKey,
-                    subjectMeta: meta,
-                    supplies: meta.supplies
-                });
-            }
-        });
-
-        return aggregated;
-    }
-
-    // 4. GIAO DIỆN CHÍNH
+    // =========================================================================
+    // MAIN RENDER (CLEAN EDITORIAL BENTO)
+    // =========================================================================
     function render(container) {
         if (!container) return;
         container.innerHTML = "";
 
         const info = getTodayInfo();
-
         if (!activeDayCode) {
-            if (info.isWeekend) {
-                activeDayCode = "T2";
-            } else if (info.isPackingTime && info.todayCode !== 'T6') {
-                // Sau giờ tan học chiều (từ sau 16h15), ưu tiên gợi ý ngày mai để soạn cặp
-                activeDayCode = info.tomorrowCode;
-            } else {
-                activeDayCode = info.todayCode;
-            }
+            if (info.isWeekend) activeDayCode = "T2";
+            else if (info.isPackingTime && info.todayCode !== 'T6') activeDayCode = info.tomorrowCode;
+            else activeDayCode = info.todayCode;
         }
 
         const wrapper = document.createElement("div");
-        wrapper.className = "py-6 px-3 sm:px-6 max-w-7xl mx-auto space-y-5 animate-fadeIn text-slate-800 dark:text-slate-100";
+        wrapper.className = "max-w-6xl mx-auto space-y-4 pb-8 text-slate-900 dark:text-slate-100";
 
-        // A. HEADER TRANG THỜI KHÓA BIỂU
-        const headerEl = document.createElement("div");
-        headerEl.className = "p-4 sm:p-6 rounded-3xl bg-gradient-to-r from-sky-600/15 via-indigo-600/15 to-purple-600/15 border border-sky-500/25 backdrop-blur-xl relative overflow-hidden shadow-xl";
-        headerEl.innerHTML = `
-            <div class="absolute -right-8 -bottom-8 w-44 h-44 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div class="space-y-1.5">
-                    <div class="flex items-center flex-wrap gap-2">
-                        <span class="px-3 py-1 rounded-full text-xs font-black bg-sky-500/20 text-sky-400 border border-sky-500/30 flex items-center gap-1.5 shadow-xs">
-                            <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
-                            <span>${TIMETABLE_CONFIG.className} • ${TIMETABLE_CONFIG.schoolName}</span>
-                        </span>
-                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-500/15 text-indigo-300 border border-indigo-500/20">
-                            GVCN: ${TIMETABLE_CONFIG.homeroomTeacher}
-                        </span>
+        const isDayMode = currentViewMode === 'day';
+        const packingTarget = info.isWeekend ? "T2" : (info.todayCode === 'T6' ? "T2" : info.tomorrowCode);
+        const packingHint = info.isPackingTime && isDayMode && activeDayCode === packingTarget
+            ? `🌙 Giờ soạn cặp • Đang xem lịch ${TIMETABLE_CONFIG.days[activeDayCode].name}`
+            : `Lớp ${TIMETABLE_CONFIG.className} • ${info.formattedDate}`;
+
+        wrapper.innerHTML = `
+            <!-- 1. ULTRA-CLEAN TOP BAR -->
+            <div class="flex flex-wrap items-center justify-between gap-2.5">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <button type="button" onclick="AzotaApp.goBack()"
+                            class="px-3 py-1.5 rounded-xl bg-white dark:bg-[#0e1017] hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10 text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors cursor-pointer shrink-0">
+                        ← Quay lại
+                    </button>
+                    <div class="min-w-0">
+                        <h2 class="text-base sm:text-xl font-black text-slate-900 dark:text-white tracking-tight truncate">
+                            Thời Khóa Biểu &amp; Balo
+                        </h2>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">${packingHint}</p>
                     </div>
-                    <h1 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2.5">
-                        <span>📅 Thời Khóa Biểu &amp; Balo Đi Học</span>
-                    </h1>
-                    <p class="text-xs text-slate-600 dark:text-slate-300 flex items-center gap-2 flex-wrap">
-                        <span class="font-semibold text-sky-600 dark:text-sky-400">🕒 Hôm nay: ${info.formattedDate}</span>
-                        <span class="text-slate-400 dark:text-slate-500">•</span>
-                        <span class="text-slate-500 dark:text-slate-400">${TIMETABLE_CONFIG.semester}</span>
-                    </p>
                 </div>
 
-                <div class="flex items-center gap-2 flex-wrap">
-                    <button type="button" 
-                            onclick="window.TimetableEngine.openImageModal()" 
-                            class="px-3.5 py-2 rounded-2xl text-xs font-bold bg-amber-500/15 hover:bg-amber-500/25 text-amber-500 dark:text-amber-300 border border-amber-500/30 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
-                            title="Phóng to ảnh chụp gốc">
-                        <span>🔍</span>
-                        <span>Phóng To Ảnh TKB</span>
-                    </button>
-                    <button type="button" 
-                            onclick="window.TimetableEngine.switchViewMode('fullweek')" 
-                            class="px-3.5 py-2 rounded-2xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-98 ${currentViewMode === 'fullweek' ? 'bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-sky-500/25 ring-2 ring-sky-400/40' : 'bg-white/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10'}">
-                        <span>📋</span>
-                        <span>Bảng Lưới Tuần</span>
-                    </button>
-                    <button type="button" 
-                            onclick="window.AzotaApp.openFileExplorer('root')" 
-                            class="px-3.5 py-2 rounded-2xl text-xs font-bold bg-white/70 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 transition-all flex items-center gap-1 cursor-pointer active:scale-98">
-                        <span>📁</span>
-                        <span>Kho Đề Thi</span>
+                <div class="flex items-center gap-2 shrink-0">
+                    <div class="inline-flex p-1 rounded-2xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10">
+                        <button type="button" onclick="window.TimetableEngine.switchViewMode('day')"
+                                class="px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${isDayMode ? 'bg-slate-950 text-white dark:bg-white dark:text-slate-950 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
+                            Theo ngày
+                        </button>
+                        <button type="button" onclick="window.TimetableEngine.switchViewMode('fullweek')"
+                                class="px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${!isDayMode ? 'bg-slate-950 text-white dark:bg-white dark:text-slate-950 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
+                            Cả tuần
+                        </button>
+                    </div>
+
+                    <button type="button" onclick="window.TimetableEngine.openImageModal()"
+                            class="px-3 py-2 rounded-2xl bg-white dark:bg-[#0e1017] hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10 text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors cursor-pointer flex items-center gap-1.5"
+                            title="Xem ảnh chụp thời khóa biểu gốc">
+                        <span>🖼️</span>
+                        <span class="hidden sm:inline">Ảnh gốc</span>
                     </button>
                 </div>
             </div>
+
+            <!-- 2. COMPACT 5-DAY STRIP (FITS 1 ROW ON EVERY PHONE!) -->
+            ${isDayMode ? `
+                <div class="grid grid-cols-5 gap-1.5 sm:gap-2 p-1.5 rounded-2xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10 shadow-xs">
+                    ${["T2", "T3", "T4", "T5", "T6"].map(code => {
+                        const dObj = TIMETABLE_CONFIG.days[code];
+                        const isSel = activeDayCode === code;
+                        const isToday = info.todayCode === code;
+                        const isTomorrow = info.isPackingTime && code === packingTarget && !isToday;
+                        return `
+                            <button type="button" onclick="window.TimetableEngine.selectDay('${code}')"
+                                    class="relative py-2.5 px-1 rounded-xl text-center transition-all cursor-pointer ${
+                                        isSel
+                                            ? 'bg-slate-950 text-white dark:bg-white dark:text-slate-950 shadow-md font-black'
+                                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/[0.05] font-bold'
+                                    }">
+                                <div class="text-xs sm:text-sm leading-none">${dObj.short}</div>
+                                <div class="text-[9px] sm:text-[10px] mt-1 leading-none opacity-70 truncate">
+                                    ${isToday ? 'Hôm nay' : (isTomorrow ? 'Ngày mai' : dObj.name.replace('Thứ ', ''))}
+                                </div>
+                                ${isToday ? `<span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-emerald-400"></span>` : ''}
+                            </button>
+                        `;
+                    }).join('')}
+                </div>
+            ` : ''}
+
+            <!-- 3. MAIN WORKSPACE -->
+            <div id="timetableMainContentArea"></div>
         `;
-        wrapper.appendChild(headerEl);
-
-        // B. THANH CHỌN THỨ TRONG TUẦN (DAY TABS)
-        const tabsContainer = document.createElement("div");
-        tabsContainer.className = "flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none";
-        
-        const dayKeys = ["T2", "T3", "T4", "T5", "T6"];
-        
-        // 1. Nút "HÔM NAY"
-        const isViewingToday = (currentViewMode === 'day' && activeDayCode === info.todayCode);
-        const todayBtn = document.createElement("button");
-        todayBtn.type = "button";
-        todayBtn.className = `shrink-0 px-4 py-2 rounded-2xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer active:scale-95 shadow-sm ${
-            isViewingToday 
-                ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-emerald-500/30 ring-2 ring-emerald-400/50' 
-                : 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
-        }`;
-        todayBtn.innerHTML = `
-            <span class="w-2 h-2 rounded-full bg-emerald-400 ${isViewingToday ? 'animate-ping' : ''}"></span>
-            <span>🔴 Hôm Nay (${info.todayName})</span>
-        `;
-        todayBtn.onclick = () => {
-            if (window.AudioHelper && window.AudioHelper.playClick) window.AudioHelper.playClick();
-            currentViewMode = 'day';
-            activeDayCode = info.isWeekend ? "T2" : info.todayCode;
-            render(container);
-        };
-        tabsContainer.appendChild(todayBtn);
-
-        // 2. Các nút T2 đến T6
-        dayKeys.forEach(code => {
-            const dayObj = TIMETABLE_CONFIG.days[code];
-            const isSelected = (currentViewMode === 'day' && activeDayCode === code);
-            const isToday = (info.todayCode === code);
-
-            const tabBtn = document.createElement("button");
-            tabBtn.type = "button";
-            tabBtn.className = `shrink-0 px-3.5 py-2 rounded-2xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-xs ${
-                isSelected 
-                    ? 'bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-md shadow-sky-500/25 ring-2 ring-sky-400/40' 
-                    : 'bg-white/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10'
-            }`;
-            tabBtn.innerHTML = `
-                <span>${dayObj.name}</span>
-                ${isToday ? `<span class="px-1.5 py-0.2 rounded-full text-[9px] font-black bg-rose-500 text-white">Nay</span>` : ''}
-            `;
-            tabBtn.onclick = () => {
-                if (window.AudioHelper && window.AudioHelper.playClick) window.AudioHelper.playClick();
-                currentViewMode = 'day';
-                activeDayCode = code;
-                render(container);
-            };
-            tabsContainer.appendChild(tabBtn);
-        });
-
-        // 3. Phím tắt: "Soạn cặp ngày mai" (Kích hoạt từ sau 16h15 hoặc buổi tối)
-        if (info.isPackingTime) {
-            const targetCode = info.isWeekend ? "T2" : (info.todayCode === 'T6' ? "T2" : info.tomorrowCode);
-            const targetName = TIMETABLE_CONFIG.days[targetCode] ? TIMETABLE_CONFIG.days[targetCode].name : targetCode;
-            const tomorrowBtn = document.createElement("button");
-            tomorrowBtn.type = "button";
-            const isTargetActive = (currentViewMode === 'day' && activeDayCode === targetCode && !isViewingToday);
-            tomorrowBtn.className = `shrink-0 px-3.5 py-2 rounded-2xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-xs ${
-                isTargetActive 
-                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-amber-500/25 ring-2 ring-amber-400/50' 
-                    : 'bg-amber-500/15 hover:bg-amber-500/25 text-amber-500 dark:text-amber-300 border border-amber-500/30'
-            }`;
-            tomorrowBtn.innerHTML = `
-                <span>🌙</span>
-                <span>Soạn Cặp: ${targetName}</span>
-                <span class="px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-amber-500/30 text-amber-900 dark:text-amber-200">Gợi ý</span>
-            `;
-            tomorrowBtn.onclick = () => {
-                if (window.AudioHelper && window.AudioHelper.playClick) window.AudioHelper.playClick();
-                currentViewMode = 'day';
-                activeDayCode = targetCode;
-                render(container);
-            };
-            tabsContainer.appendChild(tomorrowBtn);
-        }
-
-        wrapper.appendChild(tabsContainer);
-
-        // C. NỘI DUNG CHÍNH (THEO VIEW MODE)
-        const mainContentArea = document.createElement("div");
-        mainContentArea.id = "timetableMainContentArea";
-        wrapper.appendChild(mainContentArea);
 
         container.appendChild(wrapper);
 
+        const contentArea = wrapper.querySelector("#timetableMainContentArea");
         if (currentViewMode === 'fullweek') {
-            renderFullWeekView(mainContentArea);
+            renderFullWeekView(contentArea);
         } else {
-            renderDayView(activeDayCode, mainContentArea);
+            renderDayView(activeDayCode, contentArea);
         }
     }
 
-    // 5. RENDER BỐ CỤC 1 HÀNG CHUNG (3 CỘT SONG SONG):
-    // [ CỘT 1: ẢNH GỐC TO ]  |  [ CỘT 2: LỊCH TIẾT HỌC ]  |  [ CỘT 3: BALO ĐI HỌC CHECKLIST ]
+    // =========================================================================
+    // DAY VIEW: CLEAN 2-PANE BENTO (SCHEDULE LEFT 7-COL | BACKPACK RIGHT 5-COL)
+    // =========================================================================
     function renderDayView(dayCode, container) {
-        const targetContainer = container || document.getElementById("timetableMainContentArea");
-        if (!targetContainer) return;
-        targetContainer.innerHTML = "";
+        const target = container || document.getElementById("timetableMainContentArea");
+        if (!target) return;
+        target.innerHTML = "";
 
         const dayData = TIMETABLE_CONFIG.days[dayCode] || TIMETABLE_CONFIG.days["T2"];
         const info = getTodayInfo();
-        const isToday = (info.todayCode === dayCode);
+        const isToday = info.todayCode === dayCode;
         const currentPeriod = isToday ? getCurrentPeriodId() : null;
 
-        const dayWrapper = document.createElement("div");
-        dayWrapper.className = "space-y-4 animate-fadeIn";
-
-        // BANNER TRẠNG THÁI & LƯU Ý GIÁO VIÊN (NGANG BĂNG TRÊN CÙNG)
-        const topBannerEl = document.createElement("div");
-        topBannerEl.className = "p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-sky-500/10 border border-emerald-500/25 backdrop-blur-md flex items-center justify-between gap-3 flex-wrap shadow-xs";
-        
-        let bannerText = "";
-        if (info.isPackingTime && !info.isWeekend && dayCode === info.tomorrowCode && info.todayCode !== 'T6') {
-            bannerText = `
-                <div class="flex items-center gap-2">
-                    <span class="text-base">🌙</span>
-                    <span class="text-xs sm:text-sm font-black text-amber-700 dark:text-amber-300 uppercase tracking-wide">
-                        GIỜ SOẠN CẶP (Sau 16h15): Đang xem lịch ${dayData.name} ngày mai
-                    </span>
-                    <span class="text-xs text-slate-500 dark:text-slate-400 hidden sm:inline">
-                        (${dayData.morning.filter(Boolean).length} tiết Sáng • ${dayData.afternoon.filter(Boolean).length} tiết Chiều)
-                    </span>
-                </div>
-            `;
-        } else if (isToday) {
-            bannerText = `
-                <div class="flex items-center gap-2.5">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                    <span class="text-xs sm:text-sm font-black text-slate-900 dark:text-white uppercase tracking-wide">
-                        LỊCH HỌC HÔM NAY: ${dayData.name}
-                    </span>
-                    <span class="text-xs text-slate-500 dark:text-slate-400 hidden sm:inline">
-                        (${dayData.morning.filter(Boolean).length} tiết Sáng • ${dayData.afternoon.filter(Boolean).length} tiết Chiều)
-                    </span>
-                </div>
-            `;
-        } else if (info.isWeekend && dayCode === "T2") {
-            bannerText = `
-                <div class="flex items-center gap-2">
-                    <span class="text-base">🌴</span>
-                    <span class="text-xs sm:text-sm text-amber-700 dark:text-amber-200">
-                        <strong class="font-bold">Cuối tuần nghỉ học!</strong> Đang hiển thị lịch <strong class="underline">${dayData.name}</strong> để bạn chuẩn bị sách vở đầu tuần.
-                    </span>
-                </div>
-            `;
-        } else {
-            bannerText = `
-                <div class="flex items-center gap-2">
-                    <span class="text-base">📅</span>
-                    <span class="text-xs sm:text-sm font-black text-slate-900 dark:text-white">
-                        LỊCH HỌC: ${dayData.name} (${dayData.morning.filter(Boolean).length} tiết Sáng • ${dayData.afternoon.filter(Boolean).length} tiết Chiều)
-                    </span>
-                </div>
-            `;
-        }
-
-        let noteBadge = "";
-        if (dayData.specialNote) {
-            noteBadge = `
-                <div class="text-[11px] sm:text-xs text-amber-600 dark:text-amber-300 font-semibold flex items-center gap-1.5 bg-amber-500/15 px-3 py-1 rounded-xl border border-amber-500/25">
-                    <span>📌</span><span>${dayData.specialNote}</span>
-                </div>
-            `;
-        }
-
-        topBannerEl.innerHTML = `
-            <div class="flex items-center gap-2">${bannerText}</div>
-            ${noteBadge}
-        `;
-        dayWrapper.appendChild(topBannerEl);
-
-        // ================= HÀNG 3 CỘT SONG SONG TRÊN CÙNG 1 ROW =================
-        // lg:col-span-4 (Cột 1: Ảnh gốc to)
-        // lg:col-span-4 (Cột 2: Lịch tiết học Sáng & Chiều)
-        // lg:col-span-4 (Cột 3: Balo đi học checklist)
-        const rowGrid = document.createElement("div");
-        rowGrid.className = "grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch";
-
-        // ================= CỘT 1: ẢNH GỐC THỜI KHÓA BIỂU TO (lg:col-span-4) =================
-        const col1Image = document.createElement("div");
-        col1Image.className = "lg:col-span-4 flex flex-col";
-
-        col1Image.innerHTML = `
-            <div class="p-4 sm:p-5 rounded-3xl bg-white/75 dark:bg-slate-900/75 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl shadow-xl space-y-3.5 flex-1 flex flex-col justify-between">
-                <div class="flex items-center justify-between pb-2.5 border-b border-slate-200/60 dark:border-white/5">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-500 flex items-center justify-center text-base font-bold shrink-0">
-                            🖼️
-                        </div>
-                        <div>
-                            <h3 class="font-black text-xs sm:text-sm text-slate-900 dark:text-white">Ảnh Gốc Thời Khóa Biểu</h3>
-                            <div class="text-[10px] text-slate-400">Lớp 11A7 • THPT Trần Văn Giàu</div>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center gap-1">
-                        <button type="button" 
-                                onclick="window.TimetableEngine.openImageModal()" 
-                                class="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-sky-500/15 hover:bg-sky-500/25 text-sky-400 border border-sky-500/30 transition-all flex items-center gap-1 cursor-pointer active:scale-95"
-                                title="Phóng to toàn màn hình">
-                            <span>🔍</span><span>Phóng To</span>
-                        </button>
-                        <a href="${TIMETABLE_CONFIG.imageUrl}" 
-                           download="Thoi_Khoa_Bieu_11A7_THPT_Tran_Van_Giau.jpg" 
-                           class="px-2 py-1 rounded-xl text-[11px] font-bold bg-white/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 hover:bg-slate-100 transition-all flex items-center cursor-pointer"
-                           title="Tải ảnh gốc về máy">
-                            <span>📥</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Khung ảnh to rõ nét -->
-                <div class="relative flex-1 rounded-2xl overflow-hidden border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-950 p-2 text-center cursor-pointer group shadow-inner flex items-center justify-center min-h-[360px]" 
-                     onclick="window.TimetableEngine.openImageModal()" 
-                     title="Nhấp vào ảnh để phóng to toàn màn hình">
-                    <img src="${TIMETABLE_CONFIG.imageUrl}" 
-                         alt="Thời khóa biểu Lớp 11A7 Trường THPT Trần Văn Giàu" 
-                         class="w-full h-auto max-h-[460px] object-contain mx-auto rounded-xl shadow-sm transition-transform duration-300 group-hover:scale-[1.02]">
-                    
-                    <div class="absolute bottom-2.5 right-2.5 px-3 py-1 rounded-xl bg-slate-950/85 text-white text-[10px] font-black backdrop-blur-md border border-white/20 shadow-xl flex items-center gap-1 opacity-85 group-hover:opacity-100 transition-opacity">
-                        <span>🔍</span><span>Nhấp để phóng to</span>
-                    </div>
-                </div>
-
-                <div class="text-[10px] text-slate-400 dark:text-slate-400 text-center pt-1">
-                    Bản chụp nhà trường áp dụng từ 09/11/2026.
-                </div>
-            </div>
-        `;
-        rowGrid.appendChild(col1Image);
-
-        // ================= CỘT 2: LỊCH TIẾT HỌC SÁNG & CHIỀU (lg:col-span-4) =================
-        const col2Schedule = document.createElement("div");
-        col2Schedule.className = "lg:col-span-4 flex flex-col";
-
-        const hasAfternoon = dayData.afternoon.some(Boolean);
-
-        col2Schedule.innerHTML = `
-            <div class="p-4 sm:p-5 rounded-3xl bg-white/75 dark:bg-slate-900/75 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl shadow-xl space-y-3.5 flex-1 flex flex-col">
-                <div class="flex items-center justify-between pb-2.5 border-b border-slate-200/60 dark:border-white/5">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-xl bg-sky-500/15 text-sky-400 flex items-center justify-center text-base font-bold shrink-0">
-                            📅
-                        </div>
-                        <div>
-                            <h3 class="font-black text-xs sm:text-sm text-slate-900 dark:text-white">Lịch Tiết Học ${dayData.name}</h3>
-                            <div class="text-[10px] text-slate-400">Buổi Sáng &amp; Buổi Chiều</div>
-                        </div>
-                    </div>
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-500/15 text-sky-400 border border-sky-500/25">
-                        ${dayData.morning.filter(Boolean).length + dayData.afternoon.filter(Boolean).length} Tiết
-                    </span>
-                </div>
-
-                <div class="space-y-3 flex-1 overflow-y-auto max-h-[520px] pr-0.5">
-                    <!-- Buổi Sáng -->
-                    <div class="space-y-1.5">
-                        <div class="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300 px-0.5">
-                            <span class="flex items-center gap-1.5">
-                                <span>🌅</span><span>Buổi Sáng</span>
-                                <span class="text-[10px] text-slate-400 font-normal">(07:00 – 10:35)</span>
-                            </span>
-                            <span class="text-[10px] text-sky-500 font-bold">${dayData.morning.filter(Boolean).length} tiết</span>
-                        </div>
-                        <div class="space-y-1.5" id="morningPeriodList"></div>
-                    </div>
-
-                    <!-- Buổi Chiều -->
-                    <div class="space-y-1.5 pt-2 border-t border-slate-200/60 dark:border-white/5">
-                        <div class="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300 px-0.5">
-                            <span class="flex items-center gap-1.5">
-                                <span>🌇</span><span>Buổi Chiều</span>
-                                <span class="text-[10px] text-slate-400 font-normal">(13:30 – 16:15/17:05)</span>
-                            </span>
-                            <span class="text-[10px] ${hasAfternoon ? 'text-indigo-400' : 'text-slate-400'} font-bold">
-                                ${hasAfternoon ? `${dayData.afternoon.filter(Boolean).length} tiết` : 'Nghỉ'}
-                            </span>
-                        </div>
-                        <div class="space-y-1.5" id="afternoonPeriodList"></div>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        const morningList = col2Schedule.querySelector("#morningPeriodList");
-        TIMETABLE_CONFIG.timeSlots.morning.forEach((slot, idx) => {
-            const subjectKey = dayData.morning[idx] || "";
-            const isOngoing = (isToday && currentPeriod === slot.id);
-            morningList.appendChild(createCompactPeriodRow(slot, subjectKey, isOngoing));
-        });
-
-        const afternoonList = col2Schedule.querySelector("#afternoonPeriodList");
-        if (hasAfternoon) {
-            TIMETABLE_CONFIG.timeSlots.afternoon.forEach((slot, idx) => {
-                const subjectKey = dayData.afternoon[idx] || "";
-                const isOngoing = (isToday && currentPeriod === slot.id);
-                afternoonList.appendChild(createCompactPeriodRow(slot, subjectKey, isOngoing));
-            });
-        } else {
-            afternoonList.innerHTML = `
-                <div class="p-3.5 text-center rounded-xl bg-slate-500/5 border border-dashed border-slate-300 dark:border-white/10 text-[11px] text-slate-400">
-                    ☕ Buổi chiều nghỉ học chính khóa.
-                </div>
-            `;
-        }
-
-        rowGrid.appendChild(col2Schedule);
-
-        // ================= CỘT 3: BALO HỌC SINH CHECKLIST (lg:col-span-4) =================
-        // NẰM NGAY CÙNG 1 HÀNG CHUNG VỚI CỘT 1 & CỘT 2! KHÔNG BỊ CHÌM XUỐNG DƯỚI!
-        const col3Backpack = document.createElement("div");
-        col3Backpack.className = "lg:col-span-4 flex flex-col";
+        const morningPeriods = TIMETABLE_CONFIG.timeSlots.morning
+            .map((slot, idx) => ({ slot, subject: dayData.morning[idx] || "" }))
+            .filter(p => p.subject);
+        const afternoonPeriods = TIMETABLE_CONFIG.timeSlots.afternoon
+            .map((slot, idx) => ({ slot, subject: dayData.afternoon[idx] || "" }))
+            .filter(p => p.subject);
 
         const daySupplies = getSuppliesForDay(dayCode);
         const checkedMap = getCheckedSupplies(dayCode);
-
         let totalItems = 0;
         let checkedCount = 0;
-        daySupplies.forEach(grp => {
-            grp.supplies.forEach(item => {
-                totalItems++;
-                if (checkedMap[item.id]) checkedCount++;
-            });
-        });
+        daySupplies.forEach(g => g.supplies.forEach(item => {
+            totalItems++;
+            if (checkedMap[item.id]) checkedCount++;
+        }));
         const percent = totalItems > 0 ? Math.round((checkedCount / totalItems) * 100) : 100;
 
-        col3Backpack.innerHTML = `
-            <div class="p-4 sm:p-5 rounded-3xl bg-white/75 dark:bg-slate-900/75 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl shadow-xl space-y-3.5 flex-1 flex flex-col justify-between">
-                <div class="flex items-center justify-between pb-2.5 border-b border-slate-200/60 dark:border-white/5">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center text-base font-bold shrink-0">
-                            🎒
+        function buildPeriodRowHtml(p) {
+            const meta = TIMETABLE_CONFIG.subjectsMeta[p.subject] || { fullName: p.subject, icon: "📚" };
+            const isOngoing = currentPeriod === p.slot.id;
+            const actionBtn = p.subject === "Ngoại ngữ"
+                ? `<button type="button" onclick="if(window.VocabHub){window.VocabHub.openOralTest();}else if(window.AzotaApp&&window.AzotaApp.openOralTest){window.AzotaApp.openOralTest();}"
+                           class="px-2.5 py-1 rounded-xl text-[11px] font-black bg-sky-500/15 hover:bg-sky-500/25 text-sky-600 dark:text-sky-300 border border-sky-500/25 transition-colors cursor-pointer shrink-0">
+                       Khảo bài ➔
+                   </button>`
+                : (meta.examFolderId
+                    ? `<button type="button" onclick="window.AzotaApp.openFileExplorer('${meta.examFolderId}')"
+                               class="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-slate-100 dark:bg-white/[0.05] hover:bg-sky-500/15 text-slate-600 dark:text-slate-300 hover:text-sky-500 dark:hover:text-sky-300 transition-colors cursor-pointer shrink-0">
+                           Ôn bài
+                       </button>`
+                    : '');
+
+            return `
+                <div class="flex items-center justify-between gap-3 px-3.5 py-3 rounded-2xl border transition-colors ${
+                    isOngoing
+                        ? 'bg-emerald-500/10 border-emerald-500/40'
+                        : 'bg-slate-50/80 dark:bg-white/[0.03] border-slate-200/70 dark:border-white/[0.06]'
+                }">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <span class="w-8 h-8 rounded-xl flex items-center justify-center text-[11px] font-black font-mono shrink-0 ${
+                            isOngoing
+                                ? 'bg-emerald-500 text-slate-950'
+                                : 'bg-white dark:bg-white/[0.06] text-slate-500 dark:text-slate-400 border border-slate-200/80 dark:border-white/10'
+                        }">${p.slot.id}</span>
+                        <span class="text-lg leading-none shrink-0 flex items-center">${meta.icon}</span>
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-sm font-black text-slate-900 dark:text-white truncate">${meta.fullName}</span>
+                                ${isOngoing ? '<span class="px-1.5 py-0.5 rounded-full text-[9px] font-black bg-emerald-500 text-slate-950 shrink-0">Đang học</span>' : ''}
+                            </div>
+                            <div class="text-[11px] font-mono text-slate-400">${p.slot.time}</div>
                         </div>
-                        <div>
-                            <h3 class="font-black text-xs sm:text-sm text-slate-900 dark:text-white">Balo Đi Học ${dayData.name}</h3>
-                            <div class="text-[10px] text-slate-400">Sách, vở, đề cương cần mang</div>
-                        </div>
                     </div>
-                    <button type="button" 
-                            onclick="window.TimetableEngine.resetBackpackChecklist('${dayCode}')" 
-                            class="text-[11px] font-bold text-sky-500 hover:text-sky-400 underline cursor-pointer"
-                            title="Đặt lại các ô đã đánh dấu">
-                        Làm mới
-                    </button>
+                    ${actionBtn}
                 </div>
+            `;
+        }
 
-                <!-- Thanh tiến độ soạn cặp -->
-                <div class="p-2.5 rounded-2xl bg-slate-500/5 dark:bg-white/5 border border-slate-200/60 dark:border-white/5 space-y-1">
-                    <div class="flex items-center justify-between text-xs font-bold">
-                        <span class="text-slate-700 dark:text-slate-300">Tiến độ soạn cặp:</span>
-                        <span id="backpackProgressText" class="${percent === 100 ? 'text-emerald-500' : 'text-sky-500'} font-black">${checkedCount}/${totalItems} (${percent}%)</span>
-                    </div>
-                    <div class="w-full h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
-                        <div id="backpackProgressBarFill" class="h-full rounded-full transition-all duration-300 ${percent === 100 ? 'bg-emerald-500 shadow-sm shadow-emerald-500/50' : 'bg-gradient-to-r from-sky-500 to-indigo-600'}" style="width: ${percent}%;"></div>
-                    </div>
-                    <div id="backpackSuccessBadge" class="${percent === 100 ? '' : 'hidden'} text-[10px] font-bold text-emerald-500 flex items-center gap-1 pt-0.5">
-                        <span>🎉</span><span>Tuyệt vời! Đã đủ 100% sách vở vào cặp.</span>
-                    </div>
+        const gridEl = document.createElement("div");
+        gridEl.className = "grid grid-cols-1 lg:grid-cols-12 gap-4 items-start";
+
+        // LEFT PANE (7 cols): CLEAN SCHEDULE CARD
+        const leftPane = document.createElement("div");
+        leftPane.className = "lg:col-span-7 bento-card-enter rounded-3xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10 p-5 sm:p-6 space-y-5 shadow-sm";
+        leftPane.innerHTML = `
+            <div class="flex items-center justify-between gap-2">
+                <div>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Lịch Học • ${TIMETABLE_CONFIG.className}</p>
+                    <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">${dayData.name}</h3>
                 </div>
+                <span class="px-3 py-1 rounded-full bg-slate-100 dark:bg-white/[0.06] text-xs font-extrabold text-slate-600 dark:text-slate-300">
+                    ${morningPeriods.length + afternoonPeriods.length} tiết
+                </span>
+            </div>
 
-                <!-- Danh sách checklist từng môn (scrollable) -->
-                <div class="space-y-2.5 flex-1 overflow-y-auto max-h-[440px] pr-0.5" id="backpackSuppliesList"></div>
+            <!-- Buổi Sáng -->
+            <div class="space-y-2">
+                <div class="flex items-center justify-between px-1">
+                    <span class="text-[11px] font-black uppercase tracking-widest text-sky-600 dark:text-sky-400">🌅 Buổi Sáng</span>
+                    <span class="text-[11px] font-mono text-slate-400">07:00 – 10:35</span>
+                </div>
+                <div class="space-y-2">
+                    ${morningPeriods.map(buildPeriodRowHtml).join('')}
+                </div>
+            </div>
 
-                <!-- Ghi chú bổ sung -->
-                <div class="pt-2 text-[10px] text-slate-400 border-t border-slate-200/60 dark:border-white/5 flex items-center justify-between">
-                    <span>💡 Đồ mang luôn: Bút, thước, Casio, nước.</span>
-                    <span>Chỉ mang chuyên đề khi dặn</span>
+            <!-- Buổi Chiều -->
+            <div class="space-y-2 pt-3 border-t border-slate-200/70 dark:border-white/[0.08]">
+                <div class="flex items-center justify-between px-1">
+                    <span class="text-[11px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-400">🌇 Buổi Chiều</span>
+                    <span class="text-[11px] font-mono text-slate-400">${afternoonPeriods.length > 0 ? '13:30 – 16:15' : 'Nghỉ'}</span>
+                </div>
+                ${afternoonPeriods.length > 0
+                    ? `<div class="space-y-2">${afternoonPeriods.map(buildPeriodRowHtml).join('')}</div>`
+                    : `<div class="py-4 px-4 rounded-2xl border border-dashed border-slate-200 dark:border-white/10 text-center text-xs font-semibold text-slate-400">☕ Buổi chiều nghỉ học chính khóa</div>`
+                }
+            </div>
+
+            ${dayData.specialNote ? `
+                <div class="px-3.5 py-2.5 rounded-2xl bg-amber-500/[0.08] border border-amber-500/20 text-xs font-semibold text-amber-700 dark:text-amber-300 flex items-start gap-2">
+                    <span>📌</span>
+                    <span>${dayData.specialNote}</span>
+                </div>
+            ` : ''}
+        `;
+        gridEl.appendChild(leftPane);
+
+        // RIGHT PANE (5 cols): HIGH-CONTRAST BACKPACK CHECKLIST
+        const rightPane = document.createElement("div");
+        rightPane.className = "lg:col-span-5 space-y-3";
+
+        // 1. High-Contrast Progress Header Card
+        const progressCard = document.createElement("div");
+        progressCard.className = "bento-card-enter relative overflow-hidden rounded-3xl bg-slate-950 text-white dark:bg-[#f4f5f7] dark:text-slate-950 p-5 shadow-lg border border-slate-800 dark:border-white/40 space-y-3";
+        progressCard.innerHTML = `
+            <div class="bento-hatch-overlay"></div>
+            <div class="relative z-10 flex items-center justify-between gap-2">
+                <div>
+                    <span class="text-[10px] font-black uppercase tracking-widest opacity-60">🎒 Balo Đi Học</span>
+                    <h3 class="text-lg font-black tracking-tight mt-0.5">${dayData.name}</h3>
+                </div>
+                <div class="text-right">
+                    <div id="backpackProgressPct" class="text-3xl font-black font-mono leading-none">${percent}%</div>
+                    <div id="backpackProgressText" class="text-[11px] font-bold opacity-65 mt-0.5">${checkedCount}/${totalItems} món</div>
+                </div>
+            </div>
+
+            <div class="relative z-10 space-y-2">
+                <div class="bento-shimmer-track w-full h-2.5 rounded-full bg-white/15 dark:bg-slate-950/10 overflow-hidden">
+                    <div id="backpackProgressBarFill" class="h-full rounded-full transition-all duration-300 ${percent === 100 ? 'bg-emerald-400 dark:bg-emerald-600' : 'bg-white dark:bg-slate-950'}" style="width: ${percent}%"></div>
+                </div>
+                <div class="flex items-center justify-between gap-2 pt-0.5">
+                    <span id="backpackSuccessBadge" class="text-[11px] font-bold ${percent === 100 ? 'text-emerald-400 dark:text-emerald-600' : 'opacity-65'}">
+                        ${percent === 100 ? '✓ Đã soạn đủ 100%!' : 'Chạm từng mục để đánh dấu'}
+                    </span>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button type="button" onclick="window.TimetableEngine.checkAllBackpack('${dayCode}')"
+                                class="px-2.5 py-1 rounded-xl bg-white/15 hover:bg-white/25 dark:bg-slate-950/10 dark:hover:bg-slate-950/20 text-[10px] font-black transition-colors cursor-pointer">
+                            ✓ Đủ hết
+                        </button>
+                        <button type="button" onclick="window.TimetableEngine.resetBackpackChecklist('${dayCode}')"
+                                class="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 dark:bg-slate-950/10 dark:hover:bg-slate-950/20 text-[10px] font-bold opacity-80 hover:opacity-100 transition-colors cursor-pointer">
+                            ↺ Reset
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
+        rightPane.appendChild(progressCard);
 
-        const suppliesListEl = col3Backpack.querySelector("#backpackSuppliesList");
+        // 2. Clean Grouped Checklist Card
+        const listCard = document.createElement("div");
+        listCard.className = "bento-card-enter rounded-3xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10 p-4 sm:p-5 space-y-3.5 shadow-sm";
+        listCard.innerHTML = `<div id="backpackSuppliesList" class="space-y-3.5"></div>`;
+
+        const listEl = listCard.querySelector("#backpackSuppliesList");
+
+        function refreshProgressUI() {
+            const curMap = getCheckedSupplies(dayCode);
+            let curCount = 0;
+            daySupplies.forEach(g => g.supplies.forEach(s => { if (curMap[s.id]) curCount++; }));
+            const curPct = totalItems > 0 ? Math.round((curCount / totalItems) * 100) : 100;
+
+            const pctEl = progressCard.querySelector("#backpackProgressPct");
+            const txtEl = progressCard.querySelector("#backpackProgressText");
+            const barEl = progressCard.querySelector("#backpackProgressBarFill");
+            const msgEl = progressCard.querySelector("#backpackSuccessBadge");
+
+            if (pctEl) pctEl.textContent = `${curPct}%`;
+            if (txtEl) txtEl.textContent = `${curCount}/${totalItems} món`;
+            if (barEl) {
+                barEl.style.width = `${curPct}%`;
+                barEl.className = `h-full rounded-full transition-all duration-300 ${curPct === 100 ? 'bg-emerald-400 dark:bg-emerald-600' : 'bg-white dark:bg-slate-950'}`;
+            }
+            if (msgEl) {
+                msgEl.textContent = curPct === 100 ? '✓ Đã soạn đủ 100%!' : 'Chạm từng mục để đánh dấu';
+                msgEl.className = `text-[11px] font-bold ${curPct === 100 ? 'text-emerald-400 dark:text-emerald-600' : 'opacity-65'}`;
+            }
+            return { curCount, curPct };
+        }
+
         if (daySupplies.length === 0) {
-            suppliesListEl.innerHTML = `
-                <div class="p-6 text-center text-xs text-slate-400">Không có đồ dùng cần mang trong ngày nghỉ.</div>
-            `;
+            listEl.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">Không có đồ dùng cần mang trong ngày nghỉ.</p>`;
         } else {
             daySupplies.forEach(grp => {
-                const subMeta = grp.subjectMeta;
-                const subSection = document.createElement("div");
-                subSection.className = "space-y-1";
+                const sec = document.createElement("div");
+                sec.className = "space-y-1.5";
 
-                const subHeader = document.createElement("div");
-                subHeader.className = "flex items-center gap-1.5 text-[11px] font-bold text-slate-800 dark:text-slate-200";
-                subHeader.innerHTML = `
-                    <span>${subMeta.icon}</span>
-                    <span>${subMeta.fullName}</span>
-                `;
-                subSection.appendChild(subHeader);
+                const hdr = document.createElement("div");
+                hdr.className = "flex items-center gap-1.5 px-1 text-[11px] font-black uppercase tracking-wider text-slate-400";
+                hdr.innerHTML = `<span class="text-sm leading-none">${grp.subjectMeta.icon}</span><span>${grp.subjectMeta.fullName}</span>`;
+                sec.appendChild(hdr);
 
                 grp.supplies.forEach(item => {
                     let isChecked = !!checkedMap[item.id];
-                    const itemEl = document.createElement("div");
-                    itemEl.className = `backpack-checkbox-item ${isChecked ? 'is-checked' : ''}`;
-                    
-                    const boxEl = document.createElement("div");
-                    boxEl.className = `w-4 h-4 rounded-md flex items-center justify-center shrink-0 border transition-all text-[10px] font-black ${
-                        isChecked 
-                            ? 'bg-emerald-500 border-emerald-500 text-white' 
-                            : 'border-slate-300 dark:border-white/20 bg-white/40 dark:bg-slate-800/60'
-                    }`;
-                    boxEl.textContent = isChecked ? '✓' : '';
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+                    const applyItemStyle = () => {
+                        btn.className = `w-full flex items-center gap-3 px-3.5 py-2.5 min-h-[44px] rounded-2xl border text-left transition-all active:scale-[0.99] cursor-pointer ${
+                            isChecked
+                                ? 'bg-emerald-500/[0.08] border-emerald-500/30 text-slate-400 dark:text-slate-500'
+                                : 'bg-slate-50/80 dark:bg-white/[0.03] hover:bg-slate-100 dark:hover:bg-white/[0.07] border-slate-200/70 dark:border-white/[0.07] text-slate-800 dark:text-slate-100'
+                        }`;
+                        btn.innerHTML = `
+                            <span class="w-5 h-5 rounded-lg flex items-center justify-center text-xs font-black shrink-0 border transition-all ${
+                                isChecked
+                                    ? 'bg-emerald-500 border-emerald-500 text-slate-950'
+                                    : 'border-slate-300 dark:border-white/20 bg-white dark:bg-white/[0.04]'
+                            }">${isChecked ? '✓' : ''}</span>
+                            <span class="flex-1 text-xs sm:text-[13px] font-bold leading-snug ${isChecked ? 'line-through opacity-75' : ''}">
+                                ${item.name}
+                                ${item.optional ? '<span class="ml-1 text-[10px] font-bold text-amber-500 no-underline">(tùy chọn)</span>' : ''}
+                                ${item.highlight ? '<span class="ml-1 text-[10px] font-black text-orange-500 no-underline">• Quan trọng</span>' : ''}
+                            </span>
+                        `;
+                    };
+                    applyItemStyle();
 
-                    const textEl = document.createElement("div");
-                    textEl.className = "flex-1 text-[11px] item-text font-medium leading-tight";
-                    textEl.innerHTML = `
-                        ${item.name}
-                        ${item.optional ? '<span class="text-[9px] text-amber-500 font-bold ml-0.5">(Tùy chọn)</span>' : ''}
-                        ${item.highlight ? '<span class="text-[9px] text-orange-400 font-bold ml-0.5">🔥 Quan trọng</span>' : ''}
-                    `;
-
-                    itemEl.appendChild(boxEl);
-                    itemEl.appendChild(textEl);
-
-                    itemEl.onclick = (e) => {
-                        e.stopPropagation();
+                    btn.onclick = () => {
                         isChecked = !isChecked;
                         setSupplyChecked(dayCode, item.id, isChecked);
-
-                        // CẬP NHẬT GIAO DIỆN TẠI CHỖ (IN-PLACE DOM UPDATE)
-                        // TUYỆT ĐỐI KHÔNG GỌI renderDayView -> GIỮ NGUYÊN VỊ TRÍ CUỘN, KHÔNG BỊ NHẢY LÊN TRÊN!
-                        if (isChecked) {
-                            itemEl.classList.add("is-checked");
-                            boxEl.className = "w-4 h-4 rounded-md flex items-center justify-center shrink-0 border transition-all text-[10px] font-black bg-emerald-500 border-emerald-500 text-white";
-                            boxEl.textContent = '✓';
-                        } else {
-                            itemEl.classList.remove("is-checked");
-                            boxEl.className = "w-4 h-4 rounded-md flex items-center justify-center shrink-0 border transition-all text-[10px] font-black border-slate-300 dark:border-white/20 bg-white/40 dark:bg-slate-800/60";
-                            boxEl.textContent = '';
-                        }
-
-                        if (window.AudioHelper && window.AudioHelper.playClick) {
-                            window.AudioHelper.playClick();
-                        }
-
-                        // Tính lại tiến độ và cập nhật thanh tiến độ tại chỗ
-                        const curCheckedMap = getCheckedSupplies(dayCode);
-                        let curCount = 0;
-                        daySupplies.forEach(g => {
-                            g.supplies.forEach(s => {
-                                if (curCheckedMap[s.id]) curCount++;
-                            });
-                        });
-                        const curPercent = totalItems > 0 ? Math.round((curCount / totalItems) * 100) : 100;
-
-                        const progressText = col3Backpack.querySelector("#backpackProgressText");
-                        const progressBarFill = col3Backpack.querySelector("#backpackProgressBarFill");
-                        const successBadge = col3Backpack.querySelector("#backpackSuccessBadge");
-
-                        if (progressText) {
-                            progressText.textContent = `${curCount}/${totalItems} (${curPercent}%)`;
-                            progressText.className = `${curPercent === 100 ? 'text-emerald-500' : 'text-sky-500'} font-black`;
-                        }
-                        if (progressBarFill) {
-                            progressBarFill.style.width = `${curPercent}%`;
-                            progressBarFill.className = `h-full rounded-full transition-all duration-300 ${curPercent === 100 ? 'bg-emerald-500 shadow-sm shadow-emerald-500/50' : 'bg-gradient-to-r from-sky-500 to-indigo-600'}`;
-                        }
-                        if (successBadge) {
-                            if (curPercent === 100) {
-                                successBadge.classList.remove("hidden");
-                            } else {
-                                successBadge.classList.add("hidden");
-                            }
-                        }
-
-                        // Pháo hoa ăn mừng khi hoàn thành 100%
-                        if (isChecked && totalItems > 0 && curCount === totalItems) {
-                            if (window.confetti) {
-                                window.confetti({
-                                    particleCount: 50,
-                                    spread: 60,
-                                    origin: { y: 0.6 }
-                                });
-                            }
+                        applyItemStyle();
+                        if (window.AudioHelper && window.AudioHelper.playClick) window.AudioHelper.playClick();
+                        const { curCount } = refreshProgressUI();
+                        if (isChecked && totalItems > 0 && curCount === totalItems && window.confetti) {
+                            window.confetti({ particleCount: 45, spread: 55, origin: { y: 0.65 } });
                         }
                     };
-
-                    subSection.appendChild(itemEl);
+                    sec.appendChild(btn);
                 });
 
-                suppliesListEl.appendChild(subSection);
+                listEl.appendChild(sec);
             });
         }
 
-        rowGrid.appendChild(col3Backpack);
+        const footerHint = document.createElement("div");
+        footerHint.className = "pt-2.5 border-t border-slate-200/70 dark:border-white/[0.08] text-[11px] text-slate-400 flex items-center justify-between gap-2";
+        footerHint.innerHTML = `<span>💡 Luôn mang: Bút, thước, Casio, bình nước</span>`;
+        listCard.appendChild(footerHint);
 
-        dayWrapper.appendChild(rowGrid);
-        targetContainer.appendChild(dayWrapper);
+        rightPane.appendChild(listCard);
+        gridEl.appendChild(rightPane);
+        target.appendChild(gridEl);
     }
 
-    // Helper tạo một hàng tiết học tinh tế, tích hợp sẵn tóm tắt đồ dùng cần mang
-    // Helper tạo một hàng tiết học tinh tế, thiết kế 2 tầng (2-tier card) chống đè chữ tuyệt đối
-    function createCompactPeriodRow(slot, subjectKey, isOngoing) {
-        const row = document.createElement("div");
-        row.className = `timetable-period-row ${isOngoing ? 'is-current' : ''}`;
-
-        if (!subjectKey) {
-            row.innerHTML = `
-                <div class="flex items-center justify-between w-full">
-                    <div class="flex items-center gap-2">
-                        <span class="w-6 h-6 rounded-lg bg-slate-500/10 text-slate-400 flex items-center justify-center text-[10px] font-black shrink-0">
-                            ${slot.id}
-                        </span>
-                        <div>
-                            <div class="text-[11px] font-semibold text-slate-400">${slot.label}</div>
-                            <div class="text-[9px] text-slate-500 font-mono">${slot.time}</div>
-                        </div>
-                    </div>
-                    <span class="text-[10px] text-slate-400 dark:text-slate-500 italic px-2 py-0.5 rounded-md bg-slate-500/5">Nghỉ</span>
-                </div>
-            `;
-            return row;
-        }
-
-        const meta = TIMETABLE_CONFIG.subjectsMeta[subjectKey] || {
-            fullName: subjectKey,
-            icon: "📚",
-            badgeClass: "bg-slate-500/15 text-slate-300 border-slate-500/20"
-        };
-
-        const hasExams = (window.INITIAL_EXAMS || []).some(e => e.subject === subjectKey || (subjectKey === "Ngoại ngữ" && e.subject === "Tiếng Anh"));
-        const suppliesSummary = meta.supplies ? meta.supplies.map(s => s.name).join(", ") : "";
-
-        // BỐ CỤC 2 TẦNG CHUYÊN NGHIỆP:
-        // TẦNG 1: [Tiết ID] [Icon & Tên môn học] [Badge Đang học] | [Thời gian 07:00 - 07:45]
-        // TẦNG 2: [🎒 Đồ dùng sách vở] | [Nút chức năng tinh gọn]
-        // ĐẢM BẢO 100% NÚT BẤM KHÔNG BAO GIỜ BỊ ĐÈ LÊN THỜI GIAN HOẶC TÊN MÔN!
-        row.innerHTML = `
-            <!-- TẦNG 1: TIÊU ĐỀ TIẾT & THỜI GIAN ĐỘC LẬP -->
-            <div class="flex items-center justify-between gap-2 w-full">
-                <div class="flex items-center gap-2 min-w-0">
-                    <span class="w-6 h-6 rounded-lg ${isOngoing ? 'bg-emerald-500 text-white font-black shadow-xs shadow-emerald-500/40' : 'bg-sky-500/15 text-sky-500 dark:text-sky-400 border border-sky-500/20'} flex items-center justify-center text-[10px] font-black shrink-0">
-                        ${slot.id}
-                    </span>
-                    <div class="flex items-center gap-1.5 min-w-0">
-                        <span class="text-sm shrink-0">${meta.icon}</span>
-                        <span class="text-xs font-bold text-slate-900 dark:text-white truncate">${subjectKey}</span>
-                        ${isOngoing ? `<span class="px-1.5 py-0.2 rounded-full text-[8px] font-black bg-emerald-500 text-white shrink-0 animate-pulse">Đang Học</span>` : ''}
-                    </div>
-                </div>
-                <div class="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 bg-slate-200/50 dark:bg-white/5 px-2 py-0.5 rounded-md shrink-0 border border-slate-300/40 dark:border-white/5">
-                    ⏱️ ${slot.time}
-                </div>
-            </div>
-
-            <!-- TẦNG 2: ĐỒ DÙNG BALO & NÚT HÀNH ĐỘNG TINH TẾ -->
-            <div class="pt-2 border-t border-slate-200/60 dark:border-white/5 flex items-center justify-between gap-2 w-full">
-                <div class="min-w-0 flex-1">
-                    ${suppliesSummary ? `
-                        <div class="text-[10px] text-sky-600 dark:text-sky-300 font-medium truncate" title="${suppliesSummary}">
-                            🎒 ${suppliesSummary}
-                        </div>
-                    ` : `
-                        <div class="text-[10px] text-slate-400 italic">Không có đồ dùng riêng</div>
-                    `}
-                </div>
-
-                <div class="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
-                    ${(subjectKey === "Ngoại ngữ") ? `
-                        <button type="button" 
-                                onclick="if(window.VocabHub){window.VocabHub.openOralTest();}else if(window.AzotaApp&&window.AzotaApp.openOralTest){window.AzotaApp.openOralTest();}" 
-                                class="px-2.5 py-1 rounded-lg text-[10px] font-black bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 hover:from-rose-500 hover:to-purple-500 text-white shadow-xs transition-all flex items-center gap-1 cursor-pointer active:scale-95"
-                                title="👩‍🏫 Học & Khảo Bài Unit 4 (67 Từ): Flashcard 3D, Cô Khảo Bài 67/67, Ghép Thẻ & Trắc Nghiệm">
-                            <span>👩‍🏫</span>
-                            <span>Học &amp; Khảo Bài Unit 4</span>
-                        </button>
-                    ` : (hasExams ? `
-                        <button type="button" 
-                                onclick="window.AzotaApp.openFileExplorer('${meta.examFolderId}')" 
-                                class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 border border-sky-500/25 transition-all flex items-center gap-1 cursor-pointer active:scale-95"
-                                title="Luyện giải đề môn ${subjectKey} trên Aseta">
-                            <span>📝</span>
-                            <span>Luyện Đề</span>
-                        </button>
-                    ` : `
-                        <span class="text-[9px] text-slate-400 font-medium px-2 py-0.5 rounded bg-slate-500/5">
-                            Chính khóa
-                        </span>
-                    `)}
-                </div>
-            </div>
-        `;
-        return row;
-    }
-
-    // 6. RENDER GIAO DIỆN TOÀN BỘ TUẦN (GRID TABLE CHUẨN THPT + ẢNH GỐC TO)
+    // =========================================================================
+    // FULL WEEK VIEW (CLEAN EDITORIAL MATRIX — CLICK ANY DAY HEADER TO PACK!)
+    // =========================================================================
     function renderFullWeekView(container) {
-        const targetContainer = container || document.getElementById("timetableMainContentArea");
-        if (!targetContainer) return;
-        targetContainer.innerHTML = "";
+        const target = container || document.getElementById("timetableMainContentArea");
+        if (!target) return;
+        target.innerHTML = "";
 
         const info = getTodayInfo();
+        const daysList = ["T2", "T3", "T4", "T5", "T6"];
+        const slotsM = TIMETABLE_CONFIG.timeSlots.morning.slice(0, 4);
+        const slotsA = TIMETABLE_CONFIG.timeSlots.afternoon.slice(0, 4);
 
-        const fullWrapper = document.createElement("div");
-        fullWrapper.className = "space-y-6 animate-fadeIn";
+        const buildRows = (slots, key, label, accent) => slots.map((slot, sIdx) => `
+            <tr class="border-t border-slate-100 dark:border-white/[0.06]">
+                ${sIdx === 0 ? `<td rowspan="${slots.length}" class="px-2 py-2 text-center font-black text-[10px] uppercase tracking-widest ${accent} border-r border-slate-100 dark:border-white/[0.06]">${label}</td>` : ''}
+                <td class="px-2 py-2.5 text-center font-mono text-[11px] font-bold text-slate-400 border-r border-slate-100 dark:border-white/[0.06]">${slot.id}</td>
+                ${daysList.map(code => {
+                    const subj = TIMETABLE_CONFIG.days[code][key][sIdx] || "";
+                    const meta = TIMETABLE_CONFIG.subjectsMeta[subj];
+                    const isToday = info.todayCode === code;
+                    return `
+                        <td class="px-2 py-2.5 text-center ${isToday ? 'bg-sky-500/[0.05]' : ''}">
+                            ${subj ? `
+                                <span class="inline-flex items-center gap-1.5 text-xs font-extrabold text-slate-900 dark:text-white">
+                                    <span>${meta ? meta.icon : ''}</span>
+                                    <span>${subj}</span>
+                                </span>
+                            ` : '<span class="text-slate-300 dark:text-slate-700 text-xs">—</span>'}
+                        </td>
+                    `;
+                }).join('')}
+            </tr>
+        `).join('');
 
-        // Thanh chuyển đổi nhanh về ngày hôm nay
-        const topBar = document.createElement("div");
-        topBar.className = "flex items-center justify-between flex-wrap gap-2";
-        topBar.innerHTML = `
-            <div class="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                <span>📋 Bảng Phân Phối Tiết Học Toàn Bộ Tuần Lớp 11A7</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <button type="button" 
-                        onclick="window.TimetableEngine.openImageModal()" 
-                        class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-500/15 hover:bg-amber-500/25 text-amber-500 dark:text-amber-300 border border-amber-500/30 transition-all flex items-center gap-1.5 cursor-pointer">
-                    <span>🖼️</span>
-                    <span>Phóng To Ảnh Gốc</span>
-                </button>
-                <button type="button" 
-                        onclick="window.TimetableEngine.switchViewMode('day', '${info.isWeekend ? 'T2' : info.todayCode}')" 
-                        class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-sky-500/15 hover:bg-sky-500/25 text-sky-400 border border-sky-500/30 transition-all flex items-center gap-1.5 cursor-pointer">
-                    <span>🎒</span>
-                    <span>Quay Về Lịch 1 Hàng</span>
-                </button>
-            </div>
-        `;
-        fullWrapper.appendChild(topBar);
-
-        // BẢNG THỜI KHÓA BIỂU TOÀN TUẦN
-        const tableCard = document.createElement("div");
-        tableCard.className = "timetable-table-container shadow-xl";
-
-        const daysList = ["T2", "T3", "T4", "T5", "T6", "T7"];
-
-        let tableHtml = `
-            <table class="timetable-table">
-                <thead>
-                    <tr>
-                        <th class="w-16">Buổi</th>
-                        <th class="w-14">Tiết</th>
-                        ${daysList.map(code => {
-                            const isToday = (info.todayCode === code);
-                            const dayObj = TIMETABLE_CONFIG.days[code];
-                            return `<th class="${isToday ? 'col-today' : ''}">
-                                <div>${dayObj.name}</div>
-                                ${isToday ? `<span class="inline-block mt-0.5 px-2 py-0.2 rounded-full text-[9px] font-black bg-rose-500 text-white">Hôm Nay</span>` : ''}
-                            </th>`;
-                        }).join('')}
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-
-        // Hàng Buổi Sáng S1 -> S5
-        TIMETABLE_CONFIG.timeSlots.morning.forEach((slot, sIdx) => {
-            tableHtml += `<tr>`;
-            if (sIdx === 0) {
-                tableHtml += `<td rowspan="5" class="font-black text-sky-400 bg-sky-500/10 align-middle">SÁNG</td>`;
-            }
-            tableHtml += `<td class="font-bold text-slate-400 text-xs">${slot.id}</td>`;
-
-            daysList.forEach(code => {
-                const dayObj = TIMETABLE_CONFIG.days[code];
-                const subject = (dayObj && dayObj.morning) ? dayObj.morning[sIdx] : "";
-                const isToday = (info.todayCode === code);
-                const meta = TIMETABLE_CONFIG.subjectsMeta[subject];
-
-                tableHtml += `<td class="${isToday ? 'col-today' : ''}">
-                    ${subject ? `
-                        <div class="font-bold text-xs text-slate-800 dark:text-white flex items-center justify-center gap-1">
-                            <span>${meta ? meta.icon : ''}</span>
-                            <span>${subject}</span>
-                        </div>
-                    ` : `<span class="text-slate-500 dark:text-slate-600 text-xs">—</span>`}
-                </td>`;
-            });
-
-            tableHtml += `</tr>`;
-        });
-
-        // Hàng Buổi Chiều C1 -> C5
-        TIMETABLE_CONFIG.timeSlots.afternoon.forEach((slot, cIdx) => {
-            tableHtml += `<tr>`;
-            if (cIdx === 0) {
-                tableHtml += `<td rowspan="5" class="font-black text-indigo-400 bg-indigo-500/10 align-middle">CHIỀU</td>`;
-            }
-            tableHtml += `<td class="font-bold text-slate-400 text-xs">${slot.id}</td>`;
-
-            daysList.forEach(code => {
-                const dayObj = TIMETABLE_CONFIG.days[code];
-                const subject = (dayObj && dayObj.afternoon) ? dayObj.afternoon[cIdx] : "";
-                const isToday = (info.todayCode === code);
-                const meta = TIMETABLE_CONFIG.subjectsMeta[subject];
-
-                tableHtml += `<td class="${isToday ? 'col-today' : ''}">
-                    ${subject ? `
-                        <div class="font-bold text-xs text-slate-800 dark:text-white flex items-center justify-center gap-1">
-                            <span>${meta ? meta.icon : ''}</span>
-                            <span>${subject}</span>
-                        </div>
-                    ` : `<span class="text-slate-500 dark:text-slate-600 text-xs">—</span>`}
-                </td>`;
-            });
-
-            tableHtml += `</tr>`;
-        });
-
-        tableHtml += `
-                </tbody>
-            </table>
-        `;
-
-        tableCard.innerHTML = tableHtml;
-        fullWrapper.appendChild(tableCard);
-
-        // BẢN ẢNH GỐC THỜI KHÓA BIỂU TO
-        const imgCard = document.createElement("div");
-        imgCard.className = "p-5 sm:p-6 rounded-3xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl shadow-lg space-y-4";
-        imgCard.innerHTML = `
-            <div class="flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-slate-200/60 dark:border-white/5">
-                <div class="flex items-center gap-2.5">
-                    <span class="text-2xl">🖼️</span>
-                    <div>
-                        <h3 class="font-black text-sm sm:text-base text-slate-900 dark:text-white">Ảnh Gốc Thời Khóa Biểu Nhà Trường (Bản Chuẩn)</h3>
-                        <div class="text-[11px] text-slate-400">Trường THPT Trần Văn Giàu • Lớp 11A7 • Áp dụng từ 09/11/2026</div>
-                    </div>
+        target.innerHTML = `
+            <div class="bento-card-enter rounded-3xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse min-w-[640px]">
+                        <thead>
+                            <tr class="bg-slate-50 dark:bg-white/[0.03] text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                <th class="py-3 px-2 w-14 border-r border-slate-100 dark:border-white/[0.06]">Buổi</th>
+                                <th class="py-3 px-2 w-12 border-r border-slate-100 dark:border-white/[0.06]">Tiết</th>
+                                ${daysList.map(code => {
+                                    const dObj = TIMETABLE_CONFIG.days[code];
+                                    const isToday = info.todayCode === code;
+                                    return `
+                                        <th class="py-3 px-2 ${isToday ? 'text-sky-500 bg-sky-500/[0.06]' : ''}">
+                                            <button type="button" onclick="window.TimetableEngine.selectDay('${code}')"
+                                                    class="hover:text-sky-500 transition-colors cursor-pointer inline-flex items-center gap-1">
+                                                <span>${dObj.name}</span>
+                                                ${isToday ? '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>' : ''}
+                                            </button>
+                                        </th>
+                                    `;
+                                }).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${buildRows(slotsM, 'morning', 'Sáng', 'text-sky-500 bg-sky-500/[0.05]')}
+                            ${buildRows(slotsA, 'afternoon', 'Chiều', 'text-amber-500 bg-amber-500/[0.05]')}
+                        </tbody>
+                    </table>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button type="button" 
-                            onclick="window.TimetableEngine.openImageModal()" 
-                            class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-sky-500/15 hover:bg-sky-500/25 text-sky-400 border border-sky-500/30 transition-all flex items-center gap-1.5 cursor-pointer">
-                        <span>🔍</span><span>Phóng To Cực Đại</span>
+                <div class="px-4 py-3 border-t border-slate-100 dark:border-white/[0.06] flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400">
+                    <span>💡 Bấm vào tên Thứ trên bảng để mở Balo soạn cặp của ngày đó.</span>
+                    <button type="button" onclick="window.TimetableEngine.openImageModal()"
+                            class="text-sky-500 hover:text-sky-400 font-bold cursor-pointer">
+                        Xem ảnh TKB gốc ↗
                     </button>
-                    <a href="${TIMETABLE_CONFIG.imageUrl}" 
-                       download="Thoi_Khoa_Bieu_11A7_THPT_Tran_Van_Giau.jpg" 
-                       class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/80 dark:bg-slate-800/80 hover:bg-slate-100 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-white/10 transition-all flex items-center gap-1 cursor-pointer">
-                        <span>📥</span><span>Tải Về</span>
-                    </a>
-                </div>
-            </div>
-
-            <div class="relative rounded-2xl overflow-hidden border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-950 p-2 sm:p-4 text-center cursor-pointer group shadow-inner" 
-                 onclick="window.TimetableEngine.openImageModal()" 
-                 title="Nhấp để phóng to toàn màn hình">
-                <img src="${TIMETABLE_CONFIG.imageUrl}" 
-                     alt="Thời khóa biểu Lớp 11A7 THPT Trần Văn Giàu" 
-                     class="max-w-full max-h-[550px] w-auto h-auto mx-auto rounded-xl shadow-md transition-transform duration-300 group-hover:scale-[1.015]">
-                <div class="absolute bottom-4 right-4 px-3.5 py-1.5 rounded-xl bg-slate-900/85 text-white text-xs font-black backdrop-blur-md border border-white/20 shadow-lg flex items-center gap-1.5 pointer-events-none opacity-90 group-hover:opacity-100 transition-opacity">
-                    <span>🔍</span><span>Bấm để phóng to</span>
                 </div>
             </div>
         `;
-        fullWrapper.appendChild(imgCard);
-
-        // BẢNG TRA CỨU ĐỒ DÙNG HỌC TẬP TẤT CẢ CÁC MÔN
-        const refCard = document.createElement("div");
-        refCard.className = "p-6 rounded-3xl bg-white/70 dark:bg-slate-900/70 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl shadow-lg space-y-4";
-        refCard.innerHTML = `
-            <div class="flex items-center gap-2 pb-2 border-b border-slate-200/60 dark:border-white/5">
-                <span class="text-lg">📚</span>
-                <h3 class="font-black text-sm sm:text-base text-slate-900 dark:text-white">Bảng Tra Cứu Đồ Dùng Học Tập Tất Cả Các Môn (Lớp 11A7)</h3>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5" id="allSubjectsRefGrid"></div>
-        `;
-
-        const refGrid = refCard.querySelector("#allSubjectsRefGrid");
-        Object.entries(TIMETABLE_CONFIG.subjectsMeta).forEach(([subName, meta]) => {
-            const itemBox = document.createElement("div");
-            itemBox.className = "p-3.5 rounded-2xl bg-slate-500/5 dark:bg-white/5 border border-slate-200/60 dark:border-white/5 space-y-1.5";
-            itemBox.innerHTML = `
-                <div class="flex items-center gap-2 text-xs font-black text-slate-900 dark:text-white">
-                    <span>${meta.icon}</span>
-                    <span>${meta.fullName}</span>
-                </div>
-                <ul class="text-[11px] text-slate-600 dark:text-slate-300 space-y-0.5 list-disc list-inside">
-                    ${meta.supplies.map(s => `<li>${s.name}</li>`).join('')}
-                </ul>
-            `;
-            refGrid.appendChild(itemBox);
-        });
-
-        fullWrapper.appendChild(refCard);
-        targetContainer.appendChild(fullWrapper);
     }
 
-    // 7. FULLSCREEN LIGHTBOX MODAL CHO ẢNH THỜI KHÓA BIỂU
+    // =========================================================================
+    // FULLSCREEN LIGHTBOX MODAL CHO ẢNH TKB GỐC
+    // =========================================================================
     function openImageModal() {
         let modal = document.getElementById("timetableImageModal");
         if (!modal) {
             modal = document.createElement("div");
             modal.id = "timetableImageModal";
-            modal.className = "fixed inset-0 z-[999999] bg-slate-950/95 backdrop-blur-2xl flex flex-col items-center justify-between p-3 sm:p-6 animate-fadeIn transition-all select-none";
-            
+            modal.className = "fixed inset-0 z-[999999] bg-black/90 backdrop-blur-md flex flex-col items-center justify-between p-3 sm:p-6 select-none";
             modal.innerHTML = `
-                <!-- Top bar controls -->
                 <div class="w-full max-w-5xl flex items-center justify-between pb-3 border-b border-white/10 shrink-0">
-                    <div class="flex items-center gap-2 text-white">
-                        <span class="text-xl">📅</span>
-                        <div>
-                            <div class="font-black text-sm sm:text-base">${TIMETABLE_CONFIG.schoolName} • Lớp ${TIMETABLE_CONFIG.className}</div>
-                            <div class="text-[11px] text-slate-400">${TIMETABLE_CONFIG.semester} • GVCN: ${TIMETABLE_CONFIG.homeroomTeacher}</div>
-                        </div>
+                    <div class="text-white">
+                        <div class="font-black text-sm sm:text-base">${TIMETABLE_CONFIG.schoolName} • ${TIMETABLE_CONFIG.className}</div>
+                        <div class="text-[11px] text-slate-400">${TIMETABLE_CONFIG.semester} • GVCN: ${TIMETABLE_CONFIG.homeroomTeacher}</div>
                     </div>
-
-                    <div class="flex items-center gap-2">
-                        <button type="button" 
-                                onclick="window.TimetableEngine.zoomImage(0.2)" 
-                                class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-lg cursor-pointer"
-                                title="Phóng to (+)">
-                            +
-                        </button>
-                        <button type="button" 
-                                onclick="window.TimetableEngine.zoomImage(-0.2)" 
-                                class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-lg cursor-pointer"
-                                title="Thu nhỏ (-)">
-                            -
-                        </button>
-                        <button type="button" 
-                                onclick="window.TimetableEngine.resetZoom()" 
-                                class="px-2.5 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center justify-center cursor-pointer"
-                                title="Khôi phục kích thước 100%">
-                            100%
-                        </button>
-                        <a href="${TIMETABLE_CONFIG.imageUrl}" 
-                           download="Thoi_Khoa_Bieu_11A7_THPT_Tran_Van_Giau.jpg" 
-                           class="px-3 h-9 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-lg">
-                            <span>📥</span><span class="hidden sm:inline">Tải Về</span>
-                        </a>
-                        <button type="button" 
-                                onclick="window.TimetableEngine.closeImageModal()" 
-                                class="w-9 h-9 rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center font-black text-base cursor-pointer shadow-lg ml-1"
-                                title="Đóng cửa sổ (ESC)">
-                            ✕
-                        </button>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" onclick="window.TimetableEngine.zoomImage(0.25)" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold cursor-pointer">+</button>
+                        <button type="button" onclick="window.TimetableEngine.zoomImage(-0.25)" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold cursor-pointer">−</button>
+                        <button type="button" onclick="window.TimetableEngine.resetZoom()" class="px-2.5 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold cursor-pointer">100%</button>
+                        <a href="${TIMETABLE_CONFIG.imageUrl}" download="Thoi_Khoa_Bieu_11A7.jpg" class="px-3 h-9 rounded-xl bg-white text-slate-950 text-xs font-black flex items-center gap-1">📥 Tải</a>
+                        <button type="button" onclick="window.TimetableEngine.closeImageModal()" class="w-9 h-9 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-black cursor-pointer">✕</button>
                     </div>
                 </div>
-
-                <!-- Image container with scroll/pan support -->
-                <div class="flex-1 w-full max-w-5xl flex items-center justify-center overflow-auto p-2 sm:p-4 cursor-zoom-in" 
-                     id="timetableModalImgWrapper"
-                     onclick="window.TimetableEngine.zoomImage(0.3)">
-                    <img id="timetableModalImg" 
-                         src="${TIMETABLE_CONFIG.imageUrl}" 
-                         alt="Thời khóa biểu Lớp 11A7" 
-                         class="max-w-full max-h-[82vh] object-contain rounded-2xl shadow-2xl transition-transform duration-200">
-                </div>
-
-                <!-- Footer hint -->
-                <div class="w-full max-w-5xl pt-2 text-center text-xs text-slate-400 flex items-center justify-between shrink-0 border-t border-white/10">
-                    <span>💡 Nhấp vào ảnh hoặc dùng nút [+] [-] để phóng to chi tiết. Nhấn phím ESC để đóng.</span>
-                    <button type="button" onclick="window.TimetableEngine.closeImageModal()" class="text-xs text-slate-300 hover:text-white underline cursor-pointer">
-                        Đóng
-                    </button>
+                <div class="flex-1 w-full max-w-5xl flex items-center justify-center overflow-auto p-3" onclick="if(event.target===this) window.TimetableEngine.closeImageModal()">
+                    <img id="timetableModalImg" src="${TIMETABLE_CONFIG.imageUrl}" alt="Thời khóa biểu 11A7" class="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl transition-transform duration-200">
                 </div>
             `;
-
             document.body.appendChild(modal);
-
             window.addEventListener("keydown", function(e) {
-                if (e.key === "Escape") {
-                    window.TimetableEngine.closeImageModal();
-                }
+                if (e.key === "Escape") window.TimetableEngine.closeImageModal();
             });
         }
-
         imageModalZoom = 1;
         const img = document.getElementById("timetableModalImg");
-        if (img) img.style.transform = `scale(1)`;
-
+        if (img) img.style.transform = "scale(1)";
         modal.classList.remove("hidden");
         modal.style.display = "flex";
         document.body.style.overflow = "hidden";
-
-        if (window.AudioHelper && window.AudioHelper.playClick) {
-            window.AudioHelper.playClick();
-        }
     }
 
     function closeImageModal() {
@@ -1381,98 +845,48 @@ window.TimetableEngine = (function() {
     function zoomImage(delta) {
         imageModalZoom = Math.max(0.6, Math.min(3, imageModalZoom + delta));
         const img = document.getElementById("timetableModalImg");
-        if (img) {
-            img.style.transform = `scale(${imageModalZoom})`;
-        }
+        if (img) img.style.transform = `scale(${imageModalZoom})`;
     }
 
     function resetZoom() {
         imageModalZoom = 1;
         const img = document.getElementById("timetableModalImg");
-        if (img) {
-            img.style.transform = `scale(1)`;
-        }
+        if (img) img.style.transform = "scale(1)";
     }
 
-    // 8. MINI BANNER CHO TRANG KHO ĐỀ (ROOT EXPLORER)
+    // =========================================================================
+    // MINI BANNER CHO TRANG KHO ĐỀ (CLEAN EDITORIAL STRIP)
+    // =========================================================================
     function renderMiniBanner(container) {
         if (!container) return;
         container.innerHTML = "";
-
         const info = getTodayInfo();
         const dayData = TIMETABLE_CONFIG.days[info.todayCode];
+        const summary = info.isWeekend
+            ? "Cuối tuần nghỉ chính khóa • Chuẩn bị bài cho Thứ Hai"
+            : `Sáng: ${dayData.morning.filter(Boolean).join(", ") || "Nghỉ"} • Chiều: ${dayData.afternoon.filter(Boolean).join(", ") || "Nghỉ"}`;
 
         const banner = document.createElement("div");
-        banner.className = "mb-6 p-4 rounded-2xl bg-gradient-to-r from-sky-600/10 via-indigo-600/10 to-purple-600/10 border border-sky-500/20 backdrop-blur-xl transition-all hover:border-sky-500/40";
-
-        if (info.isWeekend) {
-            banner.innerHTML = `
-                <div class="flex items-center justify-between gap-3 flex-wrap">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center text-lg shrink-0">
-                            🌴
-                        </div>
-                        <div class="space-y-0.5">
-                            <div class="text-xs font-bold text-amber-600 dark:text-amber-400">Cuối Tuần: ${info.todayName}</div>
-                            <div class="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300">Nghỉ học chính khóa. Tự do ôn luyện đề hoặc chuẩn bị bài Thứ Hai!</div>
-                        </div>
+        banner.className = "mb-5 px-4 py-3 rounded-2xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10 flex items-center justify-between gap-3 flex-wrap";
+        banner.innerHTML = `
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+                <span class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-white/[0.06] flex items-center justify-center text-base shrink-0">🎒</span>
+                <div class="min-w-0">
+                    <div class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <span>${info.isWeekend ? `Cuối tuần (${info.todayName})` : `Hôm nay • ${info.todayName}`}</span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <button type="button" 
-                                onclick="window.TimetableEngine.openImageModal()" 
-                                class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-white/10 hover:bg-slate-100 transition-all flex items-center gap-1 cursor-pointer">
-                            <span>🖼️</span><span>Ảnh To</span>
-                        </button>
-                        <button type="button" 
-                                onclick="window.AzotaApp.openTimetable()" 
-                                class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-sky-600 hover:bg-sky-500 text-white shadow-md shadow-sky-600/20 transition-all flex items-center gap-1.5 cursor-pointer">
-                            <span>📅</span>
-                            <span>Xem TKB Tuần Mới</span>
-                        </button>
-                    </div>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">${summary}</p>
                 </div>
-            `;
-        } else {
-            const morningStr = dayData.morning.filter(Boolean).join(", ") || "Nghỉ";
-            const afternoonStr = dayData.afternoon.filter(Boolean).join(", ") || "Nghỉ";
-
-            banner.innerHTML = `
-                <div class="flex items-center justify-between gap-3 flex-wrap">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center text-lg shrink-0">
-                            📅
-                        </div>
-                        <div class="space-y-0.5">
-                            <div class="text-xs font-bold text-sky-600 dark:text-sky-400 flex items-center gap-1.5">
-                                <span>LỊCH HỌC HÔM NAY (${info.todayName})</span>
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                            </div>
-                            <div class="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300">
-                                🌅 <strong>Sáng:</strong> ${morningStr} &nbsp;•&nbsp; 🌇 <strong>Chiều:</strong> ${afternoonStr}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button type="button" 
-                                onclick="window.TimetableEngine.openImageModal()" 
-                                class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-white/10 hover:bg-slate-100 transition-all flex items-center gap-1 cursor-pointer">
-                            <span>🖼️</span><span>Ảnh To</span>
-                        </button>
-                        <button type="button" 
-                                onclick="window.AzotaApp.openTimetable()" 
-                                class="px-3.5 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white shadow-md shadow-sky-500/25 transition-all flex items-center gap-1.5 cursor-pointer active:scale-95">
-                            <span>🎒</span>
-                            <span>Soạn Cặp Đi Học</span>
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-
+            </div>
+            <button type="button" onclick="window.AzotaApp.openTimetable()"
+                    class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-950 text-xs font-black transition-colors cursor-pointer shrink-0">
+                Soạn cặp ➔
+            </button>
+        `;
         container.appendChild(banner);
     }
 
-    // Public API
     return {
         render: render,
         renderMiniBanner: renderMiniBanner,
@@ -1483,6 +897,7 @@ window.TimetableEngine = (function() {
         zoomImage: zoomImage,
         resetZoom: resetZoom,
         resetBackpackChecklist: resetBackpackChecklist,
+        checkAllBackpack: checkAllBackpack,
         switchViewMode: function(mode, dayCode) {
             currentViewMode = mode;
             if (dayCode) activeDayCode = dayCode;
