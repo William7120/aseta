@@ -165,12 +165,27 @@
 
         attachBentoSpotlight: function(rootEl) {
             if (!rootEl) return;
+            const supportsHover = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
             rootEl.querySelectorAll('.bento-interactive').forEach(card => {
-                card.addEventListener('mousemove', (e) => {
-                    const rect = card.getBoundingClientRect();
-                    card.style.setProperty('--mx', `${e.clientX - rect.left}px`);
-                    card.style.setProperty('--my', `${e.clientY - rect.top}px`);
-                });
+                if (supportsHover) {
+                    card.addEventListener('mousemove', (e) => {
+                        const rect = card.getBoundingClientRect();
+                        card.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+                        card.style.setProperty('--my', `${e.clientY - rect.top}px`);
+                    }, { passive: true });
+                } else {
+                    // Lightweight 60fps touch spotlight flash on tap (zero scroll jank)
+                    card.addEventListener('touchstart', (e) => {
+                        const t = e.touches && e.touches[0];
+                        if (!t) return;
+                        const rect = card.getBoundingClientRect();
+                        card.style.setProperty('--mx', `${t.clientX - rect.left}px`);
+                        card.style.setProperty('--my', `${t.clientY - rect.top}px`);
+                        card.classList.add('bento-touch-active');
+                        clearTimeout(card._touchGlowTimer);
+                        card._touchGlowTimer = setTimeout(() => card.classList.remove('bento-touch-active'), 420);
+                    }, { passive: true });
+                }
             });
         },
 
@@ -425,15 +440,15 @@
 
             container.innerHTML = `
                 <div class="max-w-7xl mx-auto space-y-4">
-                    <!-- TOP STATSBENTO 6-COLUMN ANIMATED GRID -->
-                    <div class="grid grid-cols-1 md:grid-cols-6 md:grid-rows-2 gap-4">
+                    <!-- TOP STATSBENTO 6-COLUMN ANIMATED GRID (Mobile: 3-col balanced so Analytics + Rank sit side-by-side) -->
+                    <div class="grid grid-cols-3 md:grid-cols-6 md:grid-rows-2 gap-3 sm:gap-4">
 
                         <!-- 1. PRIMARY STAT (col-span-3 row-span-2): High-Contrast Editorial EXP + Account -->
                         <div style="animation-delay: 0ms"
-                             class="bento-card-enter bento-interactive bento-interactive-light md:col-span-3 md:row-span-2 bg-slate-950 text-white dark:bg-[#f4f5f7] dark:text-slate-950 rounded-3xl p-7 sm:p-9 flex flex-col justify-between relative shadow-xl border border-slate-800 dark:border-white/40 min-h-[290px]">
+                             class="bento-card-enter bento-interactive bento-interactive-light col-span-3 md:row-span-2 bg-slate-950 text-white dark:bg-[#f4f5f7] dark:text-slate-950 rounded-3xl p-6 sm:p-9 flex flex-col justify-between relative shadow-xl border border-slate-800 dark:border-white/40 min-h-[250px] sm:min-h-[290px]">
                             <div class="bento-hatch-overlay"></div>
 
-                            <div class="relative z-10 flex items-center justify-between gap-3 flex-wrap">
+                            <div class="relative z-10 flex items-center justify-between gap-2.5 flex-wrap">
                                 <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 dark:bg-slate-950/10 rounded-full text-[10px] font-black uppercase tracking-widest text-white/85 dark:text-slate-950/75">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                                     <span>Tổng EXP Học Tập • LV.${lv.level}</span>
@@ -446,7 +461,7 @@
                                 </button>
                             </div>
 
-                            <div class="relative z-10 my-5">
+                            <div class="relative z-10 my-4 sm:my-5">
                                 <div class="flex items-baseline gap-2.5 flex-wrap">
                                     <h3 id="dashAnimatedExp" class="text-5xl sm:text-6xl font-black tracking-tighter font-mono leading-none">
                                         ${(payload.exp || 0).toLocaleString('vi-VN')}
@@ -469,21 +484,21 @@
                             </p>
                         </div>
 
-                        <!-- 2. BIG PROMINENT DAY STREAK CARD (md:col-span-3 — To, Rõ, Động!) -->
+                        <!-- 2. BIG PROMINENT DAY STREAK CARD (col-span-3 — To, Rõ, Động 60fps!) -->
                         <div style="animation-delay: 80ms"
-                             class="bento-card-enter bento-interactive md:col-span-3 bg-gradient-to-br from-orange-500/10 via-white to-amber-500/5 dark:from-[#1b1411] dark:via-[#14151d] dark:to-[#181316] rounded-3xl p-6 sm:p-7 border border-orange-500/25 dark:border-amber-500/25 flex flex-col justify-between gap-4 shadow-md relative">
-                            <div class="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-orange-500/20 blur-3xl pointer-events-none"></div>
+                             class="bento-card-enter bento-interactive col-span-3 bg-gradient-to-br from-orange-500/10 via-white to-amber-500/5 dark:from-[#1b1411] dark:via-[#14151d] dark:to-[#181316] rounded-3xl p-5 sm:p-7 border border-orange-500/25 dark:border-amber-500/25 flex flex-col justify-between gap-4 shadow-md relative">
+                            <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(circle at 92% 10%, rgba(249,115,22,0.18), transparent 48%);"></div>
 
-                            <div class="relative z-10 flex items-center justify-between gap-4">
-                                <div class="flex items-center gap-3.5">
-                                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 via-orange-500 to-rose-600 flex items-center justify-center text-3xl shadow-lg shadow-orange-500/30 shrink-0">
+                            <div class="relative z-10 flex items-center justify-between gap-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-amber-400 via-orange-500 to-rose-600 flex items-center justify-center text-2xl sm:text-3xl shadow-lg shadow-orange-500/35 shrink-0">
                                         <span class="bento-flame-live">🔥</span>
                                     </div>
                                     <div>
                                         <p class="text-[10px] font-black uppercase tracking-widest text-orange-500 dark:text-amber-400">
-                                            Chuỗi Ngày Học • Day Streak
+                                            Day Streak
                                         </p>
-                                        <div class="flex items-baseline gap-2 mt-0.5">
+                                        <div class="flex items-baseline gap-1.5 mt-0.5">
                                             <span id="dashAnimatedStreak" class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white font-mono tracking-tight">
                                                 ${streak.count}
                                             </span>
@@ -496,7 +511,7 @@
 
                                 <div class="text-right shrink-0">
                                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-500/30 text-[10px] font-black">
-                                        <span>🏆</span> <span>Kỷ lục: ${streak.best || streak.count} ngày</span>
+                                        <span>🏆</span> <span>Kỷ lục: ${streak.best || streak.count}</span>
                                     </span>
                                     <p class="hidden sm:block text-[10px] text-slate-400 mt-1 font-semibold">Đã điểm danh hôm nay ✓</p>
                                 </div>
@@ -508,9 +523,9 @@
                             </div>
                         </div>
 
-                        <!-- 3. ANALYTICS & INTERACTIVE SPARKLINE (md:col-span-2) -->
-                        <div style="animation-delay: 160ms"
-                             class="bento-card-enter bento-interactive md:col-span-2 bg-white dark:bg-[#14161f] rounded-3xl p-5 border border-slate-200/80 dark:border-white/10 flex flex-col justify-between gap-2 shadow-sm">
+                        <!-- 3. ANALYTICS & INTERACTIVE SPARKLINE (col-span-2 — sits right next to Rank on Mobile too!) -->
+                        <div style="animation-delay: 150ms"
+                             class="bento-card-enter bento-interactive col-span-2 bg-white dark:bg-[#14161f] rounded-3xl p-4 sm:p-5 border border-slate-200/80 dark:border-white/10 flex flex-col justify-between gap-2 shadow-sm">
                             <div class="flex items-start justify-between gap-2">
                                 <div>
                                     <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
@@ -539,16 +554,16 @@
                             </p>
                         </div>
 
-                        <!-- 4. RANK & RATING STAR TILE (md:col-span-1) -->
-                        <div style="animation-delay: 240ms"
-                             class="bento-card-enter bento-interactive md:col-span-1 bg-white dark:bg-[#0e1017] rounded-3xl p-5 border border-slate-200/80 dark:border-white/10 flex flex-col items-center justify-center text-center gap-1.5 shadow-sm">
+                        <!-- 4. RANK & RATING STAR TILE (col-span-1) -->
+                        <div style="animation-delay: 210ms"
+                             class="bento-card-enter bento-interactive col-span-1 bg-white dark:bg-[#0e1017] rounded-3xl p-4 sm:p-5 border border-slate-200/80 dark:border-white/10 flex flex-col items-center justify-center text-center gap-1.5 shadow-sm">
                             <div class="w-10 h-10 text-lg rounded-full bg-slate-950 text-amber-400 dark:bg-white/10 border border-white/10 flex items-center justify-center shadow-sm">
                                 <span class="bento-star-live">★</span>
                             </div>
-                            <p class="text-2xl font-black text-slate-900 dark:text-white font-mono leading-none mt-1">
+                            <p class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-mono leading-none mt-1">
                                 #${payload.rank}
                             </p>
-                            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                            <p class="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-slate-400">
                                 Hạng Lớp
                             </p>
                         </div>

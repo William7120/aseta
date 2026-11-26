@@ -8,7 +8,24 @@
 (function(window) {
     'use strict';
 
-    const CACHE_KEY = 'aseta_tvg_exam_hk1_cache_v1';
+    const CACHE_KEY = 'aseta_tvg_exam_hk1_cache_v2';
+
+    const DEFAULT_SUBJECT_SCHEDULES = {
+        nguvan:   { date: '2026-12-14T07:30:00+07:00', label: 'Thứ Hai, 14/12 • 07:30 (Dự kiến)' },
+        toan:     { date: '2026-12-15T07:30:00+07:00', label: 'Thứ Ba, 15/12 • 07:30 (Dự kiến)' },
+        tienganh: { date: '2026-12-15T09:45:00+07:00', label: 'Thứ Ba, 15/12 • 09:45 (Dự kiến)' },
+        vatly:    { date: '2026-12-16T07:30:00+07:00', label: 'Thứ Tư, 16/12 • 07:30 (Dự kiến)' },
+        hoahoc:   { date: '2026-12-16T09:00:00+07:00', label: 'Thứ Tư, 16/12 • 09:00 (Dự kiến)' },
+        lichsu:   { date: '2026-12-17T07:30:00+07:00', label: 'Thứ Năm, 17/12 • 07:30 (Dự kiến)' },
+        diali:    { date: '2026-12-17T09:00:00+07:00', label: 'Thứ Năm, 17/12 • 09:00 (Dự kiến)' },
+        tinhoc:   { date: '2026-12-18T07:30:00+07:00', label: 'Thứ Sáu, 18/12 • 07:30 (Dự kiến)' },
+        gdktpl:   { date: '2026-12-18T09:00:00+07:00', label: 'Thứ Sáu, 18/12 • 09:00 (Dự kiến)' },
+        sinhhoc:  { date: '2026-12-19T07:30:00+07:00', label: 'Thứ Bảy, 19/12 • 07:30 (Dự kiến)' },
+        gdqp:     { date: '2026-12-21T07:30:00+07:00', label: 'Thứ Hai, 21/12 • 07:30 (Dự kiến)' },
+        gdtc:     { date: '2026-12-21T09:00:00+07:00', label: 'Thứ Hai, 21/12 • 09:00 (Dự kiến)' },
+        mythuat:  { date: '2026-12-22T07:30:00+07:00', label: 'Thứ Ba, 22/12 • 07:30 (Dự kiến)' },
+        gddp:     { date: '2026-12-22T09:00:00+07:00', label: 'Thứ Ba, 22/12 • 09:00 (Dự kiến)' }
+    };
 
     const ExamScheduleEngine = {
         data: null,
@@ -91,17 +108,34 @@
             }
         },
 
-        getDaysRemaining: function() {
-            const startStr = this.data?.examWindow?.startDate || '2026-12-14';
-            const target = new Date(`${startStr}T07:30:00+07:00`).getTime();
+        getSubjectExamInfo: function(subj) {
+            const fallback = (subj && DEFAULT_SUBJECT_SCHEDULES[subj.id]) || {
+                date: `${this.data?.examWindow?.startDate || '2026-12-14'}T07:30:00+07:00`,
+                label: '14/12 – 22/12/2026 (Dự kiến)'
+            };
+            return {
+                date: (subj && subj.examDate) || fallback.date,
+                label: (subj && subj.examSession) || fallback.label
+            };
+        },
+
+        getRemainingForDate: function(isoDateStr) {
+            const target = new Date(isoDateStr).getTime();
             const now = Date.now();
             const diff = target - now;
-            if (diff <= 0) return { days: 0, hours: 0, mins: 0, secs: 0, started: true };
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            const mins = Math.floor((diff / (1000 * 60)) % 60);
-            const secs = Math.floor((diff / 1000) % 60);
-            return { days, hours, mins, secs, started: false };
+            if (isNaN(target) || diff <= 0) return { days: 0, hours: 0, mins: 0, secs: 0, started: true };
+            return {
+                days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+                hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+                mins: Math.floor((diff / (1000 * 60)) % 60),
+                secs: Math.floor((diff / 1000) % 60),
+                started: false
+            };
+        },
+
+        getDaysRemaining: function() {
+            const startStr = this.data?.examWindow?.startDate || '2026-12-14';
+            return this.getRemainingForDate(`${startStr}T07:30:00+07:00`);
         },
 
         updateDashboardBadge: function() {
@@ -109,6 +143,18 @@
             if (!el) return;
             const c = this.getDaysRemaining();
             el.textContent = c.started ? 'Đang thi HK1' : `Còn ${c.days} ngày`;
+        },
+
+        tickSubjectCountdowns: function() {
+            const subjects = this.data?.subjects || [];
+            const activeSubj = subjects.find(s => s.id === this.selectedSubjectId) || subjects[0];
+            if (!activeSubj) return;
+            const info = this.getSubjectExamInfo(activeSubj);
+            const sc = this.getRemainingForDate(info.date);
+            document.querySelectorAll('[data-subj-cd="days"]').forEach(el => { el.textContent = String(sc.days).padStart(2, '0'); });
+            document.querySelectorAll('[data-subj-cd="hours"]').forEach(el => { el.textContent = String(sc.hours).padStart(2, '0'); });
+            document.querySelectorAll('[data-subj-cd="mins"]').forEach(el => { el.textContent = String(sc.mins).padStart(2, '0'); });
+            document.querySelectorAll('[data-subj-cd="secs"]').forEach(el => { el.textContent = String(sc.secs).padStart(2, '0'); });
         },
 
         startLiveCountdown: function() {
@@ -123,6 +169,7 @@
                 if (hEl) hEl.textContent = String(c.hours).padStart(2, '0');
                 if (mEl) mEl.textContent = String(c.mins).padStart(2, '0');
                 if (sEl) sEl.textContent = String(c.secs).padStart(2, '0');
+                this.tickSubjectCountdowns();
             };
             tick();
             this.countdownTimer = setInterval(tick, 1000);
@@ -181,6 +228,8 @@
         buildDetailInnerHtml: function(subj, isSheet = false) {
             if (!subj) return '';
             const link = this.getSubjectLinkForGrade(subj, this.selectedGrade);
+            const examInfo = this.getSubjectExamInfo(subj);
+            const sc = this.getRemainingForDate(examInfo.date);
             const hasScope = this.selectedGrade === '11' && Array.isArray(subj.grade11Scope) && subj.grade11Scope.length > 0;
             const scopeItems = hasScope
                 ? subj.grade11Scope.map(item => `
@@ -218,6 +267,37 @@
                                 ✕
                             </button>
                         ` : ''}
+                    </div>
+
+                    <!-- DEDICATED PER-SUBJECT LIVE COUNTDOWN -->
+                    <div class="rounded-2xl bg-slate-950/[0.04] dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/10 p-3.5 space-y-2.5">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <span class="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-400">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                                <span>Đếm ngược riêng • ${subj.name}</span>
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">
+                                📅 ${examInfo.label}
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-4 gap-2">
+                            <div class="py-2 px-1.5 rounded-xl bg-white dark:bg-[#141722] border border-slate-200/80 dark:border-white/10 text-center">
+                                <div data-subj-cd="days" class="text-lg sm:text-xl font-black font-mono text-slate-900 dark:text-white leading-none">${String(sc.days).padStart(2, '0')}</div>
+                                <div class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mt-1">Ngày</div>
+                            </div>
+                            <div class="py-2 px-1.5 rounded-xl bg-white dark:bg-[#141722] border border-slate-200/80 dark:border-white/10 text-center">
+                                <div data-subj-cd="hours" class="text-lg sm:text-xl font-black font-mono text-sky-600 dark:text-sky-400 leading-none">${String(sc.hours).padStart(2, '0')}</div>
+                                <div class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mt-1">Giờ</div>
+                            </div>
+                            <div class="py-2 px-1.5 rounded-xl bg-white dark:bg-[#141722] border border-slate-200/80 dark:border-white/10 text-center">
+                                <div data-subj-cd="mins" class="text-lg sm:text-xl font-black font-mono text-emerald-600 dark:text-emerald-400 leading-none">${String(sc.mins).padStart(2, '0')}</div>
+                                <div class="text-[9px] font-bold uppercase tracking-wider text-slate-400 mt-1">Phút</div>
+                            </div>
+                            <div class="py-2 px-1.5 rounded-xl bg-slate-950 text-amber-400 dark:bg-amber-500/15 dark:text-amber-300 border border-slate-900 dark:border-amber-400/30 text-center">
+                                <div data-subj-cd="secs" class="text-lg sm:text-xl font-black font-mono leading-none">${String(sc.secs).padStart(2, '0')}</div>
+                                <div class="text-[9px] font-bold uppercase tracking-wider opacity-80 mt-1">Giây</div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Primary Actions -->
@@ -298,6 +378,7 @@
             if (sheetOverlay && this.mobileSheetOpen) {
                 sheetOverlay.classList.remove('hidden');
             }
+            this.tickSubjectCountdowns();
         },
 
         render: async function(containerId = 'examScheduleContainer') {

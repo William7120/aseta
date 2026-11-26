@@ -67,7 +67,9 @@
         "10": "https://drive.google.com/file/d/1bjraWPyAemGnvYbnOJWQM2nfsC_P4ULo/view?usp=drive_link",
         "11": "https://drive.google.com/file/d/1D4jXe6HU1lXFWsAs3uOLxA9O_4tDc3mY/view?usp=drive_link",
         "12": "https://drive.google.com/file/d/1cVJenXA0vCL87zdtGcAF4VLFO_rJ0phS/view?usp=drive_link"
-      }
+      },
+      "examDate": "2026-12-15T07:30:00+07:00",
+      "examSession": "Thứ Ba, 15/12 • 07:30 (Dự kiến)"
     },
     {
       "id": "nguvan",
@@ -85,7 +87,9 @@
       ],
       "links": {
         "all": "https://drive.google.com/file/d/1ElAPOP-tnMesEmsdDcnJq_qpKR5cheQf/view?usp=drive_link"
-      }
+      },
+      "examDate": "2026-12-14T07:30:00+07:00",
+      "examSession": "Thứ Hai, 14/12 • 07:30 (Dự kiến)"
     },
     {
       "id": "tienganh",
@@ -104,7 +108,9 @@
       ],
       "links": {
         "all": "https://drive.google.com/file/d/1P3rNvCHBNmNW0HvxZFXhuz8VzCycOIbV/view?usp=drive_link"
-      }
+      },
+      "examDate": "2026-12-15T09:45:00+07:00",
+      "examSession": "Thứ Ba, 15/12 • 09:45 (Dự kiến)"
     },
     {
       "id": "tinhoc",
@@ -125,7 +131,9 @@
         "10": "https://drive.google.com/file/d/154tLpOqM4aDQ2uh58SsW5QJVMo4QuemI/view?usp=drive_link",
         "11": "https://drive.google.com/file/d/1XWrbHA9KiIkmGJIPy5kUyVoD5hPSSo1r/view?usp=drive_link",
         "12": "https://drive.google.com/file/d/1D3lohoDihkg_knVgFT3mhSRwFAlaeiah/view?usp=drive_link"
-      }
+      },
+      "examDate": "2026-12-18T07:30:00+07:00",
+      "examSession": "Thứ Sáu, 18/12 • 07:30 (Dự kiến)"
     },
     {
       "id": "diali",
@@ -144,7 +152,9 @@
       ],
       "links": {
         "all": "https://drive.google.com/file/d/1ykX56pkQpc1-7fpbVGDFhST9Id57fwet/view?usp=drive_link"
-      }
+      },
+      "examDate": "2026-12-17T09:00:00+07:00",
+      "examSession": "Thứ Năm, 17/12 • 09:00 (Dự kiến)"
     },
     {
       "id": "lichsu",
@@ -161,7 +171,9 @@
       ],
       "links": {
         "all": "https://drive.google.com/file/d/1iR1Zg-wQHCQR281lvulzk7370XEuQVk-/view?usp=drive_link"
-      }
+      },
+      "examDate": "2026-12-17T07:30:00+07:00",
+      "examSession": "Thứ Năm, 17/12 • 07:30 (Dự kiến)"
     },
     {
       "id": "gdktpl",
@@ -182,7 +194,9 @@
         "10": "https://drive.google.com/file/d/1RlukzoNR5KJYMgs3gVXn88EvhuZ0C1P2/view?usp=drive_link",
         "11": "https://drive.google.com/file/d/1Fwz6BQM6xu6Ko8UUPO7MVJCrZJrfUcsD/view?usp=drive_link",
         "12": "https://drive.google.com/file/d/1R3tj-rpZumsTK1jcqkYD0B0SxIiUxyRZ/view?usp=drive_link"
-      }
+      },
+      "examDate": "2026-12-18T09:00:00+07:00",
+      "examSession": "Thứ Sáu, 18/12 • 09:00 (Dự kiến)"
     },
     {
       "id": "vatly",
@@ -200,7 +214,9 @@
       ],
       "links": {
         "all": "https://drive.google.com/file/d/1znLXsS_pLZFaMLrKINj4AsJqsDrYu5rG/view?usp=drive_link"
-      }
+      },
+      "examDate": "2026-12-16T07:30:00+07:00",
+      "examSession": "Thứ Tư, 16/12 • 07:30 (Dự kiến)"
     },
     {
       "id": "hoahoc",
@@ -220,7 +236,9 @@
         "10": "https://drive.google.com/file/d/1Q8xuPiz9Y2mTfTZ1SEPvvPseuuyCPsMj/view?usp=drive_link",
         "11": "https://drive.google.com/file/d/1JOS3qrVZ66Mh_5QWwTWGldZjjMbpj4FB/view?usp=drive_link",
         "12": "https://drive.google.com/file/d/1rDBKAczDIyAP1mjWnxqSP3dM-bIpuKJi/view?usp=drive_link"
-      }
+      },
+      "examDate": "2026-12-16T09:00:00+07:00",
+      "examSession": "Thứ Tư, 16/12 • 09:00 (Dự kiến)"
     },
     {
       "id": "sinhhoc",
@@ -239,7 +257,9 @@
       ],
       "links": {
         "all": "https://drive.google.com/file/d/176EOcm4x-tHBXaqfkyv0S05JfcTmL1ZO/view?usp=drive_link"
-      }
+      },
+      "examDate": "2026-12-19T07:30:00+07:00",
+      "examSession": "Thứ Bảy, 19/12 • 07:30 (Dự kiến)"
     },
     {
       "id": "gdqp",
@@ -255,7 +275,9 @@
       ],
       "links": {
         "all": "https://drive.google.com/file/d/1YrD0ING_oPghAz1Xj5HjvXoFkY9MI3aG/view?usp=drive_link"
-      }
+      },
+      "examDate": "2026-12-21T07:30:00+07:00",
+      "examSession": "Thứ Hai, 21/12 • 07:30 (Dự kiến)"
     },
     {
       "id": "gdtc",
@@ -273,7 +295,9 @@
         "10": "https://drive.google.com/file/d/10r7H-w5_ZaN_Bg8FIzpwfhXL06E4MwVG/view?usp=drive_link",
         "11": "https://drive.google.com/file/d/19alfd-OFu2wAwmsT1FjvK_OB1fGH8XcB/view?usp=drive_link",
         "12": "https://drive.google.com/file/d/1edcCUiok9Q1YGXitEJMM0S24TkaLYsia/view?usp=drive_link"
-      }
+      },
+      "examDate": "2026-12-21T09:00:00+07:00",
+      "examSession": "Thứ Hai, 21/12 • 09:00 (Dự kiến)"
     },
     {
       "id": "mythuat",
@@ -291,7 +315,9 @@
         "10": "https://drive.google.com/file/d/1a-hQP9qmBOA_LSUWVGIVmniW5PqqpMX7/view?usp=drive_link",
         "11": "https://drive.google.com/file/d/1v2n5pBLF5_KMzQy6_oxC8tYp-bYw_h-X/view?usp=drive_link",
         "12": "https://drive.google.com/file/d/1udlWDxKk5bmwDbpZMdCcVIBhsLN8uE5H/view?usp=drive_link"
-      }
+      },
+      "examDate": "2026-12-22T07:30:00+07:00",
+      "examSession": "Thứ Ba, 22/12 • 07:30 (Dự kiến)"
     },
     {
       "id": "gddp",
@@ -305,7 +331,9 @@
       "grade11Scope": [
         "Ôn tập các chuyên đề Giáo dục địa phương TP.HCM học kỳ I theo hướng dẫn GVBM tại lớp (trường đang cập nhật link tải)"
       ],
-      "links": {}
+      "links": {},
+      "examDate": "2026-12-22T09:00:00+07:00",
+      "examSession": "Thứ Ba, 22/12 • 09:00 (Dự kiến)"
     }
   ]
 }
