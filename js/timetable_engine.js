@@ -716,6 +716,47 @@ window.TimetableEngine = (function() {
         rightPane.appendChild(listCard);
         gridEl.appendChild(rightPane);
         target.appendChild(gridEl);
+
+        // FULL-WIDTH LARGE & CLEAR OFFICIAL TIMETABLE IMAGE CARD
+        target.appendChild(createLargeTimetableImageCard());
+    }
+
+    function createLargeTimetableImageCard() {
+        const card = document.createElement("div");
+        card.className = "mt-4 bento-card-enter rounded-3xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10 p-4 sm:p-6 space-y-4 shadow-sm";
+        card.innerHTML = `
+            <div class="flex flex-wrap items-center justify-between gap-2.5">
+                <div>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">${TIMETABLE_CONFIG.schoolName} • ${TIMETABLE_CONFIG.className}</p>
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight mt-0.5 flex items-center gap-2">
+                        <span>🖼️</span>
+                        <span>Ảnh Thời Khóa Biểu Gốc (To Rõ)</span>
+                    </h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="window.TimetableEngine.openImageModal()"
+                            class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-950 text-xs font-black transition-colors cursor-pointer flex items-center gap-1.5">
+                        <span>🔍</span><span>Phóng to toàn màn hình</span>
+                    </button>
+                    <a href="${TIMETABLE_CONFIG.imageUrl}" download="Thoi_Khoa_Bieu_11A7_THPT_TVG.jpg"
+                       class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.06] dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200/80 dark:border-white/10 transition-colors flex items-center gap-1">
+                        <span>📥</span><span class="hidden sm:inline">Tải về</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="relative rounded-2xl overflow-hidden border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-950 p-2 sm:p-3 cursor-zoom-in group"
+                 onclick="window.TimetableEngine.openImageModal()"
+                 title="Nhấp để phóng to toàn màn hình">
+                <img src="${TIMETABLE_CONFIG.imageUrl}"
+                     alt="Thời khóa biểu Lớp ${TIMETABLE_CONFIG.className} ${TIMETABLE_CONFIG.schoolName}"
+                     class="w-full h-auto max-h-[720px] object-contain mx-auto rounded-xl transition-transform duration-300 group-hover:scale-[1.01]">
+                <span class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-slate-950/85 text-white text-[11px] font-black border border-white/15 opacity-90 group-hover:opacity-100 transition-opacity pointer-events-none">
+                    🔍 Nhấp để phóng to
+                </span>
+            </div>
+        `;
+        return card;
     }
 
     // =========================================================================
@@ -786,11 +827,12 @@ window.TimetableEngine = (function() {
                     <span>💡 Bấm vào tên Thứ trên bảng để mở Balo soạn cặp của ngày đó.</span>
                     <button type="button" onclick="window.TimetableEngine.openImageModal()"
                             class="text-sky-500 hover:text-sky-400 font-bold cursor-pointer">
-                        Xem ảnh TKB gốc ↗
+                        Phóng to ảnh TKB ↗
                     </button>
                 </div>
             </div>
         `;
+        target.appendChild(createLargeTimetableImageCard());
     }
 
     // =========================================================================
