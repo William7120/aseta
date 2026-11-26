@@ -171,8 +171,26 @@
     const GIST_ID = "589a26500953aa5bbd464b463c1cfd65";
     const GIST_RAW_URL = "https://gist.githubusercontent.com/William7120/589a26500953aa5bbd464b463c1cfd65/raw/aseta_solutions.json";
     const GIST_API_URL = "https://api.github.com/gists/589a26500953aa5bbd464b463c1cfd65";
+    const LIVE_POLL_INTERVAL_MS = 3000;
+
     let isCloudSyncing = false;
+    let pendingCloudPush = false;
+    let pendingAllowEmpty = false;
     let lastCloudSyncTime = null;
+    let lastKnownEtag = null;
+    let lastKnownSignature = null;
+    let livePollTimer = null;
+    let currentLightboxId = null;
+
+    // In-memory cache prevents Safari/mobile localStorage QuotaExceededError from ever breaking uploads/deletes
+    let inMemoryFolders = null;
+    let inMemorySolutions = null;
+
+    function computeStateSignature(folders, solutions, updatedAt) {
+        const fIds = (folders || []).map(f => f.id).join(",");
+        const sIds = (solutions || []).map(s => `${s.id}:${s.likes || 0}`).join(",");
+        return `${updatedAt || ""}|F:${fIds}|S:${sIds}`;
+    }
 
     function getAdminSyncKey() {
         try {
@@ -189,34 +207,84 @@
     // REALTIME CLOUD SYNCHRONIZATION (CROSS-DEVICE & MULTI-USER)
     // ==========================================
     const SolutionCloud = {
-        syncFromCloud: async function(shouldRender = true, engine) {
-            // Instant render cached folders/solutions immediately (zero wait time)
-            if (shouldRender && engine && typeof engine.render === "function") {
+        startLiveSync: function(engine) {
+            if (livePollTimer) return;
+            livePollTimer = setInterval(() => {
+                if (document.hidden) return;
+                const view = document.getElementById("solutionsView");
+                if (!view || view.classList.contains("hidden")) return;
+                // Do not interrupt active typing in upload/create modals or an in-flight push
+                const upModal = document.getElementById("solutionUploadModal");
+                const flModal = document.getElementById("solutionCreateFolderModal");
+                if ((upModal && !upModal.classList.contains("hidden")) || (flModal && !flModal.classList.contains("hidden"))) return;
+                if (isCloudSyncing || pendingCloudPush) return;
+                this.syncFromCloud(true, engine, true);
+            }, LIVE_POLL_INTERVAL_MS);
+
+            // Instant refresh when user switches back to tab/app
+            if (!window._asetaSolutionVisBound) {
+                window._asetaSolutionVisBound = true;
+                const onResume = () => {
+                    if (document.hidden) return;
+                    const view = document.getElementById("solutionsView");
+                    if (view && !view.classList.contains("hidden") && !isCloudSyncing && !pendingCloudPush) {
+                        SolutionCloud.syncFromCloud(true, window.SolutionEngine, true);
+                    }
+                };
+                document.addEventListener("visibilitychange", onResume);
+                window.addEventListener("focus", onResume);
+            }
+        },
+
+        syncFromCloud: async function(shouldRender = true, engine, isBackgroundPoll = false) {
+            // Never let a background poll overwrite a local upload/delete that is currently syncing
+            if (isCloudSyncing || pendingCloudPush) return false;
+
+            if (shouldRender && !isBackgroundPoll && engine && typeof engine.render === "function") {
                 engine.render();
             }
+
             try {
                 let data = null;
                 const token = getAdminSyncKey();
                 const headers = { "Accept": "application/vnd.github+json" };
                 if (token) headers["Authorization"] = "Bearer " + token;
+                if (isBackgroundPoll && lastKnownEtag) {
+                    headers["If-None-Match"] = lastKnownEtag;
+                }
 
-                // 1. Fetch trực tiếp từ GitHub Gist API (Instant Realtime, cập nhật ngay lập tức không bị CDN cache)
+                // 1. Direct GitHub Gist API fetch (Zero CDN delay + ETag 304 saves bandwidth & rate limit)
                 try {
-                    const apiRes = await fetch(GIST_API_URL + "?t=" + Date.now(), { headers });
+                    const apiRes = await fetch(GIST_API_URL, { headers, cache: "no-store" });
+                    if (apiRes.status === 304) {
+                        lastCloudSyncTime = new Date();
+                        if (engine && typeof engine.updateCloudStatusBadge === "function") {
+                            engine.updateCloudStatusBadge("synced");
+                        }
+                        return true;
+                    }
                     if (apiRes.ok) {
+                        const etag = apiRes.headers.get("ETag");
+                        if (etag) lastKnownEtag = etag;
                         const apiJson = await apiRes.json();
-                        if (apiJson && apiJson.files && apiJson.files["aseta_solutions.json"] && apiJson.files["aseta_solutions.json"].content) {
-                            data = JSON.parse(apiJson.files["aseta_solutions.json"].content);
+                        const fileObj = apiJson && apiJson.files && apiJson.files["aseta_solutions.json"];
+                        if (fileObj) {
+                            if (fileObj.truncated && fileObj.raw_url) {
+                                const fullRes = await fetch(fileObj.raw_url + "?t=" + Date.now(), { cache: "no-store" });
+                                if (fullRes.ok) data = await fullRes.json();
+                            } else if (fileObj.content) {
+                                data = JSON.parse(fileObj.content);
+                            }
                         }
                     }
                 } catch(apiErr) {
                     console.warn("[Aseta Cloud] API gist fetch error, trying raw fallback:", apiErr);
                 }
 
-                // 2. Nếu API gặp sự cố, fallback sang raw Gist
+                // 2. Fallback to raw Gist URL only if API call failed
                 if (!data || !Array.isArray(data.folders) || !Array.isArray(data.solutions)) {
                     try {
-                        const rawRes = await fetch(GIST_RAW_URL + "?t=" + Date.now());
+                        const rawRes = await fetch(GIST_RAW_URL + "?t=" + Date.now(), { cache: "no-store" });
                         if (rawRes.ok) {
                             data = await rawRes.json();
                         }
@@ -225,25 +293,43 @@
                     }
                 }
 
+                // Re-check write lock after network await so we never clobber a brand-new local write
+                if (isCloudSyncing || pendingCloudPush) return false;
+
                 if (data && Array.isArray(data.folders) && Array.isArray(data.solutions)) {
-                    // Update local storage with Safari Quota protection
+                    const nextSig = computeStateSignature(data.folders, data.solutions, data.updatedAt);
+                    const changed = nextSig !== lastKnownSignature;
+                    lastKnownSignature = nextSig;
+
+                    inMemoryFolders = data.folders;
+                    inMemorySolutions = data.solutions;
+
                     try {
                         localStorage.setItem(FOLDER_STORAGE_KEY, JSON.stringify(data.folders));
                         localStorage.setItem(STORAGE_KEY, JSON.stringify(data.solutions));
                     } catch(quotaErr) {
-                        console.warn("[Aseta Cloud] Storage quota exceeded or restricted in browser:", quotaErr);
+                        console.warn("[Aseta Cloud] localStorage quota full; using in-memory cloud state:", quotaErr);
                     }
+
+                    // If current open folder or lightbox item was just deleted remotely, close cleanly
+                    if (currentFolderId && !data.folders.some(f => f.id === currentFolderId)) {
+                        currentFolderId = null;
+                    }
+                    if (currentLightboxId && !data.solutions.some(s => s.id === currentLightboxId)) {
+                        if (engine && typeof engine.closeLightbox === "function") engine.closeLightbox();
+                    }
+
                     lastCloudSyncTime = new Date();
                     if (engine && typeof engine.updateCloudStatusBadge === "function") {
                         engine.updateCloudStatusBadge("synced");
                     }
-                    if (shouldRender && engine && typeof engine.render === "function") {
+                    if (shouldRender && (!isBackgroundPoll || changed) && engine && typeof engine.render === "function") {
                         engine.render();
                     }
                     return true;
                 }
             } catch(e) {
-                console.warn("[Aseta Cloud Sync] Using local storage data:", e);
+                console.warn("[Aseta Cloud Sync] Using cached state:", e);
                 if (engine && typeof engine.updateCloudStatusBadge === "function") {
                     engine.updateCloudStatusBadge("offline");
                 }
@@ -251,9 +337,8 @@
             return false;
         },
 
-        syncToCloud: async function(engine) {
-            if (isCloudSyncing) return false;
-            // Bảo vệ quyền: Chỉ tài khoản Admin được phép đồng bộ lên đám mây
+        syncToCloud: async function(engine, allowEmpty = false) {
+            // Permission check: Only VanThua (Admin) and TuanMinh are allowed to write to cloud
             if (engine && typeof engine.isAuthorizedToUpload === "function") {
                 if (!engine.isAuthorizedToUpload()) {
                     console.warn("[Aseta Cloud] User unauthorized to sync to cloud.");
@@ -261,12 +346,19 @@
                 }
             }
 
+            // Queue rapid back-to-back mutations instead of dropping them!
+            if (isCloudSyncing) {
+                pendingCloudPush = true;
+                pendingAllowEmpty = pendingAllowEmpty || !!allowEmpty;
+                return true;
+            }
+
             const folders = (engine && typeof engine.getAllFolders === "function") ? engine.getAllFolders() : [];
             const solutions = (engine && typeof engine.getAllSolutions === "function") ? engine.getAllSolutions() : [];
 
-            // Bảo vệ chống vô tình ghi đè rỗng lên Đám mây
-            if (folders.length === 0 && solutions.length === 0) {
-                console.warn("[Aseta Cloud] Protected: Prevented overwriting cloud with empty list.");
+            // Only block accidental empty overwrite when NOT triggered by an explicit delete
+            if (!allowEmpty && folders.length === 0 && solutions.length === 0) {
+                console.warn("[Aseta Cloud] Protected: Prevented unintended empty cloud overwrite.");
                 return false;
             }
 
@@ -274,17 +366,22 @@
             if (engine && typeof engine.updateCloudStatusBadge === "function") {
                 engine.updateCloudStatusBadge("syncing");
             }
+
+            let ok = false;
             try {
                 const token = getAdminSyncKey();
-                
+                const user = window.AccountManager ? window.AccountManager.getCurrentAccount() : null;
+                const authorLabel = user ? `${user.name} (@${user.nickname})` : "Aseta Editor";
+                const updatedAt = new Date().toISOString();
+
                 const payload = {
                     files: {
                         "aseta_solutions.json": {
                             content: JSON.stringify({
                                 folders: folders,
                                 solutions: solutions,
-                                updatedAt: new Date().toISOString(),
-                                author: "Admin VanThua"
+                                updatedAt: updatedAt,
+                                author: authorLabel
                             }, null, 2)
                         }
                     }
@@ -301,28 +398,40 @@
                 });
 
                 if (res.ok) {
+                    ok = true;
+                    lastKnownEtag = null; // Next GET will cache canonical GET ETag; signature avoids redundant re-render
+                    lastKnownSignature = computeStateSignature(folders, solutions, updatedAt);
                     lastCloudSyncTime = new Date();
                     if (engine && typeof engine.updateCloudStatusBadge === "function") {
                         engine.updateCloudStatusBadge("synced");
                     }
-                    if (window.SecurityGuard && window.SecurityGuard.showSecurityToast) {
-                        window.SecurityGuard.showSecurityToast("☁️ Đã đồng bộ lên Đám Mây thành công! Tất cả bạn bè sẽ thấy ngay lập tức.");
-                    }
-                    return true;
                 } else {
+                    console.error("[Aseta Cloud Sync] PATCH failed with status:", res.status);
                     if (engine && typeof engine.updateCloudStatusBadge === "function") {
                         engine.updateCloudStatusBadge("error");
                     }
+                    if (window.SecurityGuard && window.SecurityGuard.showSecurityToast) {
+                        window.SecurityGuard.showSecurityToast("⚠️ Không thể đồng bộ đám mây (lỗi " + res.status + "). Hãy kiểm tra mạng và thử lại!");
+                    }
                 }
             } catch(e) {
-                console.warn("[Aseta Cloud Sync] Sync error:", e);
+                console.error("[Aseta Cloud Sync] Network error:", e);
                 if (engine && typeof engine.updateCloudStatusBadge === "function") {
                     engine.updateCloudStatusBadge("error");
                 }
+                if (window.SecurityGuard && window.SecurityGuard.showSecurityToast) {
+                    window.SecurityGuard.showSecurityToast("⚠️ Lỗi mạng khi đồng bộ lên đám mây!");
+                }
             } finally {
                 isCloudSyncing = false;
+                if (pendingCloudPush) {
+                    const nextAllowEmpty = pendingAllowEmpty;
+                    pendingCloudPush = false;
+                    pendingAllowEmpty = false;
+                    this.syncToCloud(engine, nextAllowEmpty);
+                }
             }
-            return false;
+            return ok;
         }
     };
 
@@ -334,23 +443,29 @@
 
         isAuthorizedToUpload: function() {
             try {
-                // Must be actively authenticated
+                // Must be actively authenticated in AuthGate
                 if (typeof window.AuthGate !== "undefined" && typeof window.AuthGate.isAuthenticated === "function") {
                     if (!window.AuthGate.isAuthenticated()) return false;
                 }
-                const isSessionActive = typeof sessionStorage !== "undefined" && sessionStorage.getItem("azota_session_active_3d") === "true";
-                if (!isSessionActive) return false;
 
                 if (window.AccountManager && typeof window.AccountManager.getCurrentAccount === "function") {
                     const user = window.AccountManager.getCurrentAccount();
-                    if (user) {
-                        return (user.isAdmin === true && (user.id === "acc_vanthua" || (user.nickname && user.nickname.toLowerCase() === "vanthua")));
+                    if (!user) return false;
+                    const nickLow = (user.nickname || "").toLowerCase();
+
+                    // 1. Admin VanThua (requires active sessionStorage session)
+                    if (user.isAdmin === true || user.id === "acc_vanthua" || nickLow === "vanthua") {
+                        return typeof sessionStorage !== "undefined" && sessionStorage.getItem("azota_session_active_3d") === "true";
+                    }
+
+                    // 2. Authorized Solution Contributor: TuanMinh (supports both localStorage remember-me and sessionStorage)
+                    if (user.id === "acc_tuanminh" || nickLow === "tuanminh") {
+                        return true;
                     }
                 }
-
                 return false;
             } catch(e) {
-                return false; // Strictest security: student default on any error
+                return false;
             }
         },
 
@@ -358,18 +473,20 @@
         // REALTIME CLOUD SYNCHRONIZATION DELEGATION
         // ==========================================
         syncFromCloud: function(shouldRender = true) {
-            return SolutionCloud.syncFromCloud(shouldRender, this);
+            SolutionCloud.startLiveSync(this);
+            return SolutionCloud.syncFromCloud(shouldRender, this, false);
         },
 
-        syncToCloud: function() {
-            return SolutionCloud.syncToCloud(this);
+        syncToCloud: function(allowEmpty = false) {
+            return SolutionCloud.syncToCloud(this, allowEmpty);
         },
 
         manualSync: function() {
             if (window.AudioHelper && window.AudioHelper.playSuccess) window.AudioHelper.playSuccess();
+            lastKnownEtag = null; // force fresh fetch
             this.syncFromCloud(true);
             if (window.SecurityGuard && window.SecurityGuard.showSecurityToast) {
-                window.SecurityGuard.showSecurityToast("🔄 Đang kiểm tra bài giải & thư mục mới nhất từ đám mây...");
+                window.SecurityGuard.showSecurityToast("🔄 Đang đồng bộ bài giải mới nhất theo thời gian thực...");
             }
         },
 
@@ -380,13 +497,13 @@
                 badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-spin"></span><span>Đang đồng bộ...</span>`;
                 badge.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-amber-500/15 text-amber-400 border border-amber-500/25";
             } else if (state === "synced") {
-                badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>Đám mây đã đồng bộ</span>`;
+                badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>Live • Thời gian thực</span>`;
                 badge.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/25";
             } else if (state === "offline") {
                 badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-slate-400"></span><span>Dữ liệu ngoại tuyến</span>`;
                 badge.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-slate-800 text-slate-400 border border-white/5";
             } else {
-                badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-400"></span><span>Lỗi kết nối đám mây</span>`;
+                badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-400"></span><span>Lỗi đồng bộ đám mây</span>`;
                 badge.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/25";
             }
         },
@@ -411,7 +528,7 @@
                     const canvas = document.createElement("canvas");
                     let width = img.width;
                     let height = img.height;
-                    const maxDim = 850;
+                    const maxDim = 1000;
                     if (width > maxDim || height > maxDim) {
                         if (width > height) {
                             height = Math.round((height * maxDim) / width);
@@ -424,8 +541,10 @@
                     canvas.width = width;
                     canvas.height = height;
                     const ctx = canvas.getContext("2d");
+                    ctx.fillStyle = "#FFFFFF";
+                    ctx.fillRect(0, 0, width, height);
                     ctx.drawImage(img, 0, 0, width, height);
-                    const compressed = canvas.toDataURL("image/jpeg", 0.68);
+                    const compressed = canvas.toDataURL("image/jpeg", 0.72);
                     callback(compressed);
                 };
                 img.onerror = function() {
@@ -440,19 +559,25 @@
         // FOLDER CRUD
         // ==========================================
         getAllFolders: function() {
+            if (Array.isArray(inMemoryFolders)) return inMemoryFolders;
             try {
                 const raw = localStorage.getItem(FOLDER_STORAGE_KEY);
                 if (raw) {
                     const list = JSON.parse(raw);
-                    if (Array.isArray(list)) return list;
+                    if (Array.isArray(list)) {
+                        inMemoryFolders = list;
+                        return list;
+                    }
                 }
             } catch(e) {}
+            inMemoryFolders = [];
             return [];
         },
 
         saveFolders: function(list) {
+            inMemoryFolders = Array.isArray(list) ? list : [];
             try {
-                localStorage.setItem(FOLDER_STORAGE_KEY, JSON.stringify(list || []));
+                localStorage.setItem(FOLDER_STORAGE_KEY, JSON.stringify(inMemoryFolders));
             } catch(e) {}
         },
 
@@ -462,28 +587,40 @@
             return list.filter(f => f.subject === subject);
         },
 
-        createFolder: function(subject, name, desc) {
+        createFolder: async function(subject, name, desc) {
+            if (!this.isAuthorizedToUpload()) {
+                alert("Chỉ tài khoản được cấp quyền (@VanThua, @TuanMinh) mới được tạo thư mục!");
+                return null;
+            }
             const cleanName = (name || "").trim();
             if (!cleanName) return null;
 
+            // Pull latest cloud state first so concurrent writes never clobber another editor's items
+            if (!isCloudSyncing && !pendingCloudPush) {
+                lastKnownEtag = null;
+                await SolutionCloud.syncFromCloud(false, this, false);
+            }
+
+            const user = window.AccountManager ? window.AccountManager.getCurrentAccount() : null;
             const newFolder = {
-                id: "fld_" + Date.now(),
+                id: "fld_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
                 subject: subject || "Tin Học 11",
                 name: cleanName,
                 description: (desc || "").trim(),
+                createdBy: user ? user.nickname : "TuanMinh",
                 createdAt: new Date().toISOString()
             };
 
-            const list = this.getAllFolders();
+            const list = [...this.getAllFolders()];
             list.unshift(newFolder);
             this.saveFolders(list);
-            this.syncToCloud();
-            return newFolder;
+            const synced = await this.syncToCloud(true);
+            return { folder: newFolder, synced };
         },
 
-        deleteFolder: function(folderId) {
+        deleteFolder: async function(folderId) {
             if (!this.isAuthorizedToUpload()) {
-                alert("Bạn không có quyền xóa thư mục!");
+                alert("Chỉ tài khoản được cấp quyền (@VanThua, @TuanMinh) mới có quyền xóa thư mục!");
                 return;
             }
 
@@ -491,35 +628,41 @@
             const target = folders.find(f => f.id === folderId);
             const folderName = target ? target.name : "thư mục này";
 
-            if (!confirm(`Bạn có chắc muốn xóa thư mục "${folderName}"?\nToàn bộ các lời giải và hình ảnh bên trong thư mục này cũng sẽ bị xóa vĩnh viễn!`)) {
+            if (!confirm(`Bạn có chắc muốn xóa thư mục "${folderName}"?\nToàn bộ các lời giải bên trong cũng sẽ bị xóa khỏi tất cả mọi người!`)) {
                 return;
             }
 
-            const newFolders = folders.filter(f => f.id !== folderId);
+            if (!isCloudSyncing && !pendingCloudPush) {
+                lastKnownEtag = null;
+                await SolutionCloud.syncFromCloud(false, this, false);
+            }
+
+            const newFolders = this.getAllFolders().filter(f => f.id !== folderId);
             this.saveFolders(newFolders);
 
             let solutions = this.getAllSolutions();
             const deletedCount = solutions.filter(s => s.folderId === folderId).length;
             solutions = solutions.filter(s => s.folderId !== folderId);
             this.saveSolutions(solutions);
-            this.syncToCloud();
 
             if (currentFolderId === folderId) {
                 currentFolderId = null;
             }
 
             if (window.AudioHelper && window.AudioHelper.playClick) window.AudioHelper.playClick();
-            if (window.SecurityGuard && window.SecurityGuard.showSecurityToast) {
-                window.SecurityGuard.showSecurityToast(`🗑️ Đã xóa thư mục "${folderName}" (${deletedCount} lời giải).`);
-            }
-
             this.render();
+
+            const synced = await this.syncToCloud(true);
+            if (synced && window.SecurityGuard && window.SecurityGuard.showSecurityToast) {
+                window.SecurityGuard.showSecurityToast(`🗑️ Đã xóa thư mục "${folderName}" (${deletedCount} lời giải) & đồng bộ tới mọi người!`);
+            }
         },
 
         // ==========================================
         // SOLUTION CRUD
         // ==========================================
         getAllSolutions: function() {
+            if (Array.isArray(inMemorySolutions)) return inMemorySolutions;
             try {
                 const raw = localStorage.getItem(STORAGE_KEY);
                 if (raw) {
@@ -534,6 +677,7 @@
                             }
                             return true;
                         });
+                        inMemorySolutions = valid;
                         if (valid.length !== list.length) {
                             this.saveSolutions(valid);
                         }
@@ -541,34 +685,41 @@
                     }
                 }
             } catch(e) {}
-            this.saveSolutions([]);
+            inMemorySolutions = [];
             return [];
         },
 
         saveSolutions: function(list) {
+            inMemorySolutions = Array.isArray(list) ? list : [];
             try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(list || []));
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(inMemorySolutions));
             } catch(e) {}
         },
 
-        deleteSolution: function(id) {
+        deleteSolution: async function(id) {
             if (!this.isAuthorizedToUpload()) {
-                alert("Bạn không có quyền xóa bài giải này!");
+                alert("Chỉ tài khoản được cấp quyền (@VanThua, @TuanMinh) mới có quyền xóa bài giải này!");
                 return;
             }
 
-            if (!confirm("Bạn có chắc chắn muốn xóa bài giải này khỏi hệ thống?")) return;
+            if (!confirm("Bạn có chắc chắn muốn xóa bài giải này? Bài giải sẽ biến mất khỏi tất cả mọi người ngay lập tức.")) return;
 
-            let currentList = this.getAllSolutions();
-            currentList = currentList.filter(s => s.id !== id);
+            if (!isCloudSyncing && !pendingCloudPush) {
+                lastKnownEtag = null;
+                await SolutionCloud.syncFromCloud(false, this, false);
+            }
+
+            const currentList = this.getAllSolutions().filter(s => s.id !== id);
             this.saveSolutions(currentList);
-            this.syncToCloud();
+            if (currentLightboxId === id) this.closeLightbox();
 
             if (window.AudioHelper && window.AudioHelper.playClick) window.AudioHelper.playClick();
-            if (window.SecurityGuard && window.SecurityGuard.showSecurityToast) {
-                window.SecurityGuard.showSecurityToast("🗑️ Đã xóa thành công bài giải.");
-            }
             this.render();
+
+            const synced = await this.syncToCloud(true);
+            if (synced && window.SecurityGuard && window.SecurityGuard.showSecurityToast) {
+                window.SecurityGuard.showSecurityToast("🗑️ Đã xóa bài giải & đồng bộ tức thì tới tất cả mọi người!");
+            }
         },
 
         // ==========================================
@@ -738,19 +889,20 @@
             const canUpload = this.isAuthorizedToUpload();
             if (uploadBtn) {
                 if (canUpload) {
-                    uploadBtn.classList.remove("opacity-50", "cursor-not-allowed");
-                    uploadBtn.title = "Đăng tải bài giải mới (Tài khoản đã cấp quyền)";
+                    uploadBtn.classList.remove("hidden", "opacity-50", "cursor-not-allowed");
+                    uploadBtn.disabled = false;
+                    uploadBtn.title = "Đăng tải bài giải mới (Tài khoản được cấp quyền)";
                 } else {
-                    uploadBtn.classList.add("opacity-50", "cursor-not-allowed");
-                    uploadBtn.title = "Chỉ tài khoản được cấp quyền (Admin / Giáo viên / VIP) mới có quyền đăng bài giải";
+                    uploadBtn.classList.add("hidden");
                 }
             }
 
             if (createFolderBtn) {
                 if (canUpload) {
-                    createFolderBtn.classList.remove("opacity-50", "cursor-not-allowed");
+                    createFolderBtn.classList.remove("hidden", "opacity-50", "cursor-not-allowed");
+                    createFolderBtn.disabled = false;
                 } else {
-                    createFolderBtn.classList.add("opacity-50", "cursor-not-allowed");
+                    createFolderBtn.classList.add("hidden");
                 }
             }
 
@@ -1204,7 +1356,7 @@
                                 <button type="button" 
                                         onclick="SolutionEngine.deleteSolution('${item.id}')" 
                                         class="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer" 
-                                        title="Xóa bài giải (Quyền Admin)">
+                                        title="Xóa bài giải (Đồng bộ thời gian thực)">
                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                 </button>
                             ` : ''}
@@ -1218,6 +1370,12 @@
         // CREATE FOLDER MODAL
         // ==========================================
         openCreateFolderModal: function(preSelectedSubject) {
+            if (!this.isAuthorizedToUpload()) {
+                if (window.SecurityGuard && window.SecurityGuard.showSecurityToast) {
+                    window.SecurityGuard.showSecurityToast("🔒 Chỉ @VanThua và @TuanMinh có quyền tạo thư mục bài giải!");
+                }
+                return;
+            }
             const modal = document.getElementById("solutionCreateFolderModal");
             const subjectSelect = document.getElementById("solFolderSubject");
             const nameInput = document.getElementById("solFolderName");
@@ -1251,12 +1409,17 @@
             if (modal) modal.classList.add("hidden");
         },
 
-        submitCreateFolder: function(e) {
+        submitCreateFolder: async function(e) {
             if (e && e.preventDefault) e.preventDefault();
+            if (!this.isAuthorizedToUpload()) {
+                alert("Bạn không có quyền tạo thư mục bài giải!");
+                return;
+            }
 
             const subjectSelect = document.getElementById("solFolderSubject");
             const nameInput = document.getElementById("solFolderName");
             const descInput = document.getElementById("solFolderDesc");
+            const submitBtn = document.querySelector('#solutionCreateFolderForm button[type="submit"]');
 
             const subject = subjectSelect ? subjectSelect.value : "Tin Học 11";
             const name = nameInput ? nameInput.value.trim() : "";
@@ -1268,12 +1431,30 @@
                 return;
             }
 
-            const newFolder = this.createFolder(subject, name, desc);
+            const origBtnHtml = submitBtn ? submitBtn.innerHTML : "";
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = "☁️ Đang tạo & đồng bộ...";
+            }
+
+            const result = await this.createFolder(subject, name, desc);
+
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = origBtnHtml || "📁 Tạo Thư Mục Ngay";
+            }
+
+            if (!result || !result.folder) return;
+            const newFolder = result.folder;
             this.closeCreateFolderModal();
 
             if (window.AudioHelper && window.AudioHelper.playSuccess) window.AudioHelper.playSuccess();
             if (window.SecurityGuard && window.SecurityGuard.showSecurityToast) {
-                window.SecurityGuard.showSecurityToast(`📁 Đã tạo thành công thư mục: "${name}"`);
+                window.SecurityGuard.showSecurityToast(
+                    result.synced
+                        ? `📁 Đã tạo & đồng bộ tức thì thư mục: "${name}"`
+                        : `⚠️ Đã tạo thư mục tạm thời trên máy — hãy bấm Đồng Bộ lại!`
+                );
             }
 
             const uploadModal = document.getElementById("solutionUploadModal");
@@ -1305,6 +1486,12 @@
         },
 
         openUploadModal: function(preSelectedSubject, preSelectedFolderId) {
+            if (!this.isAuthorizedToUpload()) {
+                if (window.SecurityGuard && window.SecurityGuard.showSecurityToast) {
+                    window.SecurityGuard.showSecurityToast("🔒 Chỉ @VanThua và @TuanMinh có quyền gửi bài giải!");
+                }
+                return;
+            }
             const modal = document.getElementById("solutionUploadModal");
             const subjectSelect = document.getElementById("solInputSubject");
 
@@ -1340,8 +1527,8 @@
                 return;
             }
 
-            if (file.size > 8 * 1024 * 1024) {
-                alert("Kích thước ảnh tối đa là 8MB!");
+            if (file.size > 10 * 1024 * 1024) {
+                alert("Kích thước ảnh tối đa là 10MB!");
                 return;
             }
 
@@ -1355,21 +1542,31 @@
             });
         },
 
-        submitUpload: function(e) {
+        submitUpload: async function(e) {
             if (e && e.preventDefault) e.preventDefault();
+            if (!this.isAuthorizedToUpload()) {
+                alert("Chỉ tài khoản được cấp quyền (@VanThua, @TuanMinh) mới được đăng bài giải!");
+                return;
+            }
 
             const titleInput = document.getElementById("solInputTitle");
             const subjectInput = document.getElementById("solInputSubject");
             const folderInput = document.getElementById("solInputFolder");
             const lessonInput = document.getElementById("solInputLesson");
             const descInput = document.getElementById("solInputDesc");
+            const urlInput = document.getElementById("solInputImageUrl");
+            const submitBtn = document.querySelector('#solutionUploadForm button[type="submit"]');
 
             const title = (titleInput && titleInput.value.trim()) || "";
             const subject = (subjectInput && subjectInput.value) || "Tin Học 11";
             const folderId = (folderInput && folderInput.value) || null;
             const lesson = (lessonInput && lessonInput.value.trim()) || "Chuyên đề bài học";
             const desc = (descInput && descInput.value.trim()) || "";
-            const imgData = window._pendingSolutionImageBase64;
+            let imgData = window._pendingSolutionImageBase64;
+            if (!imgData && urlInput && urlInput.value.trim()) {
+                this.handleDirectUrlInput(urlInput.value.trim());
+                imgData = window._pendingSolutionImageBase64;
+            }
 
             if (!title) {
                 alert("Vui lòng nhập tiêu đề cho bài giải!");
@@ -1378,7 +1575,7 @@
             }
 
             if (!imgData) {
-                alert("Vui lòng tải lên hoặc chọn một hình ảnh lời giải!");
+                alert("Vui lòng chọn ảnh từ máy hoặc dán link ảnh lời giải!");
                 return;
             }
 
@@ -1390,7 +1587,7 @@
 
             const user = window.AccountManager ? window.AccountManager.getCurrentAccount() : null;
             const newSolution = {
-                id: "sol_" + Date.now(),
+                id: "sol_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
                 title: title,
                 subject: subject,
                 folderId: folderId,
@@ -1398,25 +1595,48 @@
                 lesson: lesson,
                 description: desc,
                 imageUrl: imgData,
-                authorName: user ? user.name : "Văn Thừa (Admin)",
-                authorRole: user ? user.role : "👑 Quản Trị Viên",
-                authorAvatar: user ? user.avatar : "👑",
+                authorName: user ? user.name : "Tuấn Minh",
+                authorNickname: user ? user.nickname : "TuanMinh",
+                authorRole: user ? user.role : "🎓 Học Sinh",
+                authorAvatar: user ? user.avatar : "🧑‍🎓",
                 createdAt: new Date().toISOString(),
                 views: 1,
                 likes: 0
             };
 
-            const currentList = this.getAllSolutions();
+            const origBtnHtml = submitBtn ? submitBtn.innerHTML : "";
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = "☁️ Đang gửi lên đám mây...";
+            }
+
+            // Pull freshest cloud state first so concurrent adds never overwrite each other
+            if (!isCloudSyncing && !pendingCloudPush) {
+                lastKnownEtag = null;
+                await SolutionCloud.syncFromCloud(false, this, false);
+            }
+
+            const currentList = [...this.getAllSolutions()];
             currentList.unshift(newSolution);
             this.saveSolutions(currentList);
-            this.syncToCloud();
+
+            const synced = await this.syncToCloud(true);
+
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = origBtnHtml || "🚀 Đăng Lời Giải Ngay";
+            }
 
             if (window.AudioHelper && window.AudioHelper.playSuccess) {
                 window.AudioHelper.playSuccess();
             }
 
             if (window.SecurityGuard && window.SecurityGuard.showSecurityToast) {
-                window.SecurityGuard.showSecurityToast(`✅ Đã nhét bài giải vào ${folderName ? ('thư mục "' + folderName + '"') : subject}!`);
+                window.SecurityGuard.showSecurityToast(
+                    synced
+                        ? `✅ Đã đăng & phát trực tiếp tới 100% mọi người: "${title}"`
+                        : `⚠️ Đã lưu tạm trên máy nhưng chưa đẩy được lên đám mây — hãy bấm Đồng Bộ lại!`
+                );
             }
 
             this.closeUploadModal();
@@ -1449,6 +1669,7 @@
             const item = list.find(s => s.id === id);
             if (!item) return;
 
+            currentLightboxId = id;
             item.views = (item.views || 0) + 1;
             this.saveSolutions(list);
 
@@ -1479,6 +1700,7 @@
         },
 
         closeLightbox: function() {
+            currentLightboxId = null;
             const modal = document.getElementById("solutionLightboxModal");
             if (modal) modal.classList.add("hidden");
             if (window.AudioHelper && window.AudioHelper.playClick) window.AudioHelper.playClick();
@@ -1494,6 +1716,48 @@
             if (window.AudioHelper && window.AudioHelper.playSuccess) window.AudioHelper.playSuccess();
         }
     };
+
+    // Enable Ctrl+V screenshot paste & drag-and-drop when Upload Modal is open
+    document.addEventListener("paste", (e) => {
+        const modal = document.getElementById("solutionUploadModal");
+        if (!modal || modal.classList.contains("hidden")) return;
+        const items = e.clipboardData && e.clipboardData.items;
+        if (!items) return;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type && items[i].type.startsWith("image/")) {
+                const file = items[i].getAsFile();
+                if (file) {
+                    e.preventDefault();
+                    SolutionEngine.handleFileSelected(file);
+                }
+                break;
+            }
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const fileInput = document.getElementById("solFileInput");
+        const dropZone = fileInput ? fileInput.parentElement : null;
+        if (dropZone && !dropZone._asetaDropBound) {
+            dropZone._asetaDropBound = true;
+            ["dragenter", "dragover"].forEach(ev => {
+                dropZone.addEventListener(ev, (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add("border-emerald-400", "bg-emerald-500/15");
+                });
+            });
+            ["dragleave", "drop"].forEach(ev => {
+                dropZone.addEventListener(ev, (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove("border-emerald-400", "bg-emerald-500/15");
+                });
+            });
+            dropZone.addEventListener("drop", (e) => {
+                const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+                if (file) SolutionEngine.handleFileSelected(file);
+            });
+        }
+    });
 
     window.SolutionEngine = SolutionEngine;
 })();
