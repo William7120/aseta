@@ -348,6 +348,17 @@ window.EssayEngine = (function() {
             evaluatedAt: new Date().toLocaleTimeString('vi-VN')
         };
 
+        if (finalScore >= 5.0 && window.AsetaProgressCloud && typeof window.AsetaProgressCloud.recordActivity === "function") {
+            const essayExp = Math.max(15, Math.round(finalScore * 4));
+            window.AsetaProgressCloud.recordActivity({
+                type: "essay",
+                label: `Chấm tự luận (${finalScore}đ)`,
+                exp: essayExp,
+                dedupeKey: "essay_grade_" + q.id,
+                cooldownMs: 300000
+            });
+        }
+
         renderSubModeContent();
     }
 

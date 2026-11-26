@@ -494,17 +494,17 @@
             const badge = document.getElementById("solutionCloudSyncBadge");
             if (!badge) return;
             if (state === "syncing") {
-                badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-spin"></span><span>Đang đồng bộ...</span>`;
-                badge.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-amber-500/15 text-amber-400 border border-amber-500/25";
+                badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span><span>Đang đồng bộ...</span>`;
+                badge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-500 dark:text-amber-300 border border-amber-500/25";
             } else if (state === "synced") {
-                badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>Live • Thời gian thực</span>`;
-                badge.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/25";
+                badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span>Live</span>`;
+                badge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border border-emerald-500/25";
             } else if (state === "offline") {
-                badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-slate-400"></span><span>Dữ liệu ngoại tuyến</span>`;
-                badge.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-slate-800 text-slate-400 border border-white/5";
+                badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span><span>Ngoại tuyến</span>`;
+                badge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-200/80 dark:bg-white/10 text-slate-500 dark:text-slate-400 border border-slate-300/60 dark:border-white/10";
             } else {
-                badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-400"></span><span>Lỗi đồng bộ đám mây</span>`;
-                badge.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/25";
+                badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span><span>Lỗi đám mây</span>`;
+                badge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-500 dark:text-rose-400 border border-rose-500/25";
             }
         },
 
@@ -909,27 +909,32 @@
             const allList = this.getAllSolutions();
             const allFolders = this.getAllFolders();
 
-            // Render filter pill buttons at the top (Tiếng Anh dùng Vector UK Flag SVG)
+            // Render clean filter chips with per-subject live count
             if (filterCapsule) {
                 const pills = [
-                    { id: "all", name: `Tất Cả (${SUBJECT_CATEGORIES.length} Môn)`, iconHtml: "<span>✨</span>" },
+                    { id: "all", name: "Tất Cả", count: allList.length, iconHtml: "<span>✨</span>" },
                     ...SUBJECT_CATEGORIES.map(s => ({
                         id: s.title,
                         name: s.tag,
+                        count: allList.filter(item => item.subject === s.title).length,
                         iconHtml: (s.iconType === "svg") ? UK_FLAG_SVG : `<span>${s.icon}</span>`
                     }))
                 ];
                 filterCapsule.innerHTML = pills.map(p => {
                     const isActive = (p.id === currentSubjectFilter);
-                    const activeClasses = isActive 
-                        ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black shadow-md shadow-emerald-500/30 scale-102"
-                        : "bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 border border-white/5";
+                    const activeClasses = isActive
+                        ? "bg-slate-900 text-white dark:bg-white dark:text-slate-950 font-black shadow-sm"
+                        : "bg-white dark:bg-white/[0.04] hover:bg-slate-100 dark:hover:bg-white/[0.09] text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-white/10 font-semibold";
+                    const countBadge = p.count > 0
+                        ? `<span class="px-1.5 py-0.2 rounded-full text-[10px] font-black ${isActive ? 'bg-emerald-500 text-white dark:bg-slate-900 dark:text-emerald-400' : 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'}">${p.count}</span>`
+                        : "";
                     return `
-                        <button type="button" 
+                        <button type="button"
                                 onclick="SolutionEngine.setFilterSubject('${p.id}')"
-                                class="px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap cursor-pointer transition-all flex items-center gap-1.5 ${activeClasses}">
+                                class="px-3 py-1.5 rounded-xl text-xs whitespace-nowrap cursor-pointer transition-all flex items-center gap-1.5 shrink-0 ${activeClasses}">
                             ${p.iconHtml}
                             <span class="font-sans">${p.name}</span>
+                            ${countBadge}
                         </button>
                     `;
                 }).join("");
@@ -938,84 +943,140 @@
             // Update Counter Badge with clean text & font-sans
             if (countBadge) {
                 if (currentSubjectFilter === "all") {
-                    countBadge.textContent = `${allFolders.length} thư mục • ${allList.length} bài giải`;
+                    countBadge.textContent = `${allList.length} bài • ${allFolders.length} thư mục`;
                 } else if (currentFolderId) {
                     const currentFolder = allFolders.find(f => f.id === currentFolderId);
                     const folderSols = allList.filter(s => s.folderId === currentFolderId);
-                    countBadge.textContent = `${folderSols.length} bài giải (${currentFolder ? currentFolder.name : ''})`;
+                    countBadge.textContent = `${folderSols.length} bài • ${currentFolder ? currentFolder.name : ''}`;
                 } else {
                     const subFolders = allFolders.filter(f => f.subject === currentSubjectFilter);
                     const subSols = allList.filter(s => s.subject === currentSubjectFilter);
-                    countBadge.textContent = `${subFolders.length} thư mục • ${subSols.length} bài giải (${currentSubjectFilter})`;
+                    countBadge.textContent = `${subSols.length} bài • ${subFolders.length} thư mục`;
                 }
             }
 
             // =========================================================================
-            // LEVEL 1: ROOT VIEW (3D GLASS FOLDERS GIỐNG HỆT TRANG KHO ĐỀ)
+            // LEVEL 1: ROOT VIEW — CONTENT-FIRST GALLERY + COMPACT BENTO SUBJECT GRID
             // =========================================================================
-            if (currentSubjectFilter === "all" && !currentKeyword) {
-                grid.innerHTML = "";
-
-                // Header info
-                const headerDiv = document.createElement("div");
-                headerDiv.className = "flex items-center justify-between flex-wrap gap-2 mb-6";
-                headerDiv.innerHTML = `
-                    <div>
-                        <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <span>Danh Sách Thư Mục Môn Học 3D</span>
-                            <span class="text-xs text-amber-500 dark:text-amber-400 font-semibold px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20">${SUBJECT_CATEGORIES.length} môn</span>
-                        </h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                            Bấm vào từng thư mục 3D để xem các bài học và lời giải chi tiết bên trong
-                        </p>
-                    </div>
-                    <div class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold">
-                        Hiển thị ${SUBJECT_CATEGORIES.length} / ${SUBJECT_CATEGORIES.length} thư mục môn học 3D
-                    </div>
-                `;
-                grid.appendChild(headerDiv);
-
-                // Khối bài giải mới chia sẻ gần đây trên đám mây (Hiển thị ngay cho bạn bè thấy)
-                if (allList.length > 0) {
-                    const recentSection = document.createElement("div");
-                    recentSection.className = "mb-8 p-5 sm:p-6 rounded-3xl bg-slate-900/90 border border-emerald-500/40 backdrop-blur-xl shadow-2xl space-y-4";
-                    recentSection.innerHTML = `
-                        <div class="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-white/10">
-                            <div class="flex items-center gap-2.5">
-                                <span class="flex h-3 w-3 relative">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-                                </span>
-                                <h4 class="text-sm sm:text-base font-black text-white flex items-center gap-2">
-                                    <span>🌟</span> <span>Bài Giải & Đề Cương Mới Nhất (Đám Mây Aseta)</span>
-                                </h4>
-                                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                                    ${allList.length} bài đã đăng
-                                </span>
-                            </div>
-                            <span class="text-xs text-slate-400 flex items-center gap-1">
-                                <span>☁️</span> <span>Tất cả bạn bè đều xem được • Nhấp vào ảnh để phóng to</span>
-                            </span>
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                            ${allList.slice(0, 6).map(item => this.renderSolutionCard(item, canUpload)).join('')}
-                        </div>
-                    `;
-                    grid.appendChild(recentSection);
+            if (currentSubjectFilter === "all") {
+                let matchingSolutions = allList;
+                if (currentKeyword) {
+                    matchingSolutions = allList.filter(item =>
+                        (item.title && item.title.toLowerCase().includes(currentKeyword)) ||
+                        (item.subject && item.subject.toLowerCase().includes(currentKeyword)) ||
+                        (item.folderName && item.folderName.toLowerCase().includes(currentKeyword)) ||
+                        (item.lesson && item.lesson.toLowerCase().includes(currentKeyword)) ||
+                        (item.description && item.description.toLowerCase().includes(currentKeyword))
+                    );
                 }
 
-                // 3D Glass Folders Container (Exact same class & styling as Kho Đề!)
-                const foldersContainer = document.createElement("div");
-                foldersContainer.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 justify-items-center py-2";
+                let html = `<div class="space-y-6">`;
 
-                SUBJECT_CATEGORIES.forEach(sub => {
-                    const subFolders = allFolders.filter(f => f.subject === sub.title);
-                    const subSolutions = allList.filter(s => s.subject === sub.title);
-                    const card = this.buildGlassFolderCard(sub, subFolders.length, subSolutions.length);
-                    foldersContainer.appendChild(card);
-                });
+                // SECTION 1: LATEST / SEARCHED SOLUTIONS (Immediate access, zero scrolling!)
+                html += `
+                    <div class="space-y-3.5">
+                        <div class="flex items-center justify-between gap-2 flex-wrap px-0.5">
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-sm sm:text-base font-black text-slate-900 dark:text-white tracking-tight">
+                                    ${currentKeyword ? `Kết quả tìm "${currentKeyword}"` : 'Bài Giải Mới Nhất'}
+                                </h3>
+                                <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">
+                                    ${matchingSolutions.length} bài
+                                </span>
+                            </div>
+                            ${currentKeyword ? `
+                                <button type="button" onclick="document.getElementById('solutionSearchInput').value=''; SolutionEngine.setKeyword('');"
+                                        class="text-xs font-bold text-sky-500 hover:text-sky-400 cursor-pointer">
+                                    ✕ Xóa tìm kiếm
+                                </button>
+                            ` : `<span class="text-[11px] text-slate-500 dark:text-slate-400">Bấm vào ảnh để phóng to rõ nét</span>`}
+                        </div>
+                `;
 
-                grid.appendChild(foldersContainer);
+                if (matchingSolutions.length > 0) {
+                    html += `
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            ${matchingSolutions.map(item => this.renderSolutionCard(item, canUpload)).join('')}
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="py-10 px-6 rounded-3xl bg-white/70 dark:bg-[#0e1118]/80 border border-dashed border-slate-300 dark:border-white/10 text-center space-y-3">
+                            <div class="text-3xl">${currentKeyword ? '🔎' : '📚'}</div>
+                            <div class="text-sm font-bold text-slate-800 dark:text-white">
+                                ${currentKeyword ? `Không tìm thấy bài giải khớp "${currentKeyword}"` : 'Chưa có bài giải nào được đăng'}
+                            </div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+                                ${currentKeyword ? 'Thử tìm theo tên môn học hoặc tiêu đề ngắn hơn.' : 'Khi @VanThua hoặc @TuanMinh đăng bài giải, tất cả thành viên sẽ thấy ngay lập tức.'}
+                            </p>
+                            ${canUpload && !currentKeyword ? `
+                                <button type="button" onclick="SolutionEngine.openUploadModal()"
+                                        class="mt-1 px-4 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md cursor-pointer">
+                                    ➕ Đăng Bài Giải Đầu Tiên
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                }
+                html += `</div>`;
+
+                // SECTION 2: COMPACT BENTO SUBJECT DIRECTORY (5-col desktop / 2-col mobile, fast & clean)
+                if (!currentKeyword) {
+                    html += `
+                        <div class="space-y-3 pt-1">
+                            <div class="flex items-center justify-between px-0.5">
+                                <h3 class="text-sm sm:text-base font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+                                    <span>Thư Mục Theo Môn Học</span>
+                                    <span class="text-[11px] font-bold text-slate-400">${SUBJECT_CATEGORIES.length} môn</span>
+                                </h3>
+                                <span class="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:inline">Chọn môn để xem theo từng bài học</span>
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                                ${SUBJECT_CATEGORIES.map(sub => {
+                                    const subFolders = allFolders.filter(f => f.subject === sub.title);
+                                    const subSolutions = allList.filter(s => s.subject === sub.title);
+                                    const hasItems = subFolders.length > 0 || subSolutions.length > 0;
+                                    const iconHtml = (sub.iconType === "svg")
+                                        ? UK_FLAG_SVG
+                                        : `<span class="text-lg leading-none">${sub.icon}</span>`;
+                                    return `
+                                        <button type="button"
+                                                onclick="SolutionEngine.setFilterSubject('${sub.title}')"
+                                                class="group text-left p-3.5 rounded-2xl border transition-all duration-200 hover:-translate-y-0.5 cursor-pointer flex flex-col justify-between gap-3 ${
+                                                    hasItems
+                                                        ? 'bg-white dark:bg-[#121622] border-emerald-500/35 hover:border-emerald-400/70 shadow-sm hover:shadow-md hover:shadow-emerald-500/10'
+                                                        : 'bg-white/65 dark:bg-[#0e1118]/75 border-slate-200/80 dark:border-white/[0.07] hover:border-slate-300 dark:hover:border-white/20'
+                                                }">
+                                            <div class="flex items-center justify-between gap-2 w-full">
+                                                <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border border-white/10" style="background: ${sub.color}1f;">
+                                                    ${iconHtml}
+                                                </div>
+                                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black ${
+                                                    subSolutions.length > 0
+                                                        ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25'
+                                                        : 'bg-slate-100 dark:bg-white/[0.05] text-slate-400'
+                                                }">
+                                                    ${subSolutions.length > 0 ? `${subSolutions.length} bài` : 'Trống'}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <div class="text-xs sm:text-[13px] font-black text-slate-900 dark:text-white group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors truncate">
+                                                    ${sub.title}
+                                                </div>
+                                                <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                                                    ${subFolders.length} thư mục • ${subSolutions.length} bài giải
+                                                </div>
+                                            </div>
+                                        </button>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                html += `</div>`;
+                grid.innerHTML = html;
                 return;
             }
 
@@ -1290,79 +1351,90 @@
             grid.innerHTML = html;
         },
 
-        // Helper: Render individual solution card
+        // Helper: Render modern editorial solution card (crisp on both Dark & Light mode)
         renderSolutionCard: function(item, canUpload) {
             const formattedDate = new Date(item.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            return `
-                <div class="solution-card group relative rounded-3xl bg-slate-900/80 dark:bg-black/70 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 hover:border-emerald-500/50 p-4.5 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-emerald-500/10 flex flex-col justify-between overflow-hidden">
-                    
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between gap-2">
-                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 flex items-center gap-1">
-                                <span>📚</span>
-                                <span>${item.subject}</span>
-                            </span>
-                            <span class="text-xs font-bold text-amber-400 truncate max-w-[140px]" title="${item.folderName || ''}">
-                                📁 ${item.folderName || item.lesson || 'Chung'}
-                            </span>
-                        </div>
+            const folderPill = item.folderName
+                ? `<span class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-black/60 backdrop-blur-md text-amber-300 border border-white/15 truncate max-w-[130px]" title="${item.folderName}">📁 ${item.folderName}</span>`
+                : '';
 
-                        <div class="relative w-full h-44 rounded-2xl overflow-hidden bg-slate-950/80 border border-white/5 cursor-pointer group/thumb" onclick="SolutionEngine.openLightbox('${item.id}')" title="Bấm để xem ảnh phóng to chi tiết">
-                            <img src="${item.imageUrl}" alt="${item.title}" class="w-full h-full object-cover object-top transition-transform duration-500 group-hover/thumb:scale-105" loading="lazy">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover/thumb:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                                <span class="px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-md text-white text-xs font-bold border border-white/20 flex items-center gap-1.5 shadow-lg transform -translate-y-2 group-hover/thumb:translate-y-0 transition-transform">
-                                    <span>🔍</span>
-                                    <span>Xem Ảnh Phóng To</span>
+            return `
+                <article class="solution-card group relative rounded-2xl bg-white dark:bg-[#121622] border border-slate-200/85 dark:border-white/[0.08] hover:border-emerald-500/50 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-emerald-500/10 flex flex-col justify-between overflow-hidden">
+                    <div>
+                        <!-- Crisp 16:10 Image Preview Frame -->
+                        <div class="relative w-full aspect-[16/10] overflow-hidden bg-slate-950 cursor-pointer group/thumb"
+                             onclick="SolutionEngine.openLightbox('${item.id}')"
+                             title="Bấm để xem ảnh phóng to rõ nét">
+                            <img src="${item.imageUrl}" alt="${item.title}"
+                                 class="w-full h-full object-cover object-top transition-transform duration-500 group-hover/thumb:scale-105"
+                                 loading="lazy">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/35 pointer-events-none"></div>
+
+                            <!-- Floating top badges -->
+                            <div class="absolute top-2.5 inset-x-2.5 flex items-center justify-between gap-2">
+                                <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-black bg-black/65 backdrop-blur-md text-emerald-300 border border-emerald-400/30">
+                                    ${item.subject}
+                                </span>
+                                ${folderPill}
+                            </div>
+
+                            <!-- Hover Zoom Chip -->
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-opacity">
+                                <span class="px-3 py-1.5 rounded-xl bg-black/75 backdrop-blur-md text-white text-xs font-bold border border-white/20 flex items-center gap-1.5 shadow-lg">
+                                    <span>🔍</span><span>Phóng to</span>
                                 </span>
                             </div>
                         </div>
 
-                        <div class="space-y-1">
-                            <h4 class="text-base font-bold text-slate-900 dark:text-white leading-snug line-clamp-2 group-hover:text-emerald-400 transition-colors">
+                        <!-- Title & Summary -->
+                        <div class="p-3.5 pb-2.5 space-y-1">
+                            <h4 onclick="SolutionEngine.openLightbox('${item.id}')"
+                                class="text-sm sm:text-[15px] font-black text-slate-900 dark:text-white leading-snug line-clamp-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors cursor-pointer">
                                 ${item.title}
                             </h4>
-                            <p class="text-xs text-slate-400 dark:text-slate-400 line-clamp-2 leading-relaxed">
-                                ${item.description || 'Không có mô tả bổ sung.'}
+                            <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                                ${item.description || item.lesson || 'Bài giải chi tiết đồng bộ từ lớp 11A7.'}
                             </p>
                         </div>
                     </div>
 
-                    <div class="mt-4 pt-3 border-t border-slate-200/60 dark:border-white/5 flex items-center justify-between gap-2">
+                    <!-- Footer: Author & Actions -->
+                    <div class="px-3.5 py-2.5 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between gap-2 bg-slate-50/60 dark:bg-white/[0.015]">
                         <div class="flex items-center gap-2 min-w-0">
-                            <div class="w-6 h-6 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-500 text-white flex items-center justify-center font-bold text-[10px] shrink-0">
-                                ${item.authorAvatar || '🧑‍🏫'}
+                            <div class="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-[11px] shrink-0 shadow-xs">
+                                ${item.authorAvatar || '🧑‍🎓'}
                             </div>
-                            <div class="min-w-0">
-                                <div class="text-xs font-bold text-slate-300 truncate">${item.authorName || 'Giáo viên'}</div>
-                                <div class="text-[10px] text-slate-500">${formattedDate}</div>
+                            <div class="min-w-0 leading-tight">
+                                <div class="text-[11px] font-bold text-slate-800 dark:text-slate-200 truncate">${item.authorName || 'Aseta'}</div>
+                                <div class="text-[10px] text-slate-400">${formattedDate}</div>
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-1.5 shrink-0">
-                            <button type="button" 
-                                    onclick="SolutionEngine.toggleLike('${item.id}')" 
-                                    class="px-2 py-1 rounded-lg text-xs font-semibold text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors flex items-center gap-1 cursor-pointer" 
+                        <div class="flex items-center gap-1 shrink-0">
+                            <button type="button"
+                                    onclick="SolutionEngine.toggleLike('${item.id}')"
+                                    class="h-7 px-2 rounded-lg text-[11px] font-bold text-slate-500 dark:text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-colors flex items-center gap-1 cursor-pointer"
                                     title="Thả tim bài giải này">
                                 <span>❤️</span>
-                                <span class="text-xs font-bold">${item.likes || 0}</span>
+                                <span>${item.likes || 0}</span>
                             </button>
-                            <button type="button" 
-                                    onclick="SolutionEngine.openLightbox('${item.id}')" 
-                                    class="p-1.5 rounded-lg text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors cursor-pointer" 
-                                    title="Xem chi tiết">
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            <button type="button"
+                                    onclick="SolutionEngine.openLightbox('${item.id}')"
+                                    class="w-7 h-7 rounded-lg text-slate-500 dark:text-slate-400 hover:text-emerald-500 hover:bg-emerald-500/10 transition-colors flex items-center justify-center cursor-pointer"
+                                    title="Xem ảnh chi tiết">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                             </button>
                             ${canUpload ? `
-                                <button type="button" 
-                                        onclick="SolutionEngine.deleteSolution('${item.id}')" 
-                                        class="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer" 
+                                <button type="button"
+                                        onclick="SolutionEngine.deleteSolution('${item.id}')"
+                                        class="w-7 h-7 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-colors flex items-center justify-center cursor-pointer"
                                         title="Xóa bài giải (Đồng bộ thời gian thực)">
                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                 </button>
                             ` : ''}
                         </div>
                     </div>
-                </div>
+                </article>
             `;
         },
 
@@ -1621,6 +1693,18 @@
             this.saveSolutions(currentList);
 
             const synced = await this.syncToCloud(true);
+
+            // Reward real EXP & Day Streak when solution successfully syncs to cloud!
+            if (synced && window.AsetaProgressCloud && typeof window.AsetaProgressCloud.recordActivity === "function") {
+                window.AsetaProgressCloud.recordActivity({
+                    type: "solution",
+                    label: `Đăng bài giải: ${title.slice(0, 30)}`,
+                    exp: 35,
+                    dedupeKey: "sol_upload_" + newSolution.id,
+                    cooldownMs: 10000,
+                    silent: true
+                });
+            }
 
             if (submitBtn) {
                 submitBtn.disabled = false;

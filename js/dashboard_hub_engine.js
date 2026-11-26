@@ -29,6 +29,9 @@
         },
 
         getTodayKey: function() {
+            if (window.AsetaProgressCloud && typeof window.AsetaProgressCloud.getVietnamDateKey === 'function') {
+                return window.AsetaProgressCloud.getVietnamDateKey();
+            }
             const d = new Date();
             const y = d.getFullYear();
             const m = String(d.getMonth() + 1).padStart(2, '0');
@@ -36,84 +39,82 @@
             return `${y}-${m}-${day}`;
         },
 
-        getAndUpdateStreak: function() {
+        // 100% REAL DAY STREAK — Never fake/auto-incremented on page load!
+        // Only lights up when the account completes a genuine study action (Exam, Vocab, Essay, Solution Upload).
+        getRealStreak: function() {
             const accId = this.getCurrentAccountIdSafe();
-            const storageKey = STREAK_KEY_PREFIX + accId;
-            const today = this.getTodayKey();
-            let state = { count: 1, best: 1, lastDate: today, history: [today] };
-            try {
-                const raw = localStorage.getItem(storageKey);
-                if (raw) {
-                    const parsed = JSON.parse(raw);
-                    if (parsed && parsed.lastDate) {
-                        const last = new Date(parsed.lastDate + 'T00:00:00');
-                        const curr = new Date(today + 'T00:00:00');
-                        const diffDays = Math.round((curr - last) / (1000 * 60 * 60 * 24));
-                        const hist = Array.isArray(parsed.history) ? parsed.history : [parsed.lastDate];
-                        const prevBest = parsed.best || parsed.count || 1;
-
-                        if (diffDays === 0) {
-                            const c = Math.max(1, parsed.count || 1);
-                            state = { count: c, best: Math.max(prevBest, c), lastDate: today, history: hist };
-                        } else if (diffDays === 1) {
-                            const c = (parsed.count || 1) + 1;
-                            const nextHist = [...new Set([...hist, today])].slice(-14);
-                            state = { count: c, best: Math.max(prevBest, c), lastDate: today, history: nextHist };
-                        } else if (diffDays > 1) {
-                            state = { count: 1, best: Math.max(prevBest, 1), lastDate: today, history: [today] };
-                        }
-                    }
-                }
-                localStorage.setItem(storageKey, JSON.stringify(state));
-            } catch (_) {}
-            return state;
+            if (window.AsetaProgressCloud && typeof window.AsetaProgressCloud.getStreakInfo === 'function') {
+                return window.AsetaProgressCloud.getStreakInfo(accId);
+            }
+            return {
+                count: 0,
+                best: 0,
+                didStudyToday: false,
+                atRisk: false,
+                status: 'inactive',
+                today: this.getTodayKey(),
+                history: []
+            };
         },
 
         getWeekDaysStrip: function(streakState) {
             const labels = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
-            const now = new Date();
-            const jsDay = now.getDay(); // 0=Sun, 1=Mon...
+            const todayKey = (streakState && streakState.today) || this.getTodayKey();
+            const [ty, tm, td] = todayKey.split('-').map(Number);
+            const nowUtc = new Date(Date.UTC(ty, tm - 1, td));
+            const jsDay = nowUtc.getUTCDay(); // 0=Sun, 1=Mon...
             const todayIdx = jsDay === 0 ? 6 : jsDay - 1;
-            const histSet = new Set(streakState.history || []);
+            const histSet = new Set((streakState && streakState.history) || []);
 
-            // Compute Monday of current week
-            const monday = new Date(now);
-            monday.setDate(now.getDate() - todayIdx);
+            const mondayUtc = new Date(nowUtc);
+            mondayUtc.setUTCDate(nowUtc.getUTCDate() - todayIdx);
 
             return labels.map((lbl, idx) => {
-                const d = new Date(monday);
-                d.setDate(monday.getDate() + idx);
-                const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                const d = new Date(mondayUtc);
+                d.setUTCDate(mondayUtc.getUTCDate() + idx);
+                const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
                 const isToday = idx === todayIdx;
-                const isActive = isToday || histSet.has(key);
+                // STRICT REAL CHECK: today only lights up if the user actually studied today!
+                const isActive = histSet.has(key);
                 const isPast = idx < todayIdx;
-                return { label: lbl, key, isToday, isActive, isPast, dateNum: d.getDate() };
+                return { label: lbl, key, isToday, isActive, isPast, dateNum: d.getUTCDate() };
             });
         },
 
         getAnalyticsBars: function() {
-            let examHistory = [];
-            try {
-                examHistory = JSON.parse(localStorage.getItem('azota_exam_history') || '[]');
-                if (!Array.isArray(examHistory)) examHistory = [];
-            } catch (_) {
-                examHistory = [];
+            const currAccId = this.getCurrentAccountIdSafe();
+            let myExams = [];
+
+            // Prefer REAL cloud-synced exams for this account (works seamlessly across phone & laptop!)
+            if (window.AsetaProgressCloud && typeof window.AsetaProgressCloud.getAccountProgress === 'function') {
+                const prog = window.AsetaProgressCloud.getAccountProgress(currAccId);
+                if (prog && Array.isArray(prog.recentExams) && prog.recentExams.length > 0) {
+                    myExams = prog.recentExams;
+                }
             }
 
-            const currAccId = this.getCurrentAccountIdSafe();
-            let currNick = '';
-            try {
-                const currAcc = window.AccountManager && window.AccountManager.getCurrentAccount ? window.AccountManager.getCurrentAccount() : null;
-                currNick = currAcc && currAcc.nickname ? currAcc.nickname.toLowerCase() : '';
-            } catch (_) {}
+            // Fallback to localStorage history strictly filtered by this account
+            if (myExams.length === 0) {
+                let examHistory = [];
+                try {
+                    examHistory = JSON.parse(localStorage.getItem('azota_exam_history') || '[]');
+                    if (!Array.isArray(examHistory)) examHistory = [];
+                } catch (_) {
+                    examHistory = [];
+                }
+                let currNick = '';
+                try {
+                    const currAcc = window.AccountManager && window.AccountManager.getCurrentAccount ? window.AccountManager.getCurrentAccount() : null;
+                    currNick = currAcc && currAcc.nickname ? currAcc.nickname.toLowerCase() : '';
+                } catch (_) {}
 
-            // Strictly analyze ONLY real exam attempts belonging to this account (no mock/synthetic data)
-            const myExams = examHistory.filter(h => {
-                if (!h) return false;
-                if (h.accountId) return h.accountId === currAccId;
-                if (h.nickname && currNick) return h.nickname.toLowerCase() === currNick;
-                return true; // legacy untagged local attempt
-            });
+                myExams = examHistory.filter(h => {
+                    if (!h) return false;
+                    if (h.accountId) return h.accountId === currAccId;
+                    if (h.nickname && currNick) return h.nickname.toLowerCase() === currNick;
+                    return false;
+                });
+            }
 
             if (myExams.length === 0) {
                 return [];
@@ -148,19 +149,34 @@
             return { level, currentInLevel, xpPerLevel, pct, title };
         },
 
-        animateCountUp: function(el, targetValue, duration = 850, formatFn = (v) => v.toLocaleString('vi-VN')) {
+        animateCountUp: function(el, targetValue, duration = 650, formatFn = (v) => v.toLocaleString('vi-VN')) {
             if (!el) return;
             const target = Number(targetValue) || 0;
+            if (target <= 0 || document.hidden) {
+                el.textContent = formatFn(target);
+                return;
+            }
             const start = performance.now();
+            let finished = false;
             const step = (now) => {
+                if (finished) return;
                 const p = Math.min(1, (now - start) / duration);
-                // EaseOutExpo
                 const eased = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
                 const val = Math.round(target * eased);
                 el.textContent = formatFn(val);
-                if (p < 1) requestAnimationFrame(step);
+                if (p < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    finished = true;
+                    el.textContent = formatFn(target);
+                }
             };
             requestAnimationFrame(step);
+            // Failsafe: guarantee exact target value even if rAF is throttled in background/low-power mode
+            setTimeout(() => {
+                finished = true;
+                el.textContent = formatFn(target);
+            }, duration + 60);
         },
 
         attachBentoSpotlight: function(rootEl) {
@@ -348,7 +364,10 @@
                     : '';
                 const statSummary = (st.doneCount || 0) > 0
                     ? `TB ${st.gpa}đ • ${st.accuracy}%`
-                    : 'Chưa làm đề';
+                    : ((st.points || 0) > 0 ? 'Luyện tập tích cực' : 'Chưa có hoạt động');
+                const streakBadge = (st.streak || 0) > 0
+                    ? `<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-black ${st.isCurrentUser ? 'bg-orange-500/25 text-orange-300 dark:bg-orange-500/15 dark:text-orange-600' : 'bg-orange-500/15 text-orange-500 dark:text-amber-300'} border border-orange-500/25">🔥 ${st.streak}</span>`
+                    : '';
 
                 return `
                     <div style="animation-delay: ${Math.min(idx * 22, 180)}ms"
@@ -366,6 +385,7 @@
                                     <span class="text-xs sm:text-sm font-black truncate">${st.name}</span>
                                     ${adminPill}
                                     ${st.isCurrentUser ? '<span class="px-1.5 py-0.2 rounded-full text-[9px] font-black uppercase tracking-wider bg-sky-500 text-white">Bạn</span>' : ''}
+                                    ${streakBadge}
                                 </div>
                                 <div class="text-[11px] truncate ${subTextCls}">
                                     @${st.nickname || 'hocsinh'} • ${st.grade || 'Lớp 11'} • ${st.doneCount || 0} đề
@@ -385,8 +405,26 @@
             }).join('');
         },
 
+        refreshLiveMetrics: function() {
+            const container = document.getElementById('dashboardHubContainer');
+            if (!container || !document.getElementById('dashboardLeaderboardList')) return;
+            const payload = this.getLiveDashboardPayload();
+            const lv = this.getLevelInfo(payload.exp);
+            const streak = this.getRealStreak();
+
+            const expEl = document.getElementById('dashAnimatedExp');
+            if (expEl) expEl.textContent = (payload.exp || 0).toLocaleString('vi-VN');
+            const barEl = document.getElementById('dashExpBarFill');
+            if (barEl) barEl.style.width = `${Math.max(payload.exp > 0 ? 6 : 0, lv.pct)}%`;
+            const streakEl = document.getElementById('dashAnimatedStreak');
+            if (streakEl) streakEl.textContent = String(streak.count || 0);
+            const rankEl = document.getElementById('dashLiveRankNum');
+            if (rankEl) rankEl.textContent = `#${payload.rank || 1}`;
+            this.renderLeaderboardRowsOnly();
+        },
+
         // =========================================================================
-        // VIEW 1: ANIMATED STATSBENTO DASHBOARD (BIG DAY STREAK + LIVE MOTION)
+        // VIEW 1: ANIMATED STATSBENTO DASHBOARD (REAL CLOUD EXP + REAL DAY STREAK)
         // =========================================================================
         renderDashboard: function(containerId = 'dashboardHubContainer') {
             const container = document.getElementById(containerId);
@@ -395,7 +433,7 @@
             const payload = this.getLiveDashboardPayload();
             const u = payload.user;
             const lv = this.getLevelInfo(payload.exp);
-            const streak = this.getAndUpdateStreak();
+            const streak = this.getRealStreak();
             const weekDays = this.getWeekDaysStrip(streak);
             const bars = this.getAnalyticsBars();
             const hasRealExams = bars.length > 0;
@@ -404,7 +442,9 @@
                 : 'Chưa có bài làm • Vào Kho Đề để bắt đầu';
             const primaryDescHtml = (payload.doneCount || 0) > 0
                 ? `Tài khoản <strong class="opacity-100">@${u.nickname || 'NgocBinh'}</strong> (${u.grade || 'Lớp 11'}) đang đứng <strong>Hạng #${payload.rank}</strong> với <strong>${payload.doneCount} đề</strong> đã làm và điểm TB <strong>${payload.gpa}đ</strong>.`
-                : `Tài khoản <strong class="opacity-100">@${u.nickname || 'NgocBinh'}</strong> (${u.grade || 'Lớp 11'}) đang ở <strong>Hạng #${payload.rank}</strong>. Hoàn thành bài tập trong <strong>Kho Đề</strong> để tích lũy EXP thật!`;
+                : ((payload.exp || 0) > 0
+                    ? `Tài khoản <strong class="opacity-100">@${u.nickname || 'NgocBinh'}</strong> đang đứng <strong>Hạng #${payload.rank}</strong> với <strong>${payload.exp} EXP</strong> thật đồng bộ đám mây!`
+                    : `Tài khoản <strong class="opacity-100">@${u.nickname || 'NgocBinh'}</strong> (${u.grade || 'Lớp 11'}) đang ở <strong>Hạng #${payload.rank}</strong>. Hoàn thành đề thi, từ vựng hoặc tự luận để tích lũy EXP thật!`);
             const analyticsBarsHtml = hasRealExams
                 ? bars.map((b, i) => `
                     <div class="bento-spark-bar flex-1 max-w-[26px] rounded-full cursor-pointer ${i === bars.length - 1 ? 'bg-sky-500 dark:bg-sky-400' : 'bg-slate-800/75 dark:bg-white/75 hover:bg-sky-400'}"
@@ -422,17 +462,38 @@
                     </div>
                   `;
 
+            const streakStatusText = streak.didStudyToday
+                ? 'Đã giữ chuỗi hôm nay ✓'
+                : (streak.atRisk
+                    ? 'Làm 1 bài hôm nay để giữ chuỗi!'
+                    : 'Chưa học hôm nay • Làm 1 bài để thắp lửa!');
+            const streakStatusCls = streak.didStudyToday
+                ? 'text-emerald-500 dark:text-emerald-400'
+                : (streak.atRisk ? 'text-amber-500 dark:text-amber-300 animate-pulse' : 'text-slate-400');
+            const flameBoxCls = streak.didStudyToday
+                ? 'bg-gradient-to-br from-amber-400 via-orange-500 to-rose-600 shadow-lg shadow-orange-500/35'
+                : (streak.atRisk
+                    ? 'bg-gradient-to-br from-amber-500/80 to-orange-600/80 shadow-md shadow-amber-500/20'
+                    : 'bg-slate-200 dark:bg-white/10 grayscale opacity-75');
+
             const weekStripHtml = weekDays.map(d => {
-                const pillCls = d.isToday
-                    ? 'bg-gradient-to-b from-amber-400 to-orange-500 text-slate-950 font-black shadow-lg shadow-orange-500/35 ring-2 ring-amber-300/80 scale-105'
-                    : d.isActive
-                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 font-extrabold'
-                        : 'bg-slate-100 dark:bg-white/[0.04] text-slate-400 border border-slate-200/70 dark:border-white/5 font-bold';
+                let pillCls = 'bg-slate-100 dark:bg-white/[0.04] text-slate-400 border border-slate-200/70 dark:border-white/5 font-bold';
+                let iconGlyph = '·';
+                if (d.isActive && d.isToday) {
+                    pillCls = 'bg-gradient-to-b from-amber-400 to-orange-500 text-slate-950 font-black shadow-lg shadow-orange-500/35 ring-2 ring-amber-300/80 scale-105';
+                    iconGlyph = '🔥';
+                } else if (d.isActive) {
+                    pillCls = 'bg-amber-500/20 text-amber-500 dark:text-amber-300 border border-amber-500/40 font-extrabold';
+                    iconGlyph = '🔥';
+                } else if (d.isToday) {
+                    pillCls = 'bg-orange-500/10 text-orange-500 dark:text-amber-300 border border-dashed border-orange-400/70 font-black';
+                    iconGlyph = '○';
+                }
                 return `
-                    <div class="flex flex-col items-center gap-1 flex-1 min-w-0" title="${d.label} (${d.dateNum}) ${d.isActive ? '• Đã học 🔥' : '• Chưa điểm danh'}">
+                    <div class="flex flex-col items-center gap-1 flex-1 min-w-0" title="${d.label} (${d.dateNum}) ${d.isActive ? '• Đã hoàn thành học tập 🔥' : (d.isToday ? '• Hôm nay chưa học' : '• Chưa có hoạt động')}">
                         <div class="w-full py-1.5 rounded-xl text-[10px] text-center transition-all ${pillCls}">
                             <div>${d.label}</div>
-                            <div class="text-[11px] mt-0.5 leading-none">${d.isActive ? '🔥' : '·'}</div>
+                            <div class="text-[11px] mt-0.5 leading-none">${iconGlyph}</div>
                         </div>
                     </div>
                 `;
@@ -491,12 +552,12 @@
 
                             <div class="relative z-10 flex items-center justify-between gap-3">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-amber-400 via-orange-500 to-rose-600 flex items-center justify-center text-2xl sm:text-3xl shadow-lg shadow-orange-500/35 shrink-0">
-                                        <span class="bento-flame-live">🔥</span>
+                                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl ${flameBoxCls} flex items-center justify-center text-2xl sm:text-3xl shrink-0 transition-all">
+                                        <span class="${streak.didStudyToday ? 'bento-flame-live' : ''}">🔥</span>
                                     </div>
                                     <div>
                                         <p class="text-[10px] font-black uppercase tracking-widest text-orange-500 dark:text-amber-400">
-                                            Day Streak
+                                            Day Streak • Thực Tế
                                         </p>
                                         <div class="flex items-baseline gap-1.5 mt-0.5">
                                             <span id="dashAnimatedStreak" class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white font-mono tracking-tight">
@@ -513,7 +574,7 @@
                                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-500/30 text-[10px] font-black">
                                         <span>🏆</span> <span>Kỷ lục: ${streak.best || streak.count}</span>
                                     </span>
-                                    <p class="hidden sm:block text-[10px] text-slate-400 mt-1 font-semibold">Đã điểm danh hôm nay ✓</p>
+                                    <p class="text-[10px] mt-1 font-bold ${streakStatusCls}">${streakStatusText}</p>
                                 </div>
                             </div>
 
@@ -560,7 +621,7 @@
                             <div class="w-10 h-10 text-lg rounded-full bg-slate-950 text-amber-400 dark:bg-white/10 border border-white/10 flex items-center justify-center shadow-sm">
                                 <span class="bento-star-live">★</span>
                             </div>
-                            <p class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-mono leading-none mt-1">
+                            <p id="dashLiveRankNum" class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-mono leading-none mt-1">
                                 #${payload.rank}
                             </p>
                             <p class="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-slate-400">
@@ -577,10 +638,21 @@
                              class="bento-card-enter bento-interactive md:col-span-4 bg-white dark:bg-[#0e1017] rounded-3xl p-5 sm:p-6 border border-slate-200/80 dark:border-white/10 shadow-sm space-y-4">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                 <div>
-                                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                                        Leaderboard • Live EXP
-                                    </p>
-                                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight mt-0.5 flex items-center gap-2">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                                            Leaderboard • Thời Gian Thực
+                                        </p>
+                                        <span data-progress-sync-badge class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border border-emerald-500/25">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                            <span>Cloud Live</span>
+                                        </span>
+                                        <button type="button" onclick="window.AsetaProgressCloud && window.AsetaProgressCloud.manualSync()"
+                                                class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+                                                title="Đồng bộ EXP & BXH mới nhất từ đám mây">
+                                            🔄
+                                        </button>
+                                    </div>
+                                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight mt-1 flex items-center gap-2">
                                         <span>🏆</span> <span>Bảng Xếp Hạng Học Tập</span>
                                     </h3>
                                 </div>
@@ -662,14 +734,23 @@
             this.ensureNoticesLoaded();
             this.attachBentoSpotlight(container);
             this.startDashboardHk1Ticker();
+            if (window.AsetaProgressCloud && typeof window.AsetaProgressCloud.syncFromCloud === 'function') {
+                window.AsetaProgressCloud.syncFromCloud(true);
+            }
 
-            // Trigger smooth live animations after paint
+            // Trigger smooth live animations after paint (STRICTLY 0 when streak.count === 0!)
             requestAnimationFrame(() => {
                 this.animateCountUp(document.getElementById('dashAnimatedExp'), payload.exp || 0, 900);
                 if (hasRealExams) {
                     this.animateCountUp(document.getElementById('dashAnimatedAcc'), payload.accuracy || 0, 800, (v) => `${v}%`);
                 }
-                this.animateCountUp(document.getElementById('dashAnimatedStreak'), streak.count || 1, 650, (v) => String(v));
+                const realStreakCount = Number(streak.count) || 0;
+                if (realStreakCount > 0) {
+                    this.animateCountUp(document.getElementById('dashAnimatedStreak'), realStreakCount, 650, (v) => String(v));
+                } else {
+                    const stEl = document.getElementById('dashAnimatedStreak');
+                    if (stEl) stEl.textContent = '0';
+                }
                 const barFill = document.getElementById('dashExpBarFill');
                 if (barFill) {
                     setTimeout(() => { barFill.style.width = `${lv.pct}%`; }, 80);

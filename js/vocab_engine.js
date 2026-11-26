@@ -2282,6 +2282,17 @@
                 oralMasteredList.push(oralCurrentItem);
             }
 
+            if (window.AsetaProgressCloud && typeof window.AsetaProgressCloud.recordActivity === "function") {
+                window.AsetaProgressCloud.recordActivity({
+                    type: "vocab",
+                    label: "Khảo miệng từ vựng",
+                    exp: 5,
+                    dedupeKey: "vocab_oral_" + (oralCurrentItem ? oralCurrentItem.stt : "w"),
+                    cooldownMs: 300000,
+                    silent: true
+                });
+            }
+
             // Tự động tắt giọng đọc cô nếu đang phát, không đọc đáp án (theo yêu cầu: "đáp án thì cứ kệ đi")
             stopAllSpeech();
 
@@ -2308,6 +2319,15 @@
     }
 
     function showOralVictoryScreen(container) {
+        if (window.AsetaProgressCloud && typeof window.AsetaProgressCloud.recordActivity === "function") {
+            window.AsetaProgressCloud.recordActivity({
+                type: "vocab",
+                label: "Hoàn thành khảo miệng 67 từ",
+                exp: 120,
+                dedupeKey: "vocab_oral_victory",
+                cooldownMs: 600000
+            });
+        }
         if (window.confetti) {
             window.confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 } });
         }
@@ -2928,6 +2948,15 @@
     }
 
     function showMatchVictoryModal(timeSec, isNewRecord) {
+        if (window.AsetaProgressCloud && typeof window.AsetaProgressCloud.recordActivity === "function") {
+            window.AsetaProgressCloud.recordActivity({
+                type: "vocab",
+                label: "Hoàn thành ghép thẻ từ vựng",
+                exp: 40,
+                dedupeKey: "vocab_match_win",
+                cooldownMs: 90000
+            });
+        }
         const content = document.getElementById("vocabTabContent");
         if (!content) return;
 
@@ -3254,6 +3283,16 @@
                 if (currentQ.options[optIdx].isCorrect) {
                     quizScore++;
                     if (window.AudioHelper && window.AudioHelper.playPlip) window.AudioHelper.playPlip();
+                    if (window.AsetaProgressCloud && typeof window.AsetaProgressCloud.recordActivity === "function") {
+                        window.AsetaProgressCloud.recordActivity({
+                            type: "vocab",
+                            label: "Quiz từ vựng đúng",
+                            exp: 5,
+                            dedupeKey: "vocab_quiz_" + (currentQ.questionWord || quizCurrentIdx),
+                            cooldownMs: 300000,
+                            silent: true
+                        });
+                    }
                 }
 
                 renderCurrentTab();

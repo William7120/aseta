@@ -468,6 +468,9 @@ window.AzotaApp = (function() {
 
             this.renderAccountsList();
             UserProfile.updateUI();
+            if (window.AsetaProgressCloud && typeof window.AsetaProgressCloud.syncFromCloud === "function") {
+                window.AsetaProgressCloud.syncFromCloud(false);
+            }
             if (currentActiveViewId === "dashboard" && window.DashboardHubEngine && typeof window.DashboardHubEngine.renderDashboard === "function") {
                 window.DashboardHubEngine.renderDashboard("dashboardHubContainer");
             }
@@ -2681,23 +2684,16 @@ window.AzotaApp = (function() {
     function getCompiledLeaderboardData() {
         const currAcc = AccountManager.getCurrentAccount();
         const currAccId = currAcc ? currAcc.id : AccountManager.getCurrentAccountId();
-        let examHistory = [];
-        try {
-            examHistory = JSON.parse(localStorage.getItem("azota_exam_history") || "[]");
-            if (!Array.isArray(examHistory)) examHistory = [];
-        } catch (e) {
-            examHistory = [];
-        }
+        const hasCloud = !!(window.AsetaProgressCloud && typeof window.AsetaProgressCloud.getAccountProgress === "function");
 
-        function getExamsForAccount(acc) {
-            const nickLow = (acc.nickname || "").toLowerCase();
-            return examHistory.filter(h => {
-                if (!h) return false;
-                if (h.accountId) return h.accountId === acc.id;
-                if (h.nickname) return h.nickname.toLowerCase() === nickLow;
-                // Legacy attempts without accountId belong only to the active account
-                return acc.id === currAccId;
-            });
+        let examHistory = [];
+        if (!hasCloud) {
+            try {
+                examHistory = JSON.parse(localStorage.getItem("azota_exam_history") || "[]");
+                if (!Array.isArray(examHistory)) examHistory = [];
+            } catch (e) {
+                examHistory = [];
+            }
         }
 
         function computeStatsFromExams(exams, roleFallback) {
@@ -2707,7 +2703,7 @@ window.AzotaApp = (function() {
             }
             const totalScore = exams.reduce((sum, h) => sum + (Number(h.score) || 0), 0);
             const gpa = Number((totalScore / count).toFixed(2));
-            const points = exams.reduce((sum, h) => sum + Math.round((Number(h.score) || 0) * 20), 0);
+            const points = exams.reduce((sum, h) => sum + 20 + Math.round((Number(h.score) || 0) * 20), 0);
             const accSum = exams.reduce((sum, h) => {
                 if (h.totalQuestions > 0 && typeof h.correctCount === "number") {
                     return sum + (h.correctCount / h.totalQuestions) * 100;
@@ -2718,37 +2714,62 @@ window.AzotaApp = (function() {
             return { gpa, points, doneCount: count, accuracy, role: roleFallback || "🎓 Học Sinh" };
         }
 
-        function computeSubjectStats(exams, matcher, roleFallback) {
-            const subExams = exams.filter(h => {
-                const title = (h.examTitle || "").toLowerCase();
-                const subj = (h.subject || "").toLowerCase();
-                return title.includes(matcher) || subj.includes(matcher);
-            });
-            return computeStatsFromExams(subExams, roleFallback);
-        }
-
-        function readAccountStreak(accId) {
-            try {
-                const raw = localStorage.getItem("aseta_daily_streak_v2_" + accId);
-                if (raw) {
-                    const parsed = JSON.parse(raw);
-                    if (parsed && typeof parsed.count === "number") return parsed.count;
-                }
-            } catch (_) {}
-            return 0;
+        function buildSubjectBucketStat(subObj, roleFallback) {
+            if (!subObj || !subObj.doneCount) {
+                return { gpa: 0, points: 0, doneCount: 0, accuracy: 0, role: roleFallback || "Chưa làm đề" };
+            }
+            const c = subObj.doneCount;
+            return {
+                gpa: Number(((subObj.totalScoreSum || 0) / c).toFixed(2)),
+                points: Math.max(0, Math.floor(Number(subObj.exp) || 0)),
+                doneCount: c,
+                accuracy: Math.min(100, Math.max(0, Math.round((subObj.totalAccuracySum || 0) / c))),
+                role: roleFallback || "🎓 Học Sinh"
+            };
         }
 
         const allAccounts = AccountManager.getAllAccounts();
         const combined = allAccounts.map(acc => {
-            const accExams = getExamsForAccount(acc);
+            if (hasCloud) {
+                const cloudProg = window.AsetaProgressCloud.getAccountProgress(acc.id);
+                const streakInfo = window.AsetaProgressCloud.getStreakInfo(acc.id);
+                const subMap = cloudProg.subjectStats || {};
+                const allStat = {
+                    gpa: cloudProg.gpa || 0,
+                    points: cloudProg.exp || 0,
+                    doneCount: cloudProg.doneCount || 0,
+                    accuracy: cloudProg.accuracy || 0,
+                    role: acc.role || "🎓 Học Sinh"
+                };
+                const scores = {
+                    all: allStat,
+                    "dia-11": buildSubjectBucketStat(subMap["dia-11"], acc.role),
+                    "th-11": buildSubjectBucketStat(subMap["th-11"], acc.role),
+                    "tu-luan": buildSubjectBucketStat(subMap["tu-luan"], acc.role),
+                    "en-11": buildSubjectBucketStat(subMap["en-11"], acc.role),
+                    "ls-11": buildSubjectBucketStat(subMap["ls-11"], acc.role),
+                    "gd-11": buildSubjectBucketStat(subMap["gd-11"], acc.role)
+                };
+                return {
+                    id: acc.id,
+                    name: acc.name,
+                    nickname: acc.nickname,
+                    avatar: acc.avatar || (acc.isAdmin ? "👑" : "🎓"),
+                    grade: acc.grade || "Lớp 11",
+                    isAdmin: !!acc.isAdmin,
+                    streak: streakInfo.count || 0,
+                    bestStreak: streakInfo.best || 0,
+                    didStudyToday: !!streakInfo.didStudyToday,
+                    isCurrentUser: acc.id === currAccId,
+                    scores: scores
+                };
+            }
+
+            // Offline/fallback path
+            const nickLow = (acc.nickname || "").toLowerCase();
+            const accExams = examHistory.filter(h => h && (h.accountId === acc.id || (h.nickname && h.nickname.toLowerCase() === nickLow)));
             const scores = {
-                all: computeStatsFromExams(accExams, acc.role || "🎓 Học Sinh"),
-                "dia-11": computeSubjectStats(accExams, "địa", acc.role),
-                "th-11": computeSubjectStats(accExams, "tin", acc.role),
-                "tu-luan": computeSubjectStats(accExams, "tự luận", acc.role),
-                "en-11": computeSubjectStats(accExams, "tiếng anh", acc.role),
-                "ls-11": computeSubjectStats(accExams, "sử", acc.role),
-                "gd-11": computeSubjectStats(accExams, "kt", acc.role)
+                all: computeStatsFromExams(accExams, acc.role || "🎓 Học Sinh")
             };
             return {
                 id: acc.id,
@@ -2757,7 +2778,9 @@ window.AzotaApp = (function() {
                 avatar: acc.avatar || (acc.isAdmin ? "👑" : "🎓"),
                 grade: acc.grade || "Lớp 11",
                 isAdmin: !!acc.isAdmin,
-                streak: readAccountStreak(acc.id),
+                streak: 0,
+                bestStreak: 0,
+                didStudyToday: false,
                 isCurrentUser: acc.id === currAccId,
                 scores: scores
             };
@@ -2773,6 +2796,8 @@ window.AzotaApp = (function() {
                 grade: student.grade,
                 isAdmin: student.isAdmin,
                 streak: student.streak || 0,
+                bestStreak: student.bestStreak || 0,
+                didStudyToday: !!student.didStudyToday,
                 isCurrentUser: !!student.isCurrentUser,
                 gpa: subScore.gpa,
                 points: subScore.points,
@@ -2843,67 +2868,98 @@ window.AzotaApp = (function() {
 
     function renderExplorerLeaderboard(container) {
         container.innerHTML = "";
+        const rows = getCompiledLeaderboardData();
+        const maxExp = rows.length > 0 ? Math.max(1, rows[0].points || 1) : 1;
+
+        const scopes = [
+            { id: "all", label: "✨ Tổng Hợp" },
+            { id: "en-11", label: "Tiếng Anh" },
+            { id: "th-11", label: "💻 Tin Học" },
+            { id: "dia-11", label: "🌍 Địa Lí" },
+            { id: "ls-11", label: "🏛️ Lịch Sử" },
+            { id: "gd-11", label: "⚖️ GDKT & PL" },
+            { id: "tu-luan", label: "📝 Tự Luận" }
+        ];
 
         const wrapper = document.createElement("div");
-        wrapper.className = "py-10 px-4 sm:px-8 max-w-3xl mx-auto space-y-6 text-center animate-fadeIn";
+        wrapper.id = "explorerLiveLeaderboardRoot";
+        wrapper.className = "max-w-4xl mx-auto space-y-5 animate-fadeIn py-2";
 
         wrapper.innerHTML = `
-            <div class="relative w-28 h-28 mx-auto flex items-center justify-center">
-                <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-amber-500/20 via-orange-500/25 to-yellow-400/20 blur-2xl animate-pulse"></div>
-                <div class="relative w-24 h-24 rounded-3xl bg-gradient-to-tr from-amber-500 via-orange-500 to-yellow-400 text-slate-950 flex items-center justify-center text-5xl shadow-2xl shadow-amber-500/30 border border-amber-300/40 transform hover:scale-105 hover:rotate-3 transition-transform cursor-pointer" onclick="window.AudioHelper && window.AudioHelper.playBubblePop()">
-                    🏆
-                </div>
-            </div>
-
-            <div class="space-y-3">
-                <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-black bg-amber-500/20 text-amber-400 border border-amber-500/30 shadow-xs">
-                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-                    <span>SẮP RA MẮT • COMING SOON</span>
-                </div>
-                <h2 class="text-2xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-                    Bảng Xếp Hạng &amp; Đua Top Toàn Trường
-                </h2>
-                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-300 max-w-xl mx-auto leading-relaxed">
-                    Hệ thống vinh danh bảng vàng và tính điểm thi đua thời gian thực đang được hoàn thiện. Hãy chăm chỉ luyện đề tại Aseta để sẵn sàng bứt phá top 1 khi tính năng ra mắt nhé!
-                </p>
-            </div>
-
-            <!-- Coming Soon Feature Highlights -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-left pt-2">
-                <div class="p-4 rounded-2xl bg-white/60 dark:bg-slate-900/60 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl transition-transform hover:-translate-y-1">
-                    <div class="w-9 h-9 rounded-xl bg-amber-500/15 text-amber-500 flex items-center justify-center text-lg font-bold mb-2.5">
-                        🥇
+            <div class="p-5 sm:p-6 rounded-3xl bg-white/80 dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span data-progress-sync-badge class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border border-emerald-500/25">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span>Cloud Live</span>
+                        </span>
+                        <span class="text-[11px] font-semibold text-slate-400">Dữ liệu thật 100% • Đồng bộ đa thiết bị</span>
                     </div>
-                    <div class="font-bold text-xs text-slate-800 dark:text-white">Top 10 Cao Thủ Tuần</div>
-                    <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-normal">Vinh danh học sinh có điểm trung bình khảo thí cao nhất.</div>
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+                        <span>🏆</span> <span>Bảng Xếp Hạng Aseta 11A7</span>
+                    </h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">
+                        EXP &amp; Day Streak chỉ tăng khi hoàn thành đề thi, ôn từ vựng, chấm tự luận hoặc đóng góp bài giải thật.
+                    </p>
                 </div>
-
-                <div class="p-4 rounded-2xl bg-white/60 dark:bg-slate-900/60 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl transition-transform hover:-translate-y-1">
-                    <div class="w-9 h-9 rounded-xl bg-sky-500/15 text-sky-500 flex items-center justify-center text-lg font-bold mb-2.5">
-                        ⚡
-                    </div>
-                    <div class="font-bold text-xs text-slate-800 dark:text-white">Tốc Độ Giải Đề Thần Tốc</div>
-                    <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-normal">Ghi nhận chuỗi trả lời đúng nhanh nhất mà không dùng gợi ý.</div>
-                </div>
-
-                <div class="p-4 rounded-2xl bg-white/60 dark:bg-slate-900/60 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl transition-transform hover:-translate-y-1">
-                    <div class="w-9 h-9 rounded-xl bg-purple-500/15 text-purple-500 flex items-center justify-center text-lg font-bold mb-2.5">
-                        👑
-                    </div>
-                    <div class="font-bold text-xs text-slate-800 dark:text-white">Danh Hiệu &amp; Huy Hiệu</div>
-                    <div class="text-[11px] text-slate-400 mt-1 leading-normal">Mở khóa huy hiệu VIP và danh hiệu học sinh xuất sắc.</div>
-                </div>
-            </div>
-
-            <div class="pt-4 flex items-center justify-center gap-3">
-                <button type="button" onclick="AzotaApp.openFileExplorer('root')" class="px-5 py-2.5 rounded-2xl text-xs font-black bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white shadow-lg shadow-sky-500/25 transition-all flex items-center gap-2 cursor-pointer active:scale-98">
-                    <span>📁</span>
-                    <span>Về Kho Đề &amp; Luyện Thi Ngay</span>
+                <button type="button" onclick="window.AsetaProgressCloud && window.AsetaProgressCloud.manualSync()"
+                        class="px-4 py-2 rounded-2xl text-xs font-bold bg-slate-900 text-white dark:bg-white dark:text-slate-950 hover:opacity-90 transition-all cursor-pointer shrink-0 flex items-center gap-1.5 self-start sm:self-center">
+                    <span>🔄</span> <span>Đồng Bộ Ngay</span>
                 </button>
+            </div>
+
+            <div class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+                ${scopes.map(sc => {
+                    const active = sc.id === currentLeaderboardSubject;
+                    return `<button type="button" onclick="AzotaApp.setLeaderboardScope('${sc.id}')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${active ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-sm' : 'bg-white/70 dark:bg-white/[0.04] text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/10'}">${sc.label}</button>`;
+                }).join("")}
+            </div>
+
+            <div class="space-y-2.5">
+                ${rows.map((st, idx) => {
+                    const rank = st.rank || (idx + 1);
+                    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
+                    const relPct = (st.points || 0) > 0 ? Math.max(8, Math.min(100, Math.round((st.points / maxExp) * 100))) : 0;
+                    const rowCls = st.isCurrentUser
+                        ? 'bg-slate-950 text-white dark:bg-white dark:text-slate-950 border-transparent shadow-lg'
+                        : 'bg-white/80 dark:bg-[#12151f] border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white';
+                    const subCls = st.isCurrentUser ? 'text-slate-300 dark:text-slate-600' : 'text-slate-500 dark:text-slate-400';
+                    const streakPill = st.streak > 0
+                        ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-orange-500/15 text-orange-500 dark:text-amber-300 border border-orange-500/30">🔥 ${st.streak} ngày</span>`
+                        : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200/60 dark:bg-white/5 text-slate-400">0 ngày</span>`;
+
+                    return `
+                        <div class="relative overflow-hidden flex items-center justify-between gap-3 p-4 rounded-2xl border transition-all ${rowCls}">
+                            <div class="absolute inset-y-0 left-0 pointer-events-none ${st.isCurrentUser ? 'bg-white/10 dark:bg-slate-950/10' : 'bg-sky-500/[0.06] dark:bg-white/[0.03]'}" style="width: ${relPct}%"></div>
+                            <div class="relative z-10 flex items-center gap-3.5 min-w-0">
+                                <span class="w-8 text-center font-black text-sm shrink-0">${medal}</span>
+                                <div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-white/10 flex items-center justify-center text-lg shrink-0">${st.avatar || '🎓'}</div>
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="text-sm font-black truncate">${st.name}</span>
+                                        ${st.isAdmin ? '<span class="px-1.5 py-0.2 rounded-full text-[9px] font-black uppercase bg-amber-500/20 text-amber-400 border border-amber-400/30">Admin</span>' : ''}
+                                        ${st.isCurrentUser ? '<span class="px-1.5 py-0.2 rounded-full text-[9px] font-black uppercase bg-sky-500 text-white">Bạn</span>' : ''}
+                                        ${streakPill}
+                                    </div>
+                                    <div class="text-xs ${subCls} truncate mt-0.5">
+                                        @${st.nickname} • ${st.doneCount || 0} đề • TB ${st.gpa || 0}đ • Chính xác ${st.accuracy || 0}%
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="relative z-10 text-right shrink-0">
+                                <div class="text-base font-black font-mono">${(st.points || 0).toLocaleString('vi-VN')} <span class="text-[11px] opacity-70">EXP</span></div>
+                                <div class="text-[10px] font-semibold ${subCls}">Kỷ lục chuỗi: ${st.bestStreak || 0}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join("")}
             </div>
         `;
 
         container.appendChild(wrapper);
+        if (window.AsetaProgressCloud && typeof window.AsetaProgressCloud.syncFromCloud === "function") {
+            window.AsetaProgressCloud.syncFromCloud(true);
+        }
     }
 
     function renderExplorerHocTuLuan(container) {
@@ -3687,18 +3743,21 @@ window.AzotaApp = (function() {
         }
 
         if (rankEl) {
+            const expTag = (typeof result.expEarned === "number" && result.expEarned > 0)
+                ? ` • ⚡ +${result.expEarned} EXP`
+                : ((result.correctCount || 0) + (result.incorrectCount || 0) === 0 ? " • 0 EXP (chưa làm câu nào)" : "");
             if (result.score >= 9.0) {
                 rankEl.className = "inline-flex px-4 py-1.5 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 mb-3";
-                rankEl.textContent = "Xuất sắc! Đạt chuẩn học sinh giỏi 🌟";
+                rankEl.textContent = "Xuất sắc! Đạt chuẩn học sinh giỏi 🌟" + expTag;
             } else if (result.score >= 8.0) {
                 rankEl.className = "inline-flex px-4 py-1.5 rounded-full text-xs font-black bg-sky-500/20 text-sky-400 border border-sky-500/40 mb-3";
-                rankEl.textContent = "Giỏi! Nắm rất chắc kiến thức trọng tâm 🎉";
+                rankEl.textContent = "Giỏi! Nắm rất chắc kiến thức trọng tâm 🎉" + expTag;
             } else if (result.score >= 6.5) {
                 rankEl.className = "inline-flex px-4 py-1.5 rounded-full text-xs font-black bg-amber-500/20 text-amber-400 border border-amber-500/40 mb-3";
-                rankEl.textContent = "Khá! Cần ôn luyện thêm các câu hỏi phân hóa 👍";
+                rankEl.textContent = "Khá! Cần ôn luyện thêm các câu hỏi phân hóa 👍" + expTag;
             } else {
                 rankEl.className = "inline-flex px-4 py-1.5 rounded-full text-xs font-black bg-rose-500/20 text-rose-400 border border-rose-500/40 mb-3";
-                rankEl.textContent = "Cần cố gắng! Hãy xem lại câu sai và bấm lưu vào Câu Cần Ghi Nhớ 📖";
+                rankEl.textContent = "Cần cố gắng! Hãy xem lại câu sai và bấm lưu vào Câu Cần Ghi Nhớ 📖" + expTag;
             }
         }
 
@@ -4509,6 +4568,12 @@ window.AzotaApp = (function() {
         openSchoolNews: (tab) => window.SchoolNewsEngine ? window.SchoolNewsEngine.openModal(tab) : null,
         open11A7Journal: (idx) => window.Class11A7JournalEngine ? window.Class11A7JournalEngine.openModal(idx) : null,
         refreshLeaderboard: refreshLeaderboard,
+        refreshExplorerLeaderboard: () => {
+            const contentArea = document.getElementById("explorerContentArea");
+            if (contentArea && document.getElementById("explorerLiveLeaderboardRoot")) {
+                renderExplorerLeaderboard(contentArea);
+            }
+        },
         setLeaderboardScope: setLeaderboardScope,
         setLeaderboardSort: setLeaderboardSort,
         handleLeaderboardSearch: handleLeaderboardSearch,

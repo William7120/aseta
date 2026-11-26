@@ -386,9 +386,16 @@ window.ExamEngine = (function() {
         state.endTime = new Date();
 
         const result = gradeExam();
+        const answeredCount = (result.correctCount || 0) + (result.incorrectCount || 0);
+        result.expEarned = answeredCount > 0 ? (20 + Math.round((Number(result.score) || 0) * 20)) : 0;
         // Mistakes are no longer automatically dumped into notebook; user manually reviews & bookmarks them
         saveAttemptToHistory(result);
         localStorage.removeItem("azota_in_progress");
+
+        // Record REAL EXP, real exam stats & real Day Streak to Cloud Leaderboard
+        if (window.AsetaProgressCloud && typeof window.AsetaProgressCloud.recordExam === "function") {
+            window.AsetaProgressCloud.recordExam(result);
+        }
 
         if (result.score >= 8.0) {
             window.AudioHelper.playSuccessFanfare();
