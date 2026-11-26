@@ -65,14 +65,22 @@
         hk2: buildFreshSemester()
     };
 
-    function getStorageKey() {
-        let accId = 'default';
+    function getCurrentAccountInfo() {
         try {
+            if (window.AccountManager && typeof window.AccountManager.getCurrentAccount === 'function') {
+                const acc = window.AccountManager.getCurrentAccount();
+                if (acc && acc.id) return { id: acc.id, nickname: acc.nickname || acc.id, name: acc.name || acc.nickname || 'Học sinh' };
+            }
             if (window.AccountManager && typeof window.AccountManager.getCurrentAccountId === 'function') {
-                accId = window.AccountManager.getCurrentAccountId() || 'default';
+                const id = window.AccountManager.getCurrentAccountId();
+                if (id) return { id, nickname: id, name: 'Học sinh' };
             }
         } catch (_) {}
-        return STORAGE_PREFIX + accId;
+        return { id: 'default', nickname: 'default', name: 'Học sinh' };
+    }
+
+    function getStorageKey() {
+        return STORAGE_PREFIX + getCurrentAccountInfo().id;
     }
 
     function normalizeSemesterList(list) {
@@ -101,7 +109,13 @@
         });
     }
 
+    let loadedAccountId = null;
+
     function loadState() {
+        const currAccId = getCurrentAccountInfo().id;
+        const accountSwitched = loadedAccountId !== null && loadedAccountId !== currAccId;
+        loadedAccountId = currAccId;
+
         try {
             const raw = localStorage.getItem(getStorageKey());
             if (raw) {
@@ -111,10 +125,14 @@
                     state.targetRank = parsed.targetRank || 'gioi';
                     state.hk1 = normalizeSemesterList(parsed.hk1);
                     state.hk2 = normalizeSemesterList(parsed.hk2);
+                    if (accountSwitched) state.showConfig = false;
                     return;
                 }
             }
-            // Start cleanly with 4 empty KTTX columns (no hardcoded vnEdu photo data)
+            // Strictly isolate fresh account state (zero leakage from previous account)
+            state.currentTab = 'hk1';
+            state.targetRank = 'gioi';
+            state.showConfig = false;
             state.hk1 = buildFreshSemester();
             state.hk2 = buildFreshSemester();
         } catch (e) {
@@ -696,9 +714,16 @@
         if (!container) return;
 
         loadState();
+        const currAcc = getCurrentAccountInfo();
         const targetNum = getTargetScoreNum();
         const ev = evaluateCurrentTab();
         const tabLabel = state.currentTab === 'hk1' ? 'Học Kì 1' : (state.currentTab === 'hk2' ? 'Học Kì 2' : 'Cả Năm');
+        const targetPills = [
+            { id: 'xuatsac', label: 'XS', score: '9.0' },
+            { id: 'gioi',    label: 'Giỏi', score: '8.0' },
+            { id: 'kha',     label: 'Khá', score: '6.5' },
+            { id: 'dat',     label: 'Đạt', score: '5.0' }
+        ];
 
         const configBar = state.showConfig ? `
             <div class="rounded-2xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10 p-4 space-y-2.5 bento-card-enter">
@@ -726,7 +751,7 @@
             <div class="max-w-6xl mx-auto space-y-4 pb-8">
                 <!-- 1. CLEAN TOP BAR + 3-TAB SWITCHER -->
                 <div class="flex flex-wrap items-center justify-between gap-3">
-                    <div class="flex items-center gap-2.5">
+                    <div class="flex items-center gap-2.5 flex-wrap">
                         <button type="button" onclick="AzotaApp.goBack()"
                                 class="px-3 py-1.5 rounded-xl bg-white dark:bg-[#0e1017] hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10 text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors cursor-pointer">
                             ← Quay lại
@@ -734,6 +759,10 @@
                         <h2 class="text-base sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">
                             Tính Điểm TT22
                         </h2>
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-300 border border-sky-500/20 text-[10px] font-extrabold">
+                            <span>🔒</span>
+                            <span>@${currAcc.nickname}</span>
+                        </span>
                     </div>
 
                     <div class="inline-flex p-1 rounded-2xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10">
@@ -777,17 +806,28 @@
                         </span>
                     </div>
 
-                    <!-- Goal + Quick Actions Card -->
+                    <!-- Goal Segmented Pills + Quick Actions Card -->
                     <div class="bento-card-enter col-span-3 md:col-span-2 rounded-3xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10 p-4 sm:p-5 flex flex-col justify-between gap-3 shadow-xs">
-                        <div class="flex items-center justify-between gap-2">
-                            <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Mục tiêu</span>
-                            <select id="gradeTargetSelect"
-                                    class="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-white/[0.06] text-xs font-black text-amber-600 dark:text-amber-300 border border-slate-200/80 dark:border-white/10 outline-none cursor-pointer">
-                                <option value="xuatsac" ${state.targetRank === 'xuatsac' ? 'selected' : ''}>🏆 Xuất Sắc (≥ 9.0)</option>
-                                <option value="gioi" ${state.targetRank === 'gioi' ? 'selected' : ''}>🥇 Giỏi (≥ 8.0)</option>
-                                <option value="kha" ${state.targetRank === 'kha' ? 'selected' : ''}>🥈 Khá (≥ 6.5)</option>
-                                <option value="dat" ${state.targetRank === 'dat' ? 'selected' : ''}>🥉 Đạt (≥ 5.0)</option>
-                            </select>
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Mục tiêu</span>
+                                <span class="text-[10px] font-bold text-amber-500 font-mono">≥ ${targetNum.toFixed(1)}đ</span>
+                            </div>
+                            <div class="grid grid-cols-4 gap-1 p-1 rounded-2xl bg-slate-100 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/[0.08]">
+                                ${targetPills.map(tp => {
+                                    const isAct = state.targetRank === tp.id;
+                                    return `
+                                        <button type="button" data-select-target="${tp.id}"
+                                                class="py-1.5 px-1 rounded-xl text-[11px] font-black transition-all cursor-pointer text-center leading-tight ${
+                                                    isAct
+                                                        ? 'bg-slate-950 text-white dark:bg-amber-400 dark:text-slate-950 shadow-xs'
+                                                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                                                }">
+                                            ${tp.label}
+                                        </button>
+                                    `;
+                                }).join('')}
+                            </div>
                         </div>
 
                         <div class="flex items-center gap-2 flex-wrap">
@@ -842,15 +882,14 @@
             };
         });
 
-        // Target selector
-        const sel = container.querySelector('#gradeTargetSelect');
-        if (sel) {
-            sel.onchange = (e) => {
-                state.targetRank = e.target.value;
+        // Target segmented pill buttons (clean, zero ugly OS select dropdown!)
+        container.querySelectorAll('[data-select-target]').forEach(btn => {
+            btn.onclick = () => {
+                state.targetRank = btn.dataset.selectTarget;
                 saveState();
                 renderGradeCalculator();
             };
-        }
+        });
 
         // Toggle optional subjects bar
         const btnCfg = container.querySelector('#btnToggleConfig');

@@ -471,6 +471,9 @@ window.AzotaApp = (function() {
             if (currentActiveViewId === "dashboard" && window.DashboardHubEngine && typeof window.DashboardHubEngine.renderDashboard === "function") {
                 window.DashboardHubEngine.renderDashboard("dashboardHubContainer");
             }
+            if (currentActiveViewId === "gradeCalc" && window.GradeCalcEngine && typeof window.GradeCalcEngine.render === "function") {
+                window.GradeCalcEngine.render("gradeCalcContainer");
+            }
             SecurityGuard.showSecurityToast(`✅ Đã chuyển sang tài khoản: ${target.name} (@${target.nickname})`);
             if (window.AudioHelper) window.AudioHelper.playSuccess();
         },
