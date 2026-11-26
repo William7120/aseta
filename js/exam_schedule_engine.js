@@ -450,8 +450,9 @@
                     <!-- 1. ULTRA-CLEAN TOP BAR -->
                     <div class="flex items-center justify-between gap-2">
                         <button type="button" onclick="AzotaApp.goBack()"
-                                class="px-3 py-1.5 rounded-xl bg-white dark:bg-[#0e1017] hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10 text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors cursor-pointer">
-                            ← Quay lại
+                                class="h-11 px-4 sm:px-5 rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-950 hover:opacity-90 shadow-md text-xs sm:text-sm font-black transition-all flex items-center gap-2 shrink-0 cursor-pointer active:scale-95">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.8"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
+                            <span>Quay Lại</span>
                         </button>
 
                         <div class="flex items-center gap-2">

@@ -1104,9 +1104,9 @@
                             <div class="flex items-center gap-3">
                                 <button type="button" 
                                         onclick="SolutionEngine.backToSubject()" 
-                                        class="h-10 px-3.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-emerald-600 hover:text-white border border-slate-200 dark:border-white/10 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs group"
+                                        class="h-11 px-4 sm:px-5 rounded-2xl text-xs sm:text-sm font-black bg-slate-900 text-white dark:bg-white dark:text-slate-950 hover:opacity-90 transition-all flex items-center gap-2 cursor-pointer shadow-md active:scale-95 shrink-0 group"
                                         title="Quay lại môn ${folderSubject}">
-                                    <span class="transform group-hover:-translate-x-1 transition-transform">←</span>
+                                    <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.8"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
                                     <span>Quay Lại ${folderSubject}</span>
                                 </button>
                                 <div class="h-6 w-[1px] bg-slate-200 dark:bg-white/10 hidden sm:block"></div>
@@ -1207,9 +1207,9 @@
                         <div class="flex items-center gap-3">
                             <button type="button" 
                                     onclick="SolutionEngine.backToRoot()" 
-                                    class="h-10 px-3.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-emerald-600 hover:text-white border border-slate-200 dark:border-white/10 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs group"
-                                    title="Quay lại danh mục môn học">
-                                <span class="transform group-hover:-translate-x-1 transition-transform">←</span>
+                                    class="h-11 px-4 sm:px-5 rounded-2xl text-xs sm:text-sm font-black bg-slate-900 text-white dark:bg-white dark:text-slate-950 hover:opacity-90 transition-all flex items-center gap-2 cursor-pointer shadow-md active:scale-95 shrink-0 group"
+                                    title="Quay lại tất cả môn học">
+                                <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.8"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
                                 <span>Tất Cả Môn</span>
                             </button>
                             <div class="h-6 w-[1px] bg-slate-200 dark:bg-white/10 hidden sm:block"></div>
