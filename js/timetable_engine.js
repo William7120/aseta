@@ -378,13 +378,15 @@ window.TimetableEngine = (function() {
         wrapper.className = "max-w-6xl mx-auto space-y-4 pb-8 text-slate-900 dark:text-slate-100";
 
         const isDayMode = currentViewMode === 'day';
+        const isImgMode = currentViewMode === 'image';
+        const isWeekMode = currentViewMode === 'fullweek';
         const packingTarget = info.isWeekend ? "T2" : (info.todayCode === 'T6' ? "T2" : info.tomorrowCode);
         const packingHint = info.isPackingTime && isDayMode && activeDayCode === packingTarget
             ? `🌙 Giờ soạn cặp • Đang xem lịch ${TIMETABLE_CONFIG.days[activeDayCode].name}`
             : `Lớp ${TIMETABLE_CONFIG.className} • ${info.formattedDate}`;
 
         wrapper.innerHTML = `
-            <!-- 1. ULTRA-CLEAN TOP BAR -->
+            <!-- 1. ULTRA-CLEAN TOP BAR WITH 3-TAB ZERO-SCROLL SWITCHER -->
             <div class="flex flex-wrap items-center justify-between gap-2.5">
                 <div class="flex items-center gap-2.5 min-w-0">
                     <button type="button" onclick="AzotaApp.goBack()"
@@ -400,23 +402,18 @@ window.TimetableEngine = (function() {
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2 shrink-0">
-                    <div class="inline-flex p-1 rounded-2xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10">
-                        <button type="button" onclick="window.TimetableEngine.switchViewMode('day')"
-                                class="px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${isDayMode ? 'bg-slate-950 text-white dark:bg-white dark:text-slate-950 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
-                            Theo ngày
-                        </button>
-                        <button type="button" onclick="window.TimetableEngine.switchViewMode('fullweek')"
-                                class="px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${!isDayMode ? 'bg-slate-950 text-white dark:bg-white dark:text-slate-950 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
-                            Cả tuần
-                        </button>
-                    </div>
-
-                    <button type="button" onclick="window.TimetableEngine.openImageModal()"
-                            class="px-3 py-2 rounded-2xl bg-white dark:bg-[#0e1017] hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10 text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors cursor-pointer flex items-center gap-1.5"
-                            title="Xem ảnh chụp thời khóa biểu gốc">
-                        <span>🖼️</span>
-                        <span class="hidden sm:inline">Ảnh gốc</span>
+                <div class="inline-flex p-1 rounded-2xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10 shrink-0 shadow-xs">
+                    <button type="button" onclick="window.TimetableEngine.switchViewMode('day')"
+                            class="px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${isDayMode ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
+                        🎒 TKB &amp; Cặp
+                    </button>
+                    <button type="button" onclick="window.TimetableEngine.switchViewMode('image')"
+                            class="px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${isImgMode ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
+                        🖼️ Ảnh TKB
+                    </button>
+                    <button type="button" onclick="window.TimetableEngine.switchViewMode('fullweek')"
+                            class="px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${isWeekMode ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
+                        📅 Cả tuần
                     </button>
                 </div>
             </div>
@@ -431,13 +428,13 @@ window.TimetableEngine = (function() {
                         const isTomorrow = info.isPackingTime && code === packingTarget && !isToday;
                         return `
                             <button type="button" onclick="window.TimetableEngine.selectDay('${code}')"
-                                    class="relative py-2.5 px-1 rounded-xl text-center transition-all cursor-pointer ${
+                                    class="relative py-2 px-1 rounded-xl text-center transition-all cursor-pointer ${
                                         isSel
-                                            ? 'bg-slate-950 text-white dark:bg-white dark:text-slate-950 shadow-md font-black'
-                                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/[0.05] font-bold'
+                                            ? 'bg-blue-600 text-white shadow-md font-black'
+                                            : 'text-slate-700 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/[0.05] font-bold'
                                     }">
                                 <div class="text-xs sm:text-sm leading-none">${dObj.short}</div>
-                                <div class="text-[9px] sm:text-[10px] mt-1 leading-none opacity-70 truncate">
+                                <div class="text-[9px] sm:text-[10px] mt-1 leading-none ${isSel ? 'text-blue-100' : 'opacity-70'} truncate">
                                     ${isToday ? 'Hôm nay' : (isTomorrow ? 'Ngày mai' : dObj.name.replace('Thứ ', ''))}
                                 </div>
                                 ${isToday ? `<span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-emerald-400"></span>` : ''}
@@ -456,13 +453,16 @@ window.TimetableEngine = (function() {
         const contentArea = wrapper.querySelector("#timetableMainContentArea");
         if (currentViewMode === 'fullweek') {
             renderFullWeekView(contentArea);
+        } else if (currentViewMode === 'image') {
+            contentArea.innerHTML = "";
+            contentArea.appendChild(createLargeTimetableImageCard(false));
         } else {
             renderDayView(activeDayCode, contentArea);
         }
     }
 
     // =========================================================================
-    // DAY VIEW: CLEAN 2-PANE BENTO (SCHEDULE LEFT 7-COL | BACKPACK RIGHT 5-COL)
+    // DAY VIEW: ZERO-SCROLL 2-PANE BENTO (COMPACT TKB + PHOTO LEFT | BACKPACK RIGHT)
     // =========================================================================
     function renderDayView(dayCode, container) {
         const target = container || document.getElementById("timetableMainContentArea");
@@ -491,40 +491,37 @@ window.TimetableEngine = (function() {
         }));
         const percent = totalItems > 0 ? Math.round((checkedCount / totalItems) * 100) : 100;
 
-        function buildPeriodRowHtml(p) {
+        function buildCompactPeriodRow(p) {
             const meta = TIMETABLE_CONFIG.subjectsMeta[p.subject] || { fullName: p.subject, icon: "📚" };
             const isOngoing = currentPeriod === p.slot.id;
             const actionBtn = p.subject === "Ngoại ngữ"
                 ? `<button type="button" onclick="if(window.VocabHub){window.VocabHub.openOralTest();}else if(window.AzotaApp&&window.AzotaApp.openOralTest){window.AzotaApp.openOralTest();}"
-                           class="px-2.5 py-1 rounded-xl text-[11px] font-black bg-sky-500/15 hover:bg-sky-500/25 text-sky-600 dark:text-sky-300 border border-sky-500/25 transition-colors cursor-pointer shrink-0">
-                       Khảo bài ➔
+                           class="px-2 py-0.5 rounded-lg text-[10px] font-black bg-sky-500/15 hover:bg-sky-500/25 text-sky-700 dark:text-sky-300 border border-sky-500/25 transition-colors cursor-pointer shrink-0">
+                       Khảo ➔
                    </button>`
                 : (meta.examFolderId
                     ? `<button type="button" onclick="window.AzotaApp.openFileExplorer('${meta.examFolderId}')"
-                               class="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-slate-100 dark:bg-white/[0.05] hover:bg-sky-500/15 text-slate-600 dark:text-slate-300 hover:text-sky-500 dark:hover:text-sky-300 transition-colors cursor-pointer shrink-0">
-                           Ôn bài
+                               class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-200/70 dark:bg-white/[0.06] hover:bg-blue-500/15 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-300 transition-colors cursor-pointer shrink-0">
+                           Ôn
                        </button>`
                     : '');
 
             return `
-                <div class="flex items-center justify-between gap-3 px-3.5 py-3 rounded-2xl border transition-colors ${
+                <div class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl border transition-colors ${
                     isOngoing
-                        ? 'bg-emerald-500/10 border-emerald-500/40'
-                        : 'bg-slate-50/80 dark:bg-white/[0.03] border-slate-200/70 dark:border-white/[0.06]'
+                        ? 'bg-emerald-500/12 border-emerald-500/40'
+                        : 'bg-slate-50/90 dark:bg-white/[0.03] border-slate-200/80 dark:border-white/[0.06]'
                 }">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <span class="w-8 h-8 rounded-xl flex items-center justify-center text-[11px] font-black font-mono shrink-0 ${
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black font-mono shrink-0 ${
                             isOngoing
-                                ? 'bg-emerald-500 text-slate-950'
-                                : 'bg-white dark:bg-white/[0.06] text-slate-500 dark:text-slate-400 border border-slate-200/80 dark:border-white/10'
+                                ? 'bg-emerald-500 text-white'
+                                : 'bg-white dark:bg-white/[0.06] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/10'
                         }">${p.slot.id}</span>
-                        <span class="text-lg leading-none shrink-0 flex items-center">${meta.icon}</span>
+                        <span class="text-sm leading-none shrink-0 flex items-center">${meta.icon}</span>
                         <div class="min-w-0">
-                            <div class="flex items-center gap-1.5">
-                                <span class="text-sm font-black text-slate-900 dark:text-white truncate">${meta.fullName}</span>
-                                ${isOngoing ? '<span class="px-1.5 py-0.5 rounded-full text-[9px] font-black bg-emerald-500 text-slate-950 shrink-0">Đang học</span>' : ''}
-                            </div>
-                            <div class="text-[11px] font-mono text-slate-400">${p.slot.time}</div>
+                            <div class="text-xs font-black text-slate-900 dark:text-white truncate leading-tight">${meta.fullName}</div>
+                            <div class="text-[10px] font-mono text-slate-500 dark:text-slate-400 leading-tight">${p.slot.time}</div>
                         </div>
                     </div>
                     ${actionBtn}
@@ -535,59 +532,73 @@ window.TimetableEngine = (function() {
         const gridEl = document.createElement("div");
         gridEl.className = "grid grid-cols-1 lg:grid-cols-12 gap-4 items-start";
 
-        // LEFT PANE (7 cols): CLEAN SCHEDULE CARD
-        const leftPane = document.createElement("div");
-        leftPane.className = "lg:col-span-7 bento-card-enter rounded-3xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10 p-5 sm:p-6 space-y-5 shadow-sm";
-        leftPane.innerHTML = `
-            <div class="flex items-center justify-between gap-2">
-                <div>
-                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Lịch Học • ${TIMETABLE_CONFIG.className}</p>
-                    <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight mt-0.5">${dayData.name}</h3>
+        // LEFT PANE (7 cols): COMPACT 2-COL DAILY TKB + CLEAR OFFICIAL TKB IMAGE RIGHT BELOW (NO SCROLL PAST BACKPACK!)
+        const leftColumn = document.createElement("div");
+        leftColumn.className = "lg:col-span-7 space-y-4";
+
+        const scheduleCard = document.createElement("div");
+        scheduleCard.className = "bento-card-enter rounded-3xl bg-white dark:bg-[#0e1017] border border-slate-200/85 dark:border-white/10 p-4 sm:p-5 space-y-3.5 shadow-sm";
+        scheduleCard.innerHTML = `
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+                <div class="flex items-center gap-2">
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight">
+                        📅 Lịch ${dayData.name}
+                    </h3>
+                    <span class="px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-700 dark:text-sky-300 border border-blue-500/20 text-[11px] font-extrabold">
+                        ${morningPeriods.length + afternoonPeriods.length} tiết
+                    </span>
                 </div>
-                <span class="px-3 py-1 rounded-full bg-slate-100 dark:bg-white/[0.06] text-xs font-extrabold text-slate-600 dark:text-slate-300">
-                    ${morningPeriods.length + afternoonPeriods.length} tiết
-                </span>
+                <button type="button" onclick="window.TimetableEngine.openImageModal()"
+                        class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-black transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs">
+                    <span>🔍</span><span>Phóng to Ảnh TKB</span>
+                </button>
             </div>
 
-            <!-- Buổi Sáng -->
-            <div class="space-y-2">
-                <div class="flex items-center justify-between px-1">
-                    <span class="text-[11px] font-black uppercase tracking-widest text-sky-600 dark:text-sky-400">🌅 Buổi Sáng</span>
-                    <span class="text-[11px] font-mono text-slate-400">07:00 – 10:35</span>
+            <!-- 2-Column Compact Sáng | Chiều Grid (Fits cleanly above the fold on Mobile & Desktop!) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="space-y-1.5">
+                    <div class="flex items-center justify-between px-1">
+                        <span class="text-[11px] font-black uppercase tracking-wider text-sky-700 dark:text-sky-400">🌅 Sáng</span>
+                        <span class="text-[10px] font-mono text-slate-500 dark:text-slate-400">07:00 – 10:35</span>
+                    </div>
+                    <div class="space-y-1.5">
+                        ${morningPeriods.map(buildCompactPeriodRow).join('')}
+                    </div>
                 </div>
-                <div class="space-y-2">
-                    ${morningPeriods.map(buildPeriodRowHtml).join('')}
-                </div>
-            </div>
 
-            <!-- Buổi Chiều -->
-            <div class="space-y-2 pt-3 border-t border-slate-200/70 dark:border-white/[0.08]">
-                <div class="flex items-center justify-between px-1">
-                    <span class="text-[11px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-400">🌇 Buổi Chiều</span>
-                    <span class="text-[11px] font-mono text-slate-400">${afternoonPeriods.length > 0 ? '13:30 – 16:15' : 'Nghỉ'}</span>
+                <div class="space-y-1.5">
+                    <div class="flex items-center justify-between px-1">
+                        <span class="text-[11px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-400">🌇 Chiều</span>
+                        <span class="text-[10px] font-mono text-slate-500 dark:text-slate-400">${afternoonPeriods.length > 0 ? '13:30 – 16:15' : 'Nghỉ'}</span>
+                    </div>
+                    ${afternoonPeriods.length > 0
+                        ? `<div class="space-y-1.5">${afternoonPeriods.map(buildCompactPeriodRow).join('')}</div>`
+                        : `<div class="py-6 px-3 rounded-xl border border-dashed border-slate-200 dark:border-white/10 text-center text-xs font-semibold text-slate-500 dark:text-slate-400">☕ Chiều nghỉ chính khóa</div>`
+                    }
                 </div>
-                ${afternoonPeriods.length > 0
-                    ? `<div class="space-y-2">${afternoonPeriods.map(buildPeriodRowHtml).join('')}</div>`
-                    : `<div class="py-4 px-4 rounded-2xl border border-dashed border-slate-200 dark:border-white/10 text-center text-xs font-semibold text-slate-400">☕ Buổi chiều nghỉ học chính khóa</div>`
-                }
             </div>
 
             ${dayData.specialNote ? `
-                <div class="px-3.5 py-2.5 rounded-2xl bg-amber-500/[0.08] border border-amber-500/20 text-xs font-semibold text-amber-700 dark:text-amber-300 flex items-start gap-2">
+                <div class="px-3 py-2 rounded-xl bg-amber-500/10 border border-amber-500/25 text-xs font-semibold text-amber-800 dark:text-amber-300 flex items-start gap-2">
                     <span>📌</span>
                     <span>${dayData.specialNote}</span>
                 </div>
             ` : ''}
         `;
-        gridEl.appendChild(leftPane);
+        leftColumn.appendChild(scheduleCard);
 
-        // RIGHT PANE (5 cols): HIGH-CONTRAST BACKPACK CHECKLIST
+        // Inline Clear TKB 11A7 Photo RIGHT underneath the compact schedule (above the fold on Desktop, zero scrolling past Backpack!)
+        leftColumn.appendChild(createLargeTimetableImageCard(true));
+        gridEl.appendChild(leftColumn);
+
+        // RIGHT PANE (5 cols): HIGH-CONTRAST BACKPACK CHECKLIST (LUMINOUS TEAL-BLUE IN LIGHT MODE!)
         const rightPane = document.createElement("div");
         rightPane.className = "lg:col-span-5 space-y-3";
 
         // 1. High-Contrast Progress Header Card
         const progressCard = document.createElement("div");
-        progressCard.className = "bento-card-enter relative overflow-hidden rounded-3xl bg-slate-950 text-white dark:bg-[#f4f5f7] dark:text-slate-950 p-5 shadow-lg border border-slate-800 dark:border-white/40 space-y-3";
+        progressCard.setAttribute("data-light-hero", "true");
+        progressCard.className = "bento-card-enter relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0f766e] via-[#0d9488] to-[#0284c7] text-white dark:bg-none dark:bg-[#f4f5f7] dark:text-slate-950 p-5 shadow-lg border border-teal-600/30 dark:border-white/40 space-y-3";
         progressCard.innerHTML = `
             <div class="bento-hatch-overlay"></div>
             <div class="relative z-10 flex items-center justify-between gap-2">
@@ -717,43 +728,40 @@ window.TimetableEngine = (function() {
         rightPane.appendChild(listCard);
         gridEl.appendChild(rightPane);
         target.appendChild(gridEl);
-
-        // FULL-WIDTH LARGE & CLEAR OFFICIAL TIMETABLE IMAGE CARD
-        target.appendChild(createLargeTimetableImageCard());
     }
 
-    function createLargeTimetableImageCard() {
+    function createLargeTimetableImageCard(compact = false) {
         const card = document.createElement("div");
-        card.className = "mt-4 bento-card-enter rounded-3xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10 p-4 sm:p-6 space-y-4 shadow-sm";
+        card.className = `${compact ? '' : 'mt-1 '}bento-card-enter rounded-3xl bg-white dark:bg-[#0e1017] border border-slate-200/85 dark:border-white/10 p-4 sm:p-5 space-y-3 shadow-sm`;
         card.innerHTML = `
-            <div class="flex flex-wrap items-center justify-between gap-2.5">
+            <div class="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">${TIMETABLE_CONFIG.schoolName} • ${TIMETABLE_CONFIG.className}</p>
-                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight mt-0.5 flex items-center gap-2">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">${TIMETABLE_CONFIG.schoolName} • ${TIMETABLE_CONFIG.className}</p>
+                    <h3 class="text-sm sm:text-base font-black text-slate-900 dark:text-white tracking-tight mt-0.5 flex items-center gap-1.5">
                         <span>🖼️</span>
                         <span>Ảnh Thời Khóa Biểu Gốc (To Rõ)</span>
                     </h3>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1.5">
                     <button type="button" onclick="window.TimetableEngine.openImageModal()"
-                            class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-950 text-xs font-black transition-colors cursor-pointer flex items-center gap-1.5">
-                        <span>🔍</span><span>Phóng to toàn màn hình</span>
+                            class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-black transition-colors cursor-pointer flex items-center gap-1.5">
+                        <span>🔍</span><span>Phóng to</span>
                     </button>
                     <a href="${TIMETABLE_CONFIG.imageUrl}" download="Thoi_Khoa_Bieu_11A7_THPT_TVG.jpg"
-                       class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.06] dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200/80 dark:border-white/10 transition-colors flex items-center gap-1">
-                        <span>📥</span><span class="hidden sm:inline">Tải về</span>
+                       class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.06] dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200/80 dark:border-white/10 transition-colors flex items-center gap-1">
+                        <span>📥</span><span class="hidden sm:inline">Tải</span>
                     </a>
                 </div>
             </div>
 
-            <div class="relative rounded-2xl overflow-hidden border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-950 p-2 sm:p-3 cursor-zoom-in group"
+            <div class="relative rounded-2xl overflow-hidden border border-slate-200/80 dark:border-white/10 bg-slate-50 dark:bg-slate-950 p-1.5 sm:p-2 cursor-zoom-in group"
                  onclick="window.TimetableEngine.openImageModal()"
                  title="Nhấp để phóng to toàn màn hình">
                 <img src="${TIMETABLE_CONFIG.imageUrl}"
                      alt="Thời khóa biểu Lớp ${TIMETABLE_CONFIG.className} ${TIMETABLE_CONFIG.schoolName}"
-                     class="w-full h-auto max-h-[720px] object-contain mx-auto rounded-xl transition-transform duration-300 group-hover:scale-[1.01]">
-                <span class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-slate-950/85 text-white text-[11px] font-black border border-white/15 opacity-90 group-hover:opacity-100 transition-opacity pointer-events-none">
-                    🔍 Nhấp để phóng to
+                     class="w-full h-auto ${compact ? 'max-h-[360px]' : 'max-h-[760px]'} object-contain mx-auto rounded-xl">
+                <span class="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-xl bg-slate-950/85 text-white text-[10px] font-black border border-white/15 pointer-events-none">
+                    🔍 Chạm để phóng to
                 </span>
             </div>
         `;

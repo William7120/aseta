@@ -2575,7 +2575,8 @@ window.AzotaApp = (function() {
 
         // HERO CARD: UNIT 4 ASEAN AND VIETNAM (TRỌN BỘ 67 TỪ VỰNG)
         const unit4Hero = document.createElement("div");
-        unit4Hero.className = "mb-6 p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-blue-900/40 via-indigo-950/60 to-purple-900/40 border border-blue-500/30 shadow-xl backdrop-blur-md relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-5";
+        unit4Hero.setAttribute("data-light-hero", "true");
+        unit4Hero.className = "mb-6 p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-[#1e3a8a] via-[#312e81] to-[#4338ca] dark:from-blue-900/40 dark:via-indigo-950/60 dark:to-purple-900/40 border border-blue-500/35 shadow-xl backdrop-blur-md relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-5";
         unit4Hero.innerHTML = `
             <div class="flex items-start gap-4">
                 <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30 shrink-0 select-none">

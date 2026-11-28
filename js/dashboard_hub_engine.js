@@ -350,17 +350,17 @@
                     ? Math.max(10, Math.min(100, Math.round(((st.points || 0) / maxExp) * 100)))
                     : 0;
                 const rowCls = st.isCurrentUser
-                    ? 'bg-slate-950 text-white dark:bg-white dark:text-slate-950 border-transparent shadow-lg'
-                    : 'bg-white/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.07] border-slate-200/80 dark:border-white/5 text-slate-900 dark:text-white';
+                    ? 'bg-blue-600 text-white dark:bg-white dark:text-slate-950 border-blue-500 dark:border-transparent shadow-md'
+                    : 'bg-white dark:bg-white/[0.03] hover:bg-slate-50 dark:hover:bg-white/[0.07] border-slate-200/85 dark:border-white/5 text-slate-900 dark:text-white';
                 const subTextCls = st.isCurrentUser
-                    ? 'text-slate-300 dark:text-slate-600'
+                    ? 'text-blue-100 dark:text-slate-600'
                     : 'text-slate-500 dark:text-slate-400';
                 const expTextCls = st.isCurrentUser
-                    ? 'text-amber-300 dark:text-slate-950'
+                    ? 'text-white dark:text-slate-950'
                     : 'text-slate-900 dark:text-white';
                 const barFillCls = st.isCurrentUser
-                    ? 'bg-white/10 dark:bg-slate-950/10'
-                    : 'bg-sky-500/[0.06] dark:bg-white/[0.03]';
+                    ? 'bg-white/15 dark:bg-slate-950/10'
+                    : 'bg-blue-500/[0.07] dark:bg-white/[0.03]';
                 const adminPill = st.isAdmin
                     ? '<span class="px-1.5 py-0.2 rounded-full text-[9px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-400/30">Admin</span>'
                     : '';
@@ -506,9 +506,10 @@
                     <!-- TOP STATSBENTO 6-COLUMN ANIMATED GRID (Mobile: 3-col balanced so Analytics + Rank sit side-by-side) -->
                     <div class="grid grid-cols-3 md:grid-cols-6 md:grid-rows-2 gap-3 sm:gap-4">
 
-                        <!-- 1. PRIMARY STAT (col-span-3 row-span-2): High-Contrast Editorial EXP + Account -->
+                        <!-- 1. PRIMARY STAT (col-span-3 row-span-2): Luminous Royal Indigo in Light Mode / Crisp Editorial White in Dark Mode -->
                         <div style="animation-delay: 0ms"
-                             class="bento-card-enter bento-interactive bento-interactive-light col-span-3 md:row-span-2 bg-slate-950 text-white dark:bg-[#f4f5f7] dark:text-slate-950 rounded-3xl p-6 sm:p-9 flex flex-col justify-between relative shadow-xl border border-slate-800 dark:border-white/40 min-h-[250px] sm:min-h-[290px]">
+                             data-light-hero="true"
+                             class="bento-card-enter bento-interactive bento-interactive-light col-span-3 md:row-span-2 bg-gradient-to-br from-[#1e3a8a] via-[#1d4ed8] to-[#2563eb] text-white dark:bg-none dark:bg-[#f4f5f7] dark:text-slate-950 rounded-3xl p-6 sm:p-9 flex flex-col justify-between relative shadow-xl border border-blue-600/30 dark:border-white/40 min-h-[250px] sm:min-h-[290px]">
                             <div class="bento-hatch-overlay"></div>
 
                             <div class="relative z-10 flex items-center justify-between gap-2.5 flex-wrap">
@@ -620,7 +621,7 @@
                         <!-- 4. RANK & RATING STAR TILE (col-span-1) -->
                         <div style="animation-delay: 210ms"
                              class="bento-card-enter bento-interactive col-span-1 bg-white dark:bg-[#0e1017] rounded-3xl p-4 sm:p-5 border border-slate-200/80 dark:border-white/10 flex flex-col items-center justify-center text-center gap-1.5 shadow-sm">
-                            <div class="w-10 h-10 text-lg rounded-full bg-slate-950 text-amber-400 dark:bg-white/10 border border-white/10 flex items-center justify-center shadow-sm">
+                            <div class="w-10 h-10 text-lg rounded-full bg-amber-500/15 text-amber-600 dark:bg-white/10 dark:text-amber-400 border border-amber-500/30 dark:border-white/10 flex items-center justify-center shadow-sm">
                                 <span class="bento-star-live">★</span>
                             </div>
                             <p id="dashLiveRankNum" class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-mono leading-none mt-1">
@@ -927,7 +928,7 @@
 
             container.innerHTML = `
                 <div class="space-y-7">
-                    <div class="bento-card-enter bento-interactive flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-5 rounded-3xl bg-gradient-to-r from-[#0f172a] via-[#131b35] to-[#1e1035] border border-white/10 text-white shadow-xl">
+                    <div data-light-hero="true" class="bento-card-enter bento-interactive flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-5 rounded-3xl bg-gradient-to-r from-[#1e3a8a] via-[#2563eb] to-[#4f46e5] dark:from-[#0f172a] dark:via-[#131b35] dark:to-[#1e1035] border border-blue-500/30 dark:border-white/10 text-white shadow-xl">
                         <div class="relative z-10 space-y-1">
                             <span class="px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-black uppercase tracking-wider">
                                 🧩 Kho Chức Năng & Tiện Ích

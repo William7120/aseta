@@ -3389,3 +3389,196 @@ html[data-perf-no-shadows="true"] [class*="shadow-"] {
 html[data-perf-no-shadows="true"] .gf-shadow {
   display: none !important;
 }
+
+/* =========================================================================
+   EDITORIAL LIGHT MODE DESIGN SYSTEM (THEME TRẮNG CAO CẤP — SẠCH, DỄ NHÌN)
+   Apple / Linear / VietSchool Soft Alabaster Canvas + Pure White Elevated Cards
+   ========================================================================= */
+html:not(.dark) {
+  background-color: #eef2f7 !important;
+  color: #0f172a;
+}
+
+html:not(.dark) body {
+  background-color: #eef2f7 !important;
+  background-image: radial-gradient(rgba(100, 116, 139, 0.16) 1px, transparent 1px) !important;
+  background-size: 22px 22px !important;
+  color: #0f172a;
+}
+
+/* Clean pure-white elevated Header, Sidebar & Mobile Dock */
+html:not(.dark) header#appNavbar {
+  background: rgba(255, 255, 255, 0.94) !important;
+  border-bottom: 1px solid #dbe3ee !important;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.05) !important;
+}
+
+html:not(.dark) aside#appSidebar,
+html:not(.dark) .app-sidebar {
+  background: #ffffff !important;
+  border-right: 1px solid #dbe3ee !important;
+  box-shadow: 2px 0 16px rgba(15, 23, 42, 0.04) !important;
+}
+
+/* Fix dark sidebar icon buttons showing black squares on Light Mode! */
+html:not(.dark) .gradient-menu-btn {
+  background: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05) !important;
+}
+html:not(.dark) .gradient-menu-btn:hover {
+  background: #e2e8f0 !important;
+  border-color: #cbd5e1 !important;
+}
+html:not(.dark) .gradient-menu-btn.nav-item-active,
+html:not(.dark) .gradient-menu-btn.liquid-active,
+html:not(.dark) .gradient-menu-btn.liquid-active-amber {
+  border-color: transparent !important;
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.28) !important;
+}
+html:not(.dark) .gradient-menu-btn .gradient-menu-title {
+  color: #0f172a !important;
+}
+html:not(.dark) .gradient-menu-btn:hover .gradient-menu-title,
+html:not(.dark) .gradient-menu-btn.nav-item-active .gradient-menu-title,
+html:not(.dark) .gradient-menu-btn.liquid-active .gradient-menu-title {
+  color: #ffffff !important;
+}
+
+/* Clean Light Mobile Bottom Dock */
+html:not(.dark) #mobileBottomDock {
+  background: rgba(255, 255, 255, 0.97) !important;
+  border: 1px solid #dbe3ee !important;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12) !important;
+}
+html:not(.dark) #mobileBottomDock .mobile-dock-btn {
+  color: #475569 !important;
+}
+html:not(.dark) #mobileBottomDock .mobile-dock-btn.active {
+  color: #ffffff !important;
+}
+
+/* Crisp elevated white cards on soft alabaster canvas */
+html:not(.dark) main .bg-white,
+html:not(.dark) main [class*="bg-white/"] {
+  border-color: #dbe3ee;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05), 0 4px 16px rgba(15, 23, 42, 0.03);
+}
+
+/* High-contrast Light Mode accents (Fixes unreadable pastel -300/-400 text on white cards!) */
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-amber-300,
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-amber-400 {
+  color: #b45309 !important;
+}
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-emerald-300,
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-emerald-400 {
+  color: #047857 !important;
+}
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-sky-300,
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-sky-400 {
+  color: #0369a1 !important;
+}
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-cyan-300,
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-cyan-400 {
+  color: #0e7490 !important;
+}
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-blue-300,
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-blue-400 {
+  color: #1d4ed8 !important;
+}
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-indigo-300,
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-indigo-400 {
+  color: #4338ca !important;
+}
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-violet-300,
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-violet-400,
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-purple-300,
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-purple-400 {
+  color: #6d28d9 !important;
+}
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-pink-300,
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-pink-400,
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-fuchsia-300,
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-fuchsia-400,
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-rose-300,
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-rose-400 {
+  color: #be123c !important;
+}
+html:not(.dark) :not([data-light-hero="true"]):not([data-light-hero="true"] *) .text-slate-400 {
+  color: #475569 !important;
+}
+
+/* Preserve bright crisp text inside colored hero cards in Light Mode */
+html:not(.dark) [data-light-hero="true"],
+html:not(.dark) [data-light-hero="true"] h2,
+html:not(.dark) [data-light-hero="true"] h3,
+html:not(.dark) [data-light-hero="true"] .text-white {
+  color: #ffffff !important;
+}
+html:not(.dark) [data-light-hero="true"] .text-slate-300,
+html:not(.dark) [data-light-hero="true"] .text-sky-300,
+html:not(.dark) [data-light-hero="true"] .text-sky-400,
+html:not(.dark) [data-light-hero="true"] .text-indigo-300,
+html:not(.dark) [data-light-hero="true"] .text-indigo-400,
+html:not(.dark) [data-light-hero="true"] .text-emerald-300,
+html:not(.dark) [data-light-hero="true"] .text-emerald-400 {
+  color: #e0f2fe !important;
+}
+
+/* Gorgeous Apple Sonoma Light Mode 3D Glass Folders (Fixes muddy dark folders on Light Mode!) */
+html:not(.dark) .gf-root[data-tone="dark"] {
+  --gf-ink: #0f172a;
+  --gf-muted: #1d4ed8;
+  --gf-back-a: #e0e7ff;
+  --gf-back-b: #f1f5f9;
+  --gf-sheet-a: #ffffff;
+  --gf-sheet-b: #f8fafc;
+  --gf-sheet-ink: #0f172a;
+  --gf-sheet-muted: #475569;
+  --gf-sheet-line: rgba(15, 23, 42, 0.14);
+  --gf-front-a: rgba(255, 255, 255, 0.92);
+  --gf-front-b: rgba(241, 245, 249, 0.96);
+  --gf-rim: rgba(148, 163, 184, 0.45);
+  --gf-front-rim: rgba(255, 255, 255, 0.95);
+  --gf-shadow: rgba(15, 23, 42, 0.16);
+}
+html:not(.dark) .gf-root .gf-back {
+  background: linear-gradient(155deg, #dbeafe 0%, #eff6ff 55%, #f8fafc 100%) !important;
+  border: 1px solid #cbd5e1;
+}
+html:not(.dark) .gf-root .gf-front {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 250, 252, 0.96) 100%) !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+}
+html:not(.dark) .gf-root .gf-sheet {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+}
+html:not(.dark) .gf-root .gf-sheet-name {
+  color: #0f172a !important;
+}
+html:not(.dark) .gf-root .gf-title {
+  color: #0f172a !important;
+}
+html:not(.dark) .gf-root .gf-meta {
+  color: #1d4ed8 !important;
+}
+html:not(.dark) .gf-root .gf-key {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #1d4ed8 !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
+}
+
+/* Clean Light Mode Exam Schedule & Header Pills */
+html:not(.dark) .shuffle-toggle-pill {
+  background: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #1e293b !important;
+}
+html:not(.dark) #osLiveClock {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
