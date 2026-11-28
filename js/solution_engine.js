@@ -156,6 +156,7 @@
         };
         folderEl.addEventListener("pointermove", (e) => {
             if (e.pointerType === "touch") return;
+            if (window.AsetaPerfEngine && !window.AsetaPerfEngine.isEnabled("tilt3d")) return;
             const r = folderEl.getBoundingClientRect();
             px = ((e.clientX - r.left) / r.width) * 2 - 1;
             py = ((e.clientY - r.top) / r.height) * 2 - 1;

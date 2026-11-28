@@ -152,7 +152,8 @@
         animateCountUp: function(el, targetValue, duration = 650, formatFn = (v) => v.toLocaleString('vi-VN')) {
             if (!el) return;
             const target = Number(targetValue) || 0;
-            if (target <= 0 || document.hidden) {
+            const animOff = window.AsetaPerfEngine && !window.AsetaPerfEngine.isEnabled('animations');
+            if (target <= 0 || document.hidden || animOff) {
                 el.textContent = formatFn(target);
                 return;
             }
@@ -181,6 +182,7 @@
 
         attachBentoSpotlight: function(rootEl) {
             if (!rootEl) return;
+            if (window.AsetaPerfEngine && !window.AsetaPerfEngine.isEnabled('tilt3d')) return;
             const supportsHover = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
             rootEl.querySelectorAll('.bento-interactive').forEach(card => {
                 if (supportsHover) {
@@ -868,6 +870,15 @@
                             badgeClass: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/30',
                             gradient: 'from-pink-500 via-purple-500 to-amber-500',
                             action: "window.Class11A7JournalEngine ? window.Class11A7JournalEngine.openModal() : AzotaApp.open11A7Journal()"
+                        },
+                        {
+                            title: 'Cài Đặt Đồ Họa & Giảm Lag',
+                            desc: 'Tắt animation, kính mờ blur, 3D hoặc chọn chế độ Siêu Mượt cho máy cũ.',
+                            icon: '⚙️',
+                            badge: 'Máy Yếu',
+                            badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+                            gradient: 'from-emerald-500 to-teal-600',
+                            action: "window.AsetaPerfEngine && window.AsetaPerfEngine.openSettingsModal()"
                         }
                     ]
                 }

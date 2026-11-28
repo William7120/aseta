@@ -973,18 +973,25 @@ window.AzotaApp = (function() {
                 // Always land on Dashboard first after login
                 showView("dashboard", true);
 
-                // Audio & confetti
+                // Audio & confetti (respects user graphics setting)
                 if (window.AudioHelper) {
                     if (window.AudioHelper.playSuccess) window.AudioHelper.playSuccess();
                     else if (window.AudioHelper.playPlip) window.AudioHelper.playPlip();
                 }
 
-                if (window.confetti) {
+                if (window.confetti && (!window.AsetaPerfEngine || window.AsetaPerfEngine.isEnabled("confetti"))) {
                     window.confetti({
                         particleCount: 50,
                         spread: 60,
                         origin: { y: 0.6 }
                     });
+                }
+
+                // Offer quick Graphics / Anti-Lag chooser right after login
+                if (window.AsetaPerfEngine && typeof window.AsetaPerfEngine.openPostLoginPicker === "function") {
+                    setTimeout(() => {
+                        window.AsetaPerfEngine.openPostLoginPicker();
+                    }, 180);
                 }
             }, 250);
 
@@ -2230,6 +2237,7 @@ window.AzotaApp = (function() {
         };
         folderEl.addEventListener("pointermove", (e) => {
             if (e.pointerType === "touch") return;
+            if (window.AsetaPerfEngine && !window.AsetaPerfEngine.isEnabled("tilt3d")) return;
             const r = folderEl.getBoundingClientRect();
             px = ((e.clientX - r.left) / r.width) * 2 - 1;
             py = ((e.clientY - r.top) / r.height) * 2 - 1;

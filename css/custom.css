@@ -3311,3 +3311,83 @@ mark {
     transform: none !important;
   }
 }
+
+/* =========================================================================
+   ASETA PERFORMANCE / LOW-END DEVICE GRAPHICS OVERRIDES (CHẾ ĐỘ GIẢM LAG)
+   Controlled live via <html data-perf-no-*> attributes from performance_engine.js
+   ========================================================================= */
+
+/* 1. TẮT TOÀN BỘ ANIMATION & TRANSITION NẶNG */
+html[data-perf-no-anim="true"] *,
+html[data-perf-no-anim="true"] *::before,
+html[data-perf-no-anim="true"] *::after {
+  animation: none !important;
+  animation-duration: 0s !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+html[data-perf-no-anim="true"] .bento-card-enter,
+html[data-perf-no-anim="true"] .bento-spark-bar,
+html[data-perf-no-anim="true"] .smooth-fade-view,
+html[data-perf-no-anim="true"] .animate-fadeIn,
+html[data-perf-no-anim="true"] .animate-scaleIn {
+  opacity: 1 !important;
+  transform: none !important;
+}
+html[data-perf-no-anim="true"] .animate-ping,
+html[data-perf-no-anim="true"] .bento-shimmer-track::after {
+  display: none !important;
+}
+
+/* 2. TẮT KÍNH MỜ (BACKDROP-FILTER BLUR) — GIẢM ~70% TẢI GPU & CHỐNG NÓNG MÁY */
+html[data-perf-no-blur="true"] *,
+html[data-perf-no-blur="true"] *::before,
+html[data-perf-no-blur="true"] *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html[data-perf-no-blur="true"] header#appNavbar,
+html[data-perf-no-blur="true"] nav#mobileBottomDock,
+html[data-perf-no-blur="true"] aside#appSidebar {
+  background-color: rgba(255, 255, 255, 0.97) !important;
+}
+html.dark[data-perf-no-blur="true"] header#appNavbar,
+html.dark[data-perf-no-blur="true"] nav#mobileBottomDock,
+html.dark[data-perf-no-blur="true"] aside#appSidebar {
+  background-color: rgba(11, 15, 25, 0.98) !important;
+}
+
+/* 3. TẮT HIỆU ỨNG 3D PARALLAX & SPOTLIGHT */
+html[data-perf-no-3d="true"] .gf-stage,
+html[data-perf-no-3d="true"] .gf-tilt,
+html[data-perf-no-3d="true"] .gf-sheet,
+html[data-perf-no-3d="true"] .gf-front {
+  transform: none !important;
+  transform-style: flat !important;
+  perspective: none !important;
+  will-change: auto !important;
+}
+html[data-perf-no-3d="true"] .bento-interactive::before,
+html[data-perf-no-3d="true"] .bento-interactive::after,
+html[data-perf-no-3d="true"] .gf-spec,
+html[data-perf-no-3d="true"] .gf-back-sheen {
+  display: none !important;
+}
+
+/* 4. TẮT NỀN PHÁT SÁNG & ĐỐM SÁNG BLUR (AMBIENT GLOW) */
+html[data-perf-no-ambient="true"] .bento-hatch-overlay,
+html[data-perf-no-ambient="true"] .ambient-orb,
+html[data-perf-no-ambient="true"] [class*="blur-[100px]"],
+html[data-perf-no-ambient="true"] [class*="blur-3xl"],
+html[data-perf-no-ambient="true"] [class*="blur-2xl"] {
+  display: none !important;
+  filter: none !important;
+}
+
+/* 5. TẮT ĐỔ BÓNG NẶNG (HEAVY SHADOWS) */
+html[data-perf-no-shadows="true"] [class*="shadow-"] {
+  box-shadow: none !important;
+}
+html[data-perf-no-shadows="true"] .gf-shadow {
+  display: none !important;
+}

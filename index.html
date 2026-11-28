@@ -94,8 +94,11 @@
     <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
+    <!-- Graphics & Performance Engine (Early boot so low-end mode applies before first paint!) -->
+    <script src="js/performance_engine.js?v=20261128_1"></script>
+
     <!-- Custom OS & Animated Dock CSS (New Cache-Busted File) -->
-    <link rel="stylesheet" href="css/custom-v4.css?v=20261126_1">
+    <link rel="stylesheet" href="css/custom-v4.css?v=20261128_1">
 
     <!-- Critical AuthGate & Icon Alignment Styles (Immediate In-Memory Render) -->
     <style>
@@ -685,6 +688,16 @@
                     <!-- Theme toggle -->
                     <button type="button" id="toggleThemeBtn" onclick="AzotaApp.toggleTheme()" title="Đổi giao diện Sáng / Tối" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer text-sm shrink-0">
                         <span>☀️</span>
+                    </button>
+
+                    <!-- Graphics & Anti-Lag Settings Button -->
+                    <button type="button"
+                            id="headerPerfSettingsBtn"
+                            onclick="window.AsetaPerfEngine && window.AsetaPerfEngine.openSettingsModal()"
+                            title="Cài đặt Đồ họa & Giảm lag"
+                            class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700/80 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-bold shrink-0">
+                        <span class="text-sm leading-none">⚙️</span>
+                        <span id="headerPerfModeBadge" class="hidden md:inline text-[11px] font-extrabold text-sky-600 dark:text-sky-400">Đồ họa</span>
                     </button>
 
                     <!-- Fullscreen toggle -->
@@ -2114,9 +2127,9 @@
     <script src="js/grade_calc_engine.js?v=6"></script>
     <script src="js/school_news_engine.js?v=11"></script>
     <script src="js/exam_schedule_engine.js?v=8"></script>
-    <script src="js/dashboard_hub_engine.js?v=20261126_1"></script>
+    <script src="js/dashboard_hub_engine.js?v=20261128_1"></script>
     <script src="js/class11a7_journal_engine.js?v=10"></script>
-    <script src="js/app-v4.js?v=20261128_1"></script>
+    <script src="js/app-v4.js?v=20261128_2"></script>
 
     <!-- DIRECT INLINE RUNTIME FAIL-SAFE FOR file:/// BROWSER CACHE & 3D TILT EFFECT -->
     <script>
