@@ -98,7 +98,7 @@
     <script src="js/performance_engine.js?v=20261128_1"></script>
 
     <!-- Custom OS & Animated Dock CSS (New Cache-Busted File) -->
-    <link rel="stylesheet" href="css/custom-v4.css?v=20261128_1">
+    <link rel="stylesheet" href="css/custom-v4.css?v=20261128_2">
 
     <!-- Critical AuthGate & Icon Alignment Styles (Immediate In-Memory Render) -->
     <style>
@@ -354,7 +354,7 @@
 
                         <!-- Footer note: Only accounts provided by admin -->
                         <p class="text-center text-[10.5px] text-white/40 pt-2">
-                            Hệ thống nội bộ chỉ dành cho 4 tài khoản được cấp quyền.
+                            Hệ thống nội bộ chỉ dành cho 6 tài khoản được cấp quyền.
                         </p>
                     </form>
                 </div>
@@ -2171,6 +2171,7 @@
 
                 wrapper.addEventListener("mousemove", function(e) {
                     if (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) return;
+                    if (window.AsetaPerfEngine && !window.AsetaPerfEngine.isEnabled("tilt3d")) return;
                     var rect = card.getBoundingClientRect();
                     var mouseX = e.clientX - rect.left - rect.width / 2;
                     var mouseY = e.clientY - rect.top - rect.height / 2;

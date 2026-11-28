@@ -3374,14 +3374,12 @@ html[data-perf-no-3d="true"] .gf-back-sheen {
   display: none !important;
 }
 
-/* 4. TẮT NỀN PHÁT SÁNG & ĐỐM SÁNG BLUR (AMBIENT GLOW) */
+/* 4. TẮT NỀN PHÁT SÁNG & ĐỐM SÁNG BLUR (AMBIENT GLOW — CHỈ ẨN LỚP NỀN TRANG TRÍ, KHÔNG BAO GIỜ ẨN THẺ UI!) */
 html[data-perf-no-ambient="true"] .bento-hatch-overlay,
 html[data-perf-no-ambient="true"] .ambient-orb,
-html[data-perf-no-ambient="true"] [class*="blur-[100px]"],
-html[data-perf-no-ambient="true"] [class*="blur-3xl"],
-html[data-perf-no-ambient="true"] [class*="blur-2xl"] {
+html[data-perf-no-ambient="true"] .perf-ambient-layer,
+html[data-perf-no-ambient="true"] #authGateView > .pointer-events-none {
   display: none !important;
-  filter: none !important;
 }
 
 /* 5. TẮT ĐỔ BÓNG NẶNG (HEAVY SHADOWS) */
