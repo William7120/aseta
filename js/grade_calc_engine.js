@@ -399,151 +399,172 @@
     }
 
     // =========================================================================
-    // MOBILE CARD VIEW (SUPER EASY TOUCH INPUT — 48px BOXES, NO HORIZONTAL SCROLL)
+    // VIETSCHOOL-STYLE MOBILE REPORT CARD SHEET (ULTRA-COMPACT, 6+ SUBJECTS ON 1 SCREEN)
     // =========================================================================
-    function renderMobileSemesterCards(subjects, semKey, targetNum) {
+    function renderMobileSemesterCards(subjects, semName, semKey, targetNum) {
         const activeSubs = subjects.filter(s => s.active);
-        return `
-            <div class="lg:hidden space-y-3">
-                ${activeSubs.map(sub => {
-                    const calc = calcSubjectRow(sub);
-                    const needed = calcNeededCK(sub, targetNum);
+        const numericSubs = activeSubs.filter(s => s.type === 'numeric');
+        const commentSubs = activeSubs.filter(s => s.type === 'comment');
 
-                    if (sub.type === 'comment') {
-                        const isPass = sub.result !== 'Chưa Đạt';
+        return `
+            <div class="lg:hidden rounded-2xl overflow-hidden border border-blue-600/30 dark:border-blue-400/20 bg-white dark:bg-[#0e1118] shadow-md">
+                <!-- Authentic VietSchool Sticky Royal-Blue Header -->
+                <div class="sticky top-0 z-20 bg-gradient-to-r from-[#1d4ed8] via-[#2563eb] to-[#1d4ed8] dark:from-[#172554] dark:via-[#1e3a8a] dark:to-[#172554] text-white">
+                    <div class="px-3 py-2 flex items-center justify-between gap-2 border-b border-white/15">
+                        <span class="text-[11px] font-black uppercase tracking-wider flex items-center gap-1.5">
+                            <span>📊</span>
+                            <span>Bảng Điểm ${semName}</span>
+                        </span>
+                        <span class="text-[10px] font-semibold text-blue-100/90">
+                            Nhập 85 → 8.5 • Enter nhảy ô
+                        </span>
+                    </div>
+                    <!-- 6-column aligned VietSchool column headers -->
+                    <div class="grid grid-cols-6 divide-x divide-white/15 text-center text-[10px] font-black uppercase tracking-wide py-1.5 bg-black/15">
+                        <div>TX 1</div>
+                        <div>TX 2</div>
+                        <div>TX 3</div>
+                        <div>TX 4</div>
+                        <div class="text-sky-200">GK ×2</div>
+                        <div class="text-amber-200">CK ×3</div>
+                    </div>
+                </div>
+
+                <!-- Numeric Subject Rows (Compact ~74px each, zero horizontal scroll!) -->
+                <div class="divide-y divide-slate-200 dark:divide-white/10">
+                    ${numericSubs.map((sub, idx) => {
+                        const calc = calcSubjectRow(sub);
+                        const needed = calcNeededCK(sub, targetNum);
+                        const stripeCls = idx % 2 === 0
+                            ? 'bg-blue-50/85 dark:bg-blue-950/35'
+                            : 'bg-slate-100/90 dark:bg-white/[0.045]';
+
                         return `
-                            <div class="rounded-2xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10 p-4 flex items-center justify-between gap-3 shadow-xs" data-mobile-card="${sub.id}">
-                                <div class="flex items-center gap-3 min-w-0">
-                                    <span class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/[0.05] flex items-center justify-center text-lg shrink-0">${sub.icon}</span>
-                                    <div class="min-w-0">
-                                        <div class="text-sm font-black text-slate-900 dark:text-white truncate">${sub.name}</div>
-                                        <div class="text-[11px] text-slate-400">Môn đánh giá nhận xét</div>
+                            <div data-sem="${semKey}" data-sub-card="${sub.id}" class="transition-colors">
+                                <!-- VietSchool Subject Title Strip -->
+                                <div class="px-3 py-1.5 flex items-center justify-between gap-2 ${stripeCls} border-b border-slate-200/80 dark:border-white/[0.07]">
+                                    <div class="flex items-center gap-1.5 min-w-0">
+                                        <span class="text-sm leading-none shrink-0">${sub.icon}</span>
+                                        <span class="text-[13px] font-black text-slate-900 dark:text-white truncate">${sub.name}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 shrink-0">
+                                        <span data-cell="needed" class="px-2 py-0.5 rounded-lg text-[10px] font-extrabold border ${neededToneClass(needed.tone)}">
+                                            ${needed.text}
+                                        </span>
+                                        <div class="flex items-baseline gap-1 min-w-[54px] justify-end">
+                                            <span class="text-[9px] font-bold uppercase text-slate-400">ĐTB</span>
+                                            <span data-cell="avg" class="text-[15px] font-black font-mono leading-none ${avgScoreColor(calc.avgVal)}">${calc.avgText}</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <button type="button" data-sem="${semKey}" data-toggle-comment="${sub.id}"
-                                        class="px-4 h-11 rounded-xl text-xs font-black border transition-all active:scale-95 cursor-pointer ${
-                                            isPass
-                                                ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border-emerald-500/35'
-                                                : 'bg-rose-500/15 text-rose-600 dark:text-rose-300 border-rose-500/35'
-                                        }">
-                                    ${isPass ? '✓ Đạt' : '✕ Chưa Đạt'}
-                                </button>
+
+                                <!-- 6-Cell Aligned VietSchool Score Row -->
+                                <div class="grid grid-cols-6 divide-x divide-slate-200/90 dark:divide-white/[0.08] bg-white dark:bg-[#0b0e14]">
+                                    ${['tx1', 'tx2', 'tx3', 'tx4'].map(f => `
+                                        <input type="text" inputmode="decimal" enterkeyhint="next" autocomplete="off"
+                                               aria-label="${sub.name} ${f.toUpperCase()}"
+                                               value="${sub[f] || ''}" placeholder="·"
+                                               data-sem="${semKey}" data-sub-id="${sub.id}" data-field="${f}"
+                                               class="grade-score-input w-full h-11 px-0.5 text-center text-[15px] font-black font-mono bg-transparent text-slate-900 dark:text-white placeholder-slate-300 dark:placeholder-slate-700 focus:bg-blue-50 dark:focus:bg-blue-950/60 focus:ring-2 focus:ring-inset focus:ring-blue-500 outline-none transition-colors">
+                                    `).join('')}
+                                    <input type="text" inputmode="decimal" enterkeyhint="next" autocomplete="off"
+                                           aria-label="${sub.name} Giữa kỳ"
+                                           value="${sub.gk || ''}" placeholder="·"
+                                           data-sem="${semKey}" data-sub-id="${sub.id}" data-field="gk"
+                                           class="grade-score-input w-full h-11 px-0.5 text-center text-[15px] font-black font-mono bg-sky-50/75 dark:bg-sky-500/[0.08] text-sky-700 dark:text-sky-300 placeholder-sky-300/70 dark:placeholder-sky-700/70 focus:bg-sky-100/80 dark:focus:bg-sky-900/50 focus:ring-2 focus:ring-inset focus:ring-sky-500 outline-none transition-colors">
+                                    <input type="text" inputmode="decimal" enterkeyhint="next" autocomplete="off"
+                                           aria-label="${sub.name} Cuối kỳ"
+                                           value="${sub.ck || ''}" placeholder="·"
+                                           data-sem="${semKey}" data-sub-id="${sub.id}" data-field="ck"
+                                           class="grade-score-input w-full h-11 px-0.5 text-center text-[15px] font-black font-mono bg-amber-50/75 dark:bg-amber-500/[0.09] text-amber-700 dark:text-amber-300 placeholder-amber-300/70 dark:placeholder-amber-700/70 focus:bg-amber-100/80 dark:focus:bg-amber-900/50 focus:ring-2 focus:ring-inset focus:ring-amber-500 outline-none transition-colors">
+                                </div>
                             </div>
                         `;
-                    }
+                    }).join('')}
+                </div>
 
-                    const txFields = [
-                        { key: 'tx1', label: 'TX 1' },
-                        { key: 'tx2', label: 'TX 2' },
-                        { key: 'tx3', label: 'TX 3' },
-                        { key: 'tx4', label: 'TX 4' }
-                    ];
-
-                    return `
-                        <div class="rounded-3xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10 p-4 space-y-3 shadow-xs" data-sem="${semKey}" data-sub-card="${sub.id}">
-                            <!-- Card Header: Subject Name + Live Avg + Needed CK -->
-                            <div class="flex items-center justify-between gap-2">
-                                <div class="flex items-center gap-2.5 min-w-0">
-                                    <span class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-white/[0.05] flex items-center justify-center text-base shrink-0">${sub.icon}</span>
-                                    <h4 class="text-sm font-black text-slate-900 dark:text-white truncate">${sub.name}</h4>
-                                </div>
-                                <div class="flex items-center gap-2 shrink-0">
-                                    <span data-cell="needed" class="px-2.5 py-1 rounded-xl text-[11px] font-extrabold border ${neededToneClass(needed.tone)}">
-                                        ${needed.text}
-                                    </span>
-                                    <div class="min-w-[46px] text-right">
-                                        <span data-cell="avg" class="text-lg font-black font-mono ${avgScoreColor(calc.avgVal)}">${calc.avgText}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Row 1: Full 4 KTTX Columns (Easy 48px Tap Targets, 16px Font = No iOS Zoom!) -->
-                            <div class="grid grid-cols-4 gap-2">
-                                ${txFields.map(f => `
-                                    <label class="block">
-                                        <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 text-center mb-1">${f.label}</span>
-                                        <input type="text" inputmode="decimal" enterkeyhint="next" autocomplete="off"
-                                               value="${sub[f.key] || ''}" placeholder="—"
-                                               data-sem="${semKey}" data-sub-id="${sub.id}" data-field="${f.key}"
-                                               class="grade-score-input w-full h-12 rounded-2xl text-center text-base font-black font-mono bg-slate-100/90 dark:bg-white/[0.05] text-slate-900 dark:text-white border border-slate-200/80 dark:border-white/10 focus:border-sky-500 focus:bg-white dark:focus:bg-slate-950 focus:ring-2 focus:ring-sky-500/20 outline-none transition-all">
-                                    </label>
-                                `).join('')}
-                            </div>
-
-                            <!-- Row 2: Giữa Kỳ (×2) & Cuối Kỳ (×3) Prominent Boxes -->
-                            <div class="grid grid-cols-2 gap-2.5">
-                                <label class="block">
-                                    <span class="block text-[10px] font-black uppercase tracking-wider text-sky-600 dark:text-sky-400 text-center mb-1">Giữa Kỳ (×2)</span>
-                                    <input type="text" inputmode="decimal" enterkeyhint="next" autocomplete="off"
-                                           value="${sub.gk || ''}" placeholder="—"
-                                           data-sem="${semKey}" data-sub-id="${sub.id}" data-field="gk"
-                                           class="grade-score-input w-full h-12 rounded-2xl text-center text-base font-black font-mono bg-sky-500/[0.08] text-sky-700 dark:text-sky-300 border border-sky-500/25 focus:border-sky-400 focus:bg-white dark:focus:bg-slate-950 focus:ring-2 focus:ring-sky-500/20 outline-none transition-all">
-                                </label>
-                                <label class="block">
-                                    <span class="block text-[10px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400 text-center mb-1">Cuối Kỳ (×3)</span>
-                                    <input type="text" inputmode="decimal" enterkeyhint="next" autocomplete="off"
-                                           value="${sub.ck || ''}" placeholder="—"
-                                           data-sem="${semKey}" data-sub-id="${sub.id}" data-field="ck"
-                                           class="grade-score-input w-full h-12 rounded-2xl text-center text-base font-black font-mono bg-amber-500/[0.08] text-amber-700 dark:text-amber-300 border border-amber-500/25 focus:border-amber-400 focus:bg-white dark:focus:bg-slate-950 focus:ring-2 focus:ring-amber-500/20 outline-none transition-all">
-                                </label>
-                            </div>
+                <!-- Comment Subjects Section (Đạt / Chưa Đạt) -->
+                ${commentSubs.length > 0 ? `
+                    <div class="border-t-2 border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-white/[0.02] divide-y divide-slate-200/80 dark:divide-white/[0.07]">
+                        <div class="px-3 py-1 text-[10px] font-black uppercase tracking-wider text-slate-400">
+                            Môn đánh giá nhận xét
                         </div>
-                    `;
-                }).join('')}
+                        ${commentSubs.map(sub => {
+                            const isPass = sub.result !== 'Chưa Đạt';
+                            return `
+                                <div class="px-3 py-2 flex items-center justify-between gap-2" data-mobile-card="${sub.id}">
+                                    <div class="flex items-center gap-2 min-w-0">
+                                        <span class="text-sm shrink-0">${sub.icon}</span>
+                                        <span class="text-[13px] font-extrabold text-slate-800 dark:text-slate-100 truncate">${sub.name}</span>
+                                    </div>
+                                    <button type="button" data-sem="${semKey}" data-toggle-comment="${sub.id}"
+                                            class="px-3.5 h-8 rounded-lg text-xs font-black border transition-all active:scale-95 cursor-pointer shrink-0 ${
+                                                isPass
+                                                    ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border-emerald-500/35'
+                                                    : 'bg-rose-500/15 text-rose-600 dark:text-rose-300 border-rose-500/35'
+                                            }">
+                                        ${isPass ? '✓ Đạt (Đ)' : '✕ Chưa Đạt (CĐ)'}
+                                    </button>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                ` : ''}
             </div>
         `;
     }
 
     // =========================================================================
-    // DESKTOP EDITORIAL TABLE (ALL 4 KTTX COLUMNS + GK + CK + ĐTB + CẦN CK)
+    // DESKTOP VIETSCHOOL-STYLE TABLE (ALL 4 KTTX COLUMNS + GK + CK + ĐTB + CẦN CK)
     // =========================================================================
     function renderDesktopSemesterTable(subjects, semName, semKey, targetNum) {
         const activeSubs = subjects.filter(s => s.active);
         return `
-            <div class="hidden lg:block rounded-3xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10 shadow-sm overflow-hidden">
+            <div class="hidden lg:block rounded-2xl bg-white dark:bg-[#0e1118] border border-blue-600/25 dark:border-blue-400/20 shadow-md overflow-hidden">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-50 dark:bg-white/[0.03] border-b border-slate-200/80 dark:border-white/10 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center">
-                            <th class="py-3.5 pl-5 pr-3 text-left w-[170px]">Môn học</th>
-                            <th class="py-3.5 px-1.5 w-[74px]">TX 1</th>
-                            <th class="py-3.5 px-1.5 w-[74px]">TX 2</th>
-                            <th class="py-3.5 px-1.5 w-[74px]">TX 3</th>
-                            <th class="py-3.5 px-1.5 w-[74px]">TX 4</th>
-                            <th class="py-3.5 px-1.5 w-[84px] text-sky-600 dark:text-sky-400">GK (×2)</th>
-                            <th class="py-3.5 px-1.5 w-[84px] text-amber-600 dark:text-amber-400">CK (×3)</th>
-                            <th class="py-3.5 px-2 w-[78px] text-slate-900 dark:text-white">ĐTB ${semName}</th>
-                            <th class="py-3.5 pl-2 pr-5 text-right min-w-[130px]">Mục tiêu CK</th>
+                        <tr class="bg-gradient-to-r from-[#1d4ed8] via-[#2563eb] to-[#1d4ed8] dark:from-[#172554] dark:via-[#1e3a8a] dark:to-[#172554] text-white text-[11px] font-black uppercase tracking-wider text-center">
+                            <th class="py-3 pl-5 pr-3 text-left w-[180px]">Môn học</th>
+                            <th class="py-3 px-1.5 w-[74px] border-l border-white/15">TX 1</th>
+                            <th class="py-3 px-1.5 w-[74px] border-l border-white/15">TX 2</th>
+                            <th class="py-3 px-1.5 w-[74px] border-l border-white/15">TX 3</th>
+                            <th class="py-3 px-1.5 w-[74px] border-l border-white/15">TX 4</th>
+                            <th class="py-3 px-1.5 w-[84px] border-l border-white/15 text-sky-200">GK (×2)</th>
+                            <th class="py-3 px-1.5 w-[84px] border-l border-white/15 text-amber-200">CK (×3)</th>
+                            <th class="py-3 px-2 w-[82px] border-l border-white/15">ĐTB ${semName}</th>
+                            <th class="py-3 pl-2 pr-5 text-right border-l border-white/15 min-w-[130px]">Mục tiêu CK</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100 dark:divide-white/[0.06] text-sm">
-                        ${activeSubs.map(sub => {
+                    <tbody class="divide-y divide-slate-200/80 dark:divide-white/[0.07] text-sm">
+                        ${activeSubs.map((sub, idx) => {
                             const calc = calcSubjectRow(sub);
                             const needed = calcNeededCK(sub, targetNum);
+                            const rowStripe = idx % 2 === 1 ? 'bg-slate-50/70 dark:bg-white/[0.015]' : '';
 
                             if (sub.type === 'comment') {
                                 const isPass = sub.result !== 'Chưa Đạt';
                                 return `
-                                    <tr class="hover:bg-slate-50/70 dark:hover:bg-white/[0.02] transition-colors">
+                                    <tr class="${rowStripe} hover:bg-blue-50/50 dark:hover:bg-blue-950/20 transition-colors">
                                         <td class="py-2.5 pl-5 pr-3">
                                             <div class="flex items-center gap-2.5">
                                                 <span class="text-base">${sub.icon}</span>
                                                 <span class="font-extrabold text-slate-900 dark:text-white">${sub.name}</span>
                                             </div>
                                         </td>
-                                        <td colspan="6" class="py-2.5 px-2 text-center text-xs text-slate-400">
+                                        <td colspan="6" class="py-2.5 px-2 text-center text-xs text-slate-400 border-l border-slate-200/70 dark:border-white/[0.06]">
                                             Môn đánh giá bằng nhận xét (Thông tư 22)
                                         </td>
-                                        <td class="py-2.5 px-2 text-center">
+                                        <td class="py-2.5 px-2 text-center border-l border-slate-200/70 dark:border-white/[0.06]">
                                             <button type="button" data-sem="${semKey}" data-toggle-comment="${sub.id}"
                                                     class="px-3 py-1.5 rounded-xl text-xs font-black border cursor-pointer transition-all ${
                                                         isPass
                                                             ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/25'
                                                             : 'bg-rose-500/15 text-rose-600 dark:text-rose-300 border-rose-500/30 hover:bg-rose-500/25'
                                                     }">
-                                                ${isPass ? '✓ Đạt' : '✕ CĐ'}
+                                                ${isPass ? '✓ Đạt (Đ)' : '✕ CĐ'}
                                             </button>
                                         </td>
-                                        <td class="py-2.5 pl-2 pr-5 text-right text-xs text-slate-400 font-semibold">
+                                        <td class="py-2.5 pl-2 pr-5 text-right text-xs text-slate-400 font-semibold border-l border-slate-200/70 dark:border-white/[0.06]">
                                             ${isPass ? 'Đạt yêu cầu' : 'Cần đạt'}
                                         </td>
                                     </tr>
@@ -551,37 +572,37 @@
                             }
 
                             return `
-                                <tr class="hover:bg-slate-50/70 dark:hover:bg-white/[0.02] transition-colors" data-sem="${semKey}" data-sub-row="${sub.id}">
-                                    <td class="py-2.5 pl-5 pr-3">
+                                <tr class="${rowStripe} hover:bg-blue-50/50 dark:hover:bg-blue-950/20 transition-colors" data-sem="${semKey}" data-sub-row="${sub.id}">
+                                    <td class="py-2 pl-5 pr-3">
                                         <div class="flex items-center gap-2.5">
                                             <span class="text-base">${sub.icon}</span>
                                             <span class="font-extrabold text-slate-900 dark:text-white">${sub.name}</span>
                                         </div>
                                     </td>
                                     ${['tx1', 'tx2', 'tx3', 'tx4'].map(f => `
-                                        <td class="py-2 px-1">
+                                        <td class="p-1 border-l border-slate-200/70 dark:border-white/[0.06]">
                                             <input type="text" inputmode="decimal" autocomplete="off"
-                                                   value="${sub[f] || ''}" placeholder="—"
+                                                   value="${sub[f] || ''}" placeholder="·"
                                                    data-sem="${semKey}" data-sub-id="${sub.id}" data-field="${f}"
-                                                   class="grade-score-input w-full h-10 rounded-xl text-center text-sm font-black font-mono bg-slate-100/80 dark:bg-white/[0.04] hover:bg-slate-100 dark:hover:bg-white/[0.08] text-slate-900 dark:text-white border border-slate-200/70 dark:border-white/[0.08] focus:border-sky-500 focus:bg-white dark:focus:bg-slate-950 focus:ring-2 focus:ring-sky-500/20 outline-none transition-all">
+                                                   class="grade-score-input w-full h-10 rounded-lg text-center text-sm font-black font-mono bg-transparent hover:bg-slate-100/80 dark:hover:bg-white/[0.06] text-slate-900 dark:text-white placeholder-slate-300 dark:placeholder-slate-700 focus:bg-blue-50 dark:focus:bg-blue-950/60 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
                                         </td>
                                     `).join('')}
-                                    <td class="py-2 px-1">
+                                    <td class="p-1 border-l border-slate-200/70 dark:border-white/[0.06] bg-sky-50/60 dark:bg-sky-500/[0.06]">
                                         <input type="text" inputmode="decimal" autocomplete="off"
-                                               value="${sub.gk || ''}" placeholder="—"
+                                               value="${sub.gk || ''}" placeholder="·"
                                                data-sem="${semKey}" data-sub-id="${sub.id}" data-field="gk"
-                                               class="grade-score-input w-full h-10 rounded-xl text-center text-sm font-black font-mono bg-sky-500/[0.08] text-sky-700 dark:text-sky-300 border border-sky-500/20 focus:border-sky-400 focus:bg-white dark:focus:bg-slate-950 focus:ring-2 focus:ring-sky-500/20 outline-none transition-all">
+                                               class="grade-score-input w-full h-10 rounded-lg text-center text-sm font-black font-mono bg-transparent text-sky-700 dark:text-sky-300 placeholder-sky-300/70 dark:placeholder-sky-700 focus:bg-sky-100/80 dark:focus:bg-sky-900/50 focus:ring-2 focus:ring-sky-500 outline-none transition-all">
                                     </td>
-                                    <td class="py-2 px-1">
+                                    <td class="p-1 border-l border-slate-200/70 dark:border-white/[0.06] bg-amber-50/60 dark:bg-amber-500/[0.07]">
                                         <input type="text" inputmode="decimal" autocomplete="off"
-                                               value="${sub.ck || ''}" placeholder="—"
+                                               value="${sub.ck || ''}" placeholder="·"
                                                data-sem="${semKey}" data-sub-id="${sub.id}" data-field="ck"
-                                               class="grade-score-input w-full h-10 rounded-xl text-center text-sm font-black font-mono bg-amber-500/[0.08] text-amber-700 dark:text-amber-300 border border-amber-500/20 focus:border-amber-400 focus:bg-white dark:focus:bg-slate-950 focus:ring-2 focus:ring-amber-500/20 outline-none transition-all">
+                                               class="grade-score-input w-full h-10 rounded-lg text-center text-sm font-black font-mono bg-transparent text-amber-700 dark:text-amber-300 placeholder-amber-300/70 dark:placeholder-amber-700 focus:bg-amber-100/80 dark:focus:bg-amber-900/50 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
                                     </td>
-                                    <td class="py-2.5 px-2 text-center">
+                                    <td class="py-2 px-2 text-center border-l border-slate-200/70 dark:border-white/[0.06]">
                                         <span data-cell="avg" class="text-base font-black font-mono ${avgScoreColor(calc.avgVal)}">${calc.avgText}</span>
                                     </td>
-                                    <td class="py-2.5 pl-2 pr-5 text-right">
+                                    <td class="py-2 pl-2 pr-5 text-right border-l border-slate-200/70 dark:border-white/[0.06]">
                                         <span data-cell="needed" class="inline-block px-2.5 py-1 rounded-xl text-[11px] font-extrabold border ${neededToneClass(needed.tone)}">
                                             ${needed.text}
                                         </span>
@@ -596,70 +617,75 @@
     }
 
     // =========================================================================
-    // TAB 3: TỔNG HỢP CẢ NĂM (RESPONSIVE CARDS ON MOBILE + TABLE ON PC)
+    // TAB 3: TỔNG HỢP CẢ NĂM (VIETSCHOOL REPORT CARD TABLE ON BOTH MOBILE & PC)
     // =========================================================================
     function renderCombinedYearView(targetNum) {
         const activePairs = state.hk1
             .map((s1, idx) => ({ s1, s2: state.hk2[idx] || s1 }))
             .filter(p => p.s1.active);
 
-        const mobileCards = `
-            <div class="lg:hidden space-y-2.5">
-                ${activePairs.map(({ s1, s2 }) => {
-                    const a1 = calcSubjectRow(s1);
-                    const a2 = calcSubjectRow(s2);
-                    const yr = calcYearAverage(s1, s2);
-                    const need2 = a2.hasCk && s1.type === 'numeric'
-                        ? { text: '✓ Đủ 2 kì', tone: 'ok' }
-                        : calcNeededHK2(s1, targetNum);
+        const mobileTable = `
+            <div class="lg:hidden rounded-2xl overflow-hidden border border-blue-600/30 dark:border-blue-400/20 bg-white dark:bg-[#0e1118] shadow-md">
+                <div class="bg-gradient-to-r from-[#1d4ed8] via-[#2563eb] to-[#1d4ed8] dark:from-[#172554] dark:via-[#1e3a8a] dark:to-[#172554] text-white">
+                    <div class="px-3 py-2 flex items-center justify-between text-[11px] font-black uppercase tracking-wider border-b border-white/15">
+                        <span>📊 Tổng Hợp Cả Năm</span>
+                        <span class="text-[10px] font-normal text-blue-100">(HK1 + HK2×2)/3</span>
+                    </div>
+                    <div class="grid grid-cols-12 text-[10px] font-black uppercase py-1.5 bg-black/15 text-center">
+                        <div class="col-span-5 text-left pl-3">Môn học</div>
+                        <div class="col-span-2">HK1</div>
+                        <div class="col-span-2 text-amber-200">HK2</div>
+                        <div class="col-span-3 text-emerald-200">Cả Năm</div>
+                    </div>
+                </div>
+                <div class="divide-y divide-slate-200/80 dark:divide-white/[0.07]">
+                    ${activePairs.map(({ s1, s2 }, idx) => {
+                        const a1 = calcSubjectRow(s1);
+                        const a2 = calcSubjectRow(s2);
+                        const yr = calcYearAverage(s1, s2);
+                        const need2 = a2.hasCk && s1.type === 'numeric'
+                            ? { text: '✓ Đủ 2 kì', tone: 'ok' }
+                            : calcNeededHK2(s1, targetNum);
 
-                    return `
-                        <div class="rounded-2xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10 p-4 space-y-2.5">
-                            <div class="flex items-center justify-between gap-2">
-                                <div class="flex items-center gap-2.5 min-w-0">
-                                    <span class="text-lg">${s1.icon}</span>
-                                    <span class="text-sm font-black text-slate-900 dark:text-white truncate">${s1.name}</span>
+                        return `
+                            <div class="grid grid-cols-12 items-center py-2.5 ${idx % 2 === 1 ? 'bg-slate-50/70 dark:bg-white/[0.02]' : ''}">
+                                <div class="col-span-5 pl-3 pr-1 min-w-0">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-xs shrink-0">${s1.icon}</span>
+                                        <span class="text-xs font-black text-slate-900 dark:text-white truncate">${s1.name}</span>
+                                    </div>
+                                    <div class="mt-0.5">
+                                        <span class="inline-block px-1.5 py-0.2 rounded text-[9px] font-extrabold border ${neededToneClass(need2.tone)}">${need2.text}</span>
+                                    </div>
                                 </div>
-                                <span class="px-2.5 py-1 rounded-xl text-[11px] font-extrabold border ${neededToneClass(need2.tone)}">${need2.text}</span>
+                                <div class="col-span-2 text-center font-mono text-xs font-bold text-slate-700 dark:text-slate-300">${a1.avgText}</div>
+                                <div class="col-span-2 text-center font-mono text-xs font-bold text-amber-500">${a2.avgText}</div>
+                                <div class="col-span-3 text-center font-mono text-sm font-black ${yr.isComment ? 'text-emerald-500' : avgScoreColor(yr.avgVal)}">${yr.avgText}</div>
                             </div>
-                            <div class="grid grid-cols-3 gap-2 text-center">
-                                <div class="py-2 rounded-xl bg-slate-100/80 dark:bg-white/[0.04]">
-                                    <div class="text-[10px] font-bold text-slate-400">HK1 (×1)</div>
-                                    <div class="text-sm font-black font-mono text-slate-800 dark:text-slate-200 mt-0.5">${a1.avgText}</div>
-                                </div>
-                                <div class="py-2 rounded-xl bg-slate-100/80 dark:bg-white/[0.04]">
-                                    <div class="text-[10px] font-bold text-slate-400">HK2 (×2)</div>
-                                    <div class="text-sm font-black font-mono text-amber-500 mt-0.5">${a2.avgText}</div>
-                                </div>
-                                <div class="py-2 rounded-xl bg-slate-950 dark:bg-white/[0.08]">
-                                    <div class="text-[10px] font-bold text-slate-400">Cả Năm</div>
-                                    <div class="text-sm font-black font-mono ${yr.isComment ? 'text-emerald-400' : avgScoreColor(yr.avgVal)} mt-0.5">${yr.avgText}</div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('')}
+                        `;
+                    }).join('')}
+                </div>
             </div>
         `;
 
         const desktopTable = `
-            <div class="hidden lg:block rounded-3xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10 shadow-sm overflow-hidden">
-                <div class="px-5 py-3 bg-slate-50 dark:bg-white/[0.03] border-b border-slate-200/80 dark:border-white/10 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+            <div class="hidden lg:block rounded-2xl bg-white dark:bg-[#0e1118] border border-blue-600/25 dark:border-blue-400/20 shadow-md overflow-hidden">
+                <div class="px-5 py-2.5 bg-slate-50 dark:bg-white/[0.03] border-b border-slate-200/80 dark:border-white/10 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
                     <span>Công thức Thông tư 22: <strong class="text-slate-900 dark:text-white">ĐTB Cả Năm = (ĐTB HK1 + ĐTB HK2 × 2) / 3</strong></span>
                     <span class="font-mono text-[11px]">(*) tạm tính khi chưa đủ 2 kì</span>
                 </div>
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="border-b border-slate-200/80 dark:border-white/10 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">
+                        <tr class="bg-gradient-to-r from-[#1d4ed8] via-[#2563eb] to-[#1d4ed8] dark:from-[#172554] dark:via-[#1e3a8a] dark:to-[#172554] text-white text-[11px] font-black uppercase tracking-wider text-center">
                             <th class="py-3 pl-5 pr-3 text-left">Môn học</th>
-                            <th class="py-3 px-3">ĐTB HK1 (×1)</th>
-                            <th class="py-3 px-3">ĐTB HK2 (×2)</th>
-                            <th class="py-3 px-3 text-slate-900 dark:text-white">ĐTB Cả Năm</th>
-                            <th class="py-3 pl-3 pr-5 text-right">Dự báo HK2</th>
+                            <th class="py-3 px-3 border-l border-white/15">ĐTB HK1 (×1)</th>
+                            <th class="py-3 px-3 border-l border-white/15 text-amber-200">ĐTB HK2 (×2)</th>
+                            <th class="py-3 px-3 border-l border-white/15 text-emerald-200">ĐTB Cả Năm</th>
+                            <th class="py-3 pl-3 pr-5 text-right border-l border-white/15">Dự báo HK2</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100 dark:divide-white/[0.06] text-sm">
-                        ${activePairs.map(({ s1, s2 }) => {
+                    <tbody class="divide-y divide-slate-200/80 dark:divide-white/[0.07] text-sm">
+                        ${activePairs.map(({ s1, s2 }, idx) => {
                             const a1 = calcSubjectRow(s1);
                             const a2 = calcSubjectRow(s2);
                             const yr = calcYearAverage(s1, s2);
@@ -668,17 +694,17 @@
                                 : calcNeededHK2(s1, targetNum);
 
                             return `
-                                <tr class="hover:bg-slate-50/70 dark:hover:bg-white/[0.02]">
+                                <tr class="${idx % 2 === 1 ? 'bg-slate-50/70 dark:bg-white/[0.015]' : ''} hover:bg-blue-50/50 dark:hover:bg-blue-950/20">
                                     <td class="py-3 pl-5 pr-3">
                                         <div class="flex items-center gap-2.5">
                                             <span class="text-base">${s1.icon}</span>
                                             <span class="font-extrabold text-slate-900 dark:text-white">${s1.name}</span>
                                         </div>
                                     </td>
-                                    <td class="py-3 px-3 text-center font-mono font-bold text-slate-700 dark:text-slate-200">${a1.avgText}</td>
-                                    <td class="py-3 px-3 text-center font-mono font-bold text-amber-500">${a2.avgText}</td>
-                                    <td class="py-3 px-3 text-center font-mono text-base font-black ${yr.isComment ? 'text-emerald-500' : avgScoreColor(yr.avgVal)}">${yr.avgText}</td>
-                                    <td class="py-3 pl-3 pr-5 text-right">
+                                    <td class="py-3 px-3 text-center font-mono font-bold text-slate-700 dark:text-slate-200 border-l border-slate-200/70 dark:border-white/[0.06]">${a1.avgText}</td>
+                                    <td class="py-3 px-3 text-center font-mono font-bold text-amber-500 border-l border-slate-200/70 dark:border-white/[0.06]">${a2.avgText}</td>
+                                    <td class="py-3 px-3 text-center font-mono text-base font-black border-l border-slate-200/70 dark:border-white/[0.06] ${yr.isComment ? 'text-emerald-500' : avgScoreColor(yr.avgVal)}">${yr.avgText}</td>
+                                    <td class="py-3 pl-3 pr-5 text-right border-l border-slate-200/70 dark:border-white/[0.06]">
                                         <span class="inline-block px-2.5 py-1 rounded-xl text-[11px] font-extrabold border ${neededToneClass(need2.tone)}">${need2.text}</span>
                                     </td>
                                 </tr>
@@ -689,7 +715,7 @@
             </div>
         `;
 
-        return mobileCards + desktopTable;
+        return mobileTable + desktopTable;
     }
 
     function updateSummaryLive(container) {
@@ -748,81 +774,81 @@
         ` : '';
 
         container.innerHTML = `
-            <div class="max-w-6xl mx-auto space-y-4 pb-8">
+            <div class="max-w-6xl mx-auto space-y-3 pb-8">
                 <!-- 1. CLEAN TOP BAR + 3-TAB SWITCHER -->
-                <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex flex-wrap items-center justify-between gap-2.5">
                     <div class="flex items-center gap-2.5 flex-wrap">
                         <button type="button" onclick="AzotaApp.goBack()"
                                 class="h-11 px-4 sm:px-5 rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-950 hover:opacity-90 shadow-md text-xs sm:text-sm font-black transition-all flex items-center gap-2 shrink-0 cursor-pointer active:scale-95">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.8"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
                             <span>Quay Lại</span>
                         </button>
-                        <h2 class="text-base sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">
-                            Tính Điểm TT22
-                        </h2>
-                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-300 border border-sky-500/20 text-[10px] font-extrabold">
-                            <span>🔒</span>
-                            <span>@${currAcc.nickname}</span>
-                        </span>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-base sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">
+                                Sổ Điểm TT22
+                            </h2>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-500/25 text-[10px] font-extrabold">
+                                <span>🔒</span>
+                                <span>@${currAcc.nickname}</span>
+                            </span>
+                        </div>
                     </div>
 
-                    <div class="inline-flex p-1 rounded-2xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10">
-                        <button type="button" data-switch-tab="hk1" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${state.currentTab === 'hk1' ? 'bg-slate-950 text-white dark:bg-white dark:text-slate-950 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
+                    <div class="inline-flex p-1 rounded-2xl bg-white dark:bg-[#0e1118] border border-slate-200/80 dark:border-white/10">
+                        <button type="button" data-switch-tab="hk1" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${state.currentTab === 'hk1' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
                             HK1
                         </button>
-                        <button type="button" data-switch-tab="hk2" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${state.currentTab === 'hk2' ? 'bg-slate-950 text-white dark:bg-white dark:text-slate-950 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
+                        <button type="button" data-switch-tab="hk2" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${state.currentTab === 'hk2' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
                             HK2
                         </button>
-                        <button type="button" data-switch-tab="canam" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${state.currentTab === 'canam' ? 'bg-slate-950 text-white dark:bg-white dark:text-slate-950 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
+                        <button type="button" data-switch-tab="canam" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${state.currentTab === 'canam' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}">
                             Cả Năm
                         </button>
                     </div>
                 </div>
 
-                <!-- 2. EDITORIAL BENTO LIVE SUMMARY ROW (3 COMPACT CARDS) -->
-                <div class="grid grid-cols-3 md:grid-cols-6 gap-3">
-                    <!-- Rank Forecast Card -->
-                    <div class="bento-card-enter relative overflow-hidden col-span-2 md:col-span-3 rounded-3xl bg-slate-950 text-white dark:bg-[#f4f5f7] dark:text-slate-950 p-4 sm:p-5 flex flex-col justify-between gap-2 shadow-lg border border-slate-800 dark:border-white/40">
-                        <div class="bento-hatch-overlay"></div>
-                        <div class="relative z-10 flex items-center justify-between gap-2">
-                            <span class="text-[10px] font-black uppercase tracking-widest opacity-60">Xếp loại ${tabLabel}</span>
-                            <span id="gcSummaryBadge" class="text-xl leading-none">${ev.rankBadge}</span>
-                        </div>
-                        <div id="gcSummaryRank" class="relative z-10 text-lg sm:text-2xl font-black tracking-tight leading-tight">
-                            ${ev.rankTitle}
-                        </div>
-                        <p id="gcSummaryNote" class="relative z-10 text-[11px] opacity-65 line-clamp-2 leading-snug">
-                            ${ev.detailNote}
-                        </p>
-                    </div>
-
-                    <!-- Overall GPA Card -->
-                    <div class="bento-card-enter col-span-1 md:col-span-1 rounded-3xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10 p-4 sm:p-5 flex flex-col justify-between text-center shadow-xs">
-                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">ĐTB Chung</span>
-                        <div id="gcSummaryAvg" class="text-3xl sm:text-4xl font-black font-mono text-emerald-500 dark:text-emerald-400 leading-none my-1">
-                            ${ev.overallAvgText}
-                        </div>
-                        <span id="gcSummaryCount" class="text-[10px] font-bold text-slate-400">
-                            ${ev.filledCount}/${ev.totalNumeric} môn
-                        </span>
-                    </div>
-
-                    <!-- Goal Segmented Pills + Quick Actions Card -->
-                    <div class="bento-card-enter col-span-3 md:col-span-2 rounded-3xl bg-white dark:bg-[#0e1017] border border-slate-200/80 dark:border-white/10 p-4 sm:p-5 flex flex-col justify-between gap-3 shadow-xs">
-                        <div class="space-y-1.5">
-                            <div class="flex items-center justify-between">
-                                <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Mục tiêu</span>
-                                <span class="text-[10px] font-bold text-amber-500 font-mono">≥ ${targetNum.toFixed(1)}đ</span>
+                <!-- 2. COMPACT VIETSCHOOL SUMMARY + GOAL BAR (Fits in ~120px on mobile so grade table starts immediately!) -->
+                <div class="rounded-2xl bg-white dark:bg-[#0e1118] border border-slate-200/85 dark:border-white/10 shadow-sm overflow-hidden">
+                    <!-- Top Summary Row -->
+                    <div class="px-4 py-3 flex items-center justify-between gap-3 border-b border-slate-100 dark:border-white/[0.06]">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span id="gcSummaryBadge" class="w-10 h-10 rounded-xl bg-blue-500/10 dark:bg-blue-500/15 border border-blue-500/20 flex items-center justify-center text-xl shrink-0">${ev.rankBadge}</span>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-blue-600 dark:text-blue-400">${tabLabel}</span>
+                                    <span class="text-[10px] text-slate-400">•</span>
+                                    <span id="gcSummaryCount" class="text-[10px] font-bold text-slate-500 dark:text-slate-400">${ev.filledCount}/${ev.totalNumeric} môn có điểm</span>
+                                </div>
+                                <div id="gcSummaryRank" class="text-sm sm:text-base font-black text-slate-900 dark:text-white leading-tight truncate">
+                                    ${ev.rankTitle}
+                                </div>
+                                <p id="gcSummaryNote" class="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                                    ${ev.detailNote}
+                                </p>
                             </div>
-                            <div class="grid grid-cols-4 gap-1 p-1 rounded-2xl bg-slate-100 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/[0.08]">
+                        </div>
+
+                        <div class="text-right shrink-0 pl-2 border-l border-slate-200/70 dark:border-white/10">
+                            <div class="text-[9px] font-black uppercase tracking-wider text-slate-400">ĐTB Chung</div>
+                            <div id="gcSummaryAvg" class="text-2xl sm:text-3xl font-black font-mono text-emerald-600 dark:text-emerald-400 leading-none mt-0.5">
+                                ${ev.overallAvgText}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Compact Controls: Goal Pills + Config/Copy/Clear -->
+                    <div class="px-3 py-2 bg-slate-50/70 dark:bg-white/[0.02] flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center gap-1.5 flex-1 min-w-[210px]">
+                            <span class="text-[10px] font-black uppercase text-slate-400 shrink-0 hidden sm:inline">Mục tiêu:</span>
+                            <div class="grid grid-cols-4 gap-1 p-0.5 rounded-xl bg-slate-200/70 dark:bg-white/[0.05] flex-1 max-w-[260px]">
                                 ${targetPills.map(tp => {
                                     const isAct = state.targetRank === tp.id;
                                     return `
                                         <button type="button" data-select-target="${tp.id}"
-                                                class="py-1.5 px-1 rounded-xl text-[11px] font-black transition-all cursor-pointer text-center leading-tight ${
+                                                class="py-1 px-1 rounded-lg text-[11px] font-black transition-all cursor-pointer text-center leading-tight ${
                                                     isAct
-                                                        ? 'bg-slate-950 text-white dark:bg-amber-400 dark:text-slate-950 shadow-xs'
-                                                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                                                        ? 'bg-blue-600 text-white shadow-xs'
+                                                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                                                 }">
                                             ${tp.label}
                                         </button>
@@ -831,25 +857,26 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-2 flex-wrap">
+                        <div class="flex items-center gap-1.5 shrink-0">
                             <button type="button" id="btnToggleConfig"
-                                    class="flex-1 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.06] dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 text-xs font-extrabold transition-colors cursor-pointer">
-                                ⚙️ Chọn môn
+                                    class="h-8 px-2.5 rounded-lg bg-white dark:bg-white/[0.06] hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-slate-200 text-[11px] font-extrabold transition-colors cursor-pointer">
+                                ⚙️ Môn
                             </button>
                             ${state.currentTab === 'hk2' ? `
                                 <button type="button" id="btnCopyHk1ToHk2"
-                                        class="flex-1 py-2 px-3 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-600 dark:text-sky-300 border border-sky-500/25 text-xs font-extrabold transition-colors cursor-pointer">
+                                        class="h-8 px-2.5 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 text-sky-600 dark:text-sky-300 border border-sky-500/25 text-[11px] font-extrabold transition-colors cursor-pointer">
                                     📋 Chép HK1
                                 </button>
                             ` : ''}
                             ${state.currentTab !== 'canam' ? `
                                 <button type="button" id="btnClearSem"
-                                        class="py-2 px-3 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 dark:text-rose-400 border border-rose-500/20 text-xs font-extrabold transition-colors cursor-pointer">
-                                    🗑️ Xóa
+                                        class="h-8 px-2.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 dark:text-rose-400 border border-rose-500/20 text-[11px] font-extrabold transition-colors cursor-pointer"
+                                        title="Xóa điểm học kì hiện tại">
+                                    🗑️
                                 </button>
                             ` : `
                                 <button type="button" data-switch-tab="hk2"
-                                        class="flex-1 py-2 px-3 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-600 dark:text-sky-300 border border-sky-500/25 text-xs font-extrabold transition-colors cursor-pointer">
+                                        class="h-8 px-2.5 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 text-sky-600 dark:text-sky-300 border border-sky-500/25 text-[11px] font-extrabold transition-colors cursor-pointer">
                                     ✏️ Nhập HK2
                                 </button>
                             `}
@@ -859,11 +886,11 @@
 
                 ${configBar}
 
-                <!-- 3. GRADE INPUT SECTION (4 FULL KTTX COLUMNS: CARDS ON MOBILE + TABLE ON PC) -->
+                <!-- 3. VIETSCHOOL REPORT CARD SHEET (4 FULL KTTX + GK + CK + ĐTB) -->
                 ${state.currentTab === 'hk1'
-                    ? (renderMobileSemesterCards(state.hk1, 'hk1', targetNum) + renderDesktopSemesterTable(state.hk1, 'HK1', 'hk1', targetNum))
+                    ? (renderMobileSemesterCards(state.hk1, 'HK1', 'hk1', targetNum) + renderDesktopSemesterTable(state.hk1, 'HK1', 'hk1', targetNum))
                     : (state.currentTab === 'hk2'
-                        ? (renderMobileSemesterCards(state.hk2, 'hk2', targetNum) + renderDesktopSemesterTable(state.hk2, 'HK2', 'hk2', targetNum))
+                        ? (renderMobileSemesterCards(state.hk2, 'HK2', 'hk2', targetNum) + renderDesktopSemesterTable(state.hk2, 'HK2', 'hk2', targetNum))
                         : renderCombinedYearView(targetNum)
                     )
                 }
@@ -965,17 +992,20 @@
                 const calc = calcSubjectRow(sub);
                 const needed = calcNeededCK(sub, targetNum);
 
-                // Update both mobile card & desktop row live
+                // Update both mobile VietSchool row & desktop row live
                 container.querySelectorAll(`[data-sub-card="${subId}"], [data-sub-row="${subId}"]`).forEach(host => {
+                    const isMob = host.hasAttribute('data-sub-card');
                     const avgCell = host.querySelector('[data-cell="avg"]');
                     if (avgCell) {
                         avgCell.textContent = calc.avgText;
-                        avgCell.className = `${host.hasAttribute('data-sub-card') ? 'text-lg' : 'text-base'} font-black font-mono ${avgScoreColor(calc.avgVal)}`;
+                        avgCell.className = `${isMob ? 'text-[15px] leading-none' : 'text-base'} font-black font-mono ${avgScoreColor(calc.avgVal)}`;
                     }
                     const needCell = host.querySelector('[data-cell="needed"]');
                     if (needCell) {
                         needCell.textContent = needed.text;
-                        needCell.className = `${host.hasAttribute('data-sub-card') ? '' : 'inline-block '}px-2.5 py-1 rounded-xl text-[11px] font-extrabold border ${neededToneClass(needed.tone)}`;
+                        needCell.className = isMob
+                            ? `px-2 py-0.5 rounded-lg text-[10px] font-extrabold border ${neededToneClass(needed.tone)}`
+                            : `inline-block px-2.5 py-1 rounded-xl text-[11px] font-extrabold border ${neededToneClass(needed.tone)}`;
                     }
                 });
 
