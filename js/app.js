@@ -262,7 +262,7 @@ window.AzotaApp = (function() {
         STORAGE_KEY: "azota_user_accounts",
         CURRENT_KEY: "azota_current_account_id",
         SCHEMA_KEY: "azota_accounts_schema_v",
-        SCHEMA_VERSION: "v3_strict_4_accounts",
+        SCHEMA_VERSION: "v4_strict_6_accounts",
 
         getDefaultAccounts: function() {
             return [
@@ -317,6 +317,32 @@ window.AzotaApp = (function() {
                     isAdmin: false,
                     isDefault: true,
                     createdAt: "2026-01-01T00:00:00.000Z"
+                },
+                {
+                    id: "acc_thanhtruc",
+                    name: "Thanh Trúc",
+                    nickname: "ThanhTruc",
+                    grade: "Lớp 11",
+                    role: "🎓 Học Sinh",
+                    pin: "TT4726",
+                    avatar: "🌸",
+                    goal: "Chinh phục điểm cao Học Kỳ 1",
+                    isAdmin: false,
+                    isDefault: true,
+                    createdAt: "2026-11-28T00:00:00.000Z"
+                },
+                {
+                    id: "acc_minhtrieu",
+                    name: "Minh Triệu",
+                    nickname: "MinhTrieu",
+                    grade: "Lớp 11",
+                    role: "🎓 Học Sinh",
+                    pin: "MT3892",
+                    avatar: "🚀",
+                    goal: "9.0+ Học Kỳ 1",
+                    isAdmin: false,
+                    isDefault: true,
+                    createdAt: "2026-11-28T00:00:00.000Z"
                 }
             ];
         },

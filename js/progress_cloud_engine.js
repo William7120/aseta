@@ -13,7 +13,7 @@
     const LOCAL_CACHE_KEY = "aseta_progress_cloud_cache_v1";
     const DEDUPE_STORAGE_KEY = "aseta_exp_dedupe_v1";
     const LIVE_POLL_INTERVAL_MS = 5000;
-    const OFFICIAL_ACCOUNT_IDS = ["acc_ngocbinh", "acc_minhtri", "acc_tuanminh", "acc_vanthua"];
+    const OFFICIAL_ACCOUNT_IDS = ["acc_ngocbinh", "acc_minhtri", "acc_tuanminh", "acc_thanhtruc", "acc_minhtrieu", "acc_vanthua"];
 
     let memoryState = null; // { version: 1, updatedAt: string, accounts: { [accId]: AccountProgress } }
     let dirtyAccounts = new Set();
